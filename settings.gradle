@@ -1,0 +1,3 @@
+rootProject.name = 'skeleton'
+include 'server'
+include 'client'
