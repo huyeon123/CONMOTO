@@ -1,15 +1,12 @@
 package restapi;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
+import java.util.Random;
 
 public class RestAPI {
     public RestAPI() {
@@ -39,11 +36,12 @@ public class RestAPI {
             connection.setUseCaches(false);
             connection.setDefaultUseCaches(false);
 
+            System.out.println("전송 시작\n");
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             wr.write(jsonMessage);
             wr.flush();
 
-            readMessage(connection);
+            System.out.println("결과 : " + readMessage(connection));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,8 +52,8 @@ public class RestAPI {
         try {
             URL url = new URL(strUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(5 * 1000); //서버에 연결되는 Timeout 시간
-            connection.setReadTimeout(5 * 1000); //InputStream 읽어 오는 Timeout 시간
+            connection.setConnectTimeout(5 * 10000); //서버에 연결되는 Timeout 시간
+            connection.setReadTimeout(5 * 10000); //InputStream 읽어 오는 Timeout 시간
             //connection.addRequestProperty(); key값 설정
             return connection;
         } catch (Exception e) {
@@ -104,16 +102,49 @@ public class RestAPI {
         }
     }
 
+    private static String getRandom(String url) {
+        Random random = new Random();
+        long id = random.nextInt(2) + 1;
+        url += "/" + id;
+        return get(url);
+    }
+
+    private static void update(String strUrl, String jsonMessage) {
+        try {
+            HttpURLConnection connect = connect(strUrl);
+            assert connect != null;
+            connect.setRequestMethod("PUT");
+            connect.setRequestProperty("Content-Type", "application/json");
+            connect.setDoOutput(true);
+
+            int idx = jsonMessage.indexOf("내용") + 2;
+            String firstSub = jsonMessage.substring(0, idx);
+            String secondSub = jsonMessage.substring(idx + 1);
+            jsonMessage = firstSub + "999" + secondSub;
+
+            OutputStreamWriter wr = new OutputStreamWriter(connect.getOutputStream());
+            wr.write(jsonMessage);
+            wr.flush();
+
+            System.out.println("결과 : " + readMessage(connect));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         String url = "http://localhost:8080/rest";
 
-        deleteAll(url + "/all");
-
-        String jsonMessage = "[{\"title\":\"제목3\",\"content\":\"내용3\"},{\"title\":\"제목4\",\"content\":\"내용4\"}]";
+        String jsonMessage = "[{\"title\":\"제목1\",\"content\":\"내용1\"},{\"title\":\"제목2\",\"content\":\"내용2\"}]";
         post(url, jsonMessage);
 
-        jsonMessage = get(url);
+        jsonMessage = getRandom(url);
+        jsonMessage = jsonMessage.replace("\n", "");
+        jsonMessage = "[" + jsonMessage + "]";
+        System.out.println(jsonMessage);
 
-        post(url, jsonMessage);
+        update(url, jsonMessage);
+
+//        deleteAll(url + "/all");
     }
 }
