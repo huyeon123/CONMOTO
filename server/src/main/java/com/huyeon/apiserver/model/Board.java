@@ -1,22 +1,26 @@
 package com.huyeon.apiserver.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.huyeon.apiserver.model.listener.Auditable;
+import com.huyeon.apiserver.model.listener.PersistListener;
+import lombok.*;
 import org.apache.tomcat.jni.Local;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.NonNull;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Board {
+@EntityListeners(value = {AuditingEntityListener.class, PersistListener.class})
+public class Board extends AuditEntity implements Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -26,8 +30,5 @@ public class Board {
 
     @NonNull
     private String content;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
 }
+

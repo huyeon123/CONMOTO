@@ -1,6 +1,7 @@
 package com.huyeon.apiserver.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huyeon.apiserver.model.Board;
 import com.huyeon.apiserver.service.BoardService;
@@ -44,11 +45,11 @@ public class HomeController {
     @PostMapping("/rest")
     public String post(@RequestBody String jsonMessage) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        Board[] boardArr = mapper.readValue(jsonMessage, Board[].class);
+        List<Board> boards = mapper.readValue(jsonMessage, new TypeReference<>() {});
 
         log.info("Post on Board : {}", jsonMessage);
 
-        boardService.saveAll(boardArr);
+        boardService.saveAll(boards);
 
         List<Board> boardList = boardService.getAll();
 
@@ -62,7 +63,7 @@ public class HomeController {
     @PutMapping("/rest")
     public String update(@RequestBody String jsonMessage) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        Board[] boardArr = mapper.readValue(jsonMessage, Board[].class);
+        List<Board> boardArr = mapper.readValue(jsonMessage, new TypeReference<>() {});
 
         log.info("Put on Board : {}", jsonMessage);
 
@@ -78,7 +79,7 @@ public class HomeController {
     }
 
     @DeleteMapping("/rest/all")
-    public void deleteAll(){
+    public void deleteAll() {
         boardService.deleteAll();
         log.info("Board Table Clear");
     }

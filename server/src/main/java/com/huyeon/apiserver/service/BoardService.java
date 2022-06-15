@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +20,8 @@ public class BoardService {
         return boardRepository.findAll();
     }
 
-    public void saveAll(Board[] data) {
-        boardRepository.saveAll(Arrays.asList(data));
+    public void saveAll(List<Board> data) {
+        boardRepository.saveAll(data);
     }
 
     public void deleteAll() {
@@ -34,8 +33,8 @@ public class BoardService {
         return board.orElse(null); //isPresent()이면 board 리턴, 아니면 null 리턴
     }
 
-    public void updateById(Board[] data) {
-        boardRepository.saveAll(Arrays.asList(data));
+    public void updateById(Board data) {
+        boardRepository.save(data);
     }
 
 }
