@@ -16,8 +16,10 @@ import javax.persistence.*;
 @EntityListeners(value = {HistoryListener.class})
 public class BoardHistory extends AuditEntity implements Auditable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private Long boardId;
 
     private Long userId;
 

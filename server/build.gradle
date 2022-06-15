@@ -9,6 +9,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.7.0'
 
-    runtimeOnly 'com.h2database:h2'
+    //hibernate 5.6.9 Final 과 h2 2.1.212 호환성 문제로 안정적인 1.4.200으로 변경
+    runtimeOnly 'com.h2database:h2:1.4.200'
     runtimeOnly 'mysql:mysql-connector-java'
 }

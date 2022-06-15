@@ -17,7 +17,8 @@ public class HistoryListener {
 
         Board board = (Board) o;
         BoardHistory boardHistory = BoardHistory.builder()
-                .userId(board.getId())
+                .boardId(board.getId())
+                .userId(board.getUserId())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .build();

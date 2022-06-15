@@ -1,8 +1,10 @@
 package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.Board;
+import com.huyeon.apiserver.model.User;
 import com.huyeon.apiserver.repository.BoardHistoryRepository;
 import com.huyeon.apiserver.repository.BoardRepository;
+import com.huyeon.apiserver.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,29 +21,26 @@ public class BoardServiceTest {
     BoardRepository boardRepository;
     @Autowired
     BoardHistoryRepository boardHistoryRepository;
+    @Autowired
+    UserRepository userRepository;
 
     @DisplayName("prePersist")
     @Test
-    void test_1(){
+    void test_1() {
         List<Board> all = boardService.getAll();
         all.forEach(System.out::println);
         List<Board> addData = new ArrayList<>();
         addData.add(Board.builder()
+                .userId(1L)
                 .content("내용999")
                 .title("제목999")
                 .build());
 
         boardService.saveAll(addData);
+
+        User user = userRepository.findById(1L).get();
+        user.getBoardList().forEach(System.out::println);
+
     }
 
-    @DisplayName("")
-    @Test
-    void test_2() {
-        Board board = Board.builder()
-                .title("제목TEST")
-                .content("내용TEST")
-                .build();
-        boardRepository.save(board);
-        boardHistoryRepository.findAll().forEach(System.out::println);
-    }
 }
