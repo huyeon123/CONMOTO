@@ -3,7 +3,7 @@ package com.huyeon.apiserver.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.huyeon.apiserver.model.Board;
+import com.huyeon.apiserver.model.dto.Board;
 import com.huyeon.apiserver.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

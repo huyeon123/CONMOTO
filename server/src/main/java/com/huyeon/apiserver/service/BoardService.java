@@ -1,6 +1,6 @@
 package com.huyeon.apiserver.service;
 
-import com.huyeon.apiserver.model.Board;
+import com.huyeon.apiserver.model.dto.Board;
 import com.huyeon.apiserver.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class BoardService {
 
     public Board getByRandom(Long randomNum) {
         Optional<Board> board = boardRepository.findById(randomNum);
-        return board.orElse(null); //isPresent()이면 board 리턴, 아니면 null 리턴
+        return board.orElse(new Board()); //isPresent()이면 board 리턴, 아니면 빈 객체 리턴
     }
 
     public void updateById(Board data) {

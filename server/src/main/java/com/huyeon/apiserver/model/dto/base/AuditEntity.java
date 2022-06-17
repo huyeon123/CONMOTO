@@ -1,4 +1,4 @@
-package com.huyeon.apiserver.model;
+package com.huyeon.apiserver.model.dto.base;
 
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;

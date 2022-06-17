@@ -1,13 +1,14 @@
-package com.huyeon.apiserver.model;
+package com.huyeon.apiserver.model.dto;
 
+import com.huyeon.apiserver.model.dto.base.AuditEntity;
 import com.huyeon.apiserver.model.listener.Auditable;
+import com.huyeon.apiserver.model.listener.HistoryListener;
 import com.huyeon.apiserver.model.listener.PersistListener;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-@EntityListeners(value = {AuditingEntityListener.class, PersistListener.class})
+@EntityListeners(value = {AuditingEntityListener.class, HistoryListener.class})
 public class User extends AuditEntity implements Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

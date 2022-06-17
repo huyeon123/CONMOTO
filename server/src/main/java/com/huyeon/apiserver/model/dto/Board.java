@@ -1,7 +1,9 @@
-package com.huyeon.apiserver.model;
+package com.huyeon.apiserver.model.dto;
 
+import com.huyeon.apiserver.model.dto.base.AuditEntity;
+import com.huyeon.apiserver.model.dto.history.BoardHistory;
 import com.huyeon.apiserver.model.listener.Auditable;
-import com.huyeon.apiserver.model.listener.PersistListener;
+import com.huyeon.apiserver.model.listener.HistoryListener;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -16,7 +18,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(value = {AuditingEntityListener.class, PersistListener.class})
+@EntityListeners(value = {AuditingEntityListener.class, HistoryListener.class})
 public class Board extends AuditEntity implements Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +31,7 @@ public class Board extends AuditEntity implements Auditable {
     private String title;
 
     @NonNull
-    private String content;
+    private String content; //STATUS로 변경, List<ContentBlock> 추가
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "boardId", insertable = false, updatable = false)
