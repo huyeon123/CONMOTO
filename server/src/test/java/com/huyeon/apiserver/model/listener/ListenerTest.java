@@ -8,6 +8,7 @@ import com.huyeon.apiserver.repository.BoardRepository;
 import com.huyeon.apiserver.repository.CommentRepository;
 import com.huyeon.apiserver.repository.ContentBlockRepository;
 import com.huyeon.apiserver.repository.UserRepository;
+import com.huyeon.apiserver.repository.history.BoardHistoryRepo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class ListenerTest {
     @Autowired
     ContentBlockRepository contentBlockRepository;
 
+    @Autowired
+    BoardHistoryRepo boardHistoryRepo;
+
     @DisplayName("HistoryListener TEST")
     @Test
     void test_1(){
@@ -42,26 +46,64 @@ public class ListenerTest {
         userRepository.save(user);
 
         Board board = Board.builder()
-                .userId(2L)
+                .user(user)
                 .title("STRONG!!")
-                .content("hello")
+                .status(Board.STATUS.READY)
                 .build();
 
         boardRepository.save(board);
 
         ContentBlock contentBlock = ContentBlock.builder()
-                .boardId(5L)
+                .board(board)
                 .content("Interesting Contents")
                 .build();
 
         contentBlockRepository.save(contentBlock);
 
         Comment comment = Comment.builder()
-                .boardId(5L)
-                .userId(1L)
+                .board(board)
+                .user(user)
                 .comment("So LAUGH!!")
                 .build();
 
         commentRepository.save(comment);
+    }
+
+    @DisplayName("After Mapping")
+    @Test
+    void test_2() {
+        User user = User.builder()
+                .name("Strong-man")
+                .email("TTTT@asg.com")
+                .password("1q2w3e4r!")
+                .birthday(LocalDate.of(1997, 10, 21))
+                .build();
+
+        userRepository.save(user);
+
+        Board board = Board.builder()
+                .user(user)
+                .title("STRONG!!")
+                .status(Board.STATUS.READY)
+                .build();
+
+        boardRepository.save(board);
+
+        ContentBlock contentBlock = ContentBlock.builder()
+                .board(board)
+                .content("Interesting Contents")
+                .build();
+
+        contentBlockRepository.save(contentBlock);
+
+        Comment comment = Comment.builder()
+                .board(board)
+                .user(user)
+                .comment("So LAUGH!!")
+                .build();
+
+        commentRepository.save(comment);
+
+        boardHistoryRepo.findAll().forEach(System.out::println);
     }
 }

@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.model.dto.history;
 
+import com.huyeon.apiserver.model.dto.User;
 import com.huyeon.apiserver.model.dto.base.AuditEntity;
 import com.huyeon.apiserver.model.listener.Auditable;
 
@@ -21,14 +22,15 @@ public class UserHistory extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NonNull
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
 
-    @NonNull
+    private String name;
+
     private String email;
 
-    @NonNull
     private String password;
 
-    private boolean isDelete;
+    private boolean withdraw;
 }

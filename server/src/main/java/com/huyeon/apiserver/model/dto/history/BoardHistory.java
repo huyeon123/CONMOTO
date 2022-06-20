@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.model.dto.history;
 
+import com.huyeon.apiserver.model.dto.Board;
 import com.huyeon.apiserver.model.dto.base.AuditEntity;
 import com.huyeon.apiserver.model.listener.Auditable;
 import lombok.*;
@@ -20,11 +21,12 @@ public class BoardHistory extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long boardId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "boardId")
+    private Board board;
 
-    private Long userId;
+    private String pastTitle;
 
-    private String title;
-
-    private String content;
+    @Enumerated(EnumType.STRING)
+    private Board.STATUS pastSTATUS;
 }

@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.model.dto.history;
 
+import com.huyeon.apiserver.model.dto.Comment;
 import com.huyeon.apiserver.model.dto.base.AuditEntity;
 import com.huyeon.apiserver.model.listener.Auditable;
 
@@ -20,11 +21,9 @@ public class CommentHistory extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long commentId;
+    @ManyToOne
+    @JoinColumn(name = "commentId")
+    private Comment comment;
 
-    private Long boardId;
-
-    private Long userId;
-
-    private String comment;
+    private String pastComment;
 }

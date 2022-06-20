@@ -2,14 +2,13 @@ package com.huyeon.apiserver.model.dto;
 
 import com.huyeon.apiserver.model.dto.base.AuditEntity;
 import com.huyeon.apiserver.model.listener.Auditable;
-
 import com.huyeon.apiserver.model.listener.HistoryListener;
-import com.huyeon.apiserver.model.listener.PersistListener;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
@@ -22,9 +21,13 @@ public class Comment extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long boardId;
+    @ManyToOne
+    @JoinColumn(name = "boardId")
+    private Board board;
 
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
 
     private String comment;
 }

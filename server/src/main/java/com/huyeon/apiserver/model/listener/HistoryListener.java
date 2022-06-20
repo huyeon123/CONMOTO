@@ -23,14 +23,14 @@ public class HistoryListener {
     public void test(Object o) {
         Class<?> clazz = o.getClass();
         if (clazz.equals(Board.class)) {
+            //리스너 안에서는 주입받을 수 없어서 직접 빈을 받아옴
             BoardHistoryRepo historyRepository = BeanUtils.getBean(BoardHistoryRepo.class);
 
             Board board = (Board) o;
             BoardHistory boardHistory = BoardHistory.builder()
-                    .boardId(board.getId())
-                    .userId(board.getUserId())
-                    .title(board.getTitle())
-                    .content(board.getContent())
+                    .board(board)
+                    .pastTitle(board.getTitle())
+                    .pastSTATUS(board.getStatus())
                     .build();
 
             boardHistory.setCreatedAt(board.getCreatedAt());
@@ -41,10 +41,11 @@ public class HistoryListener {
 
             User user = (User) o;
             UserHistory userHistory = UserHistory.builder()
-                    .userId(user.getId())
+                    .user(user)
+                    .name(user.getName())
                     .email(user.getEmail())
                     .password(user.getPassword())
-                    .isDelete(false)
+                    .withdraw(user.isWithdraw())
                     .build();
 
             userHistory.setCreatedAt(user.getCreatedAt());
@@ -55,9 +56,8 @@ public class HistoryListener {
 
             ContentBlock contentBlock = (ContentBlock) o;
             ContentBlockHistory contentBlockHistory = ContentBlockHistory.builder()
-                    .blockId(contentBlock.getId())
-                    .boardId(contentBlock.getBoardId())
-                    .content(contentBlock.getContent())
+                    .contentBlock(contentBlock)
+                    .pastContent(contentBlock.getContent())
                     .build();
 
             contentBlockHistory.setCreatedAt(contentBlock.getCreatedAt());
@@ -68,10 +68,8 @@ public class HistoryListener {
 
             Comment comment = (Comment) o;
             CommentHistory commentHistory = CommentHistory.builder()
-                    .commentId(comment.getId())
-                    .boardId(comment.getBoardId())
-                    .userId(comment.getUserId())
-                    .comment(comment.getComment())
+                    .comment(comment)
+                    .pastComment(comment.getComment())
                     .build();
 
             commentHistory.setCreatedAt(comment.getCreatedAt());

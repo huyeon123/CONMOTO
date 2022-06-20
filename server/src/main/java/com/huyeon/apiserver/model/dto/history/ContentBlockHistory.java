@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.model.dto.history;
 
+import com.huyeon.apiserver.model.dto.ContentBlock;
 import com.huyeon.apiserver.model.dto.base.AuditEntity;
 import com.huyeon.apiserver.model.listener.Auditable;
 
@@ -20,9 +21,10 @@ public class ContentBlockHistory extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long blockId;
+    @ManyToOne
+    @JoinColumn(name = "blockId")
+    private ContentBlock contentBlock;
 
-    private Long boardId;
-
-    private String content;
+    @Lob
+    private String pastContent;
 }
