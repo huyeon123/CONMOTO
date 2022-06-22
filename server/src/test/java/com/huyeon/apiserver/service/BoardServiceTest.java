@@ -30,28 +30,6 @@ public class BoardServiceTest {
     @Autowired
     ContentBlockRepository blockRepository;
 
-    @DisplayName("prePersist")
-    @Test
-    void test_1() {
-        List<Board> all = boardService.getAll();
-        all.forEach(System.out::println);
-
-        List<Board> addData = new ArrayList<>();
-        addData.add(Board.builder()
-//                .userId(1L)
-                .title("제목999")
-                .status(Board.STATUS.COMPLETE)
-                .build());
-
-        boardService.saveAll(addData);
-
-        User user = userRepository.findById(1L).get();
-//        user.getBoardList().forEach(System.out::println);
-
-        boardHistoryRepo.findAll().forEach(System.out::println);
-
-    }
-
     @DisplayName("After Mapping")
     @Test
     void test_2() {

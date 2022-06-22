@@ -1,7 +1,9 @@
 package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.dto.Board;
+import com.huyeon.apiserver.model.dto.history.BoardHistory;
 import com.huyeon.apiserver.repository.BoardRepository;
+import com.huyeon.apiserver.repository.history.BoardHistoryRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -9,32 +11,64 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static com.huyeon.apiserver.support.JsonParse.readJson;
+import static com.huyeon.apiserver.support.JsonParse.writeJson;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final BoardHistoryRepo boardHistoryRepo;
 
-    public List<Board> getAll() {
-        return boardRepository.findAll();
+    //게시글 가져오기
+    public String getBoard(Long id) {
+        Board board = boardRepository.findById(id).orElse(new Board());
+        if(board.getId() == null) return null;
+        return writeJson(board);
     }
 
-    public void saveAll(List<Board> data) {
-        boardRepository.saveAll(data);
+    //게시글 작성
+    public boolean writeBoard(String jsonBoard) {
+        Board board = readJson(jsonBoard, Board.class);
+        if (board == null) return false;
+        boardRepository.save(board);
+        return true;
     }
 
-    public void deleteAll() {
-        boardRepository.deleteAll();
+    //게시글 수정
+    public boolean editBoard(Long id, String editBoard) {
+        Optional<Board> optional = boardRepository.findById(id);
+        Board current = optional.orElse(new Board());
+        Board edit = readJson(editBoard, Board.class);
+        if (edit != null
+                && current.getId().equals(edit.getId())) {
+            boardRepository.save(edit);
+            return true;
+        }
+        return false;
     }
 
-    public Board getByRandom(Long randomNum) {
-        Optional<Board> board = boardRepository.findById(randomNum);
-        return board.orElse(new Board()); //isPresent()이면 board 리턴, 아니면 빈 객체 리턴
+    //게시글 삭제
+    public boolean removeBoard(Long id) {
+        Optional<Board> optional = boardRepository.findById(id);
+        if (optional.isPresent()) {
+            boardRepository.delete(optional.get());
+            return true;
+        }
+        return false;
     }
 
-    public void updateById(Board data) {
-        boardRepository.save(data);
+    //게시글 수정이력
+    public String boardHistory(Long id) {
+        Optional<Board> board = boardRepository.findById(id);
+        if (board.isPresent()) {
+            List<BoardHistory> histories =
+                    boardHistoryRepo.findAllByBoard(board.get());
+            return writeJson(histories);
+        }
+        return null;
     }
 
 }

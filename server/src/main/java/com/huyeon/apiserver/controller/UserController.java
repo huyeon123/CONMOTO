@@ -6,14 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@RestController("/user")
+@RestController
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
     //회원가입
-    @PostMapping("/sign-up")
+    @PostMapping("/signup")
     public String signUp(@RequestBody String signUpForm) {
         if(userService.signUp(signUpForm)){
             log.info("회원 가입 완료");
@@ -42,7 +43,7 @@ public class UserController {
     //회원탈퇴
     @DeleteMapping("/{id}")
     public String resign(@PathVariable Long id) {
-
+        if(userService.resign(id)) return "이용해주셔서 감사합니다.";
         return "회원 탈퇴에 실패했습니다";
     }
 }

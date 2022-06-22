@@ -21,4 +21,10 @@ public class UserServiceTest {
         userService.signUp(jsonMsg);
         userRepository.findAll().forEach(System.out::println);
     }
+
+    @DisplayName("")
+    @Test
+    void test_2() {
+        System.out.println(userService.userInfo(1L));
+    }
 }

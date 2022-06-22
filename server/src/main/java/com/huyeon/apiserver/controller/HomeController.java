@@ -1,87 +1,26 @@
 package com.huyeon.apiserver.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.huyeon.apiserver.model.dto.Board;
-import com.huyeon.apiserver.service.BoardService;
+import com.huyeon.apiserver.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final BoardService boardService;
+    private final UserService userService;
 
-    @GetMapping("/rest")
-    public String get() throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-
-        List<Board> boardList = boardService.getAll();
-
-        String json = mapper.writeValueAsString(boardList);
-
-        log.info("get : {}", json);
-
-        return json;
+    @GetMapping
+    public String mainPage() {
+        return "Main.html";
     }
 
-    @GetMapping("/rest/{id}")
-    public String getOne(@PathVariable Long id) throws JsonProcessingException {
-        Board board = boardService.getByRandom(id);
-
-        String json = new ObjectMapper().writeValueAsString(board);
-
-        log.info("get : {}", json);
-
-        return json;
-    }
-
-    @PostMapping("/rest")
-    public String post(@RequestBody String jsonMessage) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        List<Board> boards = mapper.readValue(jsonMessage, new TypeReference<>() {});
-
-        log.info("Post on Board : {}", jsonMessage);
-
-        boardService.saveAll(boards);
-
-        List<Board> boardList = boardService.getAll();
-
-        String json = mapper.writeValueAsString(boardList);
-
-        log.info("Post Complete : {}", json);
-
-        return json;
-    }
-
-    @PutMapping("/rest")
-    public String update(@RequestBody String jsonMessage) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        List<Board> boardArr = mapper.readValue(jsonMessage, new TypeReference<>() {});
-
-        log.info("Put on Board : {}", jsonMessage);
-
-        boardService.saveAll(boardArr);
-
-        List<Board> boardList = boardService.getAll();
-
-        String json = mapper.writeValueAsString(boardList);
-
-        log.info("Put Complete : {}", json);
-
-        return json;
-    }
-
-    @DeleteMapping("/rest/all")
-    public void deleteAll() {
-        boardService.deleteAll();
-        log.info("Board Table Clear");
+    @GetMapping("/signup")
+    public String signUpPage() {
+        return "redirect:UserController";
     }
 
 }
