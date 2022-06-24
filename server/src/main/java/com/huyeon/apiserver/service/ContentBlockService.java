@@ -1,0 +1,78 @@
+package com.huyeon.apiserver.service;
+
+import com.huyeon.apiserver.model.dto.Comment;
+import com.huyeon.apiserver.model.dto.ContentBlock;
+import com.huyeon.apiserver.model.dto.history.CommentHistory;
+import com.huyeon.apiserver.model.dto.history.ContentBlockHistory;
+import com.huyeon.apiserver.repository.ContentBlockRepository;
+import com.huyeon.apiserver.repository.history.ContentBlockHistoryRepo;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+import static com.huyeon.apiserver.support.JsonParse.readJson;
+import static com.huyeon.apiserver.support.JsonParse.writeJson;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class ContentBlockService {
+    private final ContentBlockRepository blockRepository;
+    private final ContentBlockHistoryRepo blockHistoryRepo;
+
+    //블록 가져오기
+    public String getContentBlock(Long id) {
+        Optional<ContentBlock> block = blockRepository.findById(id);
+        if (block.isPresent()) {
+            return writeJson(block);
+        }
+        return null;
+    }
+
+    //블록 추가
+    public boolean writeContent(String jsonContent) {
+        ContentBlock block = readJson(jsonContent, ContentBlock.class);
+        if(block == null) return false;
+        blockRepository.save(block);
+        return true;
+    }
+
+    //블록 수정
+    public boolean editContent(Long id, String editComment) {
+        Optional<ContentBlock> optional = blockRepository.findById(id);
+        ContentBlock current = optional.orElse(new ContentBlock());
+
+        ContentBlock edit = readJson(editComment, ContentBlock.class);
+
+        if (edit != null
+                && edit.getId().equals(current.getId())) {
+            blockRepository.save(edit);
+            return true;
+        }
+        return false;
+    }
+
+    //블록 삭제
+    public boolean removeContent(Long id) {
+        Optional<ContentBlock> optional = blockRepository.findById(id);
+        if (optional.isPresent()) {
+            blockRepository.delete(optional.get());
+            return true;
+        }
+        return false;
+    }
+
+    //블록 수정이력
+    public String contentHistory(Long id) {
+        Optional<ContentBlock> optional = blockRepository.findById(id);
+        if (optional.isPresent()) {
+            List<ContentBlockHistory> histories =
+                    blockHistoryRepo.findAllByContentBlock(optional.get());
+            return writeJson(histories);
+        }
+        return null;
+    }
+}

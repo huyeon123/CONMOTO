@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.service;
 
+import com.huyeon.apiserver.model.dto.Board;
 import com.huyeon.apiserver.model.dto.Comment;
 import com.huyeon.apiserver.model.dto.history.CommentHistory;
 import com.huyeon.apiserver.repository.CommentRepository;
@@ -28,6 +29,11 @@ public class CommentService {
             return writeJson(comment);
         }
         return null;
+    }
+
+    public String getCommentByBoard(Board board) {
+        List<Comment> commentList = commentRepository.findAllByBoard(board);
+        return writeJson(commentList);
     }
 
     //댓글 추가

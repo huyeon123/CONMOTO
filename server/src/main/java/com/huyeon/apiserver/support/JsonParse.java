@@ -2,12 +2,16 @@ package com.huyeon.apiserver.support;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.huyeon.apiserver.config.JacksonConfig;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SuppressWarnings("unchecked")
 public class JsonParse {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper =
+            new ObjectMapper().registerModule(new JavaTimeModule())
+                    .registerModule(new JacksonConfig().jsonLocalDateTimeMapper());
 
     public static <T> T readJson(String jsonMsg, Class<T> clazz) {
         try {
