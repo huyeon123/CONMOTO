@@ -21,13 +21,11 @@ public class Comment extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
     @JoinColumn(name = "boardId")
-    private Board board;
+    private Long boardId;
 
-    @ManyToOne
     @JoinColumn(name = "userId")
-    private User user;
+    private Long userId;
 
     private String comment;
 }

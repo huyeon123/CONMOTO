@@ -21,9 +21,8 @@ public class Board extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
     @JoinColumn(name = "userId")
-    private User user;
+    private Long userId;
 
     @NonNull
     private String title;

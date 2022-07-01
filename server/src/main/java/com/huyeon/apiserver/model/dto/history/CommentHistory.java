@@ -21,9 +21,8 @@ public class CommentHistory extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
     @JoinColumn(name = "commentId")
-    private Comment comment;
+    private Long commentId;
 
     private String pastComment;
 }

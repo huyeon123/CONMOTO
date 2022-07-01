@@ -14,12 +14,11 @@ import com.huyeon.apiserver.repository.history.ContentBlockHistoryRepo;
 import com.huyeon.apiserver.repository.history.UserHistoryRepo;
 import com.huyeon.apiserver.support.BeanUtils;
 
-import javax.persistence.PostPersist;
-import javax.persistence.PostUpdate;
+import javax.persistence.PreUpdate;
 
 public class HistoryListener {
-    @PostPersist
-    @PostUpdate
+//    @PostPersist
+    @PreUpdate
     public void test(Object o) {
         Class<?> clazz = o.getClass();
         if (clazz.equals(Board.class)) {
@@ -28,7 +27,7 @@ public class HistoryListener {
 
             Board board = (Board) o;
             BoardHistory boardHistory = BoardHistory.builder()
-                    .board(board)
+                    .boardId(board.getId())
                     .pastTitle(board.getTitle())
                     .pastSTATUS(board.getStatus())
                     .build();
@@ -41,11 +40,11 @@ public class HistoryListener {
 
             User user = (User) o;
             UserHistory userHistory = UserHistory.builder()
-                    .user(user)
-                    .name(user.getName())
-                    .email(user.getEmail())
-                    .password(user.getPassword())
-                    .withdraw(user.isWithdraw())
+                    .userId(user.getId())
+                    .pastName(user.getName())
+                    .pastEmail(user.getEmail())
+                    .pastPassword(user.getPassword())
+                    .pastBirthday(user.getBirthday())
                     .build();
 
             userHistory.setCreatedAt(user.getCreatedAt());
@@ -56,7 +55,7 @@ public class HistoryListener {
 
             ContentBlock contentBlock = (ContentBlock) o;
             ContentBlockHistory contentBlockHistory = ContentBlockHistory.builder()
-                    .contentBlock(contentBlock)
+                    .blockId(contentBlock.getId())
                     .pastContent(contentBlock.getContent())
                     .build();
 
@@ -68,7 +67,7 @@ public class HistoryListener {
 
             Comment comment = (Comment) o;
             CommentHistory commentHistory = CommentHistory.builder()
-                    .comment(comment)
+                    .commentId(comment.getId())
                     .pastComment(comment.getComment())
                     .build();
 

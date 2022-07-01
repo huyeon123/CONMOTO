@@ -21,9 +21,8 @@ public class ContentBlockHistory extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
     @JoinColumn(name = "blockId")
-    private ContentBlock contentBlock;
+    private Long blockId;
 
     @Lob
     private String pastContent;

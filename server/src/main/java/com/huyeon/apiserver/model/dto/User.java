@@ -34,6 +34,5 @@ public class User extends AuditEntity implements Auditable {
 
     private LocalDate birthday;
 
-    @NonNull
-    private boolean withdraw;
+    private LocalDate expireDate;
 }

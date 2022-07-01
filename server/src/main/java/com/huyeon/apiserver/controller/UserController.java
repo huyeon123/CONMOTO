@@ -1,9 +1,12 @@
 package com.huyeon.apiserver.controller;
 
+import com.huyeon.apiserver.model.dto.User;
 import com.huyeon.apiserver.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import static com.huyeon.apiserver.support.JsonParse.*;
 
 @Slf4j
 @RestController
@@ -26,9 +29,9 @@ public class UserController {
     //회원정보
     @GetMapping("/{id}/profile")
     public String userInfo(@PathVariable Long id) {
-        String userInfo = userService.userInfo(id);
-        if(userInfo == null) return "회원 정보가 존재하지 않습니다.";
-        return userInfo;
+        User user = userService.userInfo(id);
+        if(user.getId() == null) return "회원 정보가 존재하지 않습니다.";
+        return writeJson(user);
     }
 
     //회원정보 수정

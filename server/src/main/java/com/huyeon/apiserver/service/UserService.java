@@ -8,16 +8,16 @@ import com.huyeon.apiserver.repository.BoardRepository;
 import com.huyeon.apiserver.repository.CommentRepository;
 import com.huyeon.apiserver.repository.UserRepository;
 import com.huyeon.apiserver.repository.history.UserHistoryRepo;
-import com.huyeon.apiserver.support.JsonParse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.huyeon.apiserver.support.JsonParse.readJson;
-import static com.huyeon.apiserver.support.JsonParse.writeJson;
 
 @Slf4j
 @Service
@@ -31,9 +31,9 @@ public class UserService {
     //회원가입
     public boolean signUp(String signUpForm) {
         User user = readJson(signUpForm, User.class);
-        if(user == null) return false;
+        if (user == null) return false;
         Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
-        if(optionalUser.isEmpty()) {
+        if (optionalUser.isEmpty()) {
             userRepository.save(user);
             return true;
         }
@@ -41,9 +41,9 @@ public class UserService {
     }
 
     //회원정보
-    public String userInfo(Long id) {
+    public User userInfo(Long id) {
         Optional<User> user = userRepository.findById(id);
-        return user.map(JsonParse::writeJson).orElse(null);
+        return user.orElse(new User());
     }
 
     //회원정보 수정
@@ -63,9 +63,11 @@ public class UserService {
     }
 
     //회원탈퇴
+    @Transactional
     public boolean resign(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
+//            boardRepository.deleteAllByUserId(id);
             userRepository.deleteById(id);
             return true;
         }
@@ -73,32 +75,45 @@ public class UserService {
     }
 
     //게시글 확인
-    public String myBoard(Long userId) {
+    public List<Board> myBoard(Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
-            List<Board> boards = boardRepository.findAllByUser(optionalUser.get());
-            return writeJson(boards);
+            Optional<List<Board>> boards =
+                    boardRepository.findAllByUserId(optionalUser.get().getId());
+            if (boards.isPresent()) return boards.get();
         }
-        return null;
+        return List.of();
     }
 
     //댓글 확인
-    public String myComment(Long userId) {
+    public List<Comment> myComment(Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
-            List<Comment> comments = commentRepository.findAllByUser(optionalUser.get());
-            return writeJson(comments);
+            Optional<List<Comment>> optionalComments =
+                    commentRepository.findAllByUserId(optionalUser.get().getId());
+            if (optionalComments.isPresent()) {
+                //탈퇴한 사용자 게시글은 제외
+                return optionalComments.get()
+                        .stream()
+                        .filter(comment -> {
+                            Long boardId = comment.getBoardId();
+                            Optional<Board> board = boardRepository.findById(boardId);
+                            return board.isPresent();
+                        })
+                        .collect(Collectors.toList());
+            }
         }
-        return null;
+        return List.of();
     }
 
     //회원정보 수정이력 확인
-    public String myInfoHistory(Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            List<UserHistory> userHistories = userHistoryRepo.findAllByUser(optionalUser.get());
-            return writeJson(userHistories);
+    public List<UserHistory> myInfoHistory(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            Optional<List<UserHistory>> histories =
+                    userHistoryRepo.findAllByUserId(user.get().getId());
+            if (histories.isPresent()) return histories.get();
         }
-        return null;
+        return List.of();
     }
 }

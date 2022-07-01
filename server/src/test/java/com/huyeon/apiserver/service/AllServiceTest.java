@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.huyeon.apiserver.model.dto.Board;
 import com.huyeon.apiserver.model.dto.Comment;
 import com.huyeon.apiserver.model.dto.ContentBlock;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.huyeon.apiserver.support.JsonParse.readJson;
 import static com.huyeon.apiserver.support.JsonParse.writeJson;
 
 @SpringBootTest
@@ -69,13 +71,13 @@ public class AllServiceTest {
 
         //게시글 작성
         Board board1 = Board.builder()
-                .user(user1)
+                .userId(user1.getId())
                 .title("제목1")
                 .status(Board.STATUS.PROCEED)
                 .build();
 
         Board board2 = Board.builder()
-                .user(user2)
+                .userId(user2.getId())
                 .title("제목2")
                 .status(Board.STATUS.COMPLETE)
                 .build();
@@ -84,22 +86,25 @@ public class AllServiceTest {
         boardService.writeBoard(writeJson(board2));
 
         //작성완료를 누르면 업로드 후 게시글 리스트로 이동
-        List<Board> user1Board = boardRepository.findAllByUser(user1);
-        List<Board> user2Board = boardRepository.findAllByUser(user2);
+        List<Board> user1Board = boardRepository.findAllByUserId(user1.getId()).get();
+        List<Board> user2Board = boardRepository.findAllByUserId(user2.getId()).get();
+
+        board1 = user1Board.get(0);
+        board2 = user2Board.get(0);
 
         //게시글 확인
         user1Board.forEach(board -> System.out.println(
-                board.getUser().getName() + " : " +
-                        boardService.getBoard(board.getId())));
+                board.getUserId() + " : " +
+                        boardService.getBoard(board.getId()).orElse(new Board())));
 
         //컨텐츠 블록 생성
         ContentBlock block1 = ContentBlock.builder()
-                .board(user2Board.get(0))
+                .boardId(board1.getId())
                 .content("보드2-내용1")
                 .build();
 
         ContentBlock block2 = ContentBlock.builder()
-                .board(user2Board.get(0))
+                .boardId(board2.getId())
                 .content("보드2-내용2")
                 .build();
 
@@ -107,29 +112,99 @@ public class AllServiceTest {
         blockService.writeContent(writeJson(block2));
 
         //블록 확인
-        List<ContentBlock> board2Contents = blockRepository.findAllByBoard(user2Board.get(0));
+        List<ContentBlock> board2Contents = blockRepository.findAllByBoardId(board2.getId()).get();
         board2Contents.forEach(block -> System.out.println(
                 blockService.getContentBlock(block.getId())));
 
         //사용자1 -> 보드2(사용자2) 댓글
         Comment comment1 = Comment.builder()
-                .user(user1)
-                .board(user2Board.get(0))
+                .userId(user1.getId())
+                .boardId(user2Board.get(0).getId())
                 .comment("잼있다!")
                 .build();
 
         //사용자2 -> 보드2(사용자2) 댓글
         Comment comment2 = Comment.builder()
-                .user(user2)
-                .board(user2Board.get(0))
+                .userId(user2.getId())
+                .boardId(user2Board.get(0).getId())
                 .comment("감사합니다(__)")
                 .build();
 
         commentService.writeComment(writeJson(comment1));
         commentService.writeComment(writeJson(comment2));
 
-        //사용자2가 보드2의 댓글 확인
-        String board2Comment = commentService.getCommentByBoard(user2Board.get(0));
+        //사용자2가 보드2의 댓글 확인(리스트)
+        List<Comment> board2Comment = commentService.getCommentByBoard(board2.getId());
         System.out.println("board2Comment = " + board2Comment);
+
+        //사용자2 회원정보 수정
+        user2.setBirthday(LocalDate.of(2022,6,7));
+        userService.editInfo(3L, writeJson(user2)); //로그인 되어있으므로 Path Variable을 통해 id 넘어옴
+        System.out.println("변경된 사용자2 = " + userService.userInfo(3L));
+
+        //보드2 수정
+        board2.setTitle("곧 삭제될 게시글입니다.");
+        boardService.editBoard(7L, writeJson(board2));
+
+        //블록2 수정
+        block2 = board2Contents.get(0);
+        block2.setContent("저는 이만 떠납니다.");
+        blockService.editContent(2L, writeJson(block2));
+
+        //댓글2 수정
+        comment2 = board2Comment.get(1);
+        comment2.setComment("저 곧 탈퇴해요 수고하세용");
+        commentService.editComment(2L, writeJson(comment2));
+
+        //정보를 바꿔도 ID는 동일하므로 변경된 내용으로 조회가 잘 됨
+        board2Comment = commentService.getCommentByBoard(board2.getId());
+        System.out.println("edit comment = " + board2Comment);
+
+        //사용자2 수정이력 확인
+        System.out.println("사용자2 변경이력 = " + userService.myInfoHistory(3L));
+
+        //사용자2 탈퇴
+        userService.resign(3L);
+        System.out.println("게시글2 정보 = " + boardService.getBoard(7L).orElse(new Board()));
+
+        //사용자1의 게시글, 댓글확인
+        System.out.println("사용자1 작성 게시글= " + userService.myBoard(2L));
+        System.out.println("사용자1 작성 댓글 = " + userService.myComment(2L));
+    }
+
+    @DisplayName("Delete Error Test")
+    @Test
+    void test_2() {
+        User user1 = User.builder()
+                .name("사용자1")
+                .email("user1@huyeon.com")
+                .password("user1pw")
+                .birthday(LocalDate.of(1997, 10, 21))
+                .build();
+
+        User user2 = User.builder()
+                .name("사용자2")
+                .email("user2@huyeon.com")
+                .password("user2pw")
+                .build();
+
+        userService.signUp(writeJson(user1));
+        userService.signUp(writeJson(user2));
+        user1 = userRepository.findByEmail("user1@huyeon.com").get();
+        user2 = userRepository.findByEmail("user2@huyeon.com").get();
+
+        Board board1 = Board.builder()
+                .userId(user1.getId())
+                .title("제목1")
+                .status(Board.STATUS.PROCEED)
+                .build();
+
+        boardService.writeBoard(writeJson(board1));
+
+        System.out.println("userService.myBoard(user1.getId()) = " + userService.myBoard(user1.getId()));
+
+        userService.resign(user1.getId());
+
+        System.out.println("userService.myBoard(user2.getId()) = " + userService.myBoard(user2.getId()));
     }
 }

@@ -2,6 +2,7 @@ package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.dto.Board;
 import com.huyeon.apiserver.model.dto.Comment;
+import com.huyeon.apiserver.model.dto.history.BoardHistory;
 import com.huyeon.apiserver.model.dto.history.CommentHistory;
 import com.huyeon.apiserver.repository.CommentRepository;
 import com.huyeon.apiserver.repository.history.CommentHistoryRepo;
@@ -9,11 +10,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 import static com.huyeon.apiserver.support.JsonParse.readJson;
-import static com.huyeon.apiserver.support.JsonParse.writeJson;
 
 @Slf4j
 @Service
@@ -23,17 +24,12 @@ public class CommentService {
     private final CommentHistoryRepo commentHistoryRepo;
 
     //댓글 가져오기
-    public String getComment(Long id) {
-        Comment comment = commentRepository.findById(id).orElse(new Comment());
-        if (comment.getId() == null) {
-            return writeJson(comment);
-        }
-        return null;
+    public Optional<Comment> getComment(Long id) {
+        return commentRepository.findById(id);
     }
 
-    public String getCommentByBoard(Board board) {
-        List<Comment> commentList = commentRepository.findAllByBoard(board);
-        return writeJson(commentList);
+    public List<Comment> getCommentByBoard(Long boardId) {
+        return commentRepository.findAllByBoardId(boardId).orElse(List.of());
     }
 
     //댓글 추가
@@ -70,13 +66,13 @@ public class CommentService {
     }
 
     //댓글 수정이력
-    public String commentHistory(Long id) {
-        Optional<Comment> optional = commentRepository.findById(id);
-        if (optional.isPresent()) {
-            List<CommentHistory> histories =
-                    commentHistoryRepo.findAllByComment(optional.get());
-            return writeJson(histories);
+    public List<CommentHistory> commentHistory(Long id) {
+        Optional<Comment> comment = commentRepository.findById(id);
+        if(comment.isPresent()) {
+            Optional<List<CommentHistory>> histories =
+                    commentHistoryRepo.findAllByCommentId(comment.get().getId());
+            if (histories.isPresent()) return histories.get();
         }
-        return null;
+        return List.of();
     }
 }

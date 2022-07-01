@@ -24,12 +24,8 @@ public class ContentBlockService {
     private final ContentBlockHistoryRepo blockHistoryRepo;
 
     //블록 가져오기
-    public String getContentBlock(Long id) {
-        Optional<ContentBlock> block = blockRepository.findById(id);
-        if (block.isPresent()) {
-            return writeJson(block);
-        }
-        return null;
+    public ContentBlock getContentBlock(Long id) {
+        return blockRepository.findById(id).orElse(new ContentBlock());
     }
 
     //블록 추가
@@ -66,13 +62,13 @@ public class ContentBlockService {
     }
 
     //블록 수정이력
-    public String contentHistory(Long id) {
-        Optional<ContentBlock> optional = blockRepository.findById(id);
-        if (optional.isPresent()) {
-            List<ContentBlockHistory> histories =
-                    blockHistoryRepo.findAllByContentBlock(optional.get());
-            return writeJson(histories);
+    public List<ContentBlockHistory> contentHistory(Long id) {
+        Optional<ContentBlock> block = blockRepository.findById(id);
+        if(block.isPresent()) {
+            Optional<List<ContentBlockHistory>> histories =
+                    blockHistoryRepo.findAllByBlockId(block.get().getId());
+            if (histories.isPresent()) return histories.get();
         }
-        return null;
+        return List.of();
     }
 }

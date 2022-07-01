@@ -8,11 +8,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 import static com.huyeon.apiserver.support.JsonParse.readJson;
-import static com.huyeon.apiserver.support.JsonParse.writeJson;
 
 @Slf4j
 @Service
@@ -23,10 +24,8 @@ public class BoardService {
     private final BoardHistoryRepo boardHistoryRepo;
 
     //게시글 가져오기
-    public String getBoard(Long id) {
-        Board board = boardRepository.findById(id).orElse(new Board());
-        if(board.getId() == null) return null;
-        return writeJson(board);
+    public Optional<Board> getBoard(Long id) {
+        return boardRepository.findById(id);
     }
 
     //게시글 작성
@@ -61,14 +60,14 @@ public class BoardService {
     }
 
     //게시글 수정이력
-    public String boardHistory(Long id) {
+    public List<BoardHistory> boardHistory(Long id) {
         Optional<Board> board = boardRepository.findById(id);
-        if (board.isPresent()) {
-            List<BoardHistory> histories =
-                    boardHistoryRepo.findAllByBoard(board.get());
-            return writeJson(histories);
+        if(board.isPresent()) {
+            Optional<List<BoardHistory>> histories =
+                    boardHistoryRepo.findAllByBoardId(board.get().getId());
+            if (histories.isPresent()) return histories.get();
         }
-        return null;
+        return List.of();
     }
 
 }

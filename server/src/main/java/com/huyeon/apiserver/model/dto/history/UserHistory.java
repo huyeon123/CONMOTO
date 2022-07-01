@@ -1,13 +1,12 @@
 package com.huyeon.apiserver.model.dto.history;
 
-import com.huyeon.apiserver.model.dto.User;
 import com.huyeon.apiserver.model.dto.base.AuditEntity;
 import com.huyeon.apiserver.model.listener.Auditable;
-
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
@@ -22,15 +21,15 @@ public class UserHistory extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
     @JoinColumn(name = "userId")
-    private User user;
+    private Long userId;
 
-    private String name;
+    private String pastName;
 
-    private String email;
+    private String pastEmail;
 
-    private String password;
+    private String pastPassword;
 
-    private boolean withdraw;
+    private LocalDate pastBirthday;
+
 }

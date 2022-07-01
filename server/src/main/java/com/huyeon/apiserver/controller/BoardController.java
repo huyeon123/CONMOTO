@@ -1,9 +1,13 @@
 package com.huyeon.apiserver.controller;
 
+import com.huyeon.apiserver.model.dto.Board;
 import com.huyeon.apiserver.service.BoardService;
+import com.huyeon.apiserver.support.JsonParse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -14,9 +18,11 @@ public class BoardController {
 
     @GetMapping("/{id}")
     public String getBoard(@PathVariable Long id) {
-        String board = boardService.getBoard(id);
-        if(board == null) return "게시글이 존재하지 않습니다.";
-        return board;
+        Optional<Board> board = boardService.getBoard(id);
+        if (board.isPresent()) {
+            return JsonParse.writeJson(board.get());
+        }
+        return "게시글을 찾을 수 없습니다.";
     }
 
     @PostMapping

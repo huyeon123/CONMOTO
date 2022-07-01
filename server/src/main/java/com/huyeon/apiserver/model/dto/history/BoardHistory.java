@@ -21,9 +21,8 @@ public class BoardHistory extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "boardId")
-    private Board board;
+    private Long boardId;
 
     private String pastTitle;
 

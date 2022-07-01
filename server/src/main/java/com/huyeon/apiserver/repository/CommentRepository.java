@@ -4,11 +4,14 @@ import com.huyeon.apiserver.model.dto.Board;
 import com.huyeon.apiserver.model.dto.Comment;
 import com.huyeon.apiserver.model.dto.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
+@Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findAllByUser(User user);
+    Optional<List<Comment>> findAllByUserId(Long userId);
 
-    List<Comment> findAllByBoard(Board board);
+    Optional<List<Comment>> findAllByBoardId(Long boardId);
 }

@@ -1,4 +1,4 @@
-insert into user (`id`, `name`, `email`, `password`, `birthday`, `withdraw`, `created_at`, `updated_at`) values (1, 'TEST', 'test@naver.com', '1234', null, FALSE, now(), now());
+insert into user (`id`, `name`, `email`, `password`, `birthday`, `created_at`, `updated_at`) values (1, 'TEST', 'test@naver.com', '1234', null, now(), now());
 
 
 insert into board (`id`, `user_id`,`title`, `status`, `created_at`, `updated_at`) values (1, 1, '제목1', null, now(), now());
