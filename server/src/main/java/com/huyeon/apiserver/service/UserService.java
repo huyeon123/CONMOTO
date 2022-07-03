@@ -29,15 +29,19 @@ public class UserService {
     private final UserHistoryRepo userHistoryRepo;
 
     //회원가입
-    public boolean signUp(String signUpForm) {
-        User user = readJson(signUpForm, User.class);
-        if (user == null) return false;
+    public boolean signUp(User user) {
         Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
         if (optionalUser.isEmpty()) {
             userRepository.save(user);
             return true;
         }
         return false;
+    }
+
+    //로그인
+    public boolean signIn(User user) {
+        Optional<User> target = userRepository.findByEmail(user.getEmail());
+        return target.isPresent() && user.getPassword().equals(target.get().getPassword());
     }
 
     //회원정보

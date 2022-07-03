@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta content = "width=device-width" charset="UTF-8">
+    <title>SUPER TODO LIST</title>
+    <style>
+        body {font-family: Arial, Helvetica, sans-serif;}
+        form {border: 3px solid #f1f1f1;}
+
+        input[type=text], input[type=password] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #04AA6D;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        .btn {
+            width: auto;
+            padding: 10px 18px;
+            background-color: #f44336;
+        }
+
+        .container {
+            padding: 16px;
+        }
+
+        aside.psw {
+            text-align: right;
+            padding-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div th:text="${response}"></div>
+<p></p>
+<div>
+    <h2>로그인</h2>
+
+    <form action="http://localhost:8080/user/signin" method="post">
+
+        <div class="container">
+            <label for="email">
+                <b>이메일</b>
+                <input type="text" placeholder="이메일을 입력해주세요." name="email" required>
+            </label>
+
+            <label for="psw">
+                <b>비밀번호</b>
+                <input type="password" placeholder="패스워드를 입력해주세요." name="password" required>
+            </label>
+
+            <button type="submit">로그인</button>
+            <label>
+                <input type="checkbox" checked="checked" name="remember"> Remember me
+            </label>
+        </div>
+
+        <div class="container" style="background-color:#f1f1f1">
+            <aside class="psw"><a href="http://localhost:8080/signup">회원가입</a></aside>
+            <aside class="psw"><a href="#">비밀번호를 잊어버리셨나요?</a></aside>
+        </div>
+    </form>
+</div>
+</body>
+</html>

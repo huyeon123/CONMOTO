@@ -1,9 +1,12 @@
 package com.huyeon.apiserver.controller;
 
+import com.huyeon.apiserver.model.dto.base.ResponseDto;
 import com.huyeon.apiserver.model.dto.User;
 import com.huyeon.apiserver.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static com.huyeon.apiserver.support.JsonParse.*;
@@ -18,12 +21,28 @@ public class UserController {
 
     //회원가입
     @PostMapping("/signup")
-    public String signUp(@RequestBody String signUpForm) {
-        if(userService.signUp(signUpForm)){
+    public ResponseEntity<ResponseDto> signUp(@ModelAttribute User user) {
+        ResponseDto response = new ResponseDto();
+        if(userService.signUp(user)){
             log.info("회원 가입 완료");
-            return "환영합니다.";
+            response.setMessage("회원 가입에 성공했습니다.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        return "회원 가입에 실패했습니다.";
+        response.setMessage("회원 가입에 실패했습니다.");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    //로그인(Security로 대체 예정, 테스트용)
+    @PostMapping("/signin")
+    public ResponseEntity<ResponseDto> signIn(@ModelAttribute User user) {
+        ResponseDto response = new ResponseDto();
+        if(userService.signIn(user)){
+            log.info("로그인 완료");
+            response.setMessage("로그인에 성공했습니다.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        response.setMessage("로그인에 실패했습니다.");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     //회원정보

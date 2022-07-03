@@ -56,9 +56,8 @@ public class AllServiceTest {
                 .password("user2pw")
                 .build();
 
-        //Client에서는 JSON으로 옴
-        userService.signUp(writeJson(user1));
-        userService.signUp(writeJson(user2));
+        userService.signUp(user1);
+        userService.signUp(user1);
 
         //저장 전에는 ID를 모름
         //클라이언트가 회원가입 후, email과 pw로 로그인을 하면 서버가 ID를 반환해준다고 가정
@@ -188,8 +187,8 @@ public class AllServiceTest {
                 .password("user2pw")
                 .build();
 
-        userService.signUp(writeJson(user1));
-        userService.signUp(writeJson(user2));
+        userService.signUp(user1);
+        userService.signUp(user2);
         user1 = userRepository.findByEmail("user1@huyeon.com").get();
         user2 = userRepository.findByEmail("user2@huyeon.com").get();
 

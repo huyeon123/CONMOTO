@@ -23,7 +23,7 @@ public class CommentController {
     private final CommentService commentService;
     private final BoardService boardService;
 
-    @GetMapping("/{id}/comments")
+    @GetMapping("/{boardId}/comments")
     public String getComments(@PathVariable Long boardId) {
         List<Comment> comments = commentService.getCommentByBoard(boardId);
         return JsonParse.writeJson(comments);

@@ -17,6 +17,10 @@ spring:
       hibernate:
         format_sql: true
 
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+
 logging:
   level:
     org.hibernate.type: trace
