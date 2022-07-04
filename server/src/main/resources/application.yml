@@ -21,6 +21,10 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
 
+  devtools:
+    livereload:
+      enabled: true
+
 logging:
   level:
     org.hibernate.type: trace
