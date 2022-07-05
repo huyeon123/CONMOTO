@@ -52,8 +52,7 @@
 <div>
     <h2>로그인</h2>
 
-    <form action="http://localhost:8080/user/signin" method="post">
-
+    <form id="sign_in">
         <div class="container">
             <label>
                 <b>이메일</b>
@@ -65,7 +64,7 @@
                 <input type="password" placeholder="패스워드를 입력해주세요." name="password" required>
             </label>
 
-            <button type="submit">로그인</button>
+            <button type="button" onclick="formSubmit()">로그인</button>
             <label>
                 <input type="checkbox" checked="checked" name="remember"> Remember me
             </label>
@@ -79,3 +78,29 @@
 </div>
 </body>
 </html>
+<script>
+    async function formSubmit(url = "http://localhost:8080/user/signin") {
+        const request = {};
+        const form = document.getElementById('sign_in')
+        request.email = this.email.value
+        request.password = this.password.value
+
+        await fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors', //운영시 cors로 변경
+            cache: 'no-cache',
+            body: JSON.stringify(request)
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                alert(data.message);
+                window.location.href = "http://localhost:8080/user"
+            })
+            .catch((error) => {
+                console.log("실패: ", error);
+            })
+    }
+</script>
