@@ -25,3 +25,9 @@ dependencies {
     runtimeOnly 'com.h2database:h2:1.4.200'
     runtimeOnly 'mysql:mysql-connector-java'
 }
+
+configurations {
+    runtimeClasspath{
+        extendsFrom developmentOnly
+    }
+}

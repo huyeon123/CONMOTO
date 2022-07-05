@@ -5,6 +5,7 @@ import com.huyeon.apiserver.model.listener.Auditable;
 import com.huyeon.apiserver.model.listener.HistoryListener;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -35,4 +36,21 @@ public class User extends AuditEntity implements Auditable {
     private LocalDate birthday;
 
     private LocalDate expireDate;
+
+    private Role role;
+
+    public User(UserSignupRequestDto request) {
+        name = request.getName();
+        email = request.getEmail();
+        password = request.getPassword();
+        if(request.getBirthday() != null) birthday = request.getBirthday();
+        role = Role.USER;
+    }
+
+    public void encryptPassword(PasswordEncoder passwordEncoder) {
+        password = passwordEncoder.encode(password);
+    }
+
+    public enum Role {USER, ADMIN}
+
 }

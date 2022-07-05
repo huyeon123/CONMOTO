@@ -3,6 +3,7 @@ package com.huyeon.apiserver.service;
 import com.huyeon.apiserver.model.dto.Board;
 import com.huyeon.apiserver.model.dto.Comment;
 import com.huyeon.apiserver.model.dto.User;
+import com.huyeon.apiserver.model.dto.UserSignupRequestDto;
 import com.huyeon.apiserver.model.dto.history.UserHistory;
 import com.huyeon.apiserver.repository.BoardRepository;
 import com.huyeon.apiserver.repository.CommentRepository;
@@ -10,6 +11,7 @@ import com.huyeon.apiserver.repository.UserRepository;
 import com.huyeon.apiserver.repository.history.UserHistoryRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,11 +29,13 @@ public class UserService {
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
     private final UserHistoryRepo userHistoryRepo;
+    private final PasswordEncoder passwordEncoder;
 
     //회원가입
-    public boolean signUp(User user) {
-        Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
-        if (optionalUser.isEmpty()) {
+    public boolean signUp(UserSignupRequestDto request) {
+        if (!userRepository.existsByEmail(request.getEmail())) {
+            User user = new User(request);
+            user.encryptPassword(passwordEncoder);
             userRepository.save(user);
             return true;
         }

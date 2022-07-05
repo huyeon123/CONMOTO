@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta content = "width=device-width" charset="UTF-8">
+    <meta content="width=device-width" charset="UTF-8">
     <title>회원가입 페이지</title>
     <style>
-        body {font-family: Arial, Helvetica, sans-serif;}
-        form {border: 3px solid #f1f1f1;}
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        form {
+            border: 3px solid #f1f1f1;
+        }
 
         input[type=text], input[type=password] {
             width: 100%;
@@ -47,6 +52,7 @@
                 display: block;
                 float: none;
             }
+
             .cancelbtn {
                 width: 100%;
             }
@@ -56,30 +62,77 @@
 <body>
 <h2>회원가입</h2>
 
-<form action="http://localhost:8080/user/signup" method="post">
-
+<form id="sign_up">
     <div class="container">
-        <label for="uname"><b>이름</b></label>
-        <input type="text" placeholder="주민등록상 이름을 입력해주세요." name="name" required>
-
-        <label for="email"><b>이메일</b></label>
-        <input type="text" placeholder="사용하고 있는 이메일을 입력해주세요." name="email" required>
-
-        <label for="psw"><b>비밀번호</b></label>
-        <input type="password" placeholder="사용할 패스워드를 입력해주세요." name="password" required>
-
-        <label for="birthday">
-            <b>생년월일(선택)</b>
-            <input type="date" name="birthday">
+        <label>
+            <b>이름</b>
+            <input type="text"
+                   placeholder="주민등록상 이름을 입력해주세요."
+                   id="username"
+                   name="username"
+                   required>
         </label>
 
+        <label>
+            <b>이메일</b>
+            <input type="text"
+                   placeholder="사용하고 있는 이메일을 입력해주세요."
+                   id="email"
+                   name="email"
+                   required>
+        </label>
 
-        <button type="submit" onclick="location.href='/signup'">회원가입</button>
+        <label>
+            <b>비밀번호</b>
+            <input type="password"
+                   placeholder="사용할 패스워드를 입력해주세요."
+                   id="password"
+                   name="password"
+                   required>
+        </label>
+
+        <label>
+            <b>생년월일(선택)</b>
+            <input type="date" id="birthday" name="birthday">
+        </label>
+
+        <button type="submit" onclick="formSubmit()">회원가입</button>
     </div>
 
     <div class="container" style="background-color:#f1f1f1">
-        <button type="button" class="cancelbtn" onclick="location.href='http://localhost:8080/'">Cancel</button>
+        <button type="button" class="cancelbtn" onclick="window.location.href='/'">Cancel</button>
     </div>
 </form>
 </body>
 </html>
+<script>
+    async function formSubmit(url = "http://localhost:8080/user/signup") {
+        const request = {};
+        const form = document.getElementById('sign_up')
+        console.log(form)
+        request.name = this.username.value
+        request.email = this.email.value
+        request.password = this.password.value
+        request.birthday = this.birthday.value
+
+        console.log(JSON.stringify(request))
+
+        await fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors', //운영시 cors로 변경
+            cache: 'no-cache',
+            body: JSON.stringify(request)
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                alert(data.message);
+                window.location.href = "http://localhost:8080/"
+            })
+            .catch((error) => {
+                console.log("실패: ", error);
+            })
+    }
+</script>

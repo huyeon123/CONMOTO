@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.controller;
 
+import com.huyeon.apiserver.model.dto.UserSignupRequestDto;
 import com.huyeon.apiserver.model.dto.base.ResponseDto;
 import com.huyeon.apiserver.model.dto.User;
 import com.huyeon.apiserver.service.UserService;
@@ -21,11 +22,12 @@ public class UserController {
 
     //회원가입
     @PostMapping("/signup")
-    public ResponseEntity<ResponseDto> signUp(@ModelAttribute User user) {
+    public ResponseEntity<ResponseDto> signUp(@RequestBody UserSignupRequestDto request) {
         ResponseDto response = new ResponseDto();
-        if(userService.signUp(user)){
+        if(userService.signUp(request)){
             log.info("회원 가입 완료");
             response.setMessage("회원 가입에 성공했습니다.");
+            response.setSuccess(true);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         response.setMessage("회원 가입에 실패했습니다.");
