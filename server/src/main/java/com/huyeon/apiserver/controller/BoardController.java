@@ -1,6 +1,6 @@
 package com.huyeon.apiserver.controller;
 
-import com.huyeon.apiserver.model.dto.Board;
+import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.service.BoardService;
 import com.huyeon.apiserver.support.JsonParse;
 import lombok.RequiredArgsConstructor;

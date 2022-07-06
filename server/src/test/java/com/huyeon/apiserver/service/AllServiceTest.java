@@ -1,10 +1,9 @@
 package com.huyeon.apiserver.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.huyeon.apiserver.model.dto.Board;
-import com.huyeon.apiserver.model.dto.Comment;
-import com.huyeon.apiserver.model.dto.ContentBlock;
-import com.huyeon.apiserver.model.dto.User;
+import com.huyeon.apiserver.model.entity.Board;
+import com.huyeon.apiserver.model.entity.Comment;
+import com.huyeon.apiserver.model.entity.ContentBlock;
+import com.huyeon.apiserver.model.entity.User;
 import com.huyeon.apiserver.repository.BoardRepository;
 import com.huyeon.apiserver.repository.ContentBlockRepository;
 import com.huyeon.apiserver.repository.UserRepository;

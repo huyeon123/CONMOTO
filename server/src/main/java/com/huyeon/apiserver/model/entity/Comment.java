@@ -1,6 +1,6 @@
-package com.huyeon.apiserver.model.dto;
+package com.huyeon.apiserver.model.entity;
 
-import com.huyeon.apiserver.model.dto.base.AuditEntity;
+import com.huyeon.apiserver.model.entity.base.AuditEntity;
 import com.huyeon.apiserver.model.listener.Auditable;
 import com.huyeon.apiserver.model.listener.HistoryListener;
 import lombok.*;

@@ -1,8 +1,9 @@
 package com.huyeon.apiserver.controller;
 
-import com.huyeon.apiserver.model.dto.UserSignupRequestDto;
-import com.huyeon.apiserver.model.dto.base.ResponseDto;
-import com.huyeon.apiserver.model.dto.User;
+import com.huyeon.apiserver.model.dto.UserSignInReq;
+import com.huyeon.apiserver.model.dto.UserSignUpReq;
+import com.huyeon.apiserver.model.dto.ResMessage;
+import com.huyeon.apiserver.model.entity.User;
 import com.huyeon.apiserver.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +23,8 @@ public class UserController {
 
     //회원가입
     @PostMapping("/signup")
-    public ResponseEntity<ResponseDto> signUp(@RequestBody UserSignupRequestDto request) {
-        ResponseDto response = new ResponseDto();
+    public ResponseEntity<ResMessage> signUp(@RequestBody UserSignUpReq request) {
+        ResMessage response = new ResMessage();
         if(userService.signUp(request)){
             log.info("회원 가입 완료");
             response.setMessage("회원 가입에 성공했습니다.");
@@ -31,19 +32,6 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         response.setMessage("회원 가입에 실패했습니다.");
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    //로그인(Security로 대체 예정, 테스트용)
-    @PostMapping("/signin")
-    public ResponseEntity<ResponseDto> signIn(@ModelAttribute User user) {
-        ResponseDto response = new ResponseDto();
-        if(userService.signIn(user)){
-            log.info("로그인 완료");
-            response.setMessage("로그인에 성공했습니다.");
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-        response.setMessage("로그인에 실패했습니다.");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

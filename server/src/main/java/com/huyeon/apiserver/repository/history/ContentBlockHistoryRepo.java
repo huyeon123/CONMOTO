@@ -1,6 +1,6 @@
 package com.huyeon.apiserver.repository.history;
 
-import com.huyeon.apiserver.model.dto.history.ContentBlockHistory;
+import com.huyeon.apiserver.model.entity.history.ContentBlockHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

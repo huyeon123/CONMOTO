@@ -1,13 +1,13 @@
 package com.huyeon.apiserver.model.listener;
 
-import com.huyeon.apiserver.model.dto.Board;
-import com.huyeon.apiserver.model.dto.Comment;
-import com.huyeon.apiserver.model.dto.ContentBlock;
-import com.huyeon.apiserver.model.dto.User;
-import com.huyeon.apiserver.model.dto.history.BoardHistory;
-import com.huyeon.apiserver.model.dto.history.CommentHistory;
-import com.huyeon.apiserver.model.dto.history.ContentBlockHistory;
-import com.huyeon.apiserver.model.dto.history.UserHistory;
+import com.huyeon.apiserver.model.entity.Board;
+import com.huyeon.apiserver.model.entity.Comment;
+import com.huyeon.apiserver.model.entity.ContentBlock;
+import com.huyeon.apiserver.model.entity.User;
+import com.huyeon.apiserver.model.entity.history.BoardHistory;
+import com.huyeon.apiserver.model.entity.history.CommentHistory;
+import com.huyeon.apiserver.model.entity.history.ContentBlockHistory;
+import com.huyeon.apiserver.model.entity.history.UserHistory;
 import com.huyeon.apiserver.repository.history.BoardHistoryRepo;
 import com.huyeon.apiserver.repository.history.CommentHistoryRepo;
 import com.huyeon.apiserver.repository.history.ContentBlockHistoryRepo;

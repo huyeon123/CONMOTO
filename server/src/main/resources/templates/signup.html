@@ -108,14 +108,10 @@
 <script>
     async function formSubmit(url = "http://localhost:8080/user/signup") {
         const request = {};
-        const form = document.getElementById('sign_up')
-        console.log(form)
         request.name = this.username.value
         request.email = this.email.value
         request.password = this.password.value
         request.birthday = this.birthday.value
-
-        console.log(JSON.stringify(request))
 
         await fetch(url, {
             method: "POST",
@@ -129,7 +125,7 @@
             .then((response) => response.json())
             .then((data) => {
                 alert(data.message);
-                window.location.href = "http://localhost:8080/"
+                window.location.href = "/"
             })
             .catch((error) => {
                 console.log("실패: ", error);

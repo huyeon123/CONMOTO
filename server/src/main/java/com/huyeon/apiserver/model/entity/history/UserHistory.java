@@ -1,6 +1,6 @@
-package com.huyeon.apiserver.model.dto.history;
+package com.huyeon.apiserver.model.entity.history;
 
-import com.huyeon.apiserver.model.dto.base.AuditEntity;
+import com.huyeon.apiserver.model.entity.base.AuditEntity;
 import com.huyeon.apiserver.model.listener.Auditable;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

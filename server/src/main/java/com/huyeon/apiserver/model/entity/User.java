@@ -1,6 +1,8 @@
-package com.huyeon.apiserver.model.dto;
+package com.huyeon.apiserver.model.entity;
 
-import com.huyeon.apiserver.model.dto.base.AuditEntity;
+import com.huyeon.apiserver.model.Role;
+import com.huyeon.apiserver.model.dto.UserSignUpReq;
+import com.huyeon.apiserver.model.entity.base.AuditEntity;
 import com.huyeon.apiserver.model.listener.Auditable;
 import com.huyeon.apiserver.model.listener.HistoryListener;
 import lombok.*;
@@ -39,7 +41,7 @@ public class User extends AuditEntity implements Auditable {
 
     private Role role;
 
-    public User(UserSignupRequestDto request) {
+    public User(UserSignUpReq request) {
         name = request.getName();
         email = request.getEmail();
         password = request.getPassword();
@@ -50,7 +52,4 @@ public class User extends AuditEntity implements Auditable {
     public void encryptPassword(PasswordEncoder passwordEncoder) {
         password = passwordEncoder.encode(password);
     }
-
-    public enum Role {USER, ADMIN}
-
 }

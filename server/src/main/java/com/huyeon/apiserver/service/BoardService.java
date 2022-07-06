@@ -1,15 +1,13 @@
 package com.huyeon.apiserver.service;
 
-import com.huyeon.apiserver.model.dto.Board;
-import com.huyeon.apiserver.model.dto.history.BoardHistory;
+import com.huyeon.apiserver.model.entity.Board;
+import com.huyeon.apiserver.model.entity.history.BoardHistory;
 import com.huyeon.apiserver.repository.BoardRepository;
 import com.huyeon.apiserver.repository.history.BoardHistoryRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 

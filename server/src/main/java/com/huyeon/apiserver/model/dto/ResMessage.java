@@ -1,4 +1,4 @@
-package com.huyeon.apiserver.model.dto.base;
+package com.huyeon.apiserver.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ResponseDto {
+public class ResMessage {
     private String message = "";
     private boolean success = false;
 }

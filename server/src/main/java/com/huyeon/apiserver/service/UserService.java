@@ -1,10 +1,11 @@
 package com.huyeon.apiserver.service;
 
-import com.huyeon.apiserver.model.dto.Board;
-import com.huyeon.apiserver.model.dto.Comment;
-import com.huyeon.apiserver.model.dto.User;
-import com.huyeon.apiserver.model.dto.UserSignupRequestDto;
-import com.huyeon.apiserver.model.dto.history.UserHistory;
+import com.huyeon.apiserver.model.dto.UserSignInReq;
+import com.huyeon.apiserver.model.entity.Board;
+import com.huyeon.apiserver.model.entity.Comment;
+import com.huyeon.apiserver.model.entity.User;
+import com.huyeon.apiserver.model.dto.UserSignUpReq;
+import com.huyeon.apiserver.model.entity.history.UserHistory;
 import com.huyeon.apiserver.repository.BoardRepository;
 import com.huyeon.apiserver.repository.CommentRepository;
 import com.huyeon.apiserver.repository.UserRepository;
@@ -32,7 +33,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     //회원가입
-    public boolean signUp(UserSignupRequestDto request) {
+    public boolean signUp(UserSignUpReq request) {
         if (!userRepository.existsByEmail(request.getEmail())) {
             User user = new User(request);
             user.encryptPassword(passwordEncoder);
@@ -40,12 +41,6 @@ public class UserService {
             return true;
         }
         return false;
-    }
-
-    //로그인
-    public boolean signIn(User user) {
-        Optional<User> target = userRepository.findByEmail(user.getEmail());
-        return target.isPresent() && user.getPassword().equals(target.get().getPassword());
     }
 
     //회원정보

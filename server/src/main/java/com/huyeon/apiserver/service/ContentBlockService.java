@@ -1,9 +1,7 @@
 package com.huyeon.apiserver.service;
 
-import com.huyeon.apiserver.model.dto.Comment;
-import com.huyeon.apiserver.model.dto.ContentBlock;
-import com.huyeon.apiserver.model.dto.history.CommentHistory;
-import com.huyeon.apiserver.model.dto.history.ContentBlockHistory;
+import com.huyeon.apiserver.model.entity.ContentBlock;
+import com.huyeon.apiserver.model.entity.history.ContentBlockHistory;
 import com.huyeon.apiserver.repository.ContentBlockRepository;
 import com.huyeon.apiserver.repository.history.ContentBlockHistoryRepo;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.huyeon.apiserver.support.JsonParse.readJson;
-import static com.huyeon.apiserver.support.JsonParse.writeJson;
 
 @Slf4j
 @Service

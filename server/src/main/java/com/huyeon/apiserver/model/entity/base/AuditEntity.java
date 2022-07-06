@@ -1,4 +1,4 @@
-package com.huyeon.apiserver.model.dto.base;
+package com.huyeon.apiserver.model.entity.base;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

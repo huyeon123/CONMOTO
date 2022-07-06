@@ -1,7 +1,6 @@
 package com.huyeon.apiserver.controller;
 
-import com.huyeon.apiserver.model.dto.Board;
-import com.huyeon.apiserver.model.dto.Comment;
+import com.huyeon.apiserver.model.entity.Comment;
 import com.huyeon.apiserver.service.BoardService;
 import com.huyeon.apiserver.service.CommentService;
 import com.huyeon.apiserver.support.JsonParse;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RestController

@@ -1,6 +1,6 @@
 package com.huyeon.apiserver.repository;
 
-import com.huyeon.apiserver.model.dto.Board;
+import com.huyeon.apiserver.model.entity.Board;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

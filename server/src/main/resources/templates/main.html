@@ -56,12 +56,21 @@
         <div class="container">
             <label>
                 <b>이메일</b>
-                <input type="text" placeholder="이메일을 입력해주세요." name="email" required autofocus>
+                <input type="text"
+                       placeholder="이메일을 입력해주세요."
+                       id="email"
+                       name="email"
+                       required
+                       autofocus>
             </label>
 
             <label>
                 <b>비밀번호</b>
-                <input type="password" placeholder="패스워드를 입력해주세요." name="password" required>
+                <input type="password"
+                       placeholder="패스워드를 입력해주세요."
+                       id="password"
+                       name="password"
+                       required>
             </label>
 
             <button type="button" onclick="formSubmit()">로그인</button>
@@ -79,9 +88,8 @@
 </body>
 </html>
 <script>
-    async function formSubmit(url = "http://localhost:8080/user/signin") {
+    async function formSubmit(url = "http://localhost:8080/auth/login") {
         const request = {};
-        const form = document.getElementById('sign_in')
         request.email = this.email.value
         request.password = this.password.value
 
@@ -97,7 +105,7 @@
             .then((response) => response.json())
             .then((data) => {
                 alert(data.message);
-                window.location.href = "http://localhost:8080/user"
+                if(data.success) window.location.href = "http://localhost:8080/user";
             })
             .catch((error) => {
                 console.log("실패: ", error);
