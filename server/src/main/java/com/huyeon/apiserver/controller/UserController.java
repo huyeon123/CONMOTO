@@ -21,20 +21,6 @@ public class UserController {
 
     private final UserService userService;
 
-    //회원가입
-    @PostMapping("/signup")
-    public ResponseEntity<ResMessage> signUp(@RequestBody UserSignUpReq request) {
-        ResMessage response = new ResMessage();
-        if(userService.signUp(request)){
-            log.info("회원 가입 완료");
-            response.setMessage("회원 가입에 성공했습니다.");
-            response.setSuccess(true);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-        response.setMessage("회원 가입에 실패했습니다.");
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
     //회원정보
     @GetMapping("/{id}/profile")
     public String userInfo(@PathVariable Long id) {

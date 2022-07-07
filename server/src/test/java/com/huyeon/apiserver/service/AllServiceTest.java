@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.service;
 
+import com.huyeon.apiserver.model.dto.UserSignUpReq;
 import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.model.entity.Comment;
 import com.huyeon.apiserver.model.entity.ContentBlock;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.huyeon.apiserver.support.JsonParse.readJson;
 import static com.huyeon.apiserver.support.JsonParse.writeJson;
 
 @SpringBootTest
@@ -36,27 +36,29 @@ public class AllServiceTest {
     BoardRepository boardRepository;
     @Autowired
     ContentBlockRepository blockRepository;
+    @Autowired
+    AuthService authService;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     @DisplayName("Scenario 1")
     @Test
     void test_1() {
         //회원 추가
-        User user1 = User.builder()
+        UserSignUpReq user1 = UserSignUpReq.builder()
                 .name("사용자1")
                 .email("user1@huyeon.com")
                 .password("user1pw")
                 .birthday(LocalDate.of(1997, 10, 21))
                 .build();
 
-        User user2 = User.builder()
+        UserSignUpReq user2 = UserSignUpReq.builder()
                 .name("사용자2")
                 .email("user2@huyeon.com")
                 .password("user2pw")
                 .build();
 
-        userService.signUp(user1);
-        userService.signUp(user1);
+        authService.signUp(user1);
+        authService.signUp(user2);
 
         //저장 전에는 ID를 모름
         //클라이언트가 회원가입 후, email과 pw로 로그인을 하면 서버가 ID를 반환해준다고 가정
@@ -173,21 +175,21 @@ public class AllServiceTest {
     @DisplayName("Delete Error Test")
     @Test
     void test_2() {
-        User user1 = User.builder()
+        UserSignUpReq user1 = UserSignUpReq.builder()
                 .name("사용자1")
                 .email("user1@huyeon.com")
                 .password("user1pw")
                 .birthday(LocalDate.of(1997, 10, 21))
                 .build();
 
-        User user2 = User.builder()
+        UserSignUpReq user2 = UserSignUpReq.builder()
                 .name("사용자2")
                 .email("user2@huyeon.com")
                 .password("user2pw")
                 .build();
 
-        userService.signUp(user1);
-        userService.signUp(user2);
+        authService.signUp(user1);
+        authService.signUp(user2);
         user1 = userRepository.findByEmail("user1@huyeon.com").get();
         user2 = userRepository.findByEmail("user2@huyeon.com").get();
 

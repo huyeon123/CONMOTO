@@ -1,10 +1,8 @@
 package com.huyeon.apiserver.service;
 
-import com.huyeon.apiserver.model.dto.UserSignInReq;
 import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.model.entity.Comment;
 import com.huyeon.apiserver.model.entity.User;
-import com.huyeon.apiserver.model.dto.UserSignUpReq;
 import com.huyeon.apiserver.model.entity.history.UserHistory;
 import com.huyeon.apiserver.repository.BoardRepository;
 import com.huyeon.apiserver.repository.CommentRepository;
@@ -12,7 +10,6 @@ import com.huyeon.apiserver.repository.UserRepository;
 import com.huyeon.apiserver.repository.history.UserHistoryRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,18 +27,6 @@ public class UserService {
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
     private final UserHistoryRepo userHistoryRepo;
-    private final PasswordEncoder passwordEncoder;
-
-    //회원가입
-    public boolean signUp(UserSignUpReq request) {
-        if (!userRepository.existsByEmail(request.getEmail())) {
-            User user = new User(request);
-            user.encryptPassword(passwordEncoder);
-            userRepository.save(user);
-            return true;
-        }
-        return false;
-    }
 
     //회원정보
     public User userInfo(Long id) {
