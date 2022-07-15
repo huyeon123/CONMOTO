@@ -26,10 +26,16 @@ public class HomeController {
         return "signup";
     }
 
+
     @GetMapping("/feed")
     public String myFeed(@AuthenticationPrincipal User user, Model model) {
         model.addAttribute("username", user.getUsername());
         return "feed";
+    }
+
+    @GetMapping("/access-denied")
+    public String accessDeniedPage() {
+        return "AccessDenied.html";
     }
 
 }

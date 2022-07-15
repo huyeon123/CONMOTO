@@ -17,12 +17,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
+                .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(auth ->
                         auth.antMatchers("/", "/**").permitAll()
                                 .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults())
-                .csrf().disable();
+                .exceptionHandling(exception -> exception.accessDeniedPage("/access-denied"))
+                .exceptionHandling()
+                .accessDeniedHandler((req, res, e) -> res.sendRedirect("/access-denied"));
 
         return http.build();
     }
