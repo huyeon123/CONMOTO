@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class UserSignInReq {
     private String email;
     private String password;
+    private boolean rememberMe;
 }

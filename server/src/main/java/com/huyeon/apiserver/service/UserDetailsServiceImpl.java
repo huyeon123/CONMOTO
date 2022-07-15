@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 /**
  * AuthenticationManger를 직접 정의하지 않고, AuthenticationManagerFactoryBean을 통해 주입받았기 때문에
  * 이 AuthenticationManger는 DaoAuthenticationProvider를 Default AuthenticationProvider로 설정한다.
- *
+ * <p>
  * DaoAuthenticationProvider는 반드시 1개의 UserDetailsService를 발견할 수 있어야한다.
  * 만약 없다면, InmemoryUserDetailsManager에 사용자가 등록되어 제공된다.
- * */
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -26,8 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("등록되지 않은 사용자입니다."));
-        return new UserDetailsImpl(user);
     }
 }

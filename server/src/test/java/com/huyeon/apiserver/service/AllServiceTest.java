@@ -41,29 +41,29 @@ public class AllServiceTest {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     @DisplayName("Scenario 1")
-    @Test
+//    @Test
     void test_1() {
         //회원 추가
-        UserSignUpReq user1 = UserSignUpReq.builder()
+        UserSignUpReq userReq1 = UserSignUpReq.builder()
                 .name("사용자1")
                 .email("user1@huyeon.com")
                 .password("user1pw")
                 .birthday(LocalDate.of(1997, 10, 21))
                 .build();
 
-        UserSignUpReq user2 = UserSignUpReq.builder()
+        UserSignUpReq userReq2 = UserSignUpReq.builder()
                 .name("사용자2")
                 .email("user2@huyeon.com")
                 .password("user2pw")
                 .build();
 
-        authService.signUp(user1);
-        authService.signUp(user2);
+        authService.signUp(userReq1);
+        authService.signUp(userReq2);
 
         //저장 전에는 ID를 모름
         //클라이언트가 회원가입 후, email과 pw로 로그인을 하면 서버가 ID를 반환해준다고 가정
-        user1 = userRepository.findByEmail("user1@huyeon.com").get();
-        user2 = userRepository.findByEmail("user2@huyeon.com").get();
+        User user1 = userRepository.findByEmail("user1@huyeon.com").get();
+        User user2 = userRepository.findByEmail("user2@huyeon.com").get();
 
         //정보 확인
         System.out.println("userService.userInfo(user1.getId()) = "
@@ -175,23 +175,23 @@ public class AllServiceTest {
     @DisplayName("Delete Error Test")
     @Test
     void test_2() {
-        UserSignUpReq user1 = UserSignUpReq.builder()
+        UserSignUpReq userReq1 = UserSignUpReq.builder()
                 .name("사용자1")
                 .email("user1@huyeon.com")
                 .password("user1pw")
                 .birthday(LocalDate.of(1997, 10, 21))
                 .build();
 
-        UserSignUpReq user2 = UserSignUpReq.builder()
+        UserSignUpReq userReq2 = UserSignUpReq.builder()
                 .name("사용자2")
                 .email("user2@huyeon.com")
                 .password("user2pw")
                 .build();
 
-        authService.signUp(user1);
-        authService.signUp(user2);
-        user1 = userRepository.findByEmail("user1@huyeon.com").get();
-        user2 = userRepository.findByEmail("user2@huyeon.com").get();
+        authService.signUp(userReq1);
+        authService.signUp(userReq2);
+        User user1 = userRepository.findByEmail("user1@huyeon.com").get();
+        User user2 = userRepository.findByEmail("user2@huyeon.com").get();
 
         Board board1 = Board.builder()
                 .userId(user1.getId())

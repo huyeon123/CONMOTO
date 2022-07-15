@@ -44,13 +44,19 @@
             text-align: right;
             padding-top: 5px;
         }
+
+        #sign_in {
+            width: 500px;
+            margin: 0 auto;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
 <div th:text="${response}"></div>
 <p></p>
 <div>
-    <h2>로그인</h2>
+    <h2 style="text-align: center">로그인</h2>
 
     <form id="sign_in">
         <div class="container">
@@ -75,7 +81,7 @@
 
             <button type="button" onclick="formSubmit()">로그인</button>
             <label>
-                <input type="checkbox" checked="checked" name="remember"> Remember me
+                <input type="checkbox" checked="checked" id = "rememberMe" name="remember"> Remember me
             </label>
         </div>
 
@@ -92,6 +98,7 @@
         const request = {};
         request.email = this.email.value
         request.password = this.password.value
+        request.rememberMe = this.rememberMe.value === "on";
 
         await fetch(url, {
             method: "POST",
@@ -105,7 +112,7 @@
             .then((response) => response.json())
             .then((data) => {
                 alert(data.message);
-                if(data.success) window.location.href = "http://localhost:8080/user";
+                if(data.success) window.location.href = "http://localhost:8080/feed";
             })
             .catch((error) => {
                 console.log("실패: ", error);

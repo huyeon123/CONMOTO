@@ -1,6 +1,5 @@
 package com.huyeon.apiserver.controller;
 
-
 import com.huyeon.apiserver.model.dto.ResMessage;
 import com.huyeon.apiserver.model.dto.UserSignInReq;
 import com.huyeon.apiserver.model.dto.UserSignUpReq;
@@ -25,7 +24,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<ResMessage> signUp(@RequestBody UserSignUpReq request) {
         ResMessage response = new ResMessage();
-        if(authService.signUp(request)){
+        if (authService.signUp(request)) {
             log.info("회원 가입 완료");
             response.setMessage("회원 가입에 성공했습니다.");
             response.setSuccess(true);

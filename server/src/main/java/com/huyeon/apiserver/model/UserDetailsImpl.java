@@ -2,13 +2,13 @@ package com.huyeon.apiserver.model;
 
 import com.huyeon.apiserver.model.entity.User;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.HashSet;
 
+@Getter
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
     private static final String ROLE_PREFIX = "ROLE_";
@@ -16,12 +16,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Role role = user.getRole();
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(ROLE_PREFIX + role.toString());
-        Collection<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(authority);
-
-        return authorities;
+        return user.getAuthorities();
     }
 
     @Override

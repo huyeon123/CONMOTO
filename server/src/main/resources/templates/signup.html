@@ -125,7 +125,7 @@
             .then((response) => response.json())
             .then((data) => {
                 alert(data.message);
-                window.location.href = "/"
+                if(data.success) window.location.href = "/"
             })
             .catch((error) => {
                 console.log("실패: ", error);

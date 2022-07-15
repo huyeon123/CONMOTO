@@ -1,7 +1,9 @@
 package com.huyeon.apiserver.controller;
 
+import com.huyeon.apiserver.model.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,9 +26,10 @@ public class HomeController {
         return "signup";
     }
 
-    @GetMapping("/*")
-    public String mainPage() {
-
-        return "redirect:/";
+    @GetMapping("/feed")
+    public String myFeed(@AuthenticationPrincipal User user, Model model) {
+        model.addAttribute("username", user.getUsername());
+        return "feed";
     }
+
 }

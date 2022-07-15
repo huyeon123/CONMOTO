@@ -26,6 +26,7 @@ public class AuthService {
         if (!userRepository.existsByEmail(request.getEmail())) {
             User user = new User(request);
             user.encryptPassword(passwordEncoder);
+            user.setEnabled(true);
             userRepository.save(user);
             return true;
         }
