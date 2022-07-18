@@ -26,18 +26,23 @@ public class AuthService {
         if (!userRepository.existsByEmail(request.getEmail())) {
             User user = new User(request);
             user.encryptPassword(passwordEncoder);
-            user.setEnabled(true);
             userRepository.save(user);
             return true;
         }
         return false;
     }
 
-    public void signIn(UserSignInReq request) throws Exception{
+    //로그인
+    public void logIn(UserSignInReq request) throws Exception{
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    //이메일 중복체크
+    public boolean checkDuplicateEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 }

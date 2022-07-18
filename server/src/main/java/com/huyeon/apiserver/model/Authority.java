@@ -16,18 +16,14 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 @Entity
-@IdClass(Authority.class)
 public class Authority implements GrantedAuthority {
     public static final String ROLE_USER = "ROLE_USER";
     public static final String ROLE_SUBSCRIBER = "ROLE_SUBSCRIBER";
-    public static final String ROLE_ADMIN = "ROLE_TEACHER";
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
 
     public static final Authority USER_AUTHORITY = Authority.builder().authority(ROLE_USER).build();
     public static final Authority SUBSCRIBER_AUTHORITY = Authority.builder().authority(ROLE_SUBSCRIBER).build();
     public static final Authority ADMIN_AUTHORITY = Authority.builder().authority(ROLE_ADMIN).build();
-
-    @Id
-    private Long userId;
 
     @Id
     private String authority;

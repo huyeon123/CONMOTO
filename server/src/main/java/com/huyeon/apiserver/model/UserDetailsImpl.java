@@ -11,7 +11,6 @@ import java.util.Collection;
 @Getter
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
-    private static final String ROLE_PREFIX = "ROLE_";
     private final User user;
 
     @Override
@@ -36,16 +35,16 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return user.isEnabled();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return user.isEnabled();
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.isEnabled();
     }
 }

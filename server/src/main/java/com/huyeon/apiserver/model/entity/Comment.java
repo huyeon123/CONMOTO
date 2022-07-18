@@ -2,7 +2,7 @@ package com.huyeon.apiserver.model.entity;
 
 import com.huyeon.apiserver.model.entity.base.AuditEntity;
 import com.huyeon.apiserver.model.listener.Auditable;
-import com.huyeon.apiserver.model.listener.HistoryListener;
+import com.huyeon.apiserver.model.listener.CommentHistoryListener;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -15,7 +15,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@EntityListeners(value = {AuditingEntityListener.class, HistoryListener.class})
+@EntityListeners(value = {AuditingEntityListener.class, CommentHistoryListener.class})
 public class Comment extends AuditEntity implements Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +24,8 @@ public class Comment extends AuditEntity implements Auditable {
     @JoinColumn(name = "boardId")
     private Long boardId;
 
-    @JoinColumn(name = "userId")
-    private Long userId;
+    @JoinColumn(name = "userEmail")
+    private String userEmail;
 
     private String comment;
 }

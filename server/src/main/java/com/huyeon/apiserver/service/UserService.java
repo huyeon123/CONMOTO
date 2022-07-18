@@ -28,22 +28,11 @@ public class UserService {
     private final CommentRepository commentRepository;
     private final UserHistoryRepo userHistoryRepo;
 
-    //회원정보
-    public User userInfo(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.orElse(new User());
-    }
-
     //회원정보 수정
-    public boolean editInfo(Long id, String editForm) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        User currentUser = optionalUser.orElse(new User());
-
+    public boolean editInfo(String email, String editForm) {
         User editUser = readJson(editForm, User.class);
 
-        //요청보낸 사용자와 수정정보 ID가 일치할때만 반영 => Security 작업할 때 보완
-        if (editUser != null
-                && editUser.getId().equals(currentUser.getId())) {
+        if (editUser != null && editUser.getEmail().equals(email)) {
             userRepository.save(editUser);
             return true;
         }
@@ -52,56 +41,34 @@ public class UserService {
 
     //회원탈퇴
     @Transactional
-    public boolean resign(Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-//            boardRepository.deleteAllByUserId(id);
-            userRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public boolean resign(String email) {
+        userRepository.deleteById(email);
+        return true;
     }
 
     //게시글 확인
-    public List<Board> myBoard(Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            Optional<List<Board>> boards =
-                    boardRepository.findAllByUserId(optionalUser.get().getId());
-            if (boards.isPresent()) return boards.get();
-        }
-        return List.of();
+    public List<Board> myBoard(String email) {
+        Optional<List<Board>> boards =
+                boardRepository.findAllByUserEmail(email);
+        return boards.orElseGet(List::of);
     }
 
     //댓글 확인
-    public List<Comment> myComment(Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            Optional<List<Comment>> optionalComments =
-                    commentRepository.findAllByUserId(optionalUser.get().getId());
-            if (optionalComments.isPresent()) {
-                //탈퇴한 사용자 게시글은 제외
-                return optionalComments.get()
-                        .stream()
-                        .filter(comment -> {
-                            Long boardId = comment.getBoardId();
-                            Optional<Board> board = boardRepository.findById(boardId);
-                            return board.isPresent();
-                        })
-                        .collect(Collectors.toList());
-            }
-        }
-        return List.of();
+    public List<Comment> myComment(String email) {
+        Optional<List<Comment>> optionalComments =
+                commentRepository.findAllByUserEmail(email);
+
+        //탈퇴한 사용자 게시글은 제외
+        return optionalComments.map(comments -> comments
+                .stream()
+                .filter(comment -> userRepository.existsByEmail(comment.getUserEmail()))
+                .collect(Collectors.toList())).orElseGet(List::of);
     }
 
     //회원정보 수정이력 확인
-    public List<UserHistory> myInfoHistory(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            Optional<List<UserHistory>> histories =
-                    userHistoryRepo.findAllByUserId(user.get().getId());
-            if (histories.isPresent()) return histories.get();
-        }
-        return List.of();
+    public List<UserHistory> myInfoHistory(String email) {
+        Optional<List<UserHistory>> histories =
+                userHistoryRepo.findAllByUserEmail(email);
+        return histories.orElseGet(List::of);
     }
 }

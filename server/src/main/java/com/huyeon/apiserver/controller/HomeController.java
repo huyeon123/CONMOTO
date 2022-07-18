@@ -1,5 +1,7 @@
 package com.huyeon.apiserver.controller;
 
+import com.huyeon.apiserver.model.Authority;
+import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +30,15 @@ public class HomeController {
 
 
     @GetMapping("/feed")
-    public String myFeed(@AuthenticationPrincipal User user, Model model) {
-        model.addAttribute("username", user.getUsername());
+    public String myFeed(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
+        if(userDetails.getAuthorities()
+                .stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) return "admin";
+        model.addAttribute("username", userDetails.getUser().getName());
         return "feed";
     }
 
-    @GetMapping("/access-denied")
+    @GetMapping("/error")
     public String accessDeniedPage() {
         return "AccessDenied.html";
     }

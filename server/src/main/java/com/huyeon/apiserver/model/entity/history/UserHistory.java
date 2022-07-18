@@ -21,12 +21,10 @@ public class UserHistory extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "userId")
-    private Long userId;
+    @JoinColumn(name = "userEmail")
+    private String userEmail;
 
     private String pastName;
-
-    private String pastEmail;
 
     private String pastPassword;
 

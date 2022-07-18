@@ -94,7 +94,7 @@ public class AllServiceTest {
 
         //게시글 확인
         user1Board.forEach(board -> System.out.println(
-                board.getUserId() + " : " +
+                board.getUserEmail() + " : " +
                         boardService.getBoard(board.getId()).orElse(new Board())));
 
         //컨텐츠 블록 생성

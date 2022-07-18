@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    Optional<List<Board>> findAllByUserId(Long userId);
+    Optional<List<Board>> findAllByUserEmail(String email);
 
-    void deleteAllByUserId(Long userId);
+    void deleteAllByUserEmail(String email);
 }

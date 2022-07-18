@@ -30,12 +30,6 @@
             opacity: 0.8;
         }
 
-        .btn {
-            width: auto;
-            padding: 10px 18px;
-            background-color: #f44336;
-        }
-
         .container {
             padding: 16px;
         }
@@ -94,6 +88,13 @@
 </body>
 </html>
 <script>
+    const form = document.getElementById("password");
+    form.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+            formSubmit();
+        }
+    });
+
     async function formSubmit(url = "http://localhost:8080/auth/login") {
         const request = {};
         request.email = this.email.value
