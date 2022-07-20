@@ -7,6 +7,7 @@ import com.huyeon.apiserver.repository.history.BoardHistoryRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,8 +28,7 @@ public class BoardService {
     }
 
     //게시글 작성
-    public boolean writeBoard(String jsonBoard) {
-        Board board = readJson(jsonBoard, Board.class);
+    public boolean writeBoard(Board board) {
         if (board == null) return false;
         boardRepository.save(board);
         return true;

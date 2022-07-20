@@ -28,16 +28,6 @@ public class HomeController {
         return "signup";
     }
 
-
-    @GetMapping("/feed")
-    public String myFeed(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
-        if(userDetails.getAuthorities()
-                .stream()
-                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) return "admin";
-        model.addAttribute("username", userDetails.getUser().getName());
-        return "feed";
-    }
-
     @GetMapping("/error")
     public String accessDeniedPage() {
         return "AccessDenied.html";

@@ -91,8 +91,7 @@
                    placeholder="사용할 패스워드를 입력해주세요."
                    id="password"
                    name="password"
-                   required
-                   onkeyup="enterSubmit(e)">
+                   required>
         </label>
 
         <label>
@@ -131,7 +130,7 @@
             return
         }
         if (!check) {
-            alert("이메일 중복체크를 해주세요.");
+            alert("이메일 중복체크를 확인해주세요.");
             return
         }
         if(request.password.length < 5) {
@@ -161,6 +160,8 @@
     async function duplicateCheck(url = "http://localhost:8080/auth/check") {
         const request = {"email" : this.email.value};
 
+        if(!validateEmail(request.email)) return;
+
         await fetch(url, {
             method: "POST",
             headers: {
@@ -177,6 +178,16 @@
             })
             .catch((error) => {
                 console.log("실패: ", error);
-            })
+            });
+    }
+
+    function validateEmail(email) {
+        const regEmail = /^[\w]+@[\w-]+.[a-zA-Z]{2,3}$/;
+
+        if (!regEmail.test(email)) {
+            alert("유효하지 않은 이메일 형식입니다.")
+            return false;
+        }
+        return true;
     }
 </script>

@@ -113,7 +113,7 @@
             .then((response) => response.json())
             .then((data) => {
                 alert(data.message);
-                if(data.success) window.location.href = "http://localhost:8080/feed";
+                if(data.success) window.location.href = "http://localhost:8080/user/feed";
             })
             .catch((error) => {
                 console.log("실패: ", error);

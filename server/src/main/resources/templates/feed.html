@@ -3,8 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>MyFeed</title>
+    <style>
+        .container {
+            width: 500px;
+            border: 1px solid #454d55;
+        }
+    </style>
 </head>
 <body>
-<div th:text = "|Hello, ${username}. Did you see this?|"></div>
+<div th:text="|Hello, ${username}. Did you see this?|"></div>
+<h2>BOARD</h2>
+<div class="container" th:each="entry : ${boardAndContents}">
+    <div th:with="board = ${entry.key}">
+        <p>작성자 : <span th:text="${board.userEmail}">email</span></p>
+        <p>제목 : <span th:text="${board.title}">title</span></p>
+        <p>상태 : <span th:text="${board.status}">status</span></p>
+    </div>
+    <div th:with="contents = ${entry.value}">
+        &lt;내용&gt;
+        <div th:each="content : ${contents}">
+            <p th:text="${content.content}"> content</p>
+        </div>
+    </div>
+</div>
+<p th:if="${#maps.size(boardAndContents) < 1}">작성한 게시글이 없습니다.</p>
+<hr>
+<h2>COMMENT</h2>
+<div class="container" th:each="comment : ${comments}">
+    <div>
+        <p th:text="${comment.userEmail}">userName</p>
+        <p th:text="${comment.comment}">comment</p>
+    </div>
+</div>
+<p th:if="${#lists.size(comments) < 1}">작성한 댓글이 없습니다.</p>
 </body>
 </html>

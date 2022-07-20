@@ -4,6 +4,8 @@ import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.UserSignInReq;
 import com.huyeon.apiserver.model.dto.UserSignUpReq;
 import com.huyeon.apiserver.model.dto.ResMessage;
+import com.huyeon.apiserver.model.entity.Board;
+import com.huyeon.apiserver.model.entity.ContentBlock;
 import com.huyeon.apiserver.model.entity.User;
 import com.huyeon.apiserver.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 import static com.huyeon.apiserver.support.JsonParse.*;
 
@@ -46,5 +52,20 @@ public class UserController {
     public String resign(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         if(userService.resign(userDetails.getUsername())) return "이용해주셔서 감사합니다.";
         return "회원 탈퇴에 실패했습니다";
+    }
+
+    @GetMapping("/feed")
+    public String myFeed(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
+        if(userDetails.getAuthorities()
+                .stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) return "admin";
+
+        model.addAttribute("username", userDetails.getUser().getName());
+
+        Map<Board, List<ContentBlock>> boardAndContents = userService.myBoardAndContents(userDetails.getUsername());
+        model.addAttribute("boardAndContents", boardAndContents);
+
+        model.addAttribute("comments", userService.myComment(userDetails.getUsername()));
+        return "feed";
     }
 }
