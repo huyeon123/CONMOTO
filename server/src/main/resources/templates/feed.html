@@ -12,6 +12,9 @@
 </head>
 <body>
 <div th:text="|Hello, ${username}. Did you see this?|"></div>
+<div>
+    <a href="http://localhost:8080/board">글쓰기</a>
+</div>
 <h2>BOARD</h2>
 <div class="container" th:each="entry : ${boardAndContents}">
     <div th:with="board = ${entry.key}">

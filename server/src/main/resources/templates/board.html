@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 작성</title>
+    <style>
+        button {
+            background-color: rgba(108, 117, 125, 0.5);
+            color: #ffffff;
+            opacity: 0.5;
+            border: none;
+            border-radius: 3px;
+            padding: 5px 10px;
+            margin: 5px auto;
+            display: block;
+            cursor: Pointer;
+        }
+
+        .container {
+            width: 500px;
+            border: 1px solid #4e555b;
+        }
+
+        .header {
+            width: 500px;
+            border-bottom: 1px solid #4e555b;
+        }
+
+        .header-elements {
+            margin-left: 5px;
+            padding: 3px;
+        }
+
+        .contents {
+            width: 500px;
+            margin: 5px auto;
+        }
+
+        #status {
+            padding-bottom: 6px;
+        }
+
+        #saveBtn {
+            background-color: #20c997;
+            opacity: 100%;
+        }
+
+        #content {
+            width: 480px;
+            height: 25px;
+            margin: 5px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div class="container">
+        <div class="header">
+            <div class="header-elements">
+                <label>
+                    제목 :
+                    <input type="text" id="title" placeholder="제목을 입력하세요.">
+                </label>
+            </div>
+            <div class="header-elements">
+                <label>
+                    상태
+                    <select id="status">
+                        <option value="READY">READY</option>
+                        <option value="PROCEED">PROCEED</option>
+                        <option value="COMPLETE">COMPLETE</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+        <div class="contents" id="contents">
+            <label class="contents">
+                <input id="content" placeholder="내용" name="inputBox">
+            </label>
+            <button id="addInputBox" type="button" onclick="addInput()">+</button>
+        </div>
+    </div>
+    <button type="button" id="saveBtn" onclick="createBoard()">저장하기</button>
+</div>
+
+</body>
+<script>
+    const targetContainer = document.getElementById("contents");
+    const target = document.getElementById("addInputBox");
+
+    const input = document.getElementById("content");
+    input.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+            addInput(); //엔터친 input box 아래에 추가되도록 함수 작성필요
+        }
+    });
+
+    function addInput() { //맨 마지막에 input box 추가
+        const newInputBox = document.createElement("input");
+        newInputBox.setAttribute("id", "content");
+        newInputBox.setAttribute("placeholder", "내용");
+        newInputBox.setAttribute("name", "inputBox");
+        targetContainer.insertBefore(newInputBox, target);
+        //해당 input box로 커서 이동
+    }
+
+    async function createBoard(url = "http://localhost:8080/board") {
+        const request = {};
+
+        let selectOption = document.getElementById("status");
+        selectOption = selectOption.options[selectOption.selectedIndex].value;
+
+        const contents = [];
+        let contentElements = document.getElementsByName("inputBox");
+        for (let content of contentElements.values()) {
+            contents.push(content.value);
+        }
+
+        request.title = this.title.value;
+        request.status = selectOption;
+        request.contents = contents;
+
+        await fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: "cors",
+            body: JSON.stringify(request)
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                alert(data.message);
+            })
+            .catch((error) => console.log("실패 : ", error));
+    }
+</script>
+</html>

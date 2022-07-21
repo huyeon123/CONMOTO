@@ -28,6 +28,11 @@ public class HomeController {
         return "signup";
     }
 
+    @GetMapping("/board")
+    public String boardPage() {
+        return "board";
+    }
+
     @GetMapping("/error")
     public String accessDeniedPage() {
         return "AccessDenied.html";
