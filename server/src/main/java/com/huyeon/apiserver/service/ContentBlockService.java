@@ -25,11 +25,25 @@ public class ContentBlockService {
         return blockRepository.findById(id).orElse(new ContentBlock());
     }
 
+    public List<ContentBlock> getContentBlockByBoardId(Long boardId) {
+        return blockRepository.findAllByBoardId(boardId).orElse(List.of());
+    }
+
     //블록 추가
     public boolean writeContent(String jsonContent) {
         ContentBlock block = readJson(jsonContent, ContentBlock.class);
         if(block == null) return false;
         blockRepository.save(block);
+        return true;
+    }
+
+    public boolean writeContents(Long boardId, List<ContentBlock> request) {
+        try {
+            request.forEach(block -> block.setBoardId(boardId));
+            blockRepository.saveAll(request);
+        } catch (Exception e) {
+            return false;
+        }
         return true;
     }
 
@@ -47,6 +61,7 @@ public class ContentBlockService {
         }
         return false;
     }
+
 
     //블록 삭제
     public boolean removeContent(Long id) {

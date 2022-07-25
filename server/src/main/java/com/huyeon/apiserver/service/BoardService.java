@@ -7,12 +7,9 @@ import com.huyeon.apiserver.repository.history.BoardHistoryRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
-
-import static com.huyeon.apiserver.support.JsonParse.readJson;
 
 @Slf4j
 @Service
@@ -27,21 +24,18 @@ public class BoardService {
         return boardRepository.findById(id);
     }
 
-    //게시글 작성
-    public boolean writeBoard(Board board) {
-        if (board == null) return false;
-        boardRepository.save(board);
-        return true;
+    //게시글 생성
+    public Long createBoard(Board board) {
+        return boardRepository.save(board).getId();
     }
 
     //게시글 수정
-    public boolean editBoard(Long id, String editBoard) {
-        Optional<Board> optional = boardRepository.findById(id);
-        Board current = optional.orElse(new Board());
-        Board edit = readJson(editBoard, Board.class);
-        if (edit != null
-                && current.getId().equals(edit.getId())) {
-            boardRepository.save(edit);
+    public boolean editBoard(String email, Board editBoard) {
+        Board current = boardRepository.findById(editBoard.getId()).orElse(new Board());
+        if (current.getUserEmail().equals(email)
+                && current.getId().equals(editBoard.getId())) {
+            editBoard.setUserEmail(email);
+            boardRepository.save(editBoard);
             return true;
         }
         return false;
@@ -60,7 +54,7 @@ public class BoardService {
     //게시글 수정이력
     public List<BoardHistory> boardHistory(Long id) {
         Optional<Board> board = boardRepository.findById(id);
-        if(board.isPresent()) {
+        if (board.isPresent()) {
             Optional<List<BoardHistory>> histories =
                     boardHistoryRepo.findAllByBoardId(board.get().getId());
             if (histories.isPresent()) return histories.get();

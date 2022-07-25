@@ -13,19 +13,21 @@
 <body>
 <div th:text="|Hello, ${username}. Did you see this?|"></div>
 <div>
-    <a href="http://localhost:8080/board">글쓰기</a>
+    <button type="button" onclick="createBoard()">글쓰기</button>
 </div>
 <h2>BOARD</h2>
 <div class="container" th:each="entry : ${boardAndContents}">
-    <div th:with="board = ${entry.key}">
-        <p>작성자 : <span th:text="${board.userEmail}">email</span></p>
-        <p>제목 : <span th:text="${board.title}">title</span></p>
-        <p>상태 : <span th:text="${board.status}">status</span></p>
-    </div>
-    <div th:with="contents = ${entry.value}">
-        &lt;내용&gt;
-        <div th:each="content : ${contents}">
-            <p th:text="${content.content}"> content</p>
+    <div onclick="goToBoard(${entry.key.id})">
+        <div th:with="board = ${entry.key}">
+            <p>작성자 : <span th:text="${board.userEmail}">email</span></p>
+            <p>제목 : <span th:text="${board.title}">title</span></p>
+            <p>상태 : <span th:text="${board.status}">status</span></p>
+        </div>
+        <div th:with="contents = ${entry.value}">
+            &lt;내용&gt;
+            <div th:each="content : ${contents}">
+                <p th:text="${content.content}"> content</p>
+            </div>
         </div>
     </div>
 </div>
@@ -40,4 +42,27 @@
 </div>
 <p th:if="${#lists.size(comments) < 1}">작성한 댓글이 없습니다.</p>
 </body>
+<script>
+    function goToBoard(id) {
+        window.location.href = "http://localhost:8080/board/" + id;
+    }
+
+    async function createBoard(url = "http://localhost:8080/api/board") {
+        await fetch(url, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: "cors",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                alert(data.message);
+                if(data.success) {
+                    window.location.href = "http://localhost:8080/board/" + data.data;
+                }
+            })
+            .catch((error) => console.log("실패 : ", error));
+    }
+</script>
 </html>

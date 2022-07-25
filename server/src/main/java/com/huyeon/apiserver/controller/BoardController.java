@@ -1,57 +1,50 @@
 package com.huyeon.apiserver.controller;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
-import com.huyeon.apiserver.model.dto.ResMessage;
 import com.huyeon.apiserver.model.entity.Board;
+import com.huyeon.apiserver.model.entity.ContentBlock;
 import com.huyeon.apiserver.service.BoardService;
-import com.huyeon.apiserver.support.JsonParse;
+import com.huyeon.apiserver.service.ContentBlockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@RestController
+@Controller
 @RequestMapping("/board")
 @RequiredArgsConstructor
 public class BoardController {
     private final BoardService boardService;
+    private final ContentBlockService blockService;
 
     @GetMapping("/{id}")
-    public String getBoard(@PathVariable Long id) {
-        Optional<Board> board = boardService.getBoard(id);
-        if (board.isPresent()) {
-            return JsonParse.writeJson(board.get());
-        }
-        return "게시글을 찾을 수 없습니다.";
-    }
-
-    @PostMapping
-    public ResponseEntity<ResMessage> writeBoard(
+    public String boardPage(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody Board newBoard) {
-        newBoard.setUserEmail(userDetails.getUsername());
-        ResMessage response = new ResMessage();
-        if (boardService.writeBoard(newBoard)) {
-            response.setMessage("게시글이 생성되었습니다.");
-            response.setSuccess(true);
-        } else response.setMessage("게시글을 작성할 수 없습니다.");
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+            @PathVariable Long id, Model model) {
+        Optional<Board> optBoard = boardService.getBoard(id);
 
-    @PutMapping("/{id}")
-    public String post(@PathVariable Long id, @RequestBody String editBoard) {
-        if (boardService.editBoard(id, editBoard)) return "게시글을 수정했습니다.";
-        return "게시글을 수정할 수 없습니다.";
-    }
+        Board check = optBoard.orElse(new Board());
+        if (!check.getUserEmail().equals(userDetails.getUsername())) {
+            return "AccessDenied";
+        }
 
-    @DeleteMapping("/{id}")
-    public String removeBoard(@PathVariable Long id) {
-        if (boardService.removeBoard(id)) return "게시글을 삭제했습니다.";
-        return "게시글을 삭제할 수 없습니다.";
+        optBoard.ifPresent(board -> {
+            model.addAttribute("title", board.getTitle());
+            model.addAttribute("status", board.getStatus());
+
+            List<ContentBlock> contents =
+                    blockService.getContentBlockByBoardId(board.getId());
+            model.addAttribute("contents", contents);
+        });
+
+        return "board";
     }
 }

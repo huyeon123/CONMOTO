@@ -54,7 +54,7 @@
     </style>
 </head>
 <body>
-<div>
+<div style="width : 500px; margin: 5px auto">
     <div class="container">
         <div class="header">
             <div class="header-elements">
@@ -81,7 +81,7 @@
             <button id="addInputBox" type="button" onclick="addInput()">+</button>
         </div>
     </div>
-    <button type="button" id="saveBtn" onclick="createBoard()">저장하기</button>
+    <button type="button" id="saveBtn" onclick="save()">저장하기</button>
 </div>
 
 </body>
@@ -105,24 +105,39 @@
         //해당 input box로 커서 이동
     }
 
-    async function createBoard(url = "http://localhost:8080/board") {
+    async function save() {
+        const url = "http://localhost:8080/api";
+        const pathname = window.location.pathname;
+        const id = pathname.substr(pathname.lastIndexOf("/"));
         const request = {};
 
         let selectOption = document.getElementById("status");
         selectOption = selectOption.options[selectOption.selectedIndex].value;
 
-        const contents = [];
+        const contents = {};
+        let order = 0;
         let contentElements = document.getElementsByName("inputBox");
         for (let content of contentElements.values()) {
-            contents.push(content.value);
+            contents[order++] = content.value;
         }
 
         request.title = this.title.value;
         request.status = selectOption;
         request.contents = contents;
+        console.log(request.contents)
 
+        const boardStatus = await saveBoard(url + "/board" + id, request);
+        const contentsStatus = await saveContents(url + "/contents" + id, request);
+
+        if (boardStatus && contentsStatus) {
+            alert("성공적으로 저장되었습니다.")
+            window.location.href = "http://localhost:8080/user/feed"
+        }
+    }
+
+    const saveBoard = async (url, request) => {
         await fetch(url, {
-            method: "POST",
+            method: "PUT",
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -131,7 +146,23 @@
         })
             .then((response) => response.json())
             .then((data) => {
-                alert(data.message);
+                return data.success
+            })
+            .catch((error) => console.log("실패 : ", error));
+    }
+
+    const saveContents = async (url, request) => {
+        await fetch(url, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: "cors",
+            body: JSON.stringify(request.contents)
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                return data.success
             })
             .catch((error) => console.log("실패 : ", error));
     }
