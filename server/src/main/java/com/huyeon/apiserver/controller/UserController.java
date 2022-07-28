@@ -32,27 +32,17 @@ public class UserController {
 
     //회원정보
     @GetMapping("/profile")
-    public String userInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public String userInfo(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            Model model) {
         User user = userDetails.getUser();
-        if(user == null) return "회원 정보가 존재하지 않습니다.";
-        return writeJson(user);
+        model.addAttribute("email", user.getEmail());
+        model.addAttribute("name", user.getName());
+        model.addAttribute("birthday", user.getBirthday());
+        return "editprofile";
     }
 
-    //회원정보 수정
-    @PostMapping("/edit")
-    public String editInfo(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody String editForm) {
-        if(userService.editInfo(userDetails.getUsername(), editForm)) {
-            return "정보가 정상적으로 반영되었습니다.";
-        }
-        return "회원정보 수정에 실패했습니다.";
-    }
 
-    //회원탈퇴
-    @DeleteMapping
-    public String resign(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        if(userService.resign(userDetails.getUsername())) return "이용해주셔서 감사합니다.";
-        return "회원 탈퇴에 실패했습니다";
-    }
 
     @GetMapping("/feed")
     public String myFeed(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {

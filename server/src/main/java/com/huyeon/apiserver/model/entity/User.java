@@ -14,8 +14,8 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-//@ToString(callSuper = true)
-//@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,11 +25,10 @@ import java.util.Set;
 public class User extends AuditEntity implements Auditable {
     @Id
     @NonNull
-    private String name;
+    private String email;
 
     @NonNull
-    @Column(unique = true)
-    private String email;
+    private String name;
 
     @NonNull
     private String password;
