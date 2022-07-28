@@ -1,16 +1,10 @@
 package com.huyeon.apiserver.controller;
 
-import com.huyeon.apiserver.model.Authority;
-import com.huyeon.apiserver.model.UserDetailsImpl;
-import com.huyeon.apiserver.model.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Role;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Locale;
 

@@ -7,17 +7,21 @@
         .container {
             width: 500px;
             border: 1px solid #454d55;
+            cursor: pointer;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
 <div th:text="|Hello, ${username}. Did you see this?|"></div>
-<div>
-    <button type="button" onclick="createBoard()">글쓰기</button>
+<div style="width: 500px;">
+    <h2 style="display: inline-block; margin: 5px auto">BOARD</h2>
+    <button type="button"
+            onclick="createBoard()"
+            style="text-align: right; display: inline-block">글쓰기</button>
 </div>
-<h2>BOARD</h2>
 <div class="container" th:each="entry : ${boardAndContents}">
-    <div onclick="goToBoard(${entry.key.id})">
+    <div th:onclick="|location.href='@{/board/{id}(id=${entry.key.id})}'|">
         <div th:with="board = ${entry.key}">
             <p>작성자 : <span th:text="${board.userEmail}">email</span></p>
             <p>제목 : <span th:text="${board.title}">title</span></p>
@@ -36,8 +40,8 @@
 <h2>COMMENT</h2>
 <div class="container" th:each="comment : ${comments}">
     <div>
-        <p th:text="${comment.userEmail}">userName</p>
-        <p th:text="${comment.comment}">comment</p>
+        <p>작성자 : <span th:text="${comment.userEmail}">userName</span></p>
+        <p>내용 : <span th:text="${comment.comment}">comment</span></p>
     </div>
 </div>
 <p th:if="${#lists.size(comments) < 1}">작성한 댓글이 없습니다.</p>

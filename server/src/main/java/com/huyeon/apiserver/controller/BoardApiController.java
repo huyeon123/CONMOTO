@@ -37,6 +37,7 @@ public class BoardApiController {
         ResMessage response = new ResMessage();
         Board newBoard = new Board();
         newBoard.setUserEmail(userDetails.getUsername());
+        newBoard.setStatus(Board.STATUS.READY);
 
         if ((id = boardService.createBoard(newBoard)) >= 0) {
             response.setMessage("게시글이 생성되었습니다.");

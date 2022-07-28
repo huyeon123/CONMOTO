@@ -1,7 +1,7 @@
 package com.huyeon.apiserver.controller;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
-import com.huyeon.apiserver.model.dto.ContentsReq;
+import com.huyeon.apiserver.model.dto.ResMessage;
 import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.model.entity.ContentBlock;
 import com.huyeon.apiserver.service.BoardService;
@@ -14,7 +14,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -27,20 +26,43 @@ public class ContentsApiController {
     @PutMapping("/{boardId}")
     public ResponseEntity<?> editContents(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable Long boardId, @RequestBody ContentsReq request) {
-
+            @PathVariable Long boardId, @RequestBody List<ContentBlock> request) {
         //boardId 게시글이 해당 유저의 것이 맞는지 확인
-        if (!boardService.getBoard(boardId)
-                .orElse(new Board())
-                .getUserEmail()
-                .equals(userDetails.getUsername())) {
+        if (checkNotMine(userDetails.getUsername(), boardId)) {
             return new ResponseEntity<>("접근할 수 없는 게시글입니다.", HttpStatus.OK);
         }
         //맞다면 request로 내용 덮어쓰기
-        List<ContentBlock> contents = request.getContents().stream()
-                .map(content -> ContentBlock.builder().content(content).build())
-                .collect(Collectors.toList());
-        blockService.writeContents(boardId, contents);
-        return new ResponseEntity<>(HttpStatus.OK);
+        blockService.writeContents(boardId, request);
+        return new ResponseEntity<>(ResMessage.builder().success(true).build(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{boardId}")
+    public ResponseEntity<?> createContent(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long boardId) {
+        if (checkNotMine(userDetails.getUsername(), boardId)) {
+            return new ResponseEntity<>("접근할 수 없는 게시글입니다.", HttpStatus.OK);
+        }
+        Long blockId = blockService.createContent(boardId);
+        ResMessage resMessage = ResMessage.builder().success(true).data(blockId).build();
+        return new ResponseEntity<>(resMessage, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<?> deleteContent(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long boardId, @RequestParam Long id) {
+        if (checkNotMine(userDetails.getUsername(), boardId)) {
+            return new ResponseEntity<>("접근할 수 없는 게시글입니다.", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(blockService.removeContent(id), HttpStatus.OK);
+    }
+
+    protected boolean checkNotMine(String email, Long boardId) {
+        return !boardService.getBoard(boardId)
+                .orElse(new Board())
+                .getUserEmail()
+                .equals(email);
     }
 }

@@ -18,8 +18,12 @@ spring:
         format_sql: true
 
   thymeleaf:
-    prefix: classpath:/templates/
-    suffix: .html
+    prefix:
+      - classpath:/templates/
+      - classpath:/static/
+    suffix:
+      - .html
+      - .js
 
   devtools:
     livereload:
@@ -34,7 +38,7 @@ spring:
     activate:
       on-profile: dev
   jpa:
-#    show-sql: true
+    #    show-sql: true
     hibernate:
       ddl-auto: create-drop #create-drop : 테이블 생성 및 종료 시점에 삭제, update : 수정사항만 반영
   datasource:
