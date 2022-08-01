@@ -91,6 +91,11 @@ button {
     margin: 5px 5px 10px;
 }
 
+#addCommentInput {
+    margin-left: 45px;
+    margin-bottom: 5px;
+}
+
 .comments-elements {
     margin: auto 5px 5px;
     padding: 5px;

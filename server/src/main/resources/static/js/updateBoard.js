@@ -17,19 +17,14 @@ $('#status').on('change', async () => {
 /*comment*/
 $('#addCommentBtn').on('click', (e) => {
     const input = document.createElement('input');
-    input.setAttribute("id", "addComment");
+    input.setAttribute("id", "addCommentInput");
     input.setAttribute("placeholder", "댓글을 작성해주세요. (엔터 시 저장됩니다.)");
-
-    const sendBtn = document.createElement('button');
-    sendBtn.setAttribute("id", "sendBtn");
-    sendBtn.innerHTML = "전송";
     e.target.parentElement.after(input);
-    input.after(sendBtn);
 })
 
-$(document).on('keyup', '#addComment', async (e) => {
+$(document).on('keyup', '#addCommentInput', async (e) => {
     if (e.keyCode === 13) {
-        const request = {comment: this.status.value}
+        const request = {comment: e.target.value}
         await commentReq(request);
         e.target.readOnly = true;
     }
