@@ -37,17 +37,10 @@ public class ContentBlockService {
     }
 
     //컨텐츠 작성
-    public boolean writeContents(Long boardId, List<ContentBlock> request) {
-        List<ContentBlock> currentContents = getContentBlockByBoardId(boardId);
-        try {
-            for (int i = 0; i < currentContents.size(); i++) {
-                request.get(i).setId(currentContents.get(i).getId());
-            }
-            request.forEach(block -> block.setBoardId(boardId));
-            blockRepository.saveAll(request);
-        } catch (Exception e) {
-            return false;
-        }
+    public boolean writeContents(Long contentId, ContentBlock request) {
+        ContentBlock current = blockRepository.findById(contentId).orElseThrow();
+        current.setContent(request.getContent());
+        blockRepository.save(current);
         return true;
     }
 

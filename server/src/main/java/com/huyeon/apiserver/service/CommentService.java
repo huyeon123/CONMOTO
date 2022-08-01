@@ -25,19 +25,18 @@ public class CommentService {
         return commentRepository.findById(id);
     }
 
-    public List<Comment> getCommentByBoard(Long boardId) {
+    public List<Comment> getCommentByBoardId(Long boardId) {
         return commentRepository.findAllByBoardId(boardId).orElse(List.of());
     }
 
-    //댓글 추가
-    public boolean writeComment(String jsonComment) {
-        Comment comment = readJson(jsonComment, Comment.class);
-        if(comment == null) return false;
-        commentRepository.save(comment);
-        return true;
+    //댓글 생성
+    public Long createComment(String author, Long boardId, Comment comment) {
+        comment.setUserEmail(author);
+        comment.setBoardId(boardId);
+        return commentRepository.save(comment).getId();
     }
 
-    //댓글 수정
+    //댓글 작성
     public boolean editComment(Long id, String editComment) {
         Optional<Comment> optional = commentRepository.findById(id);
         Comment current = optional.orElse(new Comment());
@@ -53,11 +52,14 @@ public class CommentService {
     }
 
     //댓글 삭제
-    public boolean removeComment(Long id) {
+    public boolean removeComment(String email, Long id) {
         Optional<Comment> optional = commentRepository.findById(id);
         if (optional.isPresent()) {
-            commentRepository.delete(optional.get());
-            return true;
+            Comment comment = optional.get();
+            if (comment.getUserEmail().equals(email)) {
+                commentRepository.delete(comment);
+                return true;
+            }
         }
         return false;
     }

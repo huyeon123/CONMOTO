@@ -5,6 +5,61 @@
     <title>회원탈퇴</title>
 </head>
 <body>
-
+<div>
+    <p>정말로 회원을 탈퇴하시겠습니까?</p>
+    <p>15일간의 유예기간이 주어집니다.</p>
+    <p id="today"></p>
+    <p id="expire-date"></p>
+    <label>
+        <span>동의합니다.</span>
+        <input id="agree" type="checkbox">
+    </label>
+    <button type="button" onclick="resignReq()">확인</button>
+</div>
 </body>
+<script>
+    const baseUrl = "http://" + window.location.host;
+
+    const today = new Date();
+    document.getElementById("today").innerHTML =
+        "현재 날짜 : " +
+        today.getFullYear() + "년 " +
+        (today.getMonth() + 1) + "월 " +
+        today.getDate() + "일";
+
+    const expireDate = new Date(today.setDate(today.getDate() + 15));
+    document.getElementById("expire-date").innerHTML =
+        "만료 날짜 : " +
+        expireDate.getFullYear() + "년 " +
+        (expireDate.getMonth() + 1) + "월 " +
+        expireDate.getDate() + "일";
+
+    async function resignReq() {
+        if(!this.agree.checked) {
+            alert("동의란에 체크해주세요.")
+            return;
+        }
+        const url = baseUrl + "/api/user/resign";
+
+        await fetch(url, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: "cors"
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data) {
+                    alert("회원 탈퇴가 완료되었습니다.")
+                    window.location.href = baseUrl;
+                }
+            })
+    }
+
+    function isChecked() {
+        return this.agree.value;
+    }
+
+</script>
 </html>

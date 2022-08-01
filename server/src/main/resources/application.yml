@@ -24,6 +24,7 @@ spring:
     suffix:
       - .html
       - .js
+      - .css
 
   devtools:
     livereload:

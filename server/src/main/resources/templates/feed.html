@@ -2,27 +2,51 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>MyFeed</title>
+    <title>내 정보</title>
     <style>
+        .option > button {
+            width: 30px;
+            font-size: 13px;
+            padding: 5px 10px;
+
+        }
         .container {
-            width: 500px;
-            border: 1px solid #454d55;
+            width: 550px;
             cursor: pointer;
             margin-bottom: 5px;
+            border: 1px solid #6c757d;
+        }
+
+        .option {
+            display: inline-block;
+            width: 70px;
+            align-items: center;
+            text-align: center;
+            vertical-align: top;
+            margin-top: 16px;
+        }
+
+        .content-body {
+            width: 465px;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
-<div th:text="|Hello, ${username}. Did you see this?|"></div>
+<div>
+    <span th:text="|Hello, ${username}. Did you see this?|"></span>
+    <button type="button" th:onclick="|location.href='@{/user/profile}'|">내 정보 수정</button>
+</div>
 <div style="width: 500px;">
     <h2 style="display: inline-block; margin: 5px auto">BOARD</h2>
     <button type="button"
             onclick="createBoard()"
-            style="text-align: right; display: inline-block">글쓰기</button>
+            style="text-align: right; display: inline-block">글쓰기
+    </button>
 </div>
 <div class="container" th:each="entry : ${boardAndContents}">
-    <div th:onclick="|location.href='@{/board/{id}(id=${entry.key.id})}'|">
-        <div th:with="board = ${entry.key}">
+    <div class="content-body" th:onclick="|location.href='@{/board/{id}(id=${entry.key.id})}'|">
+        <div th:with="board = ${entry.key}" th:id="*{board.id}">
             <p>작성자 : <span th:text="${board.userEmail}">email</span></p>
             <p>제목 : <span th:text="${board.title}">title</span></p>
             <p>상태 : <span th:text="${board.status}">status</span></p>
@@ -34,6 +58,11 @@
             </div>
         </div>
     </div>
+    <span class="option">
+        <button type="button" class="addBoardBtn">+</button>
+        <button type="button" class="delBoardBtn">-</button>
+   </span>
+
 </div>
 <p th:if="${#maps.size(boardAndContents) < 1}">작성한 게시글이 없습니다.</p>
 <hr>
@@ -46,12 +75,10 @@
 </div>
 <p th:if="${#lists.size(comments) < 1}">작성한 댓글이 없습니다.</p>
 </body>
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 <script>
-    function goToBoard(id) {
-        window.location.href = "http://localhost:8080/board/" + id;
-    }
-
-    async function createBoard(url = "http://localhost:8080/api/board") {
+    const baseUrl = "http://" + window.location.host;
+    async function createBoard(url = baseUrl + "/api/board") {
         await fetch(url, {
             method: "GET",
             headers: {
@@ -62,11 +89,41 @@
             .then((response) => response.json())
             .then((data) => {
                 alert(data.message);
-                if(data.success) {
-                    window.location.href = "http://localhost:8080/board/" + data.data;
+                if (data.success) {
+                    window.location.href = baseUrl +"/board/" + data.data;
                 }
             })
             .catch((error) => console.log("실패 : ", error));
+    }
+
+    $(document).on('click', '.delBoardBtn', async(e) => {
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            let target = e.target
+                .parentElement
+                .previousElementSibling
+                .firstElementChild;
+            let success = await delBoardReq(baseUrl + "/api/board/" + target.id);
+            if (success) {
+                target.parentElement.parentElement.remove();
+            }
+        }
+    });
+
+    const delBoardReq = async (url) => {
+        let success = undefined;
+        await fetch(url, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: "cors",
+        })
+            .then((response) => {
+                success = response
+            })
+            .catch((error) => console.log("실패 : ", error));
+
+        return success;
     }
 </script>
 </html>

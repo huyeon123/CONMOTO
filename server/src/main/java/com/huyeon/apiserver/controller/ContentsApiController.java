@@ -23,19 +23,6 @@ public class ContentsApiController {
     private final BoardService boardService;
     private final ContentBlockService blockService;
 
-    @PutMapping("/{boardId}")
-    public ResponseEntity<?> editContents(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable Long boardId, @RequestBody List<ContentBlock> request) {
-        //boardId 게시글이 해당 유저의 것이 맞는지 확인
-        if (checkNotMine(userDetails.getUsername(), boardId)) {
-            return new ResponseEntity<>("접근할 수 없는 게시글입니다.", HttpStatus.OK);
-        }
-        //맞다면 request로 내용 덮어쓰기
-        blockService.writeContents(boardId, request);
-        return new ResponseEntity<>(ResMessage.builder().success(true).build(), HttpStatus.OK);
-    }
-
     @GetMapping("/{boardId}")
     public ResponseEntity<?> createContent(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -46,6 +33,20 @@ public class ContentsApiController {
         Long blockId = blockService.createContent(boardId);
         ResMessage resMessage = ResMessage.builder().success(true).data(blockId).build();
         return new ResponseEntity<>(resMessage, HttpStatus.OK);
+    }
+
+    @PutMapping("/{boardId}")
+    public ResponseEntity<?> editContents(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long boardId, @RequestParam Long contentId,
+            @RequestBody ContentBlock request) {
+        //boardId 게시글이 해당 유저의 것이 맞는지 확인
+        if (checkNotMine(userDetails.getUsername(), boardId)) {
+            return new ResponseEntity<>("접근할 수 없는 게시글입니다.", HttpStatus.OK);
+        }
+        //맞다면 request로 내용 덮어쓰기
+        boolean success = blockService.writeContents(contentId, request);
+        return new ResponseEntity<>(success, HttpStatus.OK);
     }
 
     @DeleteMapping("/{boardId}")

@@ -4,6 +4,7 @@ import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.ResMessage;
 import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.service.BoardService;
+import com.huyeon.apiserver.service.ContentBlockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BoardApiController {
     private final BoardService boardService;
+    private final ContentBlockService blockService;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getBoard(@PathVariable Long id) {
@@ -40,6 +42,7 @@ public class BoardApiController {
         newBoard.setStatus(Board.STATUS.READY);
 
         if ((id = boardService.createBoard(newBoard)) >= 0) {
+            blockService.createContent(id);
             response.setMessage("게시글이 생성되었습니다.");
             response.setData(id);
             response.setSuccess(true);
@@ -57,7 +60,7 @@ public class BoardApiController {
             @PathVariable Long id, @RequestBody Board editBoard) {
         editBoard.setId(id);
         ResMessage response = new ResMessage();
-        if (boardService.editBoard(userDetails.getUsername(), editBoard)){
+        if (boardService.editBoard(userDetails.getUsername(), editBoard)) {
             response.setMessage("게시글을 수정했습니다.");
             response.setSuccess(true);
         } else {
@@ -68,9 +71,7 @@ public class BoardApiController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removeBoard(@PathVariable Long id) {
-        if (boardService.removeBoard(id)){
-            return new ResponseEntity<>("게시글을 삭제했습니다.", HttpStatus.OK);
-        }
-        return new ResponseEntity<>("게시글을 삭제할 수 없습니다.", HttpStatus.OK);
+        boolean success = boardService.removeBoard(id);
+        return new ResponseEntity<>(success, HttpStatus.OK);
     }
 }

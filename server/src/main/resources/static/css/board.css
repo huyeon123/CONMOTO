@@ -1,0 +1,153 @@
+body {
+    width: 800px;
+    margin: 5px auto;
+}
+
+input {
+    width: 600px;
+    height: 30px;
+    border-radius: 3px;
+    border: thin #5a6268;
+    font-size: 15px;
+}
+
+input:focus {
+    outline: none;
+}
+
+label > span {
+    width: 100px;
+    display: inline-block;
+    vertical-align: center;
+    padding: 5px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+button {
+    color: #ffffff;
+    opacity: 0.5;
+    border: none;
+    border-radius: 3px;
+    padding: 10px 15px;
+    margin: 5px auto;
+    cursor: Pointer;
+}
+
+.container {
+    width: 800px;
+    border: 1px solid #4e555b;
+}
+
+/*header*/
+.header {
+    width: 800px;
+    border-bottom: 1px solid #4e555b;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.header-elements {
+    display: flex;
+    align-items: center;
+    margin-left: 5px;
+    padding: 5px;
+}
+
+#title {
+    width: 780px;
+    height: 50px;
+    font-size: 40px;
+    line-height: 70px;
+}
+
+#status {
+    width: 150px;
+    /*height: 25px;*/
+    font-size: 18px;
+    padding-top: 2px;
+    padding-bottom: 6px;
+    line-height: 30px;
+}
+
+/*comments*/
+.comments {
+    width: 800px;
+    border-bottom: 1px solid #4e555b;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.comments button {
+    float: right;
+    padding: 3px 5px;
+    margin: 0 0 5px;
+    background-color: white;
+    color: black;
+}
+
+.comments-header {
+    align-content: center;
+    margin: 5px 5px 10px;
+}
+
+.comments-elements {
+    margin: auto 5px 5px;
+    padding: 5px;
+    border: 1px solid #95999c;
+    border-radius: 5px;
+}
+
+.comments-elements > span {
+    margin-right: 15px;
+}
+
+.comment-date {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.comment-body {
+    margin: 15px auto 5px;
+}
+
+.comment-body:focus {
+    outline: none;
+}
+
+/*contents*/
+.contents {
+    width: 780px;
+    margin: 5px auto;
+    align-content: center;
+}
+
+.contentContainer {
+    margin: 5px auto;
+    display: flex;
+    justify-content: center; /*수평 정렬*/
+    align-items: center; /*수직 정렬*/
+}
+
+.content {
+    width: 690px;
+}
+
+.contents button {
+    width: 38px;
+    opacity: 40%;
+}
+
+.delContentsBtn {
+    background-color: red;
+}
+
+.addContentsBtn {
+    background-color: green;
+}
+
+/*etc*/
+#closeBtn {
+    display: flex;
+    background-color: red;
+}

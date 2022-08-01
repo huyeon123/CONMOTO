@@ -42,8 +42,6 @@ public class UserController {
         return "editprofile";
     }
 
-
-
     @GetMapping("/feed")
     public String myFeed(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
         if(userDetails.getAuthorities()
@@ -57,5 +55,10 @@ public class UserController {
 
         model.addAttribute("comments", userService.myComment(userDetails.getUsername()));
         return "feed";
+    }
+
+    @GetMapping("/resign")
+    public String resignPage() {
+        return "resign";
     }
 }

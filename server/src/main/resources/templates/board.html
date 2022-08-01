@@ -2,221 +2,69 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>게시글 작성</title>
-    <style>
-        input {
-            width: 600px;
-            height: 30px;
-            border-radius: 5px;
-            border: none;
-            font-size: 15px;
-        }
-
-        select {
-            width: 150px;
-            height: 30px;
-        }
-
-        label {
-            width: 100px;
-            font-size: large;
-            display: inline-flex;
-        }
-
-        button {
-            background-color: rgba(108, 117, 125, 0.5);
-            color: #ffffff;
-            opacity: 0.5;
-            border: none;
-            border-radius: 3px;
-            padding: 10px 15px;
-            margin: 5px auto;
-            display: block;
-            cursor: Pointer;
-        }
-
-        .container {
-            width: 800px;
-            border: 1px solid #4e555b;
-        }
-
-        .header {
-            width: 800px;
-            border-bottom: 1px solid #4e555b;
-            padding-top: 10px;
-            padding-bottom: 10px;
-        }
-
-        .header-elements {
-            margin-left: 5px;
-            padding: 5px;
-        }
-
-        .contents {
-            width: 780px;
-            margin: 5px auto;
-        }
-
-        .contentsContainer {
-            margin: 5px auto;
-        }
-
-        #status {
-            padding-bottom: 6px;
-        }
-
-        .content {
-            width: 680px;
-        }
-
-        #saveBtn {
-            background-color: #20c997;
-            opacity: 100%;
-        }
-
-        .delContentsBtn {
-            display: inline-flex;
-            margin: 5px auto;
-            background-color: red;
-            opacity: 40%;
-        }
-
-        .addContentsBtn {
-            display: inline-flex;
-            margin: 5px auto;
-            background-color: green;
-            opacity: 40%;
-        }
-
-    </style>
+    <title th:text="${title}"></title>
+    <link rel="stylesheet" href="/css/board.css">
+<!--    <link rel="stylesheet" href="../static/css/board.css">-->
 </head>
 <body>
-<div style="width : 800px; margin: 5px auto">
+<div>
     <div class="container">
         <div class="header">
             <div class="header-elements">
                 <label>
-                    제목
+                    <input type="text" id="title"
+                           placeholder="제목을 입력하세요."
+                           th:value="${title}">
                 </label>
-                <input type="text" id="title"
-                       placeholder="제목을 입력하세요."
-                       th:value="${title}">
             </div>
             <div class="header-elements">
                 <label>
-                    상태
+                    <span>상태</span>
+                    <select id="status">
+                        <option th:selected="${status.name == 'READY'}"
+                                value="READY">READY
+                        </option>
+                        <option th:selected="${status.name == 'PROCEED'}"
+                                value="PROCEED">PROCEED
+                        </option>
+                        <option th:selected="${status.name =='COMPLETE'}"
+                                value="COMPLETE">COMPLETE
+                        </option>
+                    </select>
                 </label>
-                <select id="status">
-                    <option th:selected="${status.name == 'READY'}"
-                            value="READY">READY
-                    </option>
-                    <option th:selected="${status.name == 'PROCEED'}"
-                            value="PROCEED">PROCEED
-                    </option>
-                    <option th:selected="${status.name =='COMPLETE'}"
-                            value="COMPLETE">COMPLETE
-                    </option>
-                </select>
+            </div>
+        </div>
+        <div class="comments">
+            <div class="comments-header">
+                <span><b>댓글</b></span>
+                <button type="button" id="addCommentBtn">댓글작성</button>
+            </div>
+            <div class="comments-elements" th:each="comment : ${comments}" th:id="*{comment.id}">
+                <span class="comment-author" th:text="|작성자 : ${comment.author}|">작성자 : XXX</span>
+                <span class="comment-date" th:text="(${comment.date})">(X초 전)</span>
+                <button type="button" class="delCommentBtn">삭제</button>
+                <button type="button" class="editCommentBtn">수정</button>
+                <label style="display: block">
+                    <div style="display: inline">내용 :</div>
+                    <input readonly class="comment-body" th:value="${comment.body}">
+                </label>
             </div>
         </div>
         <div class="contents" id="contents">
-            <div class="contentsContainer">
-                <label class="contents" id="test" th:each="content : ${contents}" th:id="*{content.id}">
-                    <input class="content"
-                           placeholder="내용을 입력하세요."
-                           name="inputBox"
-                           th:value="${content.content}">
-                    <button type="button" class="delContentsBtn">-</button>
-                    <button type="button" class="addContentsBtn">+</button>
-                </label>
+            <div class="contentContainer" th:each="content : ${contents}" th:id="*{content.id}">
+                <input class="content"
+                       placeholder="내용을 입력하세요."
+                       th:value="${content.content}">
+                <button type="button" class="delContentsBtn">-</button>
+                <button type="button" class="addContentsBtn">+</button>
             </div>
         </div>
     </div>
-    <button type="button" id="saveBtn" onclick="save()">저장하기</button>
+    <button type="button" id="closeBtn" onclick="moveToPreviousPage()">돌아가기</button>
 </div>
 
 </body>
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-<script type="text/javascript" src="/js/updateBoard.js"></script>
-<script th:inline="javascript">
-    //Enter치면 저장, Shift+Enter는 개행
-    //추후 UI/UX 작업 시 수행
-    // const input = document.getElementById("content");
-    // input.addEventListener('keyup', (e) => {
-    //     if (e.key === 'Enter') {
-    //     }
-    // });
-
-    $(document).on('click', '.addContentsBtn', async (e) => {
-        let contentId = await addContentReq(host + "/api/contents" + id);
-
-        const newContentLabel = document.createElement("label");
-        newContentLabel.setAttribute("class", "contents")
-        newContentLabel.setAttribute("id", contentId)
-
-        const newContentInput = document.createElement("input");
-        newContentInput.setAttribute("class", "content")
-        newContentInput.setAttribute("placeholder", "내용을 입력하세요")
-        newContentInput.setAttribute("name", "inputBox")
-
-        const newContentDelBtn = document.createElement("button");
-        newContentDelBtn.setAttribute("class", "delContentsBtn");
-        newContentDelBtn.innerHTML = "-";
-
-        const newContentAddBtn = document.createElement("button");
-        newContentAddBtn.setAttribute("class", "addContentsBtn");
-        newContentAddBtn.innerHTML = "+";
-
-        newContentLabel.appendChild(newContentInput);
-        newContentLabel.appendChild(newContentDelBtn);
-        newContentLabel.appendChild(newContentAddBtn);
-
-        const targetLocation = e.target.parentElement;
-        console.log(targetLocation)
-        targetLocation.after(newContentLabel)
-    })
-
-    const addContentReq = async (url) => {
-        let id = undefined;
-        await fetch(url, {
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            mode: "cors",
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) id = data.data
-            })
-            .catch((error) => console.log("실패 : ", error));
-
-        return id;
-    }
-
-    $(document).on('click', '.delContentsBtn', async (e) => {
-        const target = e.target.parentElement;
-        const delContentRes = await delContentReq(host + "/api/contents" + id + "/?id=", target.id);
-        if (delContentRes) {
-            target.remove()
-        }
-    })
-
-    const delContentReq = async (url, id) => {
-        let success = undefined;
-        await fetch(url + id, {
-            method: "DELETE",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            mode: "cors",
-        })
-            .then((response) => {
-                success = response
-            })
-            .catch((error) => console.log("실패 : ", error));
-
-        return success
-    }
-</script>
+<script src="/js/updateBoard.js"></script>
+<!--<script src="/static/js/updateBoard.js"></script>-->
 </html>
