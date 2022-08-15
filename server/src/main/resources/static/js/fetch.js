@@ -37,5 +37,17 @@ async function postOrPut(url, body, method) {
 function getData(response) {
     return response.json()
         .catch((error) => console.log("실패 : ", error));
+}
 
+async function del(url, body) {
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: 'cors',
+        body: JSON.stringify(body)
+    });
+
+    return getData(response);
 }

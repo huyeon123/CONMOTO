@@ -39,7 +39,7 @@
 <script src="/js/fetch.js"></script>
 <script>
     async function save() {
-        const url = baseUrl + "/api/member?groupUrl=" + groupUrl;
+        const url = baseUrl + "/api/group/member?groupUrl=" + groupUrl;
         const request = [];
         const members = document.getElementsByClassName("member-info");
         for (let member of members) {
@@ -57,11 +57,25 @@
         }
     }
 
+    async function expelMember(element) {
+        const url = baseUrl + "/api/group/member?groupUrl=" +groupUrl;
+        const memberInfo = element.parentElement;
+        const email = memberInfo.children.item(1).outerText;
+        const request = {email: email};
+
+        const success = await del(url, request);
+        if (success) {
+            const name = memberInfo.firstElementChild.outerText;
+            alert(name + " 사용자가 그룹에서 추방되었습니다.")
+        }
+    }
+
     function activateExpelMemberBtn() {
         const element = $('.member-info');
         const button = document.createElement("button");
         button.setAttribute("type", "button");
         button.setAttribute("class", "checkExpel");
+        button.setAttribute("onclick", "expelMember(this)");
         button.innerHTML = "강퇴";
         element.append(button);
 

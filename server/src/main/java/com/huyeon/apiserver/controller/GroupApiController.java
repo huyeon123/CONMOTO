@@ -2,13 +2,11 @@ package com.huyeon.apiserver.controller;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.GroupDto;
+import com.huyeon.apiserver.model.dto.MemberDto;
 import com.huyeon.apiserver.model.dto.ResMessage;
 import com.huyeon.apiserver.model.entity.Groups;
 import com.huyeon.apiserver.model.entity.User;
-import com.huyeon.apiserver.service.CategoryService;
-import com.huyeon.apiserver.service.GroupManagerService;
-import com.huyeon.apiserver.service.GroupService;
-import com.huyeon.apiserver.service.UserGroupService;
+import com.huyeon.apiserver.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,18 +15,20 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Slf4j
 @RestController
+@Transactional
 @RequestMapping("/api/group")
 @RequiredArgsConstructor
 public class GroupApiController {
     private final GroupService groupService;
     private final UserGroupService userGroupService;
     private final GroupManagerService managerService;
+    private final MemberService memberService;
     private final CategoryService categoryService;
 
-    @Transactional
     @PostMapping
     public ResponseEntity<?> createGroup(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -73,5 +73,24 @@ public class GroupApiController {
         User user = userDetails.getUser();
         String resMessage = groupService.deleteGroup(user, groupUrl);
         return new ResponseEntity<>(resMessage, HttpStatus.OK);
+    }
+
+    @PostMapping("/member")
+    public ResponseEntity<?> saveMemberAuthority(
+            @RequestParam String groupUrl,
+            @RequestBody List<MemberDto> request) {
+        //request를 시도 -> 성공/실패 사후처리
+        Groups group = groupService.getGroupByUrl(groupUrl);
+        boolean success = memberService.saveMemberRole(group, request);
+        return new ResponseEntity<>(success, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/member")
+    public ResponseEntity<?> expelMember(
+            @RequestParam String groupUrl,
+            @RequestBody MemberDto request) {
+        Groups group = groupService.getGroupByUrl(groupUrl);
+        boolean success = userGroupService.expelUserFromGroup(request, group);
+        return new ResponseEntity<>(success, HttpStatus.OK);
     }
 }
