@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>카테고리 생성 페이지</title>
+</head>
+<body>
+<div>
+    <div>
+        <label>
+            <span>카테고리명</span>
+            <input type="text"
+                   id="target-category-name"
+                   placeholder="생성할 카테고리명을 입력하세요.">
+        </label>
+    </div>
+    <div>
+        <label>
+            <span>상위 카테고리</span>
+            <select id="parent-category">
+                <option th:each="category: ${categoryOptions}"
+                        th:value="${category.categoryId}"
+                        th:text="${category.name}">
+                    CATEGORY
+                </option>
+            </select>
+        </label>
+    </div>
+    <button type="button" onclick="createCategory()"> 생성</button>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script src="../static/js/fetch.js"></script>
+<script src="/js/fetch.js"></script>
+<script>
+    async function createCategory() {
+        const url = baseUrl + "/api/category?groupUrl=" + groupUrl;
+        const categoryName = $('#target-category-name').val();
+        const parentCategoryId = $('#parent-category option:selected').val();
+        const request = {name: categoryName, categoryId: parentCategoryId};
+
+        await fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: "cors",
+            body: JSON.stringify(request)
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data) {
+                    window.location.href = "./";
+                }
+            })
+            .catch((error) => console.log("실패 : ", error));
+    }
+</script>
+</html>

@@ -27,6 +27,10 @@ public class Board extends AuditEntity implements Auditable {
     @NonNull
     private String title;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoryId")
+    private Category category;
+
     @Enumerated(EnumType.STRING)
     private STATUS status;
 

@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta content = "width=device-width" charset="UTF-8">
-    <title>SUPER TODO LIST</title>
+    <meta content="width=device-width" charset="UTF-8">
+    <title>SUPER SPACE</title>
     <style>
-        body {font-family: Arial, Helvetica, sans-serif;}
-        form {border: 3px solid #f1f1f1;}
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            width: 800px;
+            margin: auto;
+        }
+
+        form {
+            border: 3px solid #f1f1f1;
+        }
 
         input[type=text], input[type=password] {
             width: 100%;
@@ -44,12 +51,18 @@
             margin: 0 auto;
             align-items: center;
         }
+
+        #logo {
+            display: flex;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
 <div th:text="${response}"></div>
 <p></p>
 <div>
+    <img src="/img/logo.jpg" alt="SUPER SPACE" id="logo">
     <h2 style="text-align: center">로그인</h2>
 
     <form id="sign_in">
@@ -75,7 +88,7 @@
 
             <button type="button" onclick="formSubmit()">로그인</button>
             <label>
-                <input type="checkbox" checked="checked" id = "rememberMe" name="remember"> Remember me
+                <input type="checkbox" checked="checked" id="rememberMe" name="remember"> Remember me
             </label>
         </div>
 
@@ -87,6 +100,8 @@
 </div>
 </body>
 </html>
+<script src="../static/js/fetch.js"></script>
+<script src="/js/fetch.js"></script>
 <script>
     const form = document.getElementById("password");
     form.addEventListener('keyup', (e) => {
@@ -101,22 +116,10 @@
         request.password = this.password.value
         request.rememberMe = this.rememberMe.value === "on";
 
-        await fetch(url, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            mode: 'cors', //운영시 cors로 변경
-            cache: 'no-cache',
-            body: JSON.stringify(request)
+        const data = post(url, request);
+        data.then((data) => {
+            alert(data.message);
+            if (data.success) window.location.href = "http://localhost:8080/workspace";
         })
-            .then((response) => response.json())
-            .then((data) => {
-                alert(data.message);
-                if(data.success) window.location.href = "http://localhost:8080/user/feed";
-            })
-            .catch((error) => {
-                console.log("실패: ", error);
-            })
     }
 </script>

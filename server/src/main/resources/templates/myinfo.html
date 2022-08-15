@@ -4,12 +4,6 @@
     <meta charset="UTF-8">
     <title>내 정보</title>
     <style>
-        .option > button {
-            width: 30px;
-            font-size: 13px;
-            padding: 5px 10px;
-
-        }
         .container {
             width: 550px;
             cursor: pointer;
@@ -19,15 +13,26 @@
 
         .option {
             display: inline-block;
-            width: 70px;
+            width: 60px;
             align-items: center;
             text-align: center;
             vertical-align: top;
-            margin-top: 16px;
+            margin-top: 10px;
+        }
+
+        .option > button {
+            width: 50px;
+            font-size: 14px;
+            padding: 5px 10px;
+            border: none;
+            background-color: white;
+            color: red;
+            opacity: 0.5;
+            cursor: pointer;
         }
 
         .content-body {
-            width: 465px;
+            width: 480px;
             display: inline-block;
         }
     </style>
@@ -59,25 +64,52 @@
         </div>
     </div>
     <span class="option">
-        <button type="button" class="addBoardBtn">+</button>
-        <button type="button" class="delBoardBtn">-</button>
-   </span>
-
+        <button type="button" class="delBoardBtn">삭제</button>
+    </span>
 </div>
 <p th:if="${#maps.size(boardAndContents) < 1}">작성한 게시글이 없습니다.</p>
 <hr>
 <h2>COMMENT</h2>
 <div class="container" th:each="comment : ${comments}">
-    <div>
+    <div class="content-body" th:id="*{comment.id}"th:onclick="|location.href='@{/board/{id}(id=${comment.boardId})}'|">
         <p>작성자 : <span th:text="${comment.userEmail}">userName</span></p>
         <p>내용 : <span th:text="${comment.comment}">comment</span></p>
     </div>
+    <span class="option">
+        <button type="button" class="delCommentBtn">삭제</button>
+    </span>
 </div>
 <p th:if="${#lists.size(comments) < 1}">작성한 댓글이 없습니다.</p>
 </body>
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 <script>
     const baseUrl = "http://" + window.location.host;
+
+    $(document).on('click', '.delBoardBtn', async (e) => {
+        if (confirm("정말로 삭제하시겠습니까?")) {
+            let target = e.target
+                .parentElement
+                .previousElementSibling
+                .firstElementChild;
+            let success = await delBoardReq(baseUrl + "/api/board/" + target.id);
+            if (success) {
+                target.parentElement.parentElement.remove();
+            }
+        }
+    });
+
+    $(document).on('click', '.delCommentBtn', async (e) => {
+        if (confirm("정말로 삭제하시겠습니까?")) {
+            let target = e.target
+                .parentElement
+                .previousElementSibling
+            let success = await delCommentReq(baseUrl + "/api/comment?commentId=" + target.id);
+            if (success) {
+                target.parentElement.remove();
+            }
+        }
+    });
+
     async function createBoard(url = baseUrl + "/api/board") {
         await fetch(url, {
             method: "GET",
@@ -90,26 +122,30 @@
             .then((data) => {
                 alert(data.message);
                 if (data.success) {
-                    window.location.href = baseUrl +"/board/" + data.data;
+                    window.location.href = baseUrl + "/board/" + data.data;
                 }
             })
             .catch((error) => console.log("실패 : ", error));
     }
 
-    $(document).on('click', '.delBoardBtn', async(e) => {
-        if(confirm("정말로 삭제하시겠습니까?")) {
-            let target = e.target
-                .parentElement
-                .previousElementSibling
-                .firstElementChild;
-            let success = await delBoardReq(baseUrl + "/api/board/" + target.id);
-            if (success) {
-                target.parentElement.parentElement.remove();
-            }
-        }
-    });
-
     const delBoardReq = async (url) => {
+        let success = undefined;
+        await fetch(url, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: "cors",
+        })
+            .then((response) => {
+                success = response
+            })
+            .catch((error) => console.log("실패 : ", error));
+
+        return success;
+    }
+
+    const delCommentReq = async (url) => {
         let success = undefined;
         await fetch(url, {
             method: "DELETE",

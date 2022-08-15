@@ -1,6 +1,5 @@
 package com.huyeon.apiserver.model.entity;
 
-import com.huyeon.apiserver.model.Authority;
 import com.huyeon.apiserver.model.dto.UserSignUpReq;
 import com.huyeon.apiserver.model.entity.base.AuditEntity;
 import com.huyeon.apiserver.model.listener.Auditable;

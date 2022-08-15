@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>그룹 생성 페이지</title>
+</head>
+<body>
+<div>
+    <div>
+        <label>
+            <span>그룹명</span>
+            <input type="text"
+                   id="group-name"
+                   placeholder="생성할 그룹명을 입력하세요.">
+        </label>
+    </div>
+    <div>
+        <label>
+            <span>그룹 소개</span>
+            <input type="text"
+                   id="group-description"
+                   placeholder="그룹 소개를 작성하세요.">
+        </label>
+    </div>
+    <div>
+        <label>
+            <span>URL</span>
+            <input type="text"
+                   id="url-path"
+                   placeholder="사용할 URL 경로명을 입력하세요.">
+        </label>
+    </div>
+    <button type="button" onclick="createGroup()"> 생성</button>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script src="../static/js/fetch.js"></script>
+<script src="/js/fetch.js"></script>
+<script>
+    async function createGroup(url = baseUrl + "/api/group") {
+        const groupName = $('#group-name').val();
+        const description = $('#group-description').val();
+        const urlPath = $('#url-path').val();
+        const request = {name: groupName, description: description, url: urlPath};
+        console.log(request)
+        await fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: "cors",
+            body: JSON.stringify(request)
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                alert(data.message);
+                if (data.success) {
+                    window.location.href = baseUrl + "/workspace/" + data.data.url;
+                }
+            })
+            .catch((error) => console.log("실패 : ", error));
+    }
+</script>
+</html>

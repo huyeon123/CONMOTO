@@ -1,4 +1,4 @@
-package com.huyeon.apiserver.model;
+package com.huyeon.apiserver.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +8,6 @@ import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import java.util.Objects;
 
 @Data

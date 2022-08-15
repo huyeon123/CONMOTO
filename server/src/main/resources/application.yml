@@ -23,8 +23,8 @@ spring:
       - classpath:/static/
     suffix:
       - .html
-      - .js
-      - .css
+#      - .js
+#      - .css
 
   devtools:
     livereload:

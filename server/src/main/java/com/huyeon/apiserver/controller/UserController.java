@@ -42,7 +42,7 @@ public class UserController {
         return "editprofile";
     }
 
-    @GetMapping("/feed")
+    @GetMapping("/info")
     public String myFeed(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
         if(userDetails.getAuthorities()
                 .stream()
@@ -54,7 +54,7 @@ public class UserController {
         model.addAttribute("boardAndContents", boardAndContents);
 
         model.addAttribute("comments", userService.myComment(userDetails.getUsername()));
-        return "feed";
+        return "myinfo";
     }
 
     @GetMapping("/resign")
