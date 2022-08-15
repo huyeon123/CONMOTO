@@ -129,7 +129,11 @@
                 <div class="sidebar-header">
                     <span>카테고리</span>
                     <button type="button" onclick="moveToCreateCategoryPage()">생성</button>
-                    <button type="button" th:if="${#lists.size(sideBar.categories) > 0}">관리</button>
+                    <button type="button"
+                            th:if="${#lists.size(sideBar.categories) > 0}"
+                            onclick="moveToManageCategoryPage()">
+                        관리
+                    </button>
                 </div>
                 <div id="category-container" th:each="category: ${sideBar.categories}">
                     <div class="sidebar-elements"
@@ -182,6 +186,10 @@
 
     function moveToCreateCategoryPage() {
         window.location.href = currentPage + "/new-category";
+    }
+
+    function moveToManageCategoryPage() {
+        window.location.href = currentPage + "/category";
     }
 </script>
 </html>

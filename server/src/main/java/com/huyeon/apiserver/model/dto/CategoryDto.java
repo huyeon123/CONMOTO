@@ -16,6 +16,7 @@ public class CategoryDto {
     private Long categoryId;
     private String name;
     private Long parentId;
+    private Integer level;
     private List<CategoryDto> subCategories;
 
     public CategoryDto(Long categoryId, String name, Long parentId) {

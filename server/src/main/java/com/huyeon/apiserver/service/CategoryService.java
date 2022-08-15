@@ -51,7 +51,7 @@ public class CategoryService {
         Map<Long, List<CategoryDto>> groupingByParent =
                 groupingByParent(categories);
 
-        addSubCategories(rootCategoryDto, groupingByParent);
+        addSubCategories(rootCategoryDto, groupingByParent, 1);
 
         return rootCategoryDto;
     }
@@ -64,14 +64,16 @@ public class CategoryService {
         return categories.get(0);
     }
 
-    private void addSubCategories(CategoryDto parent, Map<Long, List<CategoryDto>> groupingByParent) {
+    private void addSubCategories(CategoryDto parent, Map<Long, List<CategoryDto>> groupingByParent, int level) {
         List<CategoryDto> subCategories = groupingByParent.get(parent.getCategoryId());
 
         if (subCategories == null) return;
 
+        subCategories.forEach(c -> c.setLevel(level));
+
         parent.setSubCategories(subCategories);
 
-        subCategories.forEach(sc -> addSubCategories(sc, groupingByParent));
+        subCategories.forEach(sc -> addSubCategories(sc, groupingByParent, level + 1));
     }
 
     public List<CategoryDto> getCategories(Groups group) {

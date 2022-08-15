@@ -30,8 +30,21 @@ public class CategoryController {
         return "categorypage";
     }
 
+    @GetMapping("/category")
+    public String manageCategoryPage(
+            @PathVariable String groupUrl,
+            Model model) {
+        model.addAttribute("rootCategory", categoryTree(groupUrl));
+        return "categorymanage";
+    }
+
     public List<CategoryDto> categoryOptions(String groupUrl) {
         Groups group = groupService.getGroupByUrl(groupUrl);
         return categoryService.getCategories(group);
+    }
+
+    public CategoryDto categoryTree(String groupUrl) {
+        Groups group = groupService.getGroupByUrl(groupUrl);
+        return categoryService.getRootOfCategoryTree(group);
     }
 }

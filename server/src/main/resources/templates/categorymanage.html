@@ -1,10 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>카테고리 관리 페이지</title>
+    <link href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <style>
+        body {
+            width: 800px;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        .ui-state-default {
+            display: flex;
+            height: 40px;
+            padding: 5px;
+            align-items: center;
+        }
+
+        .level2 {
+            margin-left: 30px;
+        }
+
+        .level3 {
+            margin-left: 60px;
+        }
+    </style>
 </head>
 <body>
-
+<div>
+    <ul id="sortable">
+        <li class="ui-state-default ui-state-disabled"
+            th:text="${rootCategory.name}">ROOT
+        </li>
+        <div th:each="category, index : ${rootCategory.subCategories}">
+            <li class="ui-state-default"
+                th:text="${category.name}"></li>
+            <div th:each="category2: ${category.subCategories}">
+                <li class="ui-state-default level2"
+                    th:text="${category2.name}"></li>
+                <div th:each="category3: ${category2.subCategories}">
+                    <li class="ui-state-default level3"
+                        th:text="${category3.name}"></li>
+                </div>
+            </div>
+        </div>
+    </ul>
+    <button type="button" style="float: right">저장</button>
+</div>
 </body>
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script>
+    $(function () {
+        $("#sortable")
+            .sortable({
+                revert: true,
+                items: "li:not(.ui-state-disabled)",
+                containment: "document"
+            })
+            .disableSelection();
+    });
+</script>
 </html>
