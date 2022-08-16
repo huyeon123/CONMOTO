@@ -18,6 +18,11 @@
             height: 40px;
             padding: 5px;
             align-items: center;
+            justify-content: space-between;
+        }
+
+        .ui-state-highlight {
+            height: 50px;
         }
 
         .level2 {
@@ -26,6 +31,11 @@
 
         .level3 {
             margin-left: 60px;
+        }
+
+        .change-level {
+            padding: 5px;
+            margin: 3px;
         }
     </style>
 </head>
@@ -36,32 +46,142 @@
             th:text="${rootCategory.name}">ROOT
         </li>
         <div th:each="category, index : ${rootCategory.subCategories}">
-            <li class="ui-state-default"
-                th:text="${category.name}"></li>
+            <div class="ui-state-default level1">
+                <li th:id="${category.categoryId}" th:text="${category.name}">L1</li>
+            </div>
             <div th:each="category2: ${category.subCategories}">
-                <li class="ui-state-default level2"
-                    th:text="${category2.name}"></li>
+                <div class="ui-state-default level2">
+                    <li th:id="${category.categoryId}" th:text="${category2.name}">L2</li>
+                </div>
                 <div th:each="category3: ${category2.subCategories}">
-                    <li class="ui-state-default level3"
-                        th:text="${category3.name}"></li>
+                    <div class="ui-state-default level3">
+                        <li th:id="${category.categoryId}" th:text="${category3.name}">L3</li>
+                    </div>
                 </div>
             </div>
         </div>
     </ul>
-    <button type="button" style="float: right">저장</button>
+    <button type="button" style="float: right" onclick="save()">저장</button>
 </div>
 </body>
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script src="../static/js/fetch.js"></script>
+<script src="/js/fetch.js"></script>
 <script>
     $(function () {
         $("#sortable")
             .sortable({
                 revert: true,
-                items: "li:not(.ui-state-disabled)",
-                containment: "document"
+                items: "div:not(.ui-state-disabled)",
+                containment: "document",
+                cursor: "move",
+                placeholder: "ui-state-highlight"
             })
             .disableSelection();
     });
+
+    $(function () {
+        $('.ui-state-default').not('.ui-state-disabled').append(
+            $('<div>').append(
+                '<button class="change-level change-level__up">UP</button>',
+                '<button class="change-level change-level__down">DOWN</button>',
+            )
+        )
+
+        hide($('.level1 button.change-level__up').get(0));
+        hide($('.level3 button.change-level__down').get(0));
+    });
+
+    $(document).on('click', '.change-level__up', (e) => {
+        const upButton = e.target;
+        const target = e.target.parentElement.parentElement;
+        changeLevelUp(upButton, target);
+    });
+
+    $(document).on('click', '.change-level__down', (e) => {
+        const downButton = e.target;
+        const target = e.target.parentElement.parentElement;
+        changeLevelDown(downButton, target);
+    });
+
+    function changeLevelUp(upButton, target) {
+        const downButton = upButton.nextElementSibling;
+        const className = target.className;
+        if (className.includes("level2")) {
+            target.classList.replace("level2", "level1")
+            hide(upButton);
+        }
+        if (className.includes("level3")) {
+            target.classList.replace("level3", "level2")
+            display(upButton);
+            display(downButton);
+        }
+    }
+
+    function changeLevelDown(downButton, target) {
+        const upButton = downButton.previousElementSibling;
+        const className = target.className;
+        if (className.includes("level1")) {
+            target.classList.replace("level1", "level2")
+            display(upButton);
+        }
+        if (className.includes("level2")) {
+            target.classList.replace("level2", "level3")
+            hide(downButton);
+        }
+    }
+
+    function hide(button) {
+        button.style.opacity = "0.8";
+        button.disabled = true;
+    }
+
+    function display(button) {
+        button.style.opacity = "1.0";
+        button.disabled = false;
+    }
+
+    async function save() {
+        const url = baseUrl + "/api/category?groupUrl=" + groupUrl;
+        const request = [];
+
+        pushCategoryInfo(request);
+
+        const success = await put(url, request);
+        if (success) {
+            alert("정상 반영되었습니다.");
+            window.location.href = ".";
+        }
+    }
+
+    function pushCategoryInfo(request) {
+        extractAndPushFirstLevel(request);
+        extractAndPushSecondLevel(request);
+        extractAndPushThirdLevel(request);
+    }
+
+    function extractAndPushFirstLevel(request) {
+        extractAndPush('.level1 > li', 1, request);
+    }
+
+    function extractAndPushSecondLevel(request) {
+        extractAndPush('.level2 > li', 2, request);
+    }
+
+    function extractAndPushThirdLevel(request) {
+        extractAndPush('.level3 > li', 3, request);
+    }
+
+    function extractAndPush(selector, level, request) {
+        $(selector).each((idx, e) => {
+            const temp = {
+                categoryId: e.id,
+                name: e.innerText,
+                level: level
+            }
+            request.push(temp);
+        });
+    }
 </script>
 </html>

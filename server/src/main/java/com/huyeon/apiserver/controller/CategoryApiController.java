@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/category")
@@ -26,5 +28,13 @@ public class CategoryApiController {
         boolean success = categoryService.createCategory(request, group);
 
         return new ResponseEntity<>(success, HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<?> editCategory(
+            @RequestBody List<CategoryDto> request,
+            @RequestParam String groupUrl) {
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
