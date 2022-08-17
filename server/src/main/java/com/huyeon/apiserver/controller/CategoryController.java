@@ -40,7 +40,7 @@ public class CategoryController {
 
     public List<CategoryDto> categoryOptions(String groupUrl) {
         Groups group = groupService.getGroupByUrl(groupUrl);
-        return categoryService.getCategories(group);
+        return categoryService.getCategoryList(group);
     }
 
     public CategoryDto categoryTree(String groupUrl) {

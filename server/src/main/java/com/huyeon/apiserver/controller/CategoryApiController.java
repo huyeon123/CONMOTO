@@ -34,7 +34,8 @@ public class CategoryApiController {
     public ResponseEntity<?> editCategory(
             @RequestBody List<CategoryDto> request,
             @RequestParam String groupUrl) {
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        Groups group = groupService.getGroupByUrl(groupUrl);
+        boolean success = categoryService.editCategory(request, group);
+        return new ResponseEntity<>(success, HttpStatus.OK);
     }
 }

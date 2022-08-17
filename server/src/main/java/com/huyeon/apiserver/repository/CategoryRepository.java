@@ -11,5 +11,7 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findAllByGroup(Groups group);
 
+    List<Category> findAllByParent(Category parent);
+
     void deleteAllByGroup(Groups group);
 }

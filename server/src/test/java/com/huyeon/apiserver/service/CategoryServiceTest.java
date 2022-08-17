@@ -1,7 +1,6 @@
 package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.dto.CategoryDto;
-import com.huyeon.apiserver.model.entity.Category;
 import com.huyeon.apiserver.model.entity.Groups;
 import com.huyeon.apiserver.model.entity.User;
 import com.huyeon.apiserver.model.entity.UserGroup;
@@ -14,9 +13,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.event.annotation.BeforeTestClass;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
@@ -37,17 +36,31 @@ public class CategoryServiceTest {
     @Autowired
     private UserGroupRepository userGroupRepository;
 
-    @DisplayName("카테고리 생성 테스트")
+    @BeforeTestClass
+    public void initTest() {
+        User user = userRepository.findByEmail("user@test.com").orElseThrow();
+        Groups testGroup = Groups.builder().name("testGroup").build();
+        testGroup = groupRepository.save(testGroup);
+
+        UserGroup userGroup = UserGroup.builder()
+                .user(user)
+                .group(testGroup)
+                .build();
+
+        userGroupRepository.save(userGroup);
+    }
+
+    @DisplayName("카테고리 조회 테스트")
     @Test
-    void createRootCategory() throws Exception {
+    void getRootOfCategoryTreeTest() throws Exception {
         //given
-        Groups groups = initTest();
+        Groups groups = groupRepository.findByUrlPath("test-group").orElseThrow();
 
         //when
         CategoryDto rootCategory = categoryService.getRootOfCategoryTree(groups);
 
         //then
-        Assertions.assertEquals("ROOT", rootCategory.getName());
+        Assertions.assertEquals("==최상위 카테고리==", rootCategory.getName());
         Assertions.assertEquals("Level 1-1",
                 rootCategory.getSubCategories().get(0) //Root
                         .getSubCategories().get(0) //Level 1-1
@@ -59,51 +72,13 @@ public class CategoryServiceTest {
                         .getName());
     }
 
-    Groups initTest() {
-        User user = userRepository.findByEmail("user@test.com").orElseThrow();
-        Groups testGroup = Groups.builder().name("testGroup").build();
-        testGroup = groupRepository.save(testGroup);
+    @DisplayName("카테고리 순서/계층 변경 테스트")
+    @Test
+    void editCategoryTree() {
+        Groups groups = groupRepository.findByUrlPath("test-group").orElseThrow();
+        CategoryDto rootOfCategoryTree = categoryService.getRootOfCategoryTree(groups);
 
-        UserGroup userGroup = UserGroup.builder()
-                .user(user)
-                .group(testGroup)
-                .build();
+        //parentId만 바꿔주면 알아서 계층은 잡힘
 
-        userGroupRepository.save(userGroup);
-
-        List<Category> categories = new ArrayList<>();
-
-        Category level1_1 = Category.builder()
-                .name("Level 1-1")
-                .parent(null)
-                .group(testGroup)
-                .build();
-
-        Category level1_2 = Category.builder()
-                .name("Level 1-2")
-                .parent(null)
-                .group(testGroup)
-                .build();
-
-        Category level2_1 = Category.builder()
-                .name("Level 2-1")
-                .parent(level1_1)
-                .group(testGroup)
-                .build();
-
-        Category level2_2 = Category.builder()
-                .name("Level 2-2")
-                .parent(level1_1)
-                .group(testGroup)
-                .build();
-
-        categories.add(level1_1);
-        categories.add(level2_1);
-        categories.add(level1_2);
-        categories.add(level2_2);
-
-        categoryRepository.saveAll(categories);
-
-        return testGroup;
     }
 }
