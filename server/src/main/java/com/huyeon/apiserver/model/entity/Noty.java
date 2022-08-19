@@ -5,6 +5,7 @@ import com.huyeon.apiserver.model.listener.Auditable;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -19,10 +20,15 @@ public class Noty extends AuditEntity implements Auditable {
 
     private String senderName;
 
+    @ElementCollection
+    private List<String> receivers;
+
     @OneToOne(fetch = FetchType.LAZY)
-    private Groups group;
+    private Groups receiveGroup;
 
     private String message;
 
     private String redirectUrl;
+
+    private NotyType type;
 }

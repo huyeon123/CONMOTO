@@ -44,7 +44,7 @@ public class UserController {
 
     @GetMapping("/info")
     public String myFeed(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
-        if(userDetails.getAuthorities()
+        if (userDetails.getAuthorities()
                 .stream()
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) return "admin";
 
@@ -60,5 +60,12 @@ public class UserController {
     @GetMapping("/resign")
     public String resignPage() {
         return "resign";
+    }
+
+    @GetMapping("/noty")
+    public String notyCenterPage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            Model model) {
+        return "notypage";
     }
 }
