@@ -30,5 +30,6 @@ public class Noty extends AuditEntity implements Auditable {
 
     private String redirectUrl;
 
+    @Enumerated(EnumType.STRING)
     private NotyType type;
 }

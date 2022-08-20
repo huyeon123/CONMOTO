@@ -23,7 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class NotyService {
 
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000L * 60L;
+    private static final Long DEFAULT_TIMEOUT = 1000L * 60L * 60L;
 
     private final NotyRepository notyRepository;
     private final EmitterRepository emitterRepository = new EmitterRepositoryImpl();

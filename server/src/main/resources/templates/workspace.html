@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title th:title="${groupName}">Work Space</title>
+    <link href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
     <style>
         body {
             width: 100vw;
@@ -92,6 +93,68 @@
             display: inline-flex;
         }
 
+        #noty-count {
+            color: white;
+            background-color: #e4606d;
+            border-radius: 15px;
+            padding: 0 7px;
+        }
+
+        .ui-dialog {
+            padding: unset;
+        }
+
+        .ui-dialog-titlebar {
+            background-color: white;
+            border: none;
+        }
+
+        .noty {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 400px;
+            border: 1px solid;
+        }
+
+        .noty-content {
+            display: flex;
+            flex-direction: column;
+            width: 90%;
+        }
+
+        .noty-header {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px;
+        }
+
+        .message {
+            margin: 5px;
+        }
+
+        #profile {
+            display: flex;
+            justify-content: center;
+            width: 15%;
+            margin: 5px;
+            padding: 15px 0;
+            border: 1px solid;
+        }
+
+        #noty {
+            display: flex;
+            justify-content: center;
+        }
+
+        #noty-button {
+            cursor: pointer;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
     </style>
 </head>
 <body>
@@ -104,7 +167,7 @@
             <div id="info" class="sidebar-section">
                 <div style="width: 100%">
                     <div class="items" th:onclick="|location.href='@{/user/info}'|">내 활동</div>
-                    <div class="items">알림</div>
+                    <div class="items" th:onclick="|location.href='@{/user/noty}'|">알림</div>
                 </div>
             </div>
             <div id="group-list" class="sidebar-section">
@@ -158,7 +221,13 @@
         <div style="width: 100%">
             <div class="header">
                 <div id="group-name" th:text="${appHeader.groupName}">GROUP NAME</div>
-                <div id="user-name" th:text="${appHeader.userName}">USER NAME</div>
+                <div style="display: flex; flex-direction: row">
+                    <div style="margin-right: 10px">
+                        <span id="noty-button">알림</span>
+                        <span id="noty-count">0</span>
+                    </div>
+                    <div id="user-name" th:text="${appHeader.userName}">USER NAME</div>
+                </div>
             </div>
         </div>
         <div class="header">
@@ -169,11 +238,110 @@
         </div>
     </div>
 </div>
+
+<div id="noty" class="ui-dialog">
+    <div id="noty-container">
+        <div class="noty">
+            <div id="profile">프로필</div>
+            <div class="noty-content">
+                <div class="noty-header">
+                    <div>상대방</div>
+                    <div>시간</div>
+                </div>
+                <div class="message">내용</div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script src="../static/js/fetch.js"></script>
 <script src="/js/fetch.js"></script>
 <script>
+    //알림 이벤트 수신(SSE)
+    $(function () {
+        const eventSource = new EventSource("/api/noty/subscribe");
+
+        eventSource.addEventListener("message", function (event) {
+            console.log(event.data);
+
+            try {
+                const data = JSON.parse(event.data);
+
+                const $noty = $('#noty-count');
+                const current = parseInt($noty.text());
+                $noty.text(current + 1);
+
+                addNoty(data);
+                // alert("알림왔숑!");
+            } catch (e) {
+                console.error("JSON")
+            }
+        });
+    });
+
+    function addNoty(data) {
+        $("#noty-container").append(
+            `<div class="noty">
+                <div id="profile">프로필</div>
+                    <div class="noty-content">
+                        <div class="noty-header">
+                            <div>` + data.senderName + `</div>
+                            <div>` + data.sendTime + `</div>
+                        </div>
+                    <pre class="message">`+ data.message+ `</pre>
+                </div>
+            </div>`
+        )
+    }
+
+    function deleteAllNoty() {
+        $("#noty-container").children().delete();
+    }
+
+    //알림 다이얼로그
+    $(function () {
+        $("#noty").dialog({
+            title: "미확인 알림",
+            autoOpen: false,
+            dialogClass: "no-close",
+            minWidth: 430,
+            maxHeight: 320,
+            position: {
+                my: "right top",
+                at: "right-110 bottom",
+                of: ".header"
+            },
+            resizable: false,
+            show: {
+                effect: "slideDown",
+            },
+            hide: {
+                effect: "fold"
+            },
+            buttons: [
+                {
+                    text: "모두 읽음",
+                    icon: "ui-icon-trash",
+                    click: function () {
+                        $(".noty").remove();
+                        $("#noty-count").text(0);
+                        $(this).dialog("close");
+                    }
+                }
+            ],
+            draggable: true
+        });
+
+        $(".ui-dialog-content").css("padding", "0.5em");
+        $(".ui-dialog-buttonpane").css("padding", 0);
+    });
+
+    $("#noty-button").click((e) => {
+        $("#noty").dialog("open");
+    })
+
     const currentPage = window.location.pathname;
 
     function moveToCreateGroupPage() {

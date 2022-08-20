@@ -93,4 +93,13 @@ public class GroupApiController {
         boolean success = userGroupService.expelUserFromGroup(request, group);
         return new ResponseEntity<>(success, HttpStatus.OK);
     }
+
+    @PostMapping("/invite")
+    public ResponseEntity<?> inviteMember(
+            @RequestParam String groupUrl,
+            @RequestBody String userEmail) {
+        Groups group = groupService.getGroupByUrl(groupUrl);
+        groupService.inviteMember(group, userEmail);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

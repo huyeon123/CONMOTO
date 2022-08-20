@@ -1,16 +1,15 @@
 package com.huyeon.apiserver.service;
 
+import com.huyeon.apiserver.model.MyEvent;
 import com.huyeon.apiserver.model.dto.GroupDto;
-import com.huyeon.apiserver.model.entity.GroupManager;
-import com.huyeon.apiserver.model.entity.Groups;
-import com.huyeon.apiserver.model.entity.User;
-import com.huyeon.apiserver.model.entity.UserGroup;
+import com.huyeon.apiserver.model.entity.*;
 import com.huyeon.apiserver.repository.CategoryRepository;
 import com.huyeon.apiserver.repository.GroupManagerRepository;
 import com.huyeon.apiserver.repository.GroupRepository;
 import com.huyeon.apiserver.repository.UserGroupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -26,6 +25,7 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupManagerRepository managerRepository;
     private final CategoryRepository categoryRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     private static final int IDENTIFIER_LENGTH = 10;
 
@@ -142,5 +142,14 @@ public class GroupService {
         return managerRepository.existsByGroupAndManager(group, user);
     }
 
+    public void inviteMember(Groups group, String userEmail) {
+        Noty inviteNoty = Noty.builder()
+                .senderName(group.getName())
+                .receivers(List.of(userEmail))
+                .message("그룹에 초대합니다!\n" + group.getDescription())
+                .type(NotyType.GROUP_INVITE)
+                .build();
 
+        MyEvent.publishEvent(eventPublisher, inviteNoty);
+    }
 }
