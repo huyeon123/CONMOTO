@@ -1,4 +1,4 @@
-package com.huyeon.apiserver.controller;
+package com.huyeon.apiserver.controller.api;
 
 import com.huyeon.apiserver.model.dto.ResMessage;
 import com.huyeon.apiserver.model.dto.UserSignInReq;

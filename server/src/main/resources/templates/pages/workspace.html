@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/workspace_layout}">
+
+<!-- index.html 고유 CSS 추가 -->
+<th:block layout:fragment="css">
+    <!--    <link rel="stylesheet" th:href="@{/css/page/home.css}" >-->
+</th:block>
+<!-- index.html 고유 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <!--    <script th:src="@{/js/page/home.js}"></script>-->
+</th:block>
+
+<div layout:fragment="content">
+    <div class="header">
+        카테고리 헤더
+    </div>
+    <div class="super-space-contents content">
+        현재 그룹페이지의 최신 게시물 10개 보여주기
+    </div>
+</div>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<div style="width: 100%" th:fragment="headerFragment">
+    <div class="header">
+        <div id="group-name" th:text="${appHeader.groupName}">GROUP NAME</div>
+        <div style="display: flex; flex-direction: row">
+            <div style="margin-right: 10px">
+                <span id="noty-button">알림</span>
+                <span id="noty-count">0</span>
+            </div>
+            <div id="user-name" th:text="${appHeader.userName}">USER NAME</div>
+        </div>
+    </div>
+</div>
+</html>

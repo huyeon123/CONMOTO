@@ -1,0 +1,27 @@
+.header {
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-flow: row;
+    padding: 0 12px;
+}
+
+#group-name {
+    display: inline-flex;
+}
+
+#user-name {
+    display: inline-flex;
+}
+
+#noty-count {
+    color: white;
+    background-color: #e4606d;
+    border-radius: 15px;
+    padding: 0 7px;
+}
+
+#noty-button {
+    cursor: pointer;
+}

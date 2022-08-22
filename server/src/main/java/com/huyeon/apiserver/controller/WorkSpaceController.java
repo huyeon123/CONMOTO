@@ -36,7 +36,7 @@ public class WorkSpaceController {
         }
 
         addDefaultSideBarAndHeader(userDetails, model);
-        return "workspace";
+        return "pages/workspace";
     }
 
     @GetMapping("/{groupUrl}")
@@ -45,7 +45,7 @@ public class WorkSpaceController {
             @PathVariable String groupUrl,
             Model model) {
         addGroupSideBarAndHeader(userDetails, groupUrl, model);
-        return "workspace";
+        return "pages/workspace";
     }
 
     private boolean isPossibleRedirect(UserDetailsImpl userDetails) {
@@ -90,5 +90,13 @@ public class WorkSpaceController {
     private void addAttributes(Model model, SideBarDto sideBar, HeaderDto header) {
         model.addAttribute("sideBar", sideBar);
         model.addAttribute("appHeader", header);
+    }
+
+    @GetMapping("/test")
+    public String layoutTestPage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable String groupUrl, Model model) {
+
+        return "layouts/workspace_layout";
     }
 }

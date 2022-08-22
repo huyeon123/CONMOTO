@@ -28,7 +28,7 @@ public class GroupController {
 
     @GetMapping("/new")
     public String createGroupPage() {
-        return "creategroup";
+        return "pages/group/creategroup";
     }
 
     @GetMapping("/{groupUrl}/manage")
@@ -37,7 +37,7 @@ public class GroupController {
             @PathVariable String groupUrl, Model model) {
         Groups group = groupService.getGroupByUrl(groupUrl);
         addGroupInfo(group, model);
-        return "groupmanage";
+        return "pages/group/groupmanage";
     }
 
     private void addGroupInfo(Groups group, Model model) {
@@ -46,7 +46,7 @@ public class GroupController {
                 .url(group.getUrlPath())
                 .description(group.getDescription())
                 .build();
-        model.addAttribute("groupInfo", groupDto);
+        model.addAttribute("pages/group/groupInfo", groupDto);
     }
 
     @GetMapping("/{groupUrl}/members")
@@ -56,7 +56,7 @@ public class GroupController {
         Groups group = groupService.getGroupByUrl(groupUrl);
         addMemberInfo(group, model);
         addAvailableAuthority(model);
-        return "membermanage";
+        return "pages/group/membermanage";
     }
 
     private void addMemberInfo(Groups group, Model model) {
@@ -89,6 +89,6 @@ public class GroupController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable String groupUrl, Model model) {
 
-        return "deletegroup";
+        return "pages/group/deletegroup";
     }
 }

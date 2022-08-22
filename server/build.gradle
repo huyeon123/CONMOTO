@@ -15,6 +15,9 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
+    // https://mvnrepository.com/artifact/nz.net.ultraq.thymeleaf/thymeleaf-layout-dialect
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
     implementation 'org.springframework.boot:spring-boot-starter-security:2.7.0'
 

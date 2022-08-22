@@ -1,0 +1,42 @@
+.ui-dialog-titlebar {
+    background-color: white;
+    border: none;
+}
+
+.noty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 400px;
+    border: 1px solid;
+}
+
+.noty-content {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+}
+
+.noty-header {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px;
+}
+
+.message {
+    margin: 5px;
+}
+
+#profile {
+    display: flex;
+    justify-content: center;
+    width: 15%;
+    margin: 5px;
+    padding: 15px 0;
+    border: 1px solid;
+}
+
+#noty {
+    display: flex;
+    justify-content: center;
+}

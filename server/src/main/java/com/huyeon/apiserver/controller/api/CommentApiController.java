@@ -1,10 +1,9 @@
-package com.huyeon.apiserver.controller;
+package com.huyeon.apiserver.controller.api;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.entity.Comment;
 import com.huyeon.apiserver.service.BoardService;
 import com.huyeon.apiserver.service.CommentService;
-import com.huyeon.apiserver.support.JsonParse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -12,13 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequestMapping("/api/comment")
 @RequiredArgsConstructor
-public class CommentController {
+public class CommentApiController {
     private final CommentService commentService;
     private final BoardService boardService;
 

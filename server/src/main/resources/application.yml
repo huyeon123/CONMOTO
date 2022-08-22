@@ -19,12 +19,14 @@ spring:
 
   thymeleaf:
     prefix:
-      - classpath:/templates/
-      - classpath:/static/
+      - classpath: templates/
+      - classpath: static/
     suffix:
       - .html
-#      - .js
-#      - .css
+    #      - .js
+    #      - .css
+    cache: false
+    check-template-location: true
 
   devtools:
     livereload:

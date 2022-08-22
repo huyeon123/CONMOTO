@@ -1,0 +1,27 @@
+body {
+    width: 100vw;
+    margin: 0;
+    -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.super-space-app {
+    width: 100vw;
+    display: inline-flex;
+}
+
+.super-space-contents {
+    display: flex;
+    flex-flow: column;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+.content {
+    align-items: center;
+    margin: 10px;
+}

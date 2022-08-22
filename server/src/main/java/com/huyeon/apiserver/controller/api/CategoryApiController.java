@@ -1,4 +1,4 @@
-package com.huyeon.apiserver.controller;
+package com.huyeon.apiserver.controller.api;
 
 import com.huyeon.apiserver.model.dto.CategoryDto;
 import com.huyeon.apiserver.model.entity.Groups;

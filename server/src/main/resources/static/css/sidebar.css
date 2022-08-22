@@ -1,0 +1,43 @@
+.sidebar-section {
+    display: flex;
+    flex-flow: column;
+    padding: 2px 14px;
+    justify-content: left;
+}
+
+.sidebar-section .items {
+    margin: 5px;
+}
+
+#super-space-app__sidebar {
+    display: flex;
+    width: 240px;
+    height: 100vh;
+    background-color: rgb(251, 251, 250);
+}
+
+#logo {
+    display: flex;
+    height: 60px;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+}
+
+#info {
+    min-height: 150px;
+}
+
+#group-list {
+    min-height: 200px;
+}
+
+.sidebar-elements {
+    padding: 3px 10px;
+    cursor: pointer;
+}
+
+.level2 {
+    padding-left: 15px;
+}
+

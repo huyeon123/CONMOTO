@@ -39,7 +39,7 @@ public class UserController {
         model.addAttribute("email", user.getEmail());
         model.addAttribute("name", user.getName());
         model.addAttribute("birthday", user.getBirthday());
-        return "editprofile";
+        return "pages/user/editprofile";
     }
 
     @GetMapping("/info")
@@ -54,18 +54,18 @@ public class UserController {
         model.addAttribute("boardAndContents", boardAndContents);
 
         model.addAttribute("comments", userService.myComment(userDetails.getUsername()));
-        return "myinfo";
+        return "pages/user/myinfo";
     }
 
     @GetMapping("/resign")
     public String resignPage() {
-        return "resign";
+        return "pages/user/resign";
     }
 
     @GetMapping("/noty")
     public String notyCenterPage(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             Model model) {
-        return "notypage";
+        return "pages/user/notypage";
     }
 }

@@ -31,7 +31,7 @@ public class CategoryController {
             @PathVariable String groupUrl,
             Model model) {
         model.addAttribute("categoryOptions", categoryOptions(groupUrl));
-        return "categorypage";
+        return "pages/category/categorypage";
     }
 
     private List<CategoryDto> categoryOptions(String groupUrl) {
@@ -44,7 +44,7 @@ public class CategoryController {
             @PathVariable String groupUrl,
             Model model) {
         model.addAttribute("rootCategory", categoryTree(groupUrl));
-        return "categorymanage";
+        return "pages/category/categorymanage";
     }
 
     private CategoryDto categoryTree(String groupUrl) {
@@ -62,6 +62,6 @@ public class CategoryController {
         List<Board> boards = boardService.getBoardsByCategory(category);
         model.addAttribute("categoryName", categoryName);
         model.addAttribute("boards", boards);
-        return "category";
+        return "pages/category/category";
     }
 }
