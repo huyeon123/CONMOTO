@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:title="${categoryName}">Title</title>
+    <style>
+        .board {
+            border: 1px solid;
+            margin: 3px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div class="board" th:each="board: ${boards}">
+        <p th:text="${board.title}">제목</p>
+        <p>설명</p>
+        <p>태그</p>
+    </div>
+    <div class="board">
+        <p>제목</p>
+        <p>설명</p>
+        <p>태그</p>
+    </div>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script src="../static/js/fetch.js"></script>
+<script src="/js/fetch.js"></script>
+<script>
+
+</script>
+</html>

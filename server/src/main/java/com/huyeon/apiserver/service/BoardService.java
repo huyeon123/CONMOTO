@@ -1,6 +1,7 @@
 package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.entity.Board;
+import com.huyeon.apiserver.model.entity.Category;
 import com.huyeon.apiserver.model.entity.history.BoardHistory;
 import com.huyeon.apiserver.repository.BoardRepository;
 import com.huyeon.apiserver.repository.history.BoardHistoryRepo;
@@ -22,6 +23,10 @@ public class BoardService {
     //게시글 가져오기
     public Optional<Board> getBoard(Long id) {
         return boardRepository.findById(id);
+    }
+
+    public List<Board> getBoardsByCategory(Category category) {
+        return boardRepository.findAllByCategory(category).orElse(List.of());
     }
 
     //게시글 생성

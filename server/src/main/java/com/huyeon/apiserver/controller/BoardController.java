@@ -49,6 +49,10 @@ public class BoardController {
             model.addAttribute("title", board.getTitle());
             model.addAttribute("status", board.getStatus());
 
+            if(board.getCategory() != null) {
+                model.addAttribute("category", board.getCategory().getName());
+            }
+
             List<CommentDto> comments = mapToCommentDto(commentService.getCommentByBoardId(board.getId()));
             model.addAttribute("comments", comments);
 

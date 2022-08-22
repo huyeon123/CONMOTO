@@ -1,7 +1,10 @@
 package com.huyeon.apiserver.controller;
 
 import com.huyeon.apiserver.model.dto.CategoryDto;
+import com.huyeon.apiserver.model.entity.Board;
+import com.huyeon.apiserver.model.entity.Category;
 import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.service.BoardService;
 import com.huyeon.apiserver.service.CategoryService;
 import com.huyeon.apiserver.service.GroupService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,7 @@ import java.util.List;
 public class CategoryController {
     private final GroupService groupService;
     private final CategoryService categoryService;
+    private final BoardService boardService;
 
     @GetMapping("/new-category")
     public String createCategoryPage(
@@ -28,6 +32,11 @@ public class CategoryController {
             Model model) {
         model.addAttribute("categoryOptions", categoryOptions(groupUrl));
         return "categorypage";
+    }
+
+    private List<CategoryDto> categoryOptions(String groupUrl) {
+        Groups group = groupService.getGroupByUrl(groupUrl);
+        return categoryService.getCategoryList(group);
     }
 
     @GetMapping("/category")
@@ -38,13 +47,21 @@ public class CategoryController {
         return "categorymanage";
     }
 
-    public List<CategoryDto> categoryOptions(String groupUrl) {
-        Groups group = groupService.getGroupByUrl(groupUrl);
-        return categoryService.getCategoryList(group);
-    }
-
-    public CategoryDto categoryTree(String groupUrl) {
+    private CategoryDto categoryTree(String groupUrl) {
         Groups group = groupService.getGroupByUrl(groupUrl);
         return categoryService.getRootOfCategoryTree(group);
+    }
+
+    @GetMapping("/{categoryName}")
+    public String categoryPage(
+            @PathVariable String groupUrl,
+            @PathVariable String categoryName,
+            Model model
+    ) {
+        Category category = categoryService.getCategory(categoryName);
+        List<Board> boards = boardService.getBoardsByCategory(category);
+        model.addAttribute("categoryName", categoryName);
+        model.addAttribute("boards", boards);
+        return "category";
     }
 }

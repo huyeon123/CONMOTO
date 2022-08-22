@@ -137,4 +137,8 @@ public class CategoryService {
     private Long getParentId(List<CategoryDto> beforeList, CategoryDto after) {
         return beforeList.get(after.getParentId().intValue()).getCategoryId();
     }
+
+    public Category getCategory(String categoryName) {
+        return categoryRepository.findByName(categoryName).orElseThrow();
+    }
 }

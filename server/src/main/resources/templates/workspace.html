@@ -201,7 +201,7 @@
                 <div id="category-container" th:each="category: ${sideBar.categories}">
                     <div class="sidebar-elements"
                          th:utext="|> ${category.name}|"
-                         th:onclick="|location.href='@{{categoryId}(categoryId=${category.categoryId})}'|">
+                         onclick="moveToCategoryPage(this)">
                         > CATEGORY
                     </div>
                     <div class="sidebar-elements level2"
@@ -304,8 +304,6 @@
     $(function () {
         $("#noty").dialog({
             title: "미확인 알림",
-            autoOpen: false,
-            dialogClass: "no-close",
             minWidth: 430,
             maxHeight: 320,
             position: {
@@ -313,7 +311,10 @@
                 at: "right-110 bottom",
                 of: ".header"
             },
+            dialogClass: "no-close",
+            autoOpen: false,
             resizable: false,
+            draggable: true,
             show: {
                 effect: "slideDown",
             },
@@ -330,8 +331,7 @@
                         $(this).dialog("close");
                     }
                 }
-            ],
-            draggable: true
+            ]
         });
 
         $(".ui-dialog-content").css("padding", "0.5em");
@@ -343,6 +343,10 @@
     })
 
     const currentPage = window.location.pathname;
+
+    function moveToCategoryPage(obj) {
+        window.location.href = currentPage + "/" + obj.outerText;
+    }
 
     function moveToCreateGroupPage() {
         window.location.href = "/workspace/new";

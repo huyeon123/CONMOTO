@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -61,23 +62,6 @@ public class TestDBInit implements CommandLineRunner {
 
         User user = userRepository.findByEmail("user@test.com").orElseThrow();
 
-        boardRepository.save(Board.builder()
-                .userEmail("user@test.com")
-                .title("testTitle")
-                .status(Board.STATUS.READY)
-                .build());
-
-        blockRepository.save(ContentBlock.builder()
-                .boardId(1L)
-                .content("NICE CONTENT")
-                .build());
-
-        commentRepository.save(Comment.builder()
-                .boardId(1L)
-                .userEmail("user@test.com")
-                .comment("GREAT")
-                .build());
-
         GroupDto testGroup = GroupDto.builder()
                 .name("TEST GROUP")
                 .url("test-group")
@@ -92,10 +76,37 @@ public class TestDBInit implements CommandLineRunner {
                 .group(group)
                 .build());
 
-        categoryRepository.save(Category.builder()
+        Category category = Category.builder()
                 .group(group)
                 .name("==최상위 카테고리==")
                 .parent(null)
+                .build();
+
+
+        Category category2 = Category.builder()
+                .group(group)
+                .name("테스트_카테고리")
+                .parent(category)
+                .build();
+
+        categoryRepository.saveAll(List.of(category, category2));
+
+        boardRepository.save(Board.builder()
+                .userEmail("user@test.com")
+                .title("testTitle")
+                .category(category2)
+                .status(Board.STATUS.READY)
+                .build());
+
+        blockRepository.save(ContentBlock.builder()
+                .boardId(1L)
+                .content("NICE CONTENT")
+                .build());
+
+        commentRepository.save(Comment.builder()
+                .boardId(1L)
+                .userEmail("user@test.com")
+                .comment("GREAT")
                 .build());
     }
 }
