@@ -3,18 +3,13 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/workspace_layout}">
 
-<!-- index.html 고유 CSS 추가 -->
-<th:block layout:fragment="css">
-    <!--    <link rel="stylesheet" th:href="@{/css/page/home.css}" >-->
-</th:block>
-<!-- index.html 고유 스크립트 추가 -->
-<th:block layout:fragment="script">
-    <!--    <script th:src="@{/js/page/home.js}"></script>-->
-</th:block>
-
 <div layout:fragment="content">
-    <div class="header">
-        카테고리 헤더
+    <div class="content-header">
+        <h1>최근 게시물</h1>
+        <div>
+            <span>간략한 소개글</span>
+            <button style="float: right">새 글 만들기</button>
+        </div>
     </div>
     <div class="super-space-contents content">
         현재 그룹페이지의 최신 게시물 10개 보여주기

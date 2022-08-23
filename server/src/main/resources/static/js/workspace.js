@@ -1,7 +1,5 @@
-const currentPage = window.location.pathname;
-
 function moveToCategoryPage(obj) {
-    window.location.href = currentPage + "/" + obj.outerText;
+    window.location.href = "~/workspace/" + groupUrl + "/" + obj.outerText;
 }
 
 function moveToCreateGroupPage() {
@@ -9,13 +7,13 @@ function moveToCreateGroupPage() {
 }
 
 function moveToGroupManagingPage() {
-    window.location.href = currentPage + "/manage";
+    window.location.href = "/workspace/" + groupUrl + "/manage";
 }
 
 function moveToCreateCategoryPage() {
-    window.location.href = currentPage + "/new-category";
+    window.location.href = "/workspace/" + groupUrl + "/new-category";
 }
 
 function moveToManageCategoryPage() {
-    window.location.href = currentPage + "/category";
+    window.location.href = "/workspace/" + groupUrl + "/category";
 }

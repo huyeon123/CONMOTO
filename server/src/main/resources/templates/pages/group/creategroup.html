@@ -1,11 +1,38 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/workspace_layout}">
+
 <head>
-    <meta charset="UTF-8">
     <title>그룹 생성 페이지</title>
+    <script>
+        async function createGroup(url = baseUrl + "/api/group") {
+            const groupName = $('#group-name').val();
+            const description = $('#group-description').val();
+            const urlPath = $('#url-path').val();
+            const request = {name: groupName, description: description, url: urlPath};
+            console.log(request)
+            await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                mode: "cors",
+                body: JSON.stringify(request)
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    alert(data.message);
+                    if (data.success) {
+                        window.location.href = baseUrl + "/workspace/" + data.data.url;
+                    }
+                })
+                .catch((error) => console.log("실패 : ", error));
+        }
+    </script>
 </head>
-<body>
-<div>
+
+<div layout:fragment="content">
     <div>
         <label>
             <span>그룹명</span>
@@ -32,33 +59,4 @@
     </div>
     <button type="button" onclick="createGroup()"> 생성</button>
 </div>
-</body>
-<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-<script src="../../../static/js/fetch.js"></script>
-<script src="/js/fetch.js"></script>
-<script>
-    async function createGroup(url = baseUrl + "/api/group") {
-        const groupName = $('#group-name').val();
-        const description = $('#group-description').val();
-        const urlPath = $('#url-path').val();
-        const request = {name: groupName, description: description, url: urlPath};
-        console.log(request)
-        await fetch(url, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            mode: "cors",
-            body: JSON.stringify(request)
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                alert(data.message);
-                if (data.success) {
-                    window.location.href = baseUrl + "/workspace/" + data.data.url;
-                }
-            })
-            .catch((error) => console.log("실패 : ", error));
-    }
-</script>
 </html>

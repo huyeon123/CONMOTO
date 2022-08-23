@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/workspace_layout}">
 <head>
     <meta charset="UTF-8">
     <title th:title="${categoryName}">Title</title>
@@ -10,8 +12,7 @@
         }
     </style>
 </head>
-<body>
-<div>
+<div layout:fragment="content">
     <div class="board" th:each="board: ${boards}">
         <p th:text="${board.title}">제목</p>
         <p>설명</p>
@@ -23,10 +24,6 @@
         <p>태그</p>
     </div>
 </div>
-</body>
-<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-<script src="../../../static/js/fetch.js"></script>
-<script src="/js/fetch.js"></script>
 <script>
 
 </script>

@@ -1,11 +1,36 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/workspace_layout}">
 <head>
     <meta charset="UTF-8">
     <title>카테고리 생성 페이지</title>
+    <script>
+        async function createCategory() {
+            const url = baseUrl + "/api/category?groupUrl=" + groupUrl;
+            const categoryName = $('#target-category-name').val();
+            const parentCategoryId = $('#parent-category option:selected').val();
+            const request = {name: categoryName, categoryId: parentCategoryId};
+
+            await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                mode: "cors",
+                body: JSON.stringify(request)
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data) {
+                        window.location.href = "/workspace/" + groupUrl;
+                    }
+                })
+                .catch((error) => console.log("실패 : ", error));
+        }
+    </script>
 </head>
-<body>
-<div>
+<div layout:fragment="content">
     <div>
         <label>
             <span>카테고리명</span>
@@ -28,32 +53,4 @@
     </div>
     <button type="button" onclick="createCategory()"> 생성</button>
 </div>
-</body>
-<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-<script src="../../../static/js/fetch.js"></script>
-<script src="/js/fetch.js"></script>
-<script>
-    async function createCategory() {
-        const url = baseUrl + "/api/category?groupUrl=" + groupUrl;
-        const categoryName = $('#target-category-name').val();
-        const parentCategoryId = $('#parent-category option:selected').val();
-        const request = {name: categoryName, categoryId: parentCategoryId};
-
-        await fetch(url, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            mode: "cors",
-            body: JSON.stringify(request)
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data) {
-                    window.location.href = "/workspace/" + groupUrl;
-                }
-            })
-            .catch((error) => console.log("실패 : ", error));
-    }
-</script>
 </html>

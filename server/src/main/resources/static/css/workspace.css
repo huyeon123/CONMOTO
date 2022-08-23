@@ -25,3 +25,9 @@ body {
     align-items: center;
     margin: 10px;
 }
+
+.content-header {
+    display: flex;
+    flex-direction: column;
+    padding: 0 12px;
+}

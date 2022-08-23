@@ -1,5 +1,6 @@
-package com.huyeon.apiserver.controller;
+package com.huyeon.apiserver.controller.workspace;
 
+import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.CategoryDto;
 import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.model.entity.Category;
@@ -9,6 +10,8 @@ import com.huyeon.apiserver.service.CategoryService;
 import com.huyeon.apiserver.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.buf.UDecoder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,10 +31,11 @@ public class CategoryController {
 
     @GetMapping("/new-category")
     public String createCategoryPage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable String groupUrl,
             Model model) {
         model.addAttribute("categoryOptions", categoryOptions(groupUrl));
-        return "pages/category/categorypage";
+        return "pages/category/newcategory";
     }
 
     private List<CategoryDto> categoryOptions(String groupUrl) {
@@ -41,6 +45,7 @@ public class CategoryController {
 
     @GetMapping("/category")
     public String manageCategoryPage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable String groupUrl,
             Model model) {
         model.addAttribute("rootCategory", categoryTree(groupUrl));
@@ -54,6 +59,7 @@ public class CategoryController {
 
     @GetMapping("/{categoryName}")
     public String categoryPage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable String groupUrl,
             @PathVariable String categoryName,
             Model model

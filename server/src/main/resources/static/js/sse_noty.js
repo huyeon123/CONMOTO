@@ -12,7 +12,8 @@ $(function () {
             $noty.text(current + 1);
 
             addNoty(data);
-            // alert("알림왔숑!");
+
+            $("#noty").dialog("open");
         } catch (e) {
             console.error("JSON")
         }

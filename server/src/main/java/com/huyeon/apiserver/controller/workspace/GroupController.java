@@ -1,4 +1,4 @@
-package com.huyeon.apiserver.controller;
+package com.huyeon.apiserver.controller.workspace;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.GroupDto;
@@ -27,7 +27,10 @@ public class GroupController {
     private final GroupService groupService;
 
     @GetMapping("/new")
-    public String createGroupPage() {
+    public String createGroupPage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            Model model
+    ) {
         return "pages/group/creategroup";
     }
 
@@ -46,7 +49,7 @@ public class GroupController {
                 .url(group.getUrlPath())
                 .description(group.getDescription())
                 .build();
-        model.addAttribute("pages/group/groupInfo", groupDto);
+        model.addAttribute("groupInfo", groupDto);
     }
 
     @GetMapping("/{groupUrl}/members")

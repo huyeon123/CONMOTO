@@ -2,7 +2,8 @@ const baseUrl = "http://" + window.location.host;
 const pathname = window.location.pathname;
 const groupUrlStartIdx = String("/workspace").length + 1;
 const groupUrlEndIdx = pathname.indexOf("/", groupUrlStartIdx + 1);
-const groupUrl =  pathname.substring(groupUrlStartIdx, groupUrlEndIdx);
+const groupUrl =  groupUrlEndIdx === -1 ?
+    pathname.substring(groupUrlStartIdx) : pathname.substring(groupUrlStartIdx, groupUrlEndIdx);
 
 async function get(url) {
     const response = await fetch(url, {

@@ -71,7 +71,8 @@
 <hr>
 <h2>COMMENT</h2>
 <div class="container" th:each="comment : ${comments}">
-    <div class="content-body" th:id="*{comment.id}"th:onclick="|location.href='@{/board/{id}(id=${comment.boardId})}'|">
+    <div class="content-body" th:id="*{comment.id}"
+         th:onclick="|location.href='@{/board/{id}(id=${comment.boardId})}'|">
         <p>작성자 : <span th:text="${comment.userEmail}">userName</span></p>
         <p>내용 : <span th:text="${comment.comment}">comment</span></p>
     </div>

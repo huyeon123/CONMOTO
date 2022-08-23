@@ -1,4 +1,4 @@
-package com.huyeon.apiserver.controller;
+package com.huyeon.apiserver.controller.workspace;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.HeaderDto;
@@ -34,8 +34,6 @@ public class WorkSpaceController {
         if (isPossibleRedirect(userDetails)) {
             return redirectFirstGroup(userDetails);
         }
-
-        addDefaultSideBarAndHeader(userDetails, model);
         return "pages/workspace";
     }
 
@@ -44,7 +42,6 @@ public class WorkSpaceController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable String groupUrl,
             Model model) {
-        addGroupSideBarAndHeader(userDetails, groupUrl, model);
         return "pages/workspace";
     }
 
@@ -60,43 +57,5 @@ public class WorkSpaceController {
         return groupService.getGroups(userDetails.getUser()).get(0).getUrlPath();
     }
 
-    private void addDefaultSideBarAndHeader(UserDetailsImpl userDetails, Model model) {
-        User user = userDetails.getUser();
-        SideBarDto sideBar = blankSideBar(user);
-        HeaderDto appHeader = blankHeader(user.getName());
-        addAttributes(model, sideBar, appHeader);
-    }
 
-    private SideBarDto blankSideBar(User user) {
-        return SideBarDto.builder()
-                .groups(workSpaceService.getGroups(user))
-                .categories(List.of())
-                .build();
-    }
-
-    private HeaderDto blankHeader(@NonNull String name) {
-        return HeaderDto.builder()
-                .userName(name)
-                .groupName("그룹을 선택하세요!")
-                .build();
-    }
-
-    private void addGroupSideBarAndHeader(UserDetailsImpl userDetails, String groupUrl, Model model) {
-        SideBarDto sideBar = workSpaceService.getSideBar(userDetails, groupUrl);
-        HeaderDto appHeader = workSpaceService.getAppHeader(userDetails, groupUrl);
-        addAttributes(model, sideBar, appHeader);
-    }
-
-    private void addAttributes(Model model, SideBarDto sideBar, HeaderDto header) {
-        model.addAttribute("sideBar", sideBar);
-        model.addAttribute("appHeader", header);
-    }
-
-    @GetMapping("/test")
-    public String layoutTestPage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable String groupUrl, Model model) {
-
-        return "layouts/workspace_layout";
-    }
 }

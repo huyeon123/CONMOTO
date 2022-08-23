@@ -1,4 +1,4 @@
-package com.huyeon.apiserver.controller;
+package com.huyeon.apiserver.controller.workspace;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.CommentDto;
