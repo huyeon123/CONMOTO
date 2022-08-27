@@ -1,5 +1,5 @@
 function moveToCategoryPage(obj) {
-    window.location.href = "~/workspace/" + groupUrl + "/" + obj.outerText;
+    window.location.href = "/workspace/" + groupUrl + "/" + obj.outerText;
 }
 
 function moveToCreateGroupPage() {

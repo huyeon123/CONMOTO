@@ -1,18 +1,23 @@
-body {
-    width: 800px;
-    margin: 5px auto;
+.wrapper {
+    padding-top: calc(30px + env(safe-area-inset-top));
+    padding-left: calc(70px + env(safe-area-inset-left));
+    padding-right: calc(70px + env(safe-area-inset-right));
 }
 
-input {
-    width: 600px;
+.wrapper input {
+    width: 90%;
     height: 30px;
     border-radius: 3px;
-    border: thin #5a6268;
+    border: thin #85858d;
     font-size: 15px;
 }
 
 input:focus {
     outline: none;
+}
+
+.wrapper label {
+    width: 90%;
 }
 
 label > span {
@@ -24,7 +29,7 @@ label > span {
     font-weight: bold;
 }
 
-button {
+.wrapper button {
     color: #ffffff;
     opacity: 0.5;
     border: none;
@@ -34,15 +39,9 @@ button {
     cursor: Pointer;
 }
 
-.container {
-    width: 800px;
-    border: 1px solid #4e555b;
-}
-
 /*header*/
-.header {
-    width: 800px;
-    border-bottom: 1px solid #4e555b;
+.board__header {
+    border-bottom: 1px solid rgba(55, 53, 47, 0.16);
     padding-top: 10px;
     padding-bottom: 10px;
 }
@@ -55,25 +54,29 @@ button {
 }
 
 #title {
-    width: 780px;
+    width: 100%;
     height: 50px;
     font-size: 40px;
+    font-weight: 700;
     line-height: 70px;
 }
 
-#status {
-    width: 150px;
-    /*height: 25px;*/
+.select {
+    width: 80%;
+    border: none;
     font-size: 18px;
     padding-top: 2px;
     padding-bottom: 6px;
     line-height: 30px;
 }
 
+.tag {
+    width: 75px !important;
+}
+
 /*comments*/
 .comments {
-    width: 800px;
-    border-bottom: 1px solid #4e555b;
+    border-bottom: 1px solid rgba(55, 53, 47, 0.16);
     padding-top: 5px;
     padding-bottom: 5px;
 }
@@ -122,7 +125,6 @@ button {
 
 /*contents*/
 .contents {
-    width: 780px;
     margin: 5px auto;
     align-content: center;
 }
@@ -130,12 +132,13 @@ button {
 .contentContainer {
     margin: 5px auto;
     display: flex;
-    justify-content: center; /*수평 정렬*/
+    justify-content: space-between;
     align-items: center; /*수직 정렬*/
 }
 
 .content {
-    width: 690px;
+    align-items: center;
+    margin: 0 10px;
 }
 
 .contents button {
@@ -149,6 +152,13 @@ button {
 
 .addContentsBtn {
     background-color: green;
+}
+
+.content__buttons {
+    display: inline-flex;
+    width: 90px;
+    justify-content: space-between;
+    margin: 0 10px;
 }
 
 /*etc*/

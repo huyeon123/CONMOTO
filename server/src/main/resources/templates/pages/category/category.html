@@ -4,27 +4,99 @@
       layout:decorate="~{layouts/workspace_layout}">
 <head>
     <meta charset="UTF-8">
-    <title th:title="${categoryName}">Title</title>
+    <title th:text="${categoryName}">Title</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.css"
+          integrity="sha512-fxF1t7b0mpb/ytjBeSu/OpgXxCVcX5/O8AJGYvHaWmNfi/lYLtttitFK17K4iKBva4iU9dcZ+BIV7dyD/nDdSw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        h1 {
+            font-weight: 700;
+        }
+
+        h2 {
+            margin: 15px 0;
+        }
+
+        .wrapper {
+            padding-left: calc(70px + env(safe-area-inset-left));
+            padding-right: calc(70px + env(safe-area-inset-right));
+        }
+
+        .content-header {
+            min-height: 100px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #b9bbbe;
+        }
+
+        .scroll-section {
+            max-height: 80vh;
+            overflow: auto;
+        }
+
+        .content-body {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         .board {
-            border: 1px solid;
-            margin: 3px;
+            border: 1px solid #b9bbbe;
+            border-radius: 5px;
+            margin: 10px 3px;
+            padding: 10px;
+            width: 70%;
+            min-width: 600px;
+            cursor: pointer;
         }
     </style>
+    <script th:src="@{/js/createBoard.js}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"
+            integrity="sha512-Yk47FuYNtuINE1w+t/KT4BQ7JaycTCcrvlSvdK/jry6Kcxqg5vN7/svVWCxZykVzzJHaxXk5T9jnFemZHSYgnw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $(function () {
+            content_scroll_plugin();
+        });
+
+        function content_scroll_plugin() {
+            $(".scroll-section").mCustomScrollbar({
+                theme: "minimal-dark",
+                mouseWheelPixels : 150, // 마우스휠 속도
+                scrollInertia : 300, // 부드러운 스크롤 효과 적용
+                callbacks: {
+                    onTotalScrollOffset: 100,
+                    onTotalScroll: function () {
+                        console.log("BOTTOM!");
+                        getList();
+                    },
+                }
+            })
+        }
+    </script>
 </head>
-<div layout:fragment="content">
-    <div class="board" th:each="board: ${boards}">
-        <p th:text="${board.title}">제목</p>
-        <p>설명</p>
-        <p>태그</p>
+<div class="wrapper" layout:fragment="content">
+    <div class="content-header">
+        <h1 th:text="${categoryName}">카테고리명</h1>
+        <div>
+            <span>간략한 소개글</span>
+            <button style="float: right" onclick="createBoard()">새 글 만들기</button>
+        </div>
     </div>
-    <div class="board">
-        <p>제목</p>
-        <p>설명</p>
-        <p>태그</p>
+    <div class="scroll-section">
+        <div class="content-body">
+            <div class="board" th:each="board: ${boards}" th:id="*{board.id}" th:onclick="|location.href='@{{url}(url=${board.url})}'|">
+                <h2 th:text="${board.title}">제목</h2>
+                <p th:text="${board.description}">설명</p>
+                <p th:text="${board.status.name}">상태</p>
+                <p th:each="tag : ${board.tags}" th:text="${tag.tag}">태그</p>
+                <hr>
+                <div>
+                    <p th:each="content : ${board.contents}"
+                       th:text="${content.content}">내용</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<script>
-
-</script>
 </html>

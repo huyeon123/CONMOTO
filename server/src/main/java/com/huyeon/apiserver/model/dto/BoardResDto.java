@@ -12,10 +12,22 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WorkSpaceDto {
+public class BoardResDto {
+    private Long id;
+
     private String title;
-    private BoardStatus status;
+
+    private String description;
+
     private String categoryName;
-    private List<String> comments;
-    private List<String> contents;
+
+    private BoardStatus status;
+
+    private List<TagDto> tags;
+
+    private List<CommentDto> comments;
+
+    private List<ContentDto> contents;
+
+    private String url;
 }

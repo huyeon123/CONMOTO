@@ -9,12 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ResMessage {
-    private String message = "";
-    private Object data;
-    private boolean success = false;
-
-    public ResMessage(String message) {
-        this.message = message;
-    }
+public class ContentDto {
+    private Long contentId;
+    private String content;
 }

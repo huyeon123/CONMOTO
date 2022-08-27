@@ -62,7 +62,6 @@ public class ContentsApiController {
 
     protected boolean checkNotMine(String email, Long boardId) {
         return !boardService.getBoard(boardId)
-                .orElse(new Board())
                 .getUserEmail()
                 .equals(email);
     }

@@ -28,12 +28,15 @@ public class Board extends AuditEntity implements Auditable {
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    private Groups group;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoryId")
     private Category category;
 
-    @Enumerated(EnumType.STRING)
-    private STATUS status;
+    private String description;
 
-    public enum STATUS {READY, PROCEED, COMPLETE}
+    @Enumerated(EnumType.STRING)
+    private BoardStatus status;
 }
 

@@ -40,10 +40,8 @@
                 </button>
             </div>
             <div id="category-container" th:each="category: ${sideBar.categories}">
-                <div class="sidebar-elements"
-                     th:utext="|> ${category.name}|"
-                     onclick="moveToCategoryPage(this)">
-                    > CATEGORY
+                <div class="sidebar-elements">
+                    > <span th:utext="${category.name}" onclick="moveToCategoryPage(this)"></span>
                 </div>
                 <div class="sidebar-elements level2"
                      th:each="category2: ${category.subCategories}">

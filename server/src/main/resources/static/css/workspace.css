@@ -21,13 +21,13 @@ body {
     overflow: hidden;
 }
 
-.content {
-    align-items: center;
-    margin: 10px;
-}
-
 .content-header {
     display: flex;
     flex-direction: column;
     padding: 0 12px;
+}
+
+.wrapper {
+    padding-left: calc(90px + env(safe-area-inset-left));
+    padding-right: calc(90px + env(safe-area-inset-right));
 }

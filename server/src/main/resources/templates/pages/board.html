@@ -1,39 +1,64 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/workspace_layout}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${title}"></title>
-    <link rel="stylesheet" href="/css/board.css">
-<!--    <link rel="stylesheet" href="../static/css/board.css">-->
+    <title th:text="${board.title}"></title>
+    <link rel="stylesheet" th:href="@{/css/board.css}">
+    <script th:src="@{/js/updateBoard.js}"></script>
 </head>
-<body>
-<div>
+<div class="wrapper" layout:fragment="content">
     <div class="container">
-        <div class="header">
+        <div class="board__header">
             <div class="header-elements">
                 <label>
                     <input type="text" id="title"
                            placeholder="제목을 입력하세요."
-                           th:value="${title}">
+                           th:value="${board.title}">
                 </label>
             </div>
             <div class="header-elements">
-                <div th:text="category">카테고리</div>
+                <label>
+                    <input type="text" id="description"
+                           placeholder="설명을 입력하세요."
+                           th:value="${board.description}">
+                </label>
+            </div>
+            <div class="header-elements">
+                <label>
+                    <span style="width: 100px">카테고리</span>
+                    <select class="select" id="categoryOption">
+                        <option th:selected="${board.categoryName == null}">카테고리 미선택</option>
+                        <option th:each="category : ${sideBar.categories}"
+                                th:value="${category.categoryId}"
+                                th:text="${category.name}"
+                                th:selected="${category.name == board.categoryName}">카테고리
+                        </option>
+                    </select>
+                </label>
             </div>
             <div class="header-elements">
                 <label>
                     <span>상태</span>
-                    <select id="status">
-                        <option th:selected="${status.name == 'READY'}"
+                    <select class="select" id="status">
+                        <option th:selected="${board.status.name == 'READY'}"
                                 value="READY">READY
                         </option>
-                        <option th:selected="${status.name == 'PROCEED'}"
+                        <option th:selected="${board.status.name == 'PROCEED'}"
                                 value="PROCEED">PROCEED
                         </option>
-                        <option th:selected="${status.name =='COMPLETE'}"
+                        <option th:selected="${board.status.name =='COMPLETE'}"
                                 value="COMPLETE">COMPLETE
                         </option>
                     </select>
+                </label>
+            </div>
+            <div class="header-elements">
+                <label id="tags">
+                    <span>태그</span>
+                    <input class="tag" th:each="tag : ${board.tags}" th:value="|${tag.tag}|">
+                    <input class="tag" placeholder="#태그 추가">
                 </label>
             </div>
         </div>
@@ -42,7 +67,7 @@
                 <span><b>댓글</b></span>
                 <button type="button" id="addCommentBtn">댓글작성</button>
             </div>
-            <div class="comments-elements" th:each="comment : ${comments}" th:id="*{comment.id}">
+            <div class="comments-elements" th:each="comment : ${board.comments}" th:id="*{comment.id}">
                 <span class="comment-author" th:text="|작성자 : ${comment.author}|">작성자 : XXX</span>
                 <span class="comment-date" th:text="(${comment.date})">(X초 전)</span>
                 <button type="button" class="delCommentBtn">삭제</button>
@@ -52,22 +77,22 @@
                     <input readonly class="comment-body" th:value="${comment.body}">
                 </label>
             </div>
+            <div class="comments-elements" th:if="${#lists.size(board.comments) < 1}">
+                <span>작성된 댓글이 없습니다.</span>
+            </div>
         </div>
         <div class="contents">
-            <div class="contentContainer" th:each="content : ${contents}" th:id="*{content.id}">
+            <div class="contentContainer" th:each="content : ${board.contents}" th:id="*{content.contentId}">
                 <input class="content"
                        placeholder="내용을 입력하세요."
                        th:value="${content.content}">
-                <button type="button" class="delContentsBtn">-</button>
-                <button type="button" class="addContentsBtn">+</button>
+                <div class="content__buttons">
+                    <button type="button" class="delContentsBtn">-</button>
+                    <button type="button" class="addContentsBtn">+</button>
+                </div>
             </div>
         </div>
     </div>
     <button type="button" id="closeBtn" onclick="moveToPreviousPage()">돌아가기</button>
 </div>
-
-</body>
-<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-<script src="/js/updateBoard.js"></script>
-<!--<script src="/static/js/updateBoard.js"></script>-->
 </html>

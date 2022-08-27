@@ -94,8 +94,10 @@ public class TestDBInit implements CommandLineRunner {
         boardRepository.save(Board.builder()
                 .userEmail("user@test.com")
                 .title("testTitle")
+                .description("간단한 설명글")
+                .group(group)
                 .category(category2)
-                .status(Board.STATUS.READY)
+                .status(BoardStatus.READY)
                 .build());
 
         blockRepository.save(ContentBlock.builder()

@@ -1,12 +1,15 @@
 package com.huyeon.apiserver.controller.workspace;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
+import com.huyeon.apiserver.model.dto.BoardResDto;
 import com.huyeon.apiserver.model.dto.CategoryDto;
+import com.huyeon.apiserver.model.dto.ContentDto;
 import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.model.entity.Category;
 import com.huyeon.apiserver.model.entity.Groups;
 import com.huyeon.apiserver.service.BoardService;
 import com.huyeon.apiserver.service.CategoryService;
+import com.huyeon.apiserver.service.ContentBlockService;
 import com.huyeon.apiserver.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +31,7 @@ public class CategoryController {
     private final GroupService groupService;
     private final CategoryService categoryService;
     private final BoardService boardService;
+    private final ContentBlockService blockService;
 
     @GetMapping("/new-category")
     public String createCategoryPage(
@@ -65,7 +69,15 @@ public class CategoryController {
             Model model
     ) {
         Category category = categoryService.getCategory(categoryName);
-        List<Board> boards = boardService.getBoardsByCategory(category);
+
+        List<BoardResDto> boards = boardService.getBoardResponsesByCategory(category);
+
+        boards.forEach(board -> {
+            List<ContentDto> contents = blockService.getSummaryContentResByBoardId(board.getId());
+            board.setContents(contents);
+            board.setUrl("/workspace/" + groupUrl + "/board/" + board.getId());
+        });
+
         model.addAttribute("categoryName", categoryName);
         model.addAttribute("boards", boards);
         return "pages/category/category";

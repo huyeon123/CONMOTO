@@ -1,6 +1,7 @@
 package com.huyeon.apiserver.model.entity.history;
 
 import com.huyeon.apiserver.model.entity.Board;
+import com.huyeon.apiserver.model.entity.BoardStatus;
 import com.huyeon.apiserver.model.entity.base.AuditEntity;
 import com.huyeon.apiserver.model.listener.Auditable;
 import lombok.*;
@@ -27,5 +28,5 @@ public class BoardHistory extends AuditEntity implements Auditable {
     private String pastTitle;
 
     @Enumerated(EnumType.STRING)
-    private Board.STATUS pastSTATUS;
+    private BoardStatus pastSTATUS;
 }

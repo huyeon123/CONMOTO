@@ -1,6 +1,8 @@
 package com.huyeon.apiserver.controller.api;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
+import com.huyeon.apiserver.model.dto.BoardReqDto;
+import com.huyeon.apiserver.model.dto.BoardResDto;
 import com.huyeon.apiserver.model.dto.ResMessage;
 import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.service.BoardService;
@@ -12,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -24,49 +26,71 @@ public class BoardApiController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getBoard(@PathVariable Long id) {
-        Optional<Board> board = boardService.getBoard(id);
-        if (board.isPresent()) {
-            return new ResponseEntity<>(board.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("게시글을 찾을 수 없습니다.", HttpStatus.OK);
+        Board board = boardService.getBoard(id);
+        return new ResponseEntity<>(board, HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<ResMessage> createBoard(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody String groupUrl) {
+        try {
+            Long id = boardService.createBoard(userDetails.getUsername(), groupUrl);
+            blockService.createContent(id);
+
+            return new ResponseEntity<>(
+                    new ResMessage("게시글이 생성되었습니다.", id, true),
+                    HttpStatus.CREATED
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(
+                    new ResMessage("게시글 생성에 실패했습니다."),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 
-    @GetMapping
-    public ResponseEntity<ResMessage> createBoard(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Long id;
-        ResMessage response = new ResMessage();
-        Board newBoard = new Board();
-        newBoard.setUserEmail(userDetails.getUsername());
-        newBoard.setStatus(Board.STATUS.READY);
-
-        if ((id = boardService.createBoard(newBoard)) >= 0) {
-            blockService.createContent(id);
-            response.setMessage("게시글이 생성되었습니다.");
-            response.setData(id);
-            response.setSuccess(true);
-
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+    @PostMapping("/{type}")
+    public ResponseEntity<?> getLatestBoard(
+            @PathVariable String type,
+            @RequestParam String predicate,
+            @RequestBody Long lastId
+    ) {
+        if (type.equals("group")) {
+            return getLatestBoardInGroup(predicate, lastId);
+        } else if (type.equals("category")) {
+            return getLatestBoardInCategory(predicate, lastId);
         } else {
-            response.setMessage("게시글을 작성할 수 없습니다.");
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    private ResponseEntity<?> getLatestBoardInGroup(String groupUrl, Long lastId) {
+        try {
+            List<BoardResDto> newest = boardService.getNext10LatestInGroup(groupUrl, lastId);
+            return new ResponseEntity<>(newest, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private ResponseEntity<?> getLatestBoardInCategory(String categoryName, Long lastId) {
+        List<BoardResDto> newest = boardService.getNext10LatestInCategory(categoryName, lastId);
+        return new ResponseEntity<>(newest, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResMessage> editBoard(
+    public ResponseEntity<?> editBoard(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable Long id, @RequestBody Board editBoard) {
-        editBoard.setId(id);
-        ResMessage response = new ResMessage();
-        if (boardService.editBoard(userDetails.getUsername(), editBoard)) {
-            response.setMessage("게시글을 수정했습니다.");
-            response.setSuccess(true);
-        } else {
-            response.setMessage("게시글을 수정할 수 없습니다.");
+            @PathVariable Long id, @RequestBody BoardReqDto request) {
+        try {
+            boardService.editBoard(request);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

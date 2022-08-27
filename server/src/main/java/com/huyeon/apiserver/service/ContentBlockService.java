@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.service;
 
+import com.huyeon.apiserver.model.dto.ContentDto;
 import com.huyeon.apiserver.model.entity.ContentBlock;
 import com.huyeon.apiserver.model.entity.history.ContentBlockHistory;
 import com.huyeon.apiserver.repository.ContentBlockRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,6 +28,24 @@ public class ContentBlockService {
     //게시글 컨텐츠 모두 가져오기
     public List<ContentBlock> getContentBlockByBoardId(Long boardId) {
         return blockRepository.findAllByBoardId(boardId).orElse(List.of());
+    }
+
+    public List<ContentDto> getSummaryContentResByBoardId(Long boardId){
+        List<ContentBlock> contents = blockRepository.findTop3ByBoardId(boardId).orElse(List.of());
+        return mapToContentDto(contents);
+    }
+
+    public List<ContentDto> getContentResponseByBoardId(Long boardId) {
+        List<ContentBlock> contents = getContentBlockByBoardId(boardId);
+        return mapToContentDto(contents);
+    }
+
+    private List<ContentDto> mapToContentDto(List<ContentBlock> contents) {
+        return contents.stream()
+                .map(content ->
+                        new ContentDto(content.getId(), content.getContent())
+                )
+                .collect(Collectors.toList());
     }
 
     //컨텐츠 추가
@@ -57,7 +77,7 @@ public class ContentBlockService {
     //컨텐츠 수정이력
     public List<ContentBlockHistory> contentHistory(Long id) {
         Optional<ContentBlock> block = blockRepository.findById(id);
-        if(block.isPresent()) {
+        if (block.isPresent()) {
             Optional<List<ContentBlockHistory>> histories =
                     blockHistoryRepo.findAllByBlockId(block.get().getId());
             if (histories.isPresent()) return histories.get();

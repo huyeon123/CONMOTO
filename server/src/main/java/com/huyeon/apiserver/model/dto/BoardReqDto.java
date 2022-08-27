@@ -6,16 +6,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WorkSpaceDto {
+public class BoardReqDto {
+    private Long id;
+
     private String title;
+
+    private String description;
+
+    private Long categoryId;
+
     private BoardStatus status;
-    private String categoryName;
-    private List<String> comments;
-    private List<String> contents;
+
+    private String target;
 }
