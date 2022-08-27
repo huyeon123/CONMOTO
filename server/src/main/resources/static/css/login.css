@@ -4,6 +4,10 @@ body {
     margin: auto;
 }
 
+h2 {
+    text-align: center;
+}
+
 form {
     border: 3px solid #f1f1f1;
 }
@@ -15,16 +19,18 @@ input[type=text], input[type=password] {
     display: inline-block;
     border: 1px solid #ccc;
     box-sizing: border-box;
+    font-size: 14px;
 }
 
 button {
-    background-color: #04AA6D;
-    color: white;
-    padding: 14px 20px;
+    width: 100%;
+    padding: 10px 15px;
     margin: 8px 0;
     border: none;
+    font-size: 20px;
+    background-color: #04AA6D;
+    color: white;
     cursor: pointer;
-    width: 100%;
 }
 
 button:hover {
@@ -35,9 +41,16 @@ button:hover {
     padding: 16px;
 }
 
-aside.psw {
-    text-align: right;
-    padding-top: 5px;
+.support {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 16px;
+    background-color: #f1f1f1;
+}
+
+.support > div {
+    margin-top: 5px;
 }
 
 #sign_in {

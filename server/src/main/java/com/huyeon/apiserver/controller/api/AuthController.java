@@ -35,19 +35,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResMessage> logIn(@RequestBody UserSignInReq request) {
-        ResMessage response = new ResMessage();
+    public ResponseEntity<?> logIn(@RequestBody UserSignInReq request) {
         try {
             authService.logIn(request);
             log.info(request.getEmail() + "로그인");
-            response.setMessage("로그인에 성공했습니다.");
-            response.setSuccess(true);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(true, HttpStatus.OK);
         } catch (Exception e) {
             log.info(request.getEmail() + "로그인 실패");
+            return new ResponseEntity<>(false, HttpStatus.OK);
         }
-        response.setMessage("로그인에 실패했습니다.");
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/check")

@@ -1,4 +1,3 @@
-const baseUrl = "http://" + window.location.host;
 const pathname = window.location.pathname;
 const groupUrlStartIdx = String("/workspace").length + 1;
 const groupUrlEndIdx = pathname.indexOf("/", groupUrlStartIdx + 1);
