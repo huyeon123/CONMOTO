@@ -1,71 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta content="width=device-width" charset="UTF-8">
     <title>회원가입 페이지</title>
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        form {
-            border: 3px solid #f1f1f1;
-        }
-
-        input[type=text], input[type=password] {
-            width: 100%;
-            padding: 12px 20px;
-            margin: 8px 0;
-            display: inline-block;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: #04AA6D;
-            color: white;
-            padding: 14px 20px;
-            margin: 8px 0;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        button:hover {
-            opacity: 0.8;
-        }
-
-        .cancelbtn {
-            width: auto;
-            padding: 10px 18px;
-            background-color: #f44336;
-        }
-
-        .container {
-            padding: 16px;
-        }
-
-        .form-check {
-            width: auto;
-            margin-left: 5px;
-            padding: 4px 10px;
-            background-color: #6c757d;
-            border-radius: 5px;
-        }
-
-        #sign_up {
-            width: 700px;
-            margin: 0 auto;
-            align-items: center;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/sign-style.css}"/>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script th:src="@{/js/fetch.js}"></script>
+    <script th:src="@{/js/signup.js}"></script>
 </head>
 <body>
-<h2 style="text-align: center">회원가입</h2>
-
 <form id="sign_up">
     <div class="container">
-        <label>
+        <label class="form__element">
             <b>이름</b>
             <input type="text"
                    placeholder="주민등록상 이름을 입력해주세요."
@@ -74,18 +20,21 @@
                    required>
         </label>
 
-        <label>
+        <label class="form__element">
             <b>이메일</b>
-            <button class="form-check" type="button" onclick=duplicateCheck()>중복체크</button>
+            <button class="duplicate-check"
+                    type="button"
+                    onclick=duplicateCheck()>
+                중복체크
+            </button>
             <input type="text"
                    placeholder="사용하고 있는 이메일을 입력해주세요."
                    id="email"
                    name="email"
                    required>
-
         </label>
 
-        <label>
+        <label class="form__element">
             <b>비밀번호</b>
             <input type="password"
                    placeholder="사용할 패스워드를 입력해주세요."
@@ -102,92 +51,9 @@
         <button class="submit" type="button" onclick=formSubmit()>회원가입</button>
     </div>
 
-    <div class="container" style="background-color:#f1f1f1">
-        <button type="button" class="cancelbtn" onclick="window.location.href='/'">Cancel</button>
+    <div class="support">
+        <button type="button" class="cancel-btn" onclick="location.href='/'">취소</button>
     </div>
 </form>
 </body>
 </html>
-<script>
-    let check = false;
-
-    const form = document.getElementById("password");
-    form.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') {
-            formSubmit();
-        }
-    });
-
-    async function formSubmit(url = "http://localhost:8080/auth/signup") {
-        const request = {};
-        request.name = this.username.value
-        request.email = this.email.value
-        request.password = this.password.value
-        request.birthday = this.birthday.value
-
-        if(request.name.length < 1) {
-            alert("이름을 입력해주세요");
-            return
-        }
-        if (!check) {
-            alert("이메일 중복체크를 확인해주세요.");
-            return
-        }
-        if(request.password.length < 5) {
-            alert("비밀번호는 최소 5자리입니다.");
-            return
-        }
-
-        await fetch(url, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            mode: 'cors', //운영시 cors로 변경
-            cache: 'no-cache',
-            body: JSON.stringify(request)
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                alert(data.message);
-                if(data.success) window.location.href = "/"
-            })
-            .catch((error) => {
-                console.log("실패: ", error);
-            });
-    }
-
-    async function duplicateCheck(url = "http://localhost:8080/auth/check") {
-        const request = {"email" : this.email.value};
-
-        if(!validateEmail(request.email)) return;
-
-        await fetch(url, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            mode: 'cors', //운영시 cors로 변경
-            cache: 'no-cache',
-            body: JSON.stringify(request)
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                alert(data.message);
-                check = true;
-            })
-            .catch((error) => {
-                console.log("실패: ", error);
-            });
-    }
-
-    function validateEmail(email) {
-        const regEmail = /^[\w]+@[\w-]+.[a-zA-Z]{2,3}$/;
-
-        if (!regEmail.test(email)) {
-            alert("유효하지 않은 이메일 형식입니다.")
-            return false;
-        }
-        return true;
-    }
-</script>

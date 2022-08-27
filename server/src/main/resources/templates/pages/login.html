@@ -3,19 +3,17 @@
 <head>
     <meta content="width=device-width" charset="UTF-8">
     <title>SUPER SPACE</title>
-    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{/css/sign-style.css}">
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script th:src="@{/js/fetch.js}"></script>
     <script th:src="@{/js/login.js}"></script>
 </head>
 <body>
-<div>
+<div class="display">
     <img th:src="@{/img/logo.jpg}" alt="SUPER SPACE" id="logo">
-    <h2>로그인</h2>
-
     <form id="sign_in">
         <div class="container">
-            <label>
+            <label class="form__element">
                 <b>이메일</b>
                 <input type="text"
                        placeholder="이메일을 입력해주세요."
@@ -25,7 +23,7 @@
                        autofocus>
             </label>
 
-            <label>
+            <label class="form__element">
                 <b>비밀번호</b>
                 <input type="password"
                        placeholder="패스워드를 입력해주세요."
