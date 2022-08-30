@@ -150,12 +150,20 @@ $(document).on('click', '.delContentsBtn', async (e) => {
 
 $(document).on('keyup', '.content', (e) => {
     if (e.keyCode === 13) {
-        const contentId = e.target.parentElement.id;
-        const url = "/api/contents/" + boardId + "?contentId=" + contentId;
-        const request = {content: e.target.value};
-        e.target.blur();
-        saveContents(url, request);
+        if (!e.shiftKey) {
+            const contentId = e.target.parentElement.id;
+            const url = "/api/contents/" + boardId + "?contentId=" + contentId;
+            const request = {content: e.target.value};
+            e.target.blur();
+            saveContents(url, request);
+        }
     }
+})
+
+$(document).on('keyup keydown', '.content', () => {
+    const content = $('.content');
+    content.height(1)
+        .height(content.prop('scrollHeight') + 10);
 })
 
 const saveContents = async (url, request) => {

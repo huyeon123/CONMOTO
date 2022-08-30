@@ -1,3 +1,8 @@
+#super-space__title {
+    font-family: Azonix, sans-serif;
+    color: rgb(129 0 131 / 81%);
+}
+
 .sidebar-section {
     display: flex;
     flex-flow: column;

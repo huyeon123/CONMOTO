@@ -3,7 +3,6 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/workspace_layout}">
 <head>
-    <meta charset="UTF-8">
     <title th:text="${board.title}"></title>
     <link rel="stylesheet" th:href="@{/css/board.css}">
     <script th:src="@{/js/updateBoard.js}"></script>
@@ -72,9 +71,8 @@
                 <span class="comment-date" th:text="(${comment.date})">(X초 전)</span>
                 <button type="button" class="delCommentBtn">삭제</button>
                 <button type="button" class="editCommentBtn">수정</button>
-                <label style="display: block">
-                    <div style="display: inline">내용 :</div>
-                    <input readonly class="comment-body" th:value="${comment.body}">
+                <label>
+                    <input readonly th:value="${comment.body}">
                 </label>
             </div>
             <div class="comments-elements" th:if="${#lists.size(board.comments) < 1}">
@@ -83,9 +81,10 @@
         </div>
         <div class="contents">
             <div class="contentContainer" th:each="content : ${board.contents}" th:id="*{content.contentId}">
-                <input class="content"
-                       placeholder="내용을 입력하세요."
-                       th:value="${content.content}">
+                <textarea class="content"
+                          placeholder="내용을 입력하세요."
+                          th:text="${content.content}">
+                </textarea>
                 <div class="content__buttons">
                     <button type="button" class="delContentsBtn">-</button>
                     <button type="button" class="addContentsBtn">+</button>

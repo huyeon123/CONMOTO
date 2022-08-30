@@ -1,3 +1,8 @@
+@font-face {
+    font-family: Azonix;
+    src: url("../fonts/Azonix.woff") format("woff");
+}
+
 body {
     width: 100vw;
     margin: 0;

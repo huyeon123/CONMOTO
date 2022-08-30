@@ -39,11 +39,16 @@ label > span {
     cursor: Pointer;
 }
 
+.container {
+    width: 90%;
+}
+
 /*header*/
 .board__header {
     border-bottom: 1px solid rgba(55, 53, 47, 0.16);
     padding-top: 10px;
     padding-bottom: 10px;
+    flex-direction: column;
 }
 
 .header-elements {
@@ -124,6 +129,21 @@ label > span {
 }
 
 /*contents*/
+textarea {
+    width: 90%;
+    min-height: 20px;
+    resize: none;
+    border: none;
+    font-size: 16px;
+    line-height: 25px;
+    padding-top: 15px;
+    font-family: sans-serif;
+}
+
+textarea:focus {
+    outline: none;
+}
+
 .contents {
     margin: 5px auto;
     align-content: center;
@@ -137,7 +157,6 @@ label > span {
 }
 
 .content {
-    align-items: center;
     margin: 0 10px;
 }
 
