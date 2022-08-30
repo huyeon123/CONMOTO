@@ -1,58 +1,39 @@
-let lastId = 0;
+let nextPage = 0;
 let isFetching = false;
+const curr = new Date();
+const utc = curr.getTime() + (curr.getTimezoneOffset() * 60 * 1000);
+const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+const KR_now = new Date(utc + (2 * KR_TIME_DIFF)); //서버에서 다시 KR_TIME_DIFF만큼 빠짐
 
 $(function () {
-    isFetching = true;
-    const url = "/api/board/group?predicate=" + groupUrl;
-    fetch(url, {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        mode: "cors",
-        body: lastId
-    })
-        .then((res) => res.json())
-        .then((data) => {
-            drawList(data);
-        })
-});
-
-$(document).on("scroll", ".scroll-section", () => {
-    const SCROLLED_HEIGHT = window.scrollY;
-    const WINDOW_HEIGHT = window.innerHeight;
-    const DOC_TOTAL_HEIGHT = document.body.offsetHeight;
-    const IS_END = (WINDOW_HEIGHT + SCROLLED_HEIGHT > DOC_TOTAL_HEIGHT - 500);
-
-    if (IS_END && !isFetching) { // isFetching이 false일 때 조건 추가
-        getList();
+    const request = {
+        type: "GROUP",
+        query: groupUrl,
+        now: KR_now,
+        nextPage: nextPage
     }
+    getList(request);
 });
 
-const getList = (url) => {
+const getList = (request) => {
     isFetching = true;
-    fetch(url, {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        mode: "cors",
-        body: lastId
-
-    })
-        .then((res) => res.json())
-        .then((resJson) => {
-            drawList(resJson);
-        });
+    const url = "/api/board/latest";
+    const res = post(url, request);
+    res.then(data => drawList(data));
 };
 
 const drawList = (data) => {
     let listHtml = "";
     data.forEach((item, index) => {
-        const {id, title, description, categoryName, status, tags, contents, url} = item;
+        const {id, author, title, description, categoryName, status, tags, url, updatedAt} = item;
 
         listHtml = `<div class="board" id="${id}" onclick="location.href=${url}">
-                    <h2>${title}</h2>`;
+                        <div class="board__header">
+                            <span>작성자 : ${author}</span>
+                            <span class="board__updatedAt">${updatedAt}</span>
+                        </div>
+                        <h2>${title}</h2>
+                        <hr>`;
 
         if (description !== null) {
             listHtml += `<p>${description}</p>`
@@ -62,30 +43,30 @@ const drawList = (data) => {
             listHtml += `<p>${categoryName}</p>`
         }
 
-        listHtml += `<p>${status}</p>`;
+        const statusElement = document.createElement("p");
+        statusElement.setAttribute("class", "board__status");
+        statusElement.innerText = status;
+        addStatusClass(statusElement, status);
+
+        listHtml += statusElement.outerHTML + `<div>`;
 
         if (tags !== null) {
             tags.forEach((tag) => {
-                listHtml += `<p>${tag.tag}</p>`;
+                listHtml += `<span class="board__tags">%#35;${tag.tag}</span>`;
             });
         }
 
-        listHtml += `<hr><div><p>내용 요약</p>`;
-
-        if (contents !== null) {
-            contents.forEach((content) => {
-                listHtml += `<p>${content.content}</p>`
-            });
-        }
-
-        listHtml += `<p>내용</p></div></div>`;
+        listHtml += `</div>`;
 
         $(".content-body").append(listHtml);
 
         if (index === data.length - 1) {
-            lastId = id;
+            nextPage++;
         }
-        $("#mCSB_1_scrollbar_vertical .mCSB_dragger").css("height", "100px");
     });
     isFetching = false;
 };
+
+function addStatusClass(statusElement, status) {
+    statusElement.className += (" status__" + status.toLowerCase());
+}

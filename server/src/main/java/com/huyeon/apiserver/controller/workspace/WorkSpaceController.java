@@ -1,16 +1,7 @@
 package com.huyeon.apiserver.controller.workspace;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
-import com.huyeon.apiserver.model.dto.BoardResDto;
-import com.huyeon.apiserver.model.dto.HeaderDto;
-import com.huyeon.apiserver.model.dto.SideBarDto;
-import com.huyeon.apiserver.model.entity.Groups;
-import com.huyeon.apiserver.model.entity.User;
-import com.huyeon.apiserver.service.BoardService;
-import com.huyeon.apiserver.service.ContentBlockService;
 import com.huyeon.apiserver.service.GroupService;
-import com.huyeon.apiserver.service.WorkSpaceService;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,8 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
-
 @Slf4j
 @Controller
 @RequestMapping("/workspace")
@@ -29,8 +18,6 @@ import java.util.List;
 public class WorkSpaceController {
 
     private final GroupService groupService;
-    private final BoardService boardService;
-    private final ContentBlockService blockService;
 
     @GetMapping
     public String workSpacePage(
@@ -59,9 +46,8 @@ public class WorkSpaceController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable String groupUrl,
             Model model) {
-
-        //TODO: 보드당 요약 컨텐츠 가져오기
-
+        String groupName = groupService.getGroupNameByUrl(groupUrl);
+        model.addAttribute("title", groupName);
         return "pages/workspace";
     }
 

@@ -1,6 +1,7 @@
 package com.huyeon.apiserver.controller.api;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
+import com.huyeon.apiserver.model.dto.BoardHeaderReqDto;
 import com.huyeon.apiserver.model.dto.BoardReqDto;
 import com.huyeon.apiserver.model.dto.BoardResDto;
 import com.huyeon.apiserver.model.dto.ResMessage;
@@ -51,24 +52,28 @@ public class BoardApiController {
         }
     }
 
-    @PostMapping("/{type}")
-    public ResponseEntity<?> getLatestBoard(
-            @PathVariable String type,
-            @RequestParam String predicate,
-            @RequestBody Long lastId
-    ) {
-        if (type.equals("group")) {
-            return getLatestBoardInGroup(predicate, lastId);
-        } else if (type.equals("category")) {
-            return getLatestBoardInCategory(predicate, lastId);
+    @PostMapping("/latest")
+    public ResponseEntity<?> getLatestBoard(@RequestBody BoardReqDto request) {
+        if (isRequestFromGroup(request)) {
+            return getLatestBoardInGroup(request);
+        } else if (isRequestFromCategory(request)) {
+            return getLatestBoardInCategory(request);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    private ResponseEntity<?> getLatestBoardInGroup(String groupUrl, Long lastId) {
+    private boolean isRequestFromGroup(BoardReqDto request) {
+        return request.getType().equals("GROUP");
+    }
+
+    private boolean isRequestFromCategory(BoardReqDto request) {
+        return request.getType().equals("CATEGORY");
+    }
+
+    private ResponseEntity<?> getLatestBoardInGroup(BoardReqDto request) {
         try {
-            List<BoardResDto> newest = boardService.getNext10LatestInGroup(groupUrl, lastId);
+            List<BoardResDto> newest = boardService.getNext10LatestInGroup(request);
             return new ResponseEntity<>(newest, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,15 +81,15 @@ public class BoardApiController {
         }
     }
 
-    private ResponseEntity<?> getLatestBoardInCategory(String categoryName, Long lastId) {
-        List<BoardResDto> newest = boardService.getNext10LatestInCategory(categoryName, lastId);
+    private ResponseEntity<?> getLatestBoardInCategory(BoardReqDto request) {
+        List<BoardResDto> newest = boardService.getNext10LatestInCategory(request);
         return new ResponseEntity<>(newest, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editBoard(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable Long id, @RequestBody BoardReqDto request) {
+            @PathVariable Long id, @RequestBody BoardHeaderReqDto request) {
         try {
             boardService.editBoard(request);
             return new ResponseEntity<>(HttpStatus.OK);

@@ -1,25 +1,22 @@
 package com.huyeon.apiserver.model.dto;
 
-import com.huyeon.apiserver.model.entity.BoardStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class BoardReqDto {
-    private Long id;
+    private String type;
 
-    private String title;
+    private String query;
 
-    private String description;
+    private LocalDateTime now;
 
-    private Long categoryId;
-
-    private BoardStatus status;
-
-    private String target;
+    private int nextPage;
 }

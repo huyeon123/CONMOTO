@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.service;
 
+import com.huyeon.apiserver.model.dto.BoardHeaderReqDto;
 import com.huyeon.apiserver.model.dto.BoardReqDto;
 import com.huyeon.apiserver.model.dto.BoardResDto;
 import com.huyeon.apiserver.model.entity.Board;
@@ -45,7 +46,7 @@ public class BoardService {
 
     public BoardResDto getBoardResponse(Long id) {
         Board board = getBoard(id);
-        return mapToBoardResDto(board);
+        return new BoardResDto(board);
     }
 
     public List<BoardResDto> getBoardResponsesByCategory(Category category) {
@@ -53,44 +54,33 @@ public class BoardService {
         return mapToDtoList(boards);
     }
 
-    public List<BoardResDto> getNext10LatestInGroup(String groupUrl, Long lastId) throws Exception{
-        Groups group = getGroupByUrl(groupUrl);
+    public List<BoardResDto> getNext10LatestInGroup(BoardReqDto request) {
+        Groups group = getGroupByUrl(request.getQuery());
         List<Board> newest;
 
-        if (lastId == FIRST_LOAD) {
-            newest = boardRepository.find10Latest(group, PageRequest.of(0, 10));
+        if (isFirstLoad(request)) {
+            newest = boardRepository.find10Latest(group, request.getNow(), PageRequest.of(FIRST_LOAD, 5));
         } else {
-            newest = boardRepository.findNext10LatestInGroup(group, lastId, PageRequest.of(0, 5));
+            newest = boardRepository.findNextLatestInGroup(group, request.getNow(), PageRequest.of(request.getNextPage(), 5));
         }
 
         return mapToDtoList(newest);
     }
 
-    public List<BoardResDto> getNext10LatestInCategory(String categoryName, Long lastId) {
-        Category category = getCategoryByName(categoryName);
-        List<Board> next10Latest = boardRepository.findNext10LatestInCategory(category, lastId, PageRequest.of(0, 1));
+    private boolean isFirstLoad(BoardReqDto request) {
+        return request.getNextPage() == FIRST_LOAD;
+    }
+
+    public List<BoardResDto> getNext10LatestInCategory(BoardReqDto request) {
+        Category category = getCategoryByName(request.getQuery());
+        List<Board> next10Latest = boardRepository.findNext10LatestInCategory(category, 0L, PageRequest.of(FIRST_LOAD, 10));
         return mapToDtoList(next10Latest);
     }
 
     private List<BoardResDto> mapToDtoList(List<Board> boards) {
         return boards.stream()
-                .map(this::mapToBoardResDto)
+                .map(BoardResDto::new)
                 .collect(Collectors.toList());
-    }
-
-    private BoardResDto mapToBoardResDto(Board board) {
-        BoardResDto boardResDto = BoardResDto.builder()
-                .id(board.getId())
-                .title(board.getTitle())
-                .description(board.getDescription())
-                .status(board.getStatus())
-                .build();
-
-        if (board.getCategory() != null) {
-            boardResDto.setCategoryName(board.getCategory().getName());
-        }
-
-        return boardResDto;
     }
 
     //게시글 생성
@@ -108,7 +98,7 @@ public class BoardService {
     }
 
     //게시글 수정
-    public void editBoard(BoardReqDto request) throws Exception {
+    public void editBoard(BoardHeaderReqDto request) throws Exception {
         Board board = getBoard(request.getId());
 
         switch (request.getTarget()) {

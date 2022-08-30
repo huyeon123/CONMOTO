@@ -38,5 +38,9 @@ public class Board extends AuditEntity implements Auditable {
 
     @Enumerated(EnumType.STRING)
     private BoardStatus status;
+
+    public String getCategoryName() {
+        return category.getName();
+    }
 }
 
