@@ -12,6 +12,10 @@ h1, h2 {
     margin: 15px 0 5px;
 }
 
+p {
+    margin: 10px 0;
+}
+
 .super-space-app {
     width: 100vw;
     display: inline-flex;

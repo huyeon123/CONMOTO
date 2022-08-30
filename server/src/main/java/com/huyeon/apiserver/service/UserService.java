@@ -82,9 +82,7 @@ public class UserService {
 
     //게시글 확인
     public List<Board> myBoard(String email) {
-        Optional<List<Board>> boards =
-                boardRepository.findAllByUserEmail(email);
-        return boards.orElseGet(List::of);
+        return boardRepository.findAllByUserEmail(email);
     }
 
     //게시글&내용 확인
@@ -92,7 +90,7 @@ public class UserService {
         Map<Board, List<ContentBlock>> boardAndContents = new LinkedHashMap<>();
         List<Board> boards = myBoard(email);
         boards.forEach(board -> {
-            List<ContentBlock> contents = blockRepository.findAllByBoardId(board.getId()).orElseGet(List::of);
+            List<ContentBlock> contents = blockRepository.findAllByBoardId(board.getId());
             boardAndContents.put(board, contents);
         });
         return boardAndContents;

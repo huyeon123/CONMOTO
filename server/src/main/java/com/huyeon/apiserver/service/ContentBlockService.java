@@ -27,11 +27,11 @@ public class ContentBlockService {
 
     //게시글 컨텐츠 모두 가져오기
     public List<ContentBlock> getContentBlockByBoardId(Long boardId) {
-        return blockRepository.findAllByBoardId(boardId).orElse(List.of());
+        return blockRepository.findAllByBoardId(boardId);
     }
 
     public List<ContentDto> getSummaryContentResByBoardId(Long boardId){
-        List<ContentBlock> contents = blockRepository.findTop3ByBoardId(boardId).orElse(List.of());
+        List<ContentBlock> contents = blockRepository.findTop3ByBoardId(boardId);
         return mapToContentDto(contents);
     }
 

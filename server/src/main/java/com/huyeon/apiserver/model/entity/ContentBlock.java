@@ -26,4 +26,8 @@ public class ContentBlock extends AuditEntity implements Auditable {
 
     @Lob //varchar 보다 큰 내용을 담을 수 있음
     private String content;
+
+    public ContentBlock(Long boardId) {
+        this.boardId = boardId;
+    }
 }

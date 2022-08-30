@@ -23,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardApiController {
     private final BoardService boardService;
-    private final ContentBlockService blockService;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getBoard(@PathVariable Long id) {
@@ -31,24 +30,21 @@ public class BoardApiController {
         return new ResponseEntity<>(board, HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<ResMessage> createBoard(
+    @GetMapping
+    public ResponseEntity<?> createBoard(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody String groupUrl) {
+            @RequestParam String groupUrl) {
         try {
             Long id = boardService.createBoard(userDetails.getUsername(), groupUrl);
-            blockService.createContent(id);
 
             return new ResponseEntity<>(
                     new ResMessage("게시글이 생성되었습니다.", id, true),
-                    HttpStatus.CREATED
-            );
+                    HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(
                     new ResMessage("게시글 생성에 실패했습니다."),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

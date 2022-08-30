@@ -3,13 +3,12 @@ package com.huyeon.apiserver.service;
 import com.huyeon.apiserver.model.dto.BoardHeaderReqDto;
 import com.huyeon.apiserver.model.dto.BoardReqDto;
 import com.huyeon.apiserver.model.dto.BoardResDto;
-import com.huyeon.apiserver.model.entity.Board;
-import com.huyeon.apiserver.model.entity.BoardStatus;
-import com.huyeon.apiserver.model.entity.Category;
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.dto.ContentDto;
+import com.huyeon.apiserver.model.entity.*;
 import com.huyeon.apiserver.model.entity.history.BoardHistory;
 import com.huyeon.apiserver.repository.BoardRepository;
 import com.huyeon.apiserver.repository.CategoryRepository;
+import com.huyeon.apiserver.repository.ContentBlockRepository;
 import com.huyeon.apiserver.repository.GroupRepository;
 import com.huyeon.apiserver.repository.history.BoardHistoryRepo;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -28,11 +28,10 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class BoardService {
-    private static final int FIRST_LOAD = 0;
-
     private final GroupRepository groupRepository;
     private final CategoryRepository categoryRepository;
     private final BoardRepository boardRepository;
+    private final ContentBlockRepository blockRepository;
     private final BoardHistoryRepo boardHistoryRepo;
 
     //게시글 가져오기
@@ -41,7 +40,7 @@ public class BoardService {
     }
 
     private List<Board> getBoardsByCategory(Category category) {
-        return boardRepository.findAllByCategory(category).orElse(List.of());
+        return boardRepository.findAllByCategory(category);
     }
 
     public BoardResDto getBoardResponse(Long id) {
@@ -54,33 +53,36 @@ public class BoardService {
         return mapToDtoList(boards);
     }
 
-    public List<BoardResDto> getNext10LatestInGroup(BoardReqDto request) {
-        Groups group = getGroupByUrl(request.getQuery());
-        List<Board> newest;
-
-        if (isFirstLoad(request)) {
-            newest = boardRepository.find10Latest(group, request.getNow(), PageRequest.of(FIRST_LOAD, 5));
-        } else {
-            newest = boardRepository.findNextLatestInGroup(group, request.getNow(), PageRequest.of(request.getNextPage(), 5));
-        }
-
-        return mapToDtoList(newest);
-    }
-
-    private boolean isFirstLoad(BoardReqDto request) {
-        return request.getNextPage() == FIRST_LOAD;
-    }
-
-    public List<BoardResDto> getNext10LatestInCategory(BoardReqDto request) {
-        Category category = getCategoryByName(request.getQuery());
-        List<Board> next10Latest = boardRepository.findNext10LatestInCategory(category, 0L, PageRequest.of(FIRST_LOAD, 10));
-        return mapToDtoList(next10Latest);
-    }
-
     private List<BoardResDto> mapToDtoList(List<Board> boards) {
         return boards.stream()
                 .map(BoardResDto::new)
                 .collect(Collectors.toList());
+    }
+
+    //Template Method Pattern 적용하기
+    public List<BoardResDto> getNext10LatestInGroup(BoardReqDto request) {
+        Groups group = getGroupByUrl(request.getQuery());
+        List<Board> newest = boardRepository.findNextTenLatestInGroup(group, request.getNow(), PageRequest.of(request.getNextPage(), 10));
+        return mapToDtoList(newest);
+    }
+
+    public List<BoardResDto> getNext10LatestInCategory(BoardReqDto request) {
+        Category category = getCategoryByName(request.getQuery());
+        List<Board> newest = boardRepository.findNextTenLatestInCategory(category, request.getNow(), PageRequest.of(request.getNextPage(), 10));
+        List<BoardResDto> boardDtoList = mapToDtoList(newest);
+        addContents(boardDtoList);
+        return boardDtoList;
+    }
+
+    private void addContents(List<BoardResDto> newest) {
+        newest.forEach(board -> {
+            List<ContentDto> summaryContents = blockRepository.findTop3ByBoardId(board.getId())
+                    .stream()
+                    .map(ContentDto::new)
+                    .collect(Collectors.toList());
+
+            board.setContents(summaryContents);
+        });
     }
 
     //게시글 생성
@@ -94,7 +96,15 @@ public class BoardService {
                 .status(BoardStatus.READY)
                 .build();
 
-        return boardRepository.save(board).getId();
+        Long id = boardRepository.save(board).getId();
+
+        createDefaultContent(id);
+
+        return id;
+    }
+
+    private void createDefaultContent(Long boardId) {
+        blockRepository.save(new ContentBlock(boardId));
     }
 
     //게시글 수정

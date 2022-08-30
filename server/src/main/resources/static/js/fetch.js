@@ -1,4 +1,4 @@
-const pathname = window.location.pathname;
+const pathname = decodeURI(window.location.pathname);
 const groupUrlStartIdx = String("/workspace").length + 1;
 const groupUrlEndIdx = pathname.indexOf("/", groupUrlStartIdx + 1);
 const groupUrl =  groupUrlEndIdx === -1 ?

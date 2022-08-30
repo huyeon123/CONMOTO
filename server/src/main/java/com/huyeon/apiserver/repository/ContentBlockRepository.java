@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface ContentBlockRepository extends JpaRepository<ContentBlock, Long> {
-    Optional<List<ContentBlock>> findAllByBoardId(Long boardId);
+    List<ContentBlock> findAllByBoardId(Long boardId);
 
-    Optional<List<ContentBlock>> findTop3ByBoardId(Long boardId);
+    List<ContentBlock> findTop3ByBoardId(Long boardId);
 }

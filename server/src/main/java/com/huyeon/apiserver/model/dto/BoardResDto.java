@@ -44,6 +44,7 @@ public class BoardResDto {
         description = board.getDescription();
         status = board.getStatus();
         updatedAt = board.getUpdatedAt();
+        url = "/board/" + id;
 
         if (board.getCategory() != null) {
             categoryName = board.getCategoryName();

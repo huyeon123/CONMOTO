@@ -16,31 +16,20 @@ import java.util.Optional;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    Optional<List<Board>> findAllByUserEmail(String email);
+    List<Board> findAllByUserEmail(String email);
 
-    Optional<List<Board>> findAllByCategory(Category category);
+    List<Board> findAllByCategory(Category category);
 
     @Query(value = "select b from Board b where updatedAt < :now and group_id = :group order by updatedAt desc")
-    List<Board> find10Latest(@Param("group") Groups group, @Param("now") LocalDateTime now, Pageable pageable);
+    List<Board> findNextTenLatestInGroup(@Param("group") Groups group, @Param("now") LocalDateTime now, Pageable pageable);
 
     @Query(value = "select b from Board b " +
-            "where id < :lastId and group_id = :group " +
-            "order by id desc")
-    List<Board> findNext10LatestInGroup(
-            @Param("group") Groups group,
-            @Param("lastId") Long lastId,
-            Pageable pageable);
-
-    @Query(value = "select b from Board b " +
-            "where  id < :lastId and category_id = :category " +
-            "order by  id desc")
-    List<Board> findNext10LatestInCategory(
+            "where updatedAt < :now and category_id = :category " +
+            "order by updatedAt desc")
+    List<Board> findNextTenLatestInCategory(
             @Param("category") Category category,
-            @Param("lastId") Long lastId,
+            @Param("now") LocalDateTime now,
             Pageable pageable);
-
-    @Query(value = "select b from Board b where updatedAt < :now and group_id = :group order by updatedAt desc")
-    List<Board> findNextLatestInGroup(@Param("group") Groups group, @Param("now") LocalDateTime now, Pageable pageable);
 
     void deleteAllByUserEmail(String email);
 }
