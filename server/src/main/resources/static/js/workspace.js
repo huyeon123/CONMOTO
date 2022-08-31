@@ -1,13 +1,13 @@
 function moveToCategoryPage(obj) {
-    window.location.href = "/workspace/" + groupUrl + "/" + obj.outerText;
+    window.location.href = "/workspace/" + groupUrl + "/" + obj.outerText.substring(2);
 }
 
 function moveToCreateGroupPage() {
     window.location.href = "/workspace/new";
 }
 
-function moveToGroupManagingPage() {
-    window.location.href = "/workspace/" + groupUrl + "/manage";
+function moveToGroupManagingPage(url) {
+    window.location.href = "/workspace/" + url + "/manage";
 }
 
 function moveToCreateCategoryPage() {

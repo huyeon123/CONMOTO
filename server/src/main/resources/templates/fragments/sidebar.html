@@ -20,7 +20,7 @@
             <div id="group-container" th:each="group: ${sideBar.groups}">
                 <div class="sidebar-elements">
                     <span th:utext="|> ${group.name}|" th:onclick="|location.href='@{/workspace/{groupUrl}(groupUrl=${group.urlPath})}'|"> GROUP NAME</span>
-                    <i class="material-icons md-16 gray" onclick="moveToGroupManagingPage()">settings</i>
+                    <i class="material-icons md-16 gray" th:id="${group.urlPath}" onclick="moveToGroupManagingPage(this.id)">settings</i>
                 </div>
             </div>
         </div>
@@ -38,10 +38,10 @@
                 </div>
                 <div class="sidebar-elements level2"
                      th:each="category2: ${category.subCategories}">
-                    <span th:utext="|> ${category2.name}|"> > TT </span>
+                    <span th:utext="|> ${category2.name}|" onclick="moveToCategoryPage(this)"> > TT </span>
                     <div class="sidebar-elements"
                          th:each="category3: ${category2.subCategories}">
-                        <span th:utext="|> ${category3.name}|"> > TT </span>
+                        <span th:utext="|> ${category3.name}|" onclick="moveToCategoryPage(this)"> > TT </span>
                     </div>
                 </div>
             </div>

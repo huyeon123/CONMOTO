@@ -46,7 +46,6 @@ $(function () {
             at: "right-110 bottom",
             of: ".header"
         },
-        dialogClass: "no-close",
         autoOpen: false,
         resizable: false,
         draggable: true,

@@ -4,59 +4,45 @@
       layout:decorate="~{layouts/workspace_layout}">
 
 <head>
-    <title>그룹 생성 페이지</title>
-    <script>
-        async function createGroup(url = baseUrl + "/api/group") {
-            const groupName = $('#group-name').val();
-            const description = $('#group-description').val();
-            const urlPath = $('#url-path').val();
-            const request = {name: groupName, description: description, url: urlPath};
-            console.log(request)
-            await fetch(url, {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                mode: "cors",
-                body: JSON.stringify(request)
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    alert(data.message);
-                    if (data.success) {
-                        window.location.href = baseUrl + "/workspace/" + data.data.url;
-                    }
-                })
-                .catch((error) => console.log("실패 : ", error));
-        }
-    </script>
+    <title>그룹 생성</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}"/>
+    <script th:src="@{/js/group-create.js}"></script>
 </head>
 
-<div layout:fragment="content">
-    <div>
-        <label>
-            <span>그룹명</span>
-            <input type="text"
-                   id="group-name"
-                   placeholder="생성할 그룹명을 입력하세요.">
-        </label>
+<div class="flex-column-center wrapper" layout:fragment="content">
+    <div class="content__header">
+        <h1>새 그룹 생성</h1>
+        <span>새로운 그룹을 생성합니다.</span>
     </div>
-    <div>
-        <label>
-            <span>그룹 소개</span>
-            <input type="text"
-                   id="group-description"
-                   placeholder="그룹 소개를 작성하세요.">
-        </label>
+    <div class="content__body">
+        <div class="content__body__block">
+            <label>
+                <span class="label">그룹명</span>
+                <input type="text"
+                       id="group-name"
+                       placeholder="생성할 그룹명을 입력하세요.">
+            </label>
+        </div>
+        <div class="content__body__block">
+            <label>
+                <span class="label">그룹 소개</span>
+                <input type="text"
+                       id="group-description"
+                       placeholder="그룹 소개를 작성하세요.">
+            </label>
+        </div>
+        <div class="content__body__block">
+            <label>
+                <span class="label">URL</span>
+                <input type="text"
+                       id="url-path"
+                       placeholder="사용할 URL 경로명을 입력하세요.">
+            </label>
+        </div>
+        <div class="flex-space-between">
+            <button class="cancel margin-top-10" type="button" onclick="location.href='/workspace'">취소</button>
+            <button class="default margin-top-10" type="button" onclick="createGroup()">생성</button>
+        </div>
     </div>
-    <div>
-        <label>
-            <span>URL</span>
-            <input type="text"
-                   id="url-path"
-                   placeholder="사용할 URL 경로명을 입력하세요.">
-        </label>
-    </div>
-    <button type="button" onclick="createGroup()"> 생성</button>
 </div>
 </html>
