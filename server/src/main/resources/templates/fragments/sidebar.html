@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <div id="super-space-app__sidebar" th:fragment="sideBarFragment">
-    <div style="width: 240px;">
+    <div class="sidebar">
         <div id="logo" class="sidebar-section">
             <div id="super-space__title">SUPER SPACE</div>
+            <i class="material-icons" id="sidebar__fold">first_page</i>
         </div>
         <div id="info" class="sidebar-section">
             <div style="width: 100%">
@@ -14,34 +15,26 @@
         <div id="group-list" class="sidebar-section">
             <div class="sidebar-header">
                 <span>그룹 리스트</span>
-                <button type="button" onclick="moveToCreateGroupPage()">생성</button>
-                <button type="button"
-                        onclick="moveToGroupManagingPage()"
-                        th:if="${#lists.size(sideBar.groups) > 0}">
-                    관리
-                </button>
+                <i class="material-icons md-18 gray" onclick="moveToCreateGroupPage()">add</i>
             </div>
             <div id="group-container" th:each="group: ${sideBar.groups}">
-                <div class="sidebar-elements"
-                     th:utext="|> ${group.name}|"
-                     th:onclick="|location.href='@{/workspace/{groupUrl}(groupUrl=${group.urlPath})}'|">
-                    > GROUP NAME
+                <div class="sidebar-elements">
+                    <span th:utext="|> ${group.name}|" th:onclick="|location.href='@{/workspace/{groupUrl}(groupUrl=${group.urlPath})}'|"> GROUP NAME</span>
+                    <i class="material-icons md-16 gray" onclick="moveToGroupManagingPage()">settings</i>
                 </div>
             </div>
         </div>
         <div id="category" class="sidebar-section">
             <div class="sidebar-header">
                 <span>카테고리</span>
-                <button type="button" onclick="moveToCreateCategoryPage()">생성</button>
-                <button type="button"
-                        th:if="${#lists.size(sideBar.categories) > 0}"
-                        onclick="moveToManageCategoryPage()">
-                    관리
-                </button>
+                <div>
+                    <i class="material-icons md-18 gray" onclick="moveToCreateCategoryPage()">add</i>
+                    <i class="material-icons md-16 gray" onclick="moveToManageCategoryPage()">settings</i>
+                </div>
             </div>
             <div id="category-container" th:each="category: ${sideBar.categories}">
                 <div class="sidebar-elements">
-                    > <span th:utext="${category.name}" onclick="moveToCategoryPage(this)"></span>
+                    <span th:utext="|> ${category.name}|" onclick="moveToCategoryPage(this)"></span>
                 </div>
                 <div class="sidebar-elements level2"
                      th:each="category2: ${category.subCategories}">
