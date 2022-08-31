@@ -1,3 +1,8 @@
+.flex-center {
+    display: flex;
+    align-items: center;
+}
+
 .flex-space-between {
     display: flex;
     justify-content: space-between;
@@ -48,7 +53,8 @@
 }
 
 span.label {
-    width: 100px;
+    width: fit-content;
+    min-width: 100px;
     display: inline-block;
     vertical-align: center;
     padding: 5px 0;
@@ -69,7 +75,7 @@ input:focus {
 }
 
 button {
-    width: 50px;
+    width: fit-content;
     color: #ffffff;
     border: none;
     border-radius: 3px;
@@ -81,10 +87,19 @@ button.default {
     background-color: #4d91f5;
 }
 
-button.cancel {
+button.warn {
     background-color: #f54d4d;
+}
+
+button.save {
+    background-color: #77d78d;
 }
 
 .margin-top-10 {
     margin-top: 10px;
+}
+
+.check-box {
+    width: auto;
+    margin: 5px;
 }

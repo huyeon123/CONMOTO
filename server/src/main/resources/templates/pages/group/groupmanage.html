@@ -3,73 +3,42 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/workspace_layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>그룹 관리 페이지</title>
-    <style>
-        .section {
-            margin: 5px 10px;
-        }
-    </style>
-    <script>
-        function inviteMember() {
-
-        }
-
-        function moveToDeletePage() {
-            window.location.href = "./delete";
-        }
-
-        function moveToMemberManagePage() {
-            window.location.href = "./members";
-        }
-
-        function saveGroupInfo() {
-            const url = baseUrl + "/api/group?groupUrl=" + groupUrl;
-
-            const changedName = $('#group-name').val();
-            const changedUrl = $('#group-url').val();
-            const changedDescription = $('#group-description').val();
-            const request = {
-                name: changedName,
-                url: changedUrl,
-                description: changedDescription
-            };
-
-            const res = put(url, request);
-            let success = false;
-            res.then((data) => {
-                if (data) success = data;
-            })
-            return success;
-        }
-    </script>
+    <title th:text="|${groupInfo.name} - 그룹 관리|"></title>
+    <script th:src="@{/js/group-manage.js}"></script>
 </head>
-<div layout:fragment="content">
-    <div class="section">
-        <button type="button" onclick="inviteMember()">멤버 초대</button>
-        <button type="button" onclick="moveToMemberManagePage()">멤버 관리</button>
-        <button type="button" onclick="saveGroupInfo()">저장</button>
+<div class="flex-column-center wrapper" layout:fragment="content">
+    <div class="content__header">
+        <h1 th:text="|${groupInfo.name} - 그룹 관리|"></h1>
+        <span>해당 그룹 정보를 변경할 수 있습니다.</span>
+        <div class="margin-top-10">
+            <button type="button" class="default" onclick="inviteMember()">멤버 초대</button>
+            <button type="button" class="default" onclick="moveToMemberManagePage()">멤버 관리</button>
+            <button type="button" class="warn" onclick="moveToDeletePage()">그룹 삭제</button>
+        </div>
     </div>
-    <div class="section">
-        <label>
-            <div>그룹명 수정</div>
-            <input id="group-name" th:value="${groupInfo.name}">
-        </label>
-    </div>
-    <div class="section">
-        <label>
-            <div>그룹 URL 수정</div>
-            <input id="group-url" th:value="${groupInfo.url}">
-        </label>
-    </div>
-    <div class="section">
-        <label>
-            <div>그룹 설명 수정</div>
-            <input id="group-description" th:value="${groupInfo.description}">
-        </label>
-    </div>
-    <div class="section">
-        <button type="button" onclick="moveToDeletePage()">그룹 삭제</button>
+    <div class="content__body">
+        <div class="content__body__block">
+            <label>
+                <span class="label">그룹명 수정</span>
+                <input id="group-name" th:value="${groupInfo.name}">
+            </label>
+        </div>
+        <div class="content__body__block">
+            <label>
+                <span class="label">그룹 URL 수정</span>
+                <input id="group-url" th:value="${groupInfo.url}">
+            </label>
+        </div>
+        <div class="content__body__block">
+            <label>
+                <span class="label">그룹 설명 수정</span>
+                <input id="group-description" th:value="${groupInfo.description}">
+            </label>
+        </div>
+        <div class="content__body__block flex-space-between">
+            <button type="button" class="warn" onclick="location.href='/workspace'">취소</button>
+            <button type="button" class="save" onclick="saveGroupInfo()">저장</button>
+        </div>
     </div>
 </div>
 

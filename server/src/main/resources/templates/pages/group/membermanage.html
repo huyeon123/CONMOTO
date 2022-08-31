@@ -3,89 +3,53 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/workspace_layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>멤버 관리 페이지</title>
-    <style>
-        .section {
-            margin: 5px 10px;
-        }
-    </style>
-    <script>
-        async function save() {
-            const url = baseUrl + "/api/group/member?groupUrl=" + groupUrl;
-            const request = [];
-            const members = document.getElementsByClassName("member-info");
-            for (let member of members) {
-                const email = member.children.item(1).outerText;
-                const authority = member.lastElementChild.value;
-                request.push({
-                    email: email,
-                    groupRole: authority
-                });
-            }
-
-            const success = await post(url, request);
-            if (success) {
-                alert("변경 사항이 반영되었습니다.")
-            }
-        }
-
-        async function expelMember(element) {
-            const url = baseUrl + "/api/group/member?groupUrl=" + groupUrl;
-            const memberInfo = element.parentElement;
-            const email = memberInfo.children.item(1).outerText;
-            const request = {email: email};
-
-            const success = await del(url, request);
-            if (success) {
-                const name = memberInfo.firstElementChild.outerText;
-                alert(name + " 사용자가 그룹에서 추방되었습니다.")
-            }
-        }
-
-        function activateExpelMemberBtn() {
-            const element = $('.member-info');
-            const button = document.createElement("button");
-            button.setAttribute("type", "button");
-            button.setAttribute("class", "checkExpel");
-            button.setAttribute("onclick", "expelMember(this)");
-            button.innerHTML = "강퇴";
-            element.append(button);
-
-            $('#expel-btn')
-                .html("멤버 강퇴 취소")
-                .attr("onclick", "cancelExpelMemberBtn()");
-        }
-
-        function cancelExpelMemberBtn() {
-            $('.checkExpel').remove();
-            $('#expel-btn')
-                .html("멤버 강퇴")
-                .attr("onclick", "activateExpelMemberBtn()");
-        }
-    </script>
+    <title th:text="|${groupName} - 멤버 관리|"></title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <script th:src="@{/js/member-manage.js}"></script>
 </head>
-<div layout:fragment="content">
-    <div class="section">
-        <button type="button" id="expel-btn" onclick="activateExpelMemberBtn()">멤버 강퇴</button>
-    </div>
-    <div class="section" id="member-table">
-        <span>멤버 권한 변경</span>
-        <div class="member-info" th:each="member, index: ${members}" th:id="|member_${index.index}|">
-            <span id="member-name" th:text="${member.name}">USER</span>
-            <span id="member-email" th:text="${member.email}">EMAIL</span>
-            <span th:utext="${member.groupRole}">AUTHORITY</span>
-            <select id="member-authority">
-                <option th:each="authority: ${availableAuth}"
-                        th:value="${authority}"
-                        th:text="${authority}">
-                    권한
-                </option>
-            </select>
+<div class="flex-column-center wrapper" layout:fragment="content">
+    <div class="content__header">
+        <h1 th:text="|${groupName} - 멤버 관리|"></h1>
+        <span>해당 그룹의 멤버 정보를 변경할 수 있습니다.</span>
+        <div class="margin-top-10">
+            <button type="button" class="warn" id="activate-expel" onclick="activateExpelMemberBtn()">멤버 강퇴 활성화</button>
         </div>
     </div>
-    <div class="section">
-        <button type="button" onclick="save()">저장</button>
+    <div class="content__body">
+        <div class="content__body__block">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>이름</th>
+                    <th>이메일</th>
+                    <th>권한</th>
+                    <th>강퇴</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="member-info" th:each="member, index: ${members}" th:id="|member_${index.index}|">
+                    <td class="member-name" th:text="${member.name}">USER</td>
+                    <td class="member-email" th:text="${member.email}">EMAIL</td>
+                    <td>
+                        <select class="member-authority">
+                            <option th:each="authority: ${availableAuth}"
+                                    th:value="${authority}"
+                                    th:text="${authority}">
+                                권한
+                            </option>
+                        </select>
+                    </td>
+                    <td class="member-expel">
+                        <button type="button" class="expel-btn warn" th:onclick="|expelMember('${index.index}')|" disabled style="opacity: 0.5">강퇴</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="content__body__block flex-space-between">
+            <button type="button" class="warn" onclick="location.href='/workspace'">취소</button>
+            <button type="button" class="save" onclick="save()">저장</button>
+        </div>
     </div>
 </div>
 </html>

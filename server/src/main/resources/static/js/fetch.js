@@ -51,3 +51,15 @@ async function del(url, body) {
 
     return getData(response);
 }
+
+async function delWithoutBody(url) {
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: 'cors'
+    });
+
+    return getData(response);
+}

@@ -67,6 +67,7 @@ public class GroupController {
         List<MemberDto> members = users.stream()
                 .map(user -> convertToMemberDto(group, user))
                 .collect(Collectors.toList());
+        model.addAttribute("groupName", group.getName());
         model.addAttribute("members", members);
     }
 
@@ -91,7 +92,8 @@ public class GroupController {
     public String groupDeletePage(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable String groupUrl, Model model) {
-
+        String groupName = groupService.getGroupNameByUrl(groupUrl);
+        model.addAttribute("groupName", groupName);
         return "pages/group/deletegroup";
     }
 }
