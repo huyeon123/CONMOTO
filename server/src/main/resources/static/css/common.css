@@ -1,4 +1,4 @@
-.flex-center {
+.flex-horizon-center {
     display: flex;
     align-items: center;
 }
@@ -76,9 +76,9 @@ input:focus {
 
 button {
     width: fit-content;
-    color: #ffffff;
+    color: #ffffff !important;
     border: none;
-    border-radius: 3px;
+    border-radius: 3px !important;
     padding: 5px 10px;
     cursor: Pointer;
 }
@@ -97,6 +97,11 @@ button.save {
 
 .margin-top-10 {
     margin-top: 10px;
+}
+
+.padding-side-5 {
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .check-box {
