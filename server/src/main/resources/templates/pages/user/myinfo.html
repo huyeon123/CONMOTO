@@ -1,166 +1,57 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/workspace_layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>내 정보</title>
-    <style>
-        .container {
-            width: 550px;
-            cursor: pointer;
-            margin-bottom: 5px;
-            border: 1px solid #6c757d;
-        }
-
-        .option {
-            display: inline-block;
-            width: 60px;
-            align-items: center;
-            text-align: center;
-            vertical-align: top;
-            margin-top: 10px;
-        }
-
-        .option > button {
-            width: 50px;
-            font-size: 14px;
-            padding: 5px 10px;
-            border: none;
-            background-color: white;
-            color: red;
-            opacity: 0.5;
-            cursor: pointer;
-        }
-
-        .content-body {
-            width: 480px;
-            display: inline-block;
-        }
-    </style>
+    <title>마이페이지</title>
+    <link th:href="@{/css/myinfo.css}">
+    <script th:src="@{/js/myinfo.js}"></script>
+    <script th:src="@{/js/board-util.js}"></script>
 </head>
-<body>
-<div>
-    <span th:text="|Hello, ${username}. Did you see this?|"></span>
-    <button type="button" th:onclick="|location.href='@{/user/profile}'|">내 정보 수정</button>
-</div>
-<div style="width: 500px;">
-    <h2 style="display: inline-block; margin: 5px auto">BOARD</h2>
-    <button type="button"
-            onclick="createBoard()"
-            style="text-align: right; display: inline-block">글쓰기
-    </button>
-</div>
-<div class="container" th:each="entry : ${boardAndContents}">
-    <div class="content-body" th:onclick="|location.href='@{/board/{id}(id=${entry.key.id})}'|">
-        <div th:with="board = ${entry.key}" th:id="*{board.id}">
-            <p>작성자 : <span th:text="${board.userEmail}">email</span></p>
-            <p>제목 : <span th:text="${board.title}">title</span></p>
-            <p>상태 : <span th:text="${board.status}">status</span></p>
-        </div>
-        <div th:with="contents = ${entry.value}">
-            &lt;내용&gt;
-            <div th:each="content : ${contents}">
-                <p th:text="${content.content}"> content</p>
-            </div>
+<div class="flex-column-center wrapper" layout:fragment="content">
+    <div class="content__header">
+        <h1>마이페이지</h1>
+        <span>나와 관련된 정보를 조회/수정할 수 있습니다.</span>
+        <div class="margin-top-10">
+            <button type="button" class="default" onclick="moveToMyBoard()">내 게시글</button>
+            <button type="button" class="default" onclick="moveToMyComment()">내 댓글</button>
+            <button type="button" class="warn" onclick="moveToResign()">회원탈퇴</button>
         </div>
     </div>
-    <span class="option">
-        <button type="button" class="delBoardBtn">삭제</button>
-    </span>
-</div>
-<p th:if="${#maps.size(boardAndContents) < 1}">작성한 게시글이 없습니다.</p>
-<hr>
-<h2>COMMENT</h2>
-<div class="container" th:each="comment : ${comments}">
-    <div class="content-body" th:id="*{comment.id}"
-         th:onclick="|location.href='@{/board/{id}(id=${comment.boardId})}'|">
-        <p>작성자 : <span th:text="${comment.userEmail}">userName</span></p>
-        <p>내용 : <span th:text="${comment.comment}">comment</span></p>
+    <div class="content__body">
+        <div class="content__body__block">
+            <label class="input-group flex-nowrap">
+                <span class="input-group-text" id="addon-wrapping">이메일</span>
+                <input class="form-control" id="email" th:value="${user.email}" readonly>
+            </label>
+        </div>
+        <div class="content__body__block">
+            <label class="input-group flex-nowrap">
+                <span class="input-group-text">이름</span>
+                <input class="form-control" id="username" th:value="${user.name}">
+            </label>
+        </div>
+        <div class="content__body__block">
+            <label class="input-group flex-nowrap">
+                <span class="input-group-text">비밀번호</span>
+                <input class="form-control" id="password" type="password">
+            </label>
+        </div>
+        <div class="content__body__block">
+            <label class="input-group flex-nowrap">
+                <span class="input-group-text">비밀번호 확인</span>
+                <input class="form-control" id="check-password" type="password">
+            </label>
+        </div>
+        <div class="content__body__block">
+            <label class="input-group flex-nowrap">
+                <span class="input-group-text">생년월일</span>
+                <input class="form-control" id="birthday" type="date" th:value="${user.birthday}">
+            </label>
+        </div>
+        <div>
+            <button type="button" class="default margin-top-10" style="float: right" onclick="save()">생성</button>
+        </div>
     </div>
-    <span class="option">
-        <button type="button" class="delCommentBtn">삭제</button>
-    </span>
 </div>
-<p th:if="${#lists.size(comments) < 1}">작성한 댓글이 없습니다.</p>
-</body>
-<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-<script>
-    const baseUrl = "http://" + window.location.host;
-
-    $(document).on('click', '.delBoardBtn', async (e) => {
-        if (confirm("정말로 삭제하시겠습니까?")) {
-            let target = e.target
-                .parentElement
-                .previousElementSibling
-                .firstElementChild;
-            let success = await delBoardReq(baseUrl + "/api/board/" + target.id);
-            if (success) {
-                target.parentElement.parentElement.remove();
-            }
-        }
-    });
-
-    $(document).on('click', '.delCommentBtn', async (e) => {
-        if (confirm("정말로 삭제하시겠습니까?")) {
-            let target = e.target
-                .parentElement
-                .previousElementSibling
-            let success = await delCommentReq(baseUrl + "/api/comment?commentId=" + target.id);
-            if (success) {
-                target.parentElement.remove();
-            }
-        }
-    });
-
-    async function createBoard(url = baseUrl + "/api/board") {
-        await fetch(url, {
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            mode: "cors",
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                alert(data.message);
-                if (data.success) {
-                    window.location.href = baseUrl + "/board/" + data.data;
-                }
-            })
-            .catch((error) => console.log("실패 : ", error));
-    }
-
-    const delBoardReq = async (url) => {
-        let success = undefined;
-        await fetch(url, {
-            method: "DELETE",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            mode: "cors",
-        })
-            .then((response) => {
-                success = response
-            })
-            .catch((error) => console.log("실패 : ", error));
-
-        return success;
-    }
-
-    const delCommentReq = async (url) => {
-        let success = undefined;
-        await fetch(url, {
-            method: "DELETE",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            mode: "cors",
-        })
-            .then((response) => {
-                success = response
-            })
-            .catch((error) => console.log("실패 : ", error));
-
-        return success;
-    }
-</script>
 </html>

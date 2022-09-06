@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface UserHistoryRepo extends JpaRepository<UserHistory, Long> {
-    Optional<List<UserHistory>> findAllByUserEmail(String email);
+    List<UserHistory> findAllByUserEmail(String email);
 }

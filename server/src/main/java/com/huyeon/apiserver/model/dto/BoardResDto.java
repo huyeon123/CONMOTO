@@ -23,6 +23,8 @@ public class BoardResDto {
 
     private String description;
 
+    private String groupName;
+
     private String categoryName;
 
     private BoardStatus status;
@@ -42,9 +44,10 @@ public class BoardResDto {
         author = board.getUserEmail();
         title = board.getTitle();
         description = board.getDescription();
+        groupName = board.getGroupName();
         status = board.getStatus();
         updatedAt = board.getUpdatedAt();
-        url = "/board/" + id;
+        url = "/workspace/" + board.getGroupUrl() + "/board/" + id;
 
         if (board.getCategory() != null) {
             categoryName = board.getCategoryName();

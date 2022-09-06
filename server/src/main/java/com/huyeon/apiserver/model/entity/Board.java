@@ -39,6 +39,14 @@ public class Board extends AuditEntity implements Auditable {
     @Enumerated(EnumType.STRING)
     private BoardStatus status;
 
+    public String getGroupName() {
+        return group.getName();
+    }
+
+    public String getGroupUrl() {
+        return group.getUrlPath();
+    }
+
     public String getCategoryName() {
         return category.getName();
     }

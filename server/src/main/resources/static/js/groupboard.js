@@ -17,5 +17,5 @@ function drawBoardsOfGroup() {
 }
 
 function moveToBoard(url) {
-    location.href = pathname + url;
+    location.href = url;
 }

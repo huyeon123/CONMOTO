@@ -2,12 +2,11 @@ package com.huyeon.apiserver.controller.api;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.BoardHeaderReqDto;
-import com.huyeon.apiserver.model.dto.BoardReqDto;
+import com.huyeon.apiserver.model.dto.PageReqDto;
 import com.huyeon.apiserver.model.dto.BoardResDto;
 import com.huyeon.apiserver.model.dto.ResMessage;
 import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.service.BoardService;
-import com.huyeon.apiserver.service.ContentBlockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -49,25 +48,32 @@ public class BoardApiController {
     }
 
     @PostMapping("/latest")
-    public ResponseEntity<?> getLatestBoard(@RequestBody BoardReqDto request) {
+    public ResponseEntity<?> getLatestBoard(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody PageReqDto request) {
         if (isRequestFromGroup(request)) {
             return getLatestBoardInGroup(request);
         } else if (isRequestFromCategory(request)) {
             return getLatestBoardInCategory(request);
+        } else if (isRequestFromUser(request)) {
+            return getLatestBoardInUser(request, userDetails);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    private boolean isRequestFromGroup(BoardReqDto request) {
+    private boolean isRequestFromGroup(PageReqDto request) {
         return request.getType().equals("GROUP");
     }
 
-    private boolean isRequestFromCategory(BoardReqDto request) {
+    private boolean isRequestFromCategory(PageReqDto request) {
         return request.getType().equals("CATEGORY");
     }
 
-    private ResponseEntity<?> getLatestBoardInGroup(BoardReqDto request) {
+    private boolean isRequestFromUser(PageReqDto request) {
+        return request.getType().equals("USER");
+    }
+    private ResponseEntity<?> getLatestBoardInGroup(PageReqDto request) {
         try {
             List<BoardResDto> newest = boardService.getNext10LatestInGroup(request);
             return new ResponseEntity<>(newest, HttpStatus.OK);
@@ -77,8 +83,13 @@ public class BoardApiController {
         }
     }
 
-    private ResponseEntity<?> getLatestBoardInCategory(BoardReqDto request) {
+    private ResponseEntity<?> getLatestBoardInCategory(PageReqDto request) {
         List<BoardResDto> newest = boardService.getNext10LatestInCategory(request);
+        return new ResponseEntity<>(newest, HttpStatus.OK);
+    }
+
+    private ResponseEntity<?> getLatestBoardInUser(PageReqDto request, UserDetailsImpl userDetails) {
+        List<BoardResDto> newest = boardService.getNext10LatestInUser(request, userDetails.getUser());
         return new ResponseEntity<>(newest, HttpStatus.OK);
     }
 

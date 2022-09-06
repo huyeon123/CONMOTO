@@ -1,7 +1,7 @@
 package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.dto.BoardHeaderReqDto;
-import com.huyeon.apiserver.model.dto.BoardReqDto;
+import com.huyeon.apiserver.model.dto.PageReqDto;
 import com.huyeon.apiserver.model.dto.BoardResDto;
 import com.huyeon.apiserver.model.dto.ContentDto;
 import com.huyeon.apiserver.model.entity.*;
@@ -17,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -59,14 +58,16 @@ public class BoardService {
                 .collect(Collectors.toList());
     }
 
-    //Template Method Pattern 적용하기
-    public List<BoardResDto> getNext10LatestInGroup(BoardReqDto request) {
+    //TODO: Template Method Pattern 적용하기
+    public List<BoardResDto> getNext10LatestInGroup(PageReqDto request) {
         Groups group = getGroupByUrl(request.getQuery());
         List<Board> newest = boardRepository.findNextTenLatestInGroup(group, request.getNow(), PageRequest.of(request.getNextPage(), 10));
-        return mapToDtoList(newest);
+        List<BoardResDto> boardDtoList = mapToDtoList(newest);
+        addContents(boardDtoList);
+        return boardDtoList;
     }
 
-    public List<BoardResDto> getNext10LatestInCategory(BoardReqDto request) {
+    public List<BoardResDto> getNext10LatestInCategory(PageReqDto request) {
         Category category = getCategoryByName(request.getQuery());
         List<Board> newest = boardRepository.findNextTenLatestInCategory(category, request.getNow(), PageRequest.of(request.getNextPage(), 10));
         List<BoardResDto> boardDtoList = mapToDtoList(newest);
@@ -83,6 +84,13 @@ public class BoardService {
 
             board.setContents(summaryContents);
         });
+    }
+
+    public List<BoardResDto> getNext10LatestInUser(PageReqDto request, User user) {
+        List<Board> newest = boardRepository.findNextLatestInUser(user, request.getNow(), PageRequest.of(request.getNextPage(), 10));
+        List<BoardResDto> boardResDtoList = mapToDtoList(newest);
+        addContents(boardResDtoList);
+        return boardResDtoList;
     }
 
     //게시글 생성

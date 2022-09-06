@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/workspace_layout}">
+<head>
+    <title>내 게시글</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.css"
+          integrity="sha512-fxF1t7b0mpb/ytjBeSu/OpgXxCVcX5/O8AJGYvHaWmNfi/lYLtttitFK17K4iKBva4iU9dcZ+BIV7dyD/nDdSw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link th:href="@{/css/myinfo.css}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"
+            integrity="sha512-Yk47FuYNtuINE1w+t/KT4BQ7JaycTCcrvlSvdK/jry6Kcxqg5vN7/svVWCxZykVzzJHaxXk5T9jnFemZHSYgnw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script th:src="@{/js/board-util.js}"></script>
+    <script th:src="@{/js/myboard.js}"></script>
+</head>
+<div class="flex-column-center wrapper" layout:fragment="content">
+    <div class="content__header">
+        <h1>내 게시글</h1>
+        <span>내가 작성한 게시글을 확인할 수 있습니다.</span>
+        <div class="margin-top-10">
+            <button type="button" class="default" onclick="moveToMyPage()">내 정보 수정</button>
+            <button type="button" class="default" onclick="moveToMyComment()">내 댓글</button>
+            <button type="button" class="warn" onclick="moveToResign()">회원탈퇴</button>
+        </div>
+    </div>
+    <div class="super-space-contents content">
+        <div class="scroll-section">
+            <div class="content-body"></div>
+        </div>
+    </div>
+</html>

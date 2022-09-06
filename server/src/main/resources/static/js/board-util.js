@@ -39,9 +39,9 @@ function content_scroll_plugin(getListCallback) {
     });
 }
 
-function drawBoards(data) {
+function drawBoards(data, type) {
     data.forEach((item, index) => {
-        const boardElement = drawBoard(item);
+        const boardElement = drawBoard(item, type);
 
         $(".content-body").append(boardElement);
 
@@ -50,10 +50,10 @@ function drawBoards(data) {
     isFetching = false;
 }
 
-function drawBoard(item) {
+function drawBoard(item, type) {
     let boardBlock = "";
     boardBlock = drawBoardHeader(item, boardBlock);
-    boardBlock = drawBoardBody(item, boardBlock);
+    boardBlock = drawBoardBody(item, type, boardBlock);
     boardBlock = drawBoardFooter(item, boardBlock);
     return boardBlock;
 }
@@ -67,12 +67,16 @@ function drawBoardHeader(item, boardBlock) {
     return boardBlock;
 }
 
-function drawBoardBody(item, boardBlock) {
-    if (item.contents === null) {
-        boardBlock += addCategoryName(item.categoryName);
-    } else {
-        boardBlock += addContents(item.contents);
+function drawBoardBody(item, type, boardBlock) {
+    if (type === "USER") {
+        boardBlock += addGroupName(item.groupName);
     }
+
+    if (type !== "CATEGORY") {
+        boardBlock += addCategoryName(item.categoryName);
+    }
+
+    boardBlock += addContents(item.contents);
     return boardBlock;
 }
 
@@ -86,6 +90,7 @@ function drawBoardFooter(item, boardBlock) {
 function boardBlockStart(id, url) {
     return `<div class="board" id="${id}" onclick="moveToBoard('${url}')">`;
 }
+
 function addAuthorAndUpdateTime(author, updatedAt) {
     return `<div class="board__header">
                 <span>작성자 : ${author}</span>
@@ -104,6 +109,13 @@ function addHorizonLine() {
 function addDescription(description) {
     if (description !== null) {
         return `<p>${description}</p>`;
+    }
+    return "";
+}
+
+function addGroupName(groupName) {
+    if (groupName !== null) {
+        return `<p>${groupName}</p>`;
     }
     return "";
 }
@@ -153,8 +165,29 @@ function addTags(tags) {
 function boardBlockEnd() {
     return `</div>`;
 }
+
 function setNextPageIfEnd(index, data) {
     if (index === data.length - 1) {
         nextPage++;
     }
+}
+
+function moveToBoard(url) {
+    location.href = url;
+}
+
+function moveToMyPage() {
+    location.href = "./info";
+}
+
+function moveToMyBoard() {
+    location.href = "./board";
+}
+
+function moveToMyComment() {
+    location.href = "./comment";
+}
+
+function moveToResign() {
+    location.href = "./resign";
 }

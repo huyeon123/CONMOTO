@@ -15,10 +15,10 @@ function drawBoardsOfCategory() {
     }
 
     getList(request)
-        .then(data => drawBoards(data))
+        .then(data => drawBoards(data, request.type))
         .catch(error => console.error(error));
 }
 
 function moveToBoard(url) {
-    location.href = "." + url;
+    location.href = url;
 }

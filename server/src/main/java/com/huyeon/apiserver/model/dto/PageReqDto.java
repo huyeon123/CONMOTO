@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BoardReqDto {
+public class PageReqDto {
     private String type;
 
     private String query;
