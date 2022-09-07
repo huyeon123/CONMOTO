@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 
+import java.time.LocalDateTime;
+
 @SpringBootTest
 public class BoardRepositoryTest {
     @Autowired
@@ -21,9 +23,9 @@ public class BoardRepositoryTest {
     void test_1(){
         //given
         Groups group = groupRepository.findByUrlPath("test-group").orElseThrow();
-        Long lastId = 5L;
+        LocalDateTime now = LocalDateTime.now();
 
         //when, then
-        Assertions.assertDoesNotThrow(() -> boardRepository.findNext10LatestInGroup(group, lastId, PageRequest.of(0, 10)));
+        Assertions.assertDoesNotThrow(() -> boardRepository.findNextTenLatestInGroup(group, now, PageRequest.of(0, 10)));
     }
 }

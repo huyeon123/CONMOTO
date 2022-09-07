@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,11 @@ public class EmitterRepositoryImpl implements EmitterRepository{
     @Override
     public void saveEventCache(String eventCacheId, Object event) {
         eventCache.put(eventCacheId, event);
+    }
+
+    @Override
+    public Optional<SseEmitter> findEmitterById(String emitterId) {
+        return Optional.ofNullable(emitters.get(emitterId));
     }
 
     @Override

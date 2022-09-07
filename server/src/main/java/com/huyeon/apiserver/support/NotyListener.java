@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.support;
 
+import com.huyeon.apiserver.model.dto.NotyEventDto;
 import com.huyeon.apiserver.model.entity.Noty;
 import com.huyeon.apiserver.service.NotyService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ public class NotyListener {
 
     @Async
     @TransactionalEventListener
-    public void handleNoty(Noty noty) {
+    public void handleNoty(NotyEventDto noty) {
         notyService.publish(noty);
     }
 }

@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.service;
 
+import com.huyeon.apiserver.model.EmitterAdaptor;
 import com.huyeon.apiserver.model.entity.Groups;
 import com.huyeon.apiserver.model.entity.Noty;
 import com.huyeon.apiserver.model.entity.NotyType;
@@ -25,74 +26,14 @@ public class NotyServiceTest {
     @DisplayName("알림 구독")
     void subscribe() throws Exception{
         //given
-        String userEmail = "user@test.com";
-        String lastEventId = "";
+        EmitterAdaptor ea = EmitterAdaptor.builder()
+                .userEmail("user@test.com")
+                .lastEventId("")
+                .build();
+        String notyType = "DEFAULT";
 
         //when, then
-        assertDoesNotThrow(() -> notyService.subscribe(userEmail, lastEventId));
+        assertDoesNotThrow(() -> notyService.subscribe(ea, notyType));
     }
 
-    @Test
-    @DisplayName("알림 생성 - 특정 한 명")
-    void createNotyToMember() throws Exception{
-        //given
-
-        //when, then
-        assertDoesNotThrow(() -> notyService.createNotyToMember(
-                "TEST USER",
-                "sub@test.com",
-                NotyType.DIRECT_MESSAGE,
-                "안녕하세요",
-                "url"
-        ));
-    }
-
-    @Test
-    @DisplayName("알림 생성 - 다수")
-    void createNotyToMembers() throws Exception{
-        //given
-
-        //when, then
-        assertDoesNotThrow(() -> notyService.createNotyToMembers(
-                "TEST USER",
-                List.of("sub@test.com, admin@test.com"),
-                NotyType.BOARD_TAGGED,
-                "코드좀 봐주세요",
-                "url"
-        ));
-    }
-
-    @Test
-    @DisplayName("알림 생성 - 그룹")
-    void createNotyToGroup() throws Exception{
-        //given
-        Groups group = groupRepository.findByUrlPath("test-group").orElseThrow();
-
-        //when, then
-        assertDoesNotThrow(() -> notyService.createNotyToGroup(
-                "testGroup",
-                group,
-                NotyType.NOTICE,
-                "안녕하세요",
-                "url"
-        ));
-    }
-
-    @Test
-    @DisplayName("알림 전송")
-    public void publish() throws Exception {
-        //given
-        String userEmail = "user@test.com";
-        String lastEventId = "";
-        notyService.subscribe(userEmail, lastEventId);
-        Noty noty = notyService.createNotyToMember(
-                "user@test.com",
-                "sub@test.com",
-                NotyType.DIRECT_MESSAGE,
-                "안녕하세요",
-                "url");
-
-        //when, then
-        assertDoesNotThrow(() -> notyService.publish(noty));
-    }
 }

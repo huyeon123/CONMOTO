@@ -1,55 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/workspace_layout}">
 <head>
-    <meta charset="UTF-8">
     <title>내 알림</title>
-    <style>
-        .noty {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 700px;
-            border: 1px solid;
-        }
-        .noty-content {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
-        .noty-header {
-            display: flex;
-            justify-content: space-between;
-            margin: 5px;
-        }
-        .message {
-            margin: 5px;
-        }
-
-        #profile {
-            display: flex;
-            justify-content: center;
-            width: 10%;
-            margin: 5px;
-            padding: 15px 0;
-            border: 1px solid;
-        }
-    </style>
+    <link th:href="@{/css/noty.css}"/>
+    <script th:src="@{/js/notypage.js}"></script>
 </head>
-<body>
-<div>
-    <div class="noty">
-        <div id="profile">프로필</div>
-        <div class="noty-content">
-            <div class="noty-header">
-                <div>상대방</div>
-                <div>시간</div>
+<div class="flex-column-center wrapper" layout:fragment="content">
+    <div class="content__header">
+        <h1>내 알림</h1>
+        <span>수신받은 알림 메세지를 확인할 수 있습니다.</span>
+    </div>
+    <div class="content__body">
+        <div class="noty full-size">
+            <div class="profile">프로필</div>
+            <div class="noty-content">
+                <div class="noty-header">
+                    <div>상대방</div>
+                    <div class="time">시간</div>
+                </div>
+                <div class="message">내용</div>
             </div>
-            <div class="message">내용</div>
         </div>
     </div>
 </div>
-</body>
-<script>
-
-</script>
 </html>

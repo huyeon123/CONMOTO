@@ -1,6 +1,6 @@
 package com.huyeon.apiserver.model.dto;
 
-import com.huyeon.apiserver.model.entity.Noty;
+import com.huyeon.apiserver.model.entity.NotyReceiver;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,13 +13,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class NotyDto {
+    private Long id;
     private String senderName;
     private LocalDateTime sendTime;
     private String message;
 
-    public NotyDto(Noty noty) {
-        this.senderName = noty.getSenderName();
-        this.sendTime = noty.getCreatedAt();
-        this.message = noty.getMessage();
+    public NotyDto(NotyReceiver receiver) {
+        this.id = receiver.getId();
+        this.senderName = receiver.getSenderName();
+        this.sendTime = receiver.getCreatedAt();
+        this.message = receiver.getMessage();
     }
 }

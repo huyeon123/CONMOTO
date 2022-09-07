@@ -1,11 +1,13 @@
 package com.huyeon.apiserver.service;
 
+import com.huyeon.apiserver.model.EmitterAdaptor;
 import com.huyeon.apiserver.model.dto.NotyDto;
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.dto.NotyEventDto;
 import com.huyeon.apiserver.model.entity.Noty;
-import com.huyeon.apiserver.model.entity.NotyType;
+import com.huyeon.apiserver.model.entity.NotyReceiver;
 import com.huyeon.apiserver.repository.EmitterRepository;
 import com.huyeon.apiserver.repository.EmitterRepositoryImpl;
+import com.huyeon.apiserver.repository.NotyReceiverRepository;
 import com.huyeon.apiserver.repository.NotyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -26,39 +29,70 @@ public class NotyService {
     private static final Long DEFAULT_TIMEOUT = 1000L * 60L * 60L;
 
     private final NotyRepository notyRepository;
+    private final NotyReceiverRepository receiverRepository;
     private final EmitterRepository emitterRepository = new EmitterRepositoryImpl();
 
-    public SseEmitter subscribe(String userEmail, String lastEventId) {
-        String emitterId = makeTimeIncludeId(userEmail);
-        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
+    public SseEmitter subscribe(EmitterAdaptor ea, String notyType) {
+        String emitterId = makeTypeIncludeId(ea.getUserEmail(), notyType);
+        SseEmitter emitter = getEmitter(emitterId);
 
-        //성공 or 시간만료 시 자동으로 삭제
-        emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
-        emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
+        ea.setEmitterId(emitterId);
+        ea.setEmitter(emitter);
 
-        // 503 에러를 방지하기 위한 더미 이벤트 전송
-        String eventId = makeTimeIncludeId(userEmail);
-        sendNotification(emitter, eventId, emitterId, "EventStream Created. [userEmail=" + userEmail + "]");
+        sendUnreadEvent(ea);
 
-        // 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
-        if (hasLostData(lastEventId)) {
-            sendLostData(lastEventId, userEmail, emitterId, emitter);
+        if (hasLostData(ea.getLastEventId())) {
+            sendLostData(ea);
         }
 
         return emitter;
+    }
+
+    private String makeTypeIncludeId(String userEmail, String notyType) {
+        return userEmail + "_" + notyType;
+    }
+
+    private SseEmitter getEmitter(String emitterId) {
+        SseEmitter emitter = findOrMakeEmitter(emitterId);
+        setOnCompletion(emitter, emitterId);
+        return emitter;
+    }
+
+    private SseEmitter findOrMakeEmitter(String emitterId) {
+        Optional<SseEmitter> emitterOpt = emitterRepository.findEmitterById(emitterId);
+        return emitterOpt.orElse(
+                emitterRepository.save(
+                        emitterId, new SseEmitter(DEFAULT_TIMEOUT)
+                )
+        );
+    }
+
+    private void setOnCompletion(SseEmitter emitter, String emitterId) {
+        emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
+    }
+
+    private void sendUnreadEvent(EmitterAdaptor ea) {
+        List<NotyReceiver> receivedNotices = receiverRepository.findAllByUserEmail(ea.getUserEmail());
+        receivedNotices.stream()
+                .filter(NotyReceiver::isUnread)
+                .forEach(receive -> {
+                    ea.setData(new NotyDto(receive));
+                    sendNotification(ea);
+                });
     }
 
     private String makeTimeIncludeId(String userEmail) {
         return userEmail + "_" + System.currentTimeMillis();
     }
 
-    private void sendNotification(SseEmitter emitter, String emitterId, String eventId, Object data) {
+    private void sendNotification(EmitterAdaptor ea) {
         try {
-            emitter.send(SseEmitter.event()
-                    .id(eventId)
-                    .data(data));
+            ea.getEmitter()
+                    .send(SseEmitter.event()
+                            .id(ea.getEventId())
+                            .data(ea.getData()));
         } catch (IOException exception) {
-            emitterRepository.deleteById(emitterId);
+            emitterRepository.deleteById(ea.getEmitterId());
         }
     }
 
@@ -66,53 +100,45 @@ public class NotyService {
         return !lastEventId.isEmpty();
     }
 
-    private void sendLostData(String lastEventId, String userEmail, String emitterId, SseEmitter emitter) {
-        Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByMemberId(userEmail);
+    private void sendLostData(EmitterAdaptor ea) {
+        Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByMemberId(ea.getUserEmail());
         eventCaches.entrySet().stream()
-                .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
-                .forEach(entry -> sendNotification(emitter, entry.getKey(), emitterId, entry.getValue()));
+                .filter(entry -> ea.getLastEventId().compareTo(entry.getKey()) < 0)
+                .forEach(entry -> {
+                    ea.setEventId(entry.getKey());
+                    ea.setData(entry.getValue());
+                    sendNotification(ea);
+                });
     }
 
-    public void publish(Noty noty) {
-        Noty newNoty = notyRepository.save(noty);
+    public void publish(NotyEventDto noty) {
+        Noty newNoty = notyRepository.save(noty.getNoty());
+        receiverRepository.saveAll(noty.getReceivers());
 
-        newNoty.getReceivers().forEach(email -> {
-            String eventId = makeTimeIncludeId(email);
-            Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByMemberId(email);
+        noty.getReceivers().forEach(receiver -> {
+            String userEmail = receiver.getUserEmail();
+            String eventId = makeTimeIncludeId(userEmail);
+            Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByMemberId(userEmail);
             emitters.forEach((key, emitter) -> {
                 emitterRepository.saveEventCache(key, newNoty);
-                sendNotification(emitter, key, eventId, new NotyDto(newNoty));
+
+                EmitterAdaptor ea = EmitterAdaptor.builder()
+                        .emitter(emitter)
+                        .emitterId(key)
+                        .eventId(eventId)
+                        .data(new NotyDto(receiver))
+                        .build();
+
+                sendNotification(ea);
             });
         });
     }
 
-    public Noty createNotyToMember(String sender, String receiver, NotyType notificationType, String message, String url) {
-        return Noty.builder()
-                .senderName(sender)
-                .receivers(List.of(receiver))
-                .type(notificationType)
-                .message(message)
-                .redirectUrl(url)
-                .build();
-    }
-
-    public Noty createNotyToMembers(String sender, List<String> receivers, NotyType notificationType, String message, String url) {
-        return Noty.builder()
-                .senderName(sender)
-                .receivers(receivers)
-                .type(notificationType)
-                .message(message)
-                .redirectUrl(url)
-                .build();
-    }
-
-    public Noty createNotyToGroup(String sender, Groups group, NotyType notificationType, String message, String url) {
-        return Noty.builder()
-                .senderName(sender)
-                .receiveGroup(group)
-                .type(notificationType)
-                .message(message)
-                .redirectUrl(url)
-                .build();
+    public void setReadNoty(List<Long> idList) {
+        idList.forEach(id -> {
+            NotyReceiver receiver = receiverRepository.findById(id).orElseThrow();
+            receiver.setRead(true);
+            receiverRepository.save(receiver);
+        });
     }
 }

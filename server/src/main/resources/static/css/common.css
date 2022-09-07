@@ -108,3 +108,8 @@ button.save {
     width: auto;
     margin: 5px;
 }
+
+.time {
+    color: gray;
+    font-size: 14px;
+}

@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.service;
 
+import com.huyeon.apiserver.model.EmitterAdaptor;
 import com.huyeon.apiserver.model.entity.GroupManager;
 import com.huyeon.apiserver.model.entity.Groups;
 import com.huyeon.apiserver.model.entity.User;
@@ -55,13 +56,16 @@ public class GroupServiceTest {
     void inviteMember() {
         //given
         Groups group = groupRepository.findByUrlPath("test-group").orElseThrow();
-        String userEmail = "user@test.com";
-        String lastEventId = "";
+        EmitterAdaptor ea = EmitterAdaptor.builder()
+                .userEmail("user@test.com")
+                .lastEventId("")
+                .build();
+        String notyType = "DEFAULT";
 
         //when
-        Assertions.assertDoesNotThrow(() -> groupService.inviteMember(group, userEmail));
+        Assertions.assertDoesNotThrow(() -> groupService.inviteMember(group, ea.getUserEmail()));
 
         //then
-        Assertions.assertDoesNotThrow(() -> notyService.subscribe(userEmail, lastEventId));
+        Assertions.assertDoesNotThrow(() -> notyService.subscribe(ea, notyType));
     }
 }

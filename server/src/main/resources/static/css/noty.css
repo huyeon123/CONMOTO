@@ -9,12 +9,13 @@
     align-items: center;
     width: 400px;
     border: 1px solid;
+    border-radius: 3px;
+    box-shadow: 2px 2px gray;
+    margin-bottom: 10px;
 }
 
-.noty-content {
-    display: flex;
-    flex-direction: column;
-    width: 90%;
+.noty.full-size {
+    width: 100%;
 }
 
 .noty-header {
@@ -23,17 +24,25 @@
     margin: 5px;
 }
 
-.message {
-    margin: 5px;
-}
-
-#profile {
+.profile {
     display: flex;
     justify-content: center;
-    width: 15%;
+    width: 60px;
     margin: 5px;
     padding: 15px 0;
     border: 1px solid;
+    border-radius: 3px;
+}
+
+.noty-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.message {
+    margin: 5px;
+    white-space: pre-line;
 }
 
 #noty {
