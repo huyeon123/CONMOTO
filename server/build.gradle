@@ -31,6 +31,9 @@ dependencies {
     //hibernate 5.6.9 Final 과 h2 2.1.212 호환성 문제로 안정적인 1.4.200으로 변경
     runtimeOnly 'com.h2database:h2:1.4.200'
     runtimeOnly 'mysql:mysql-connector-java'
+
+    // https://mvnrepository.com/artifact/org.jasypt/jasypt
+    implementation 'org.jasypt:jasypt:1.9.2'
 }
 
 configurations {
