@@ -1,25 +1,26 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/workspace_layout}">
 <head>
-    <title th:text="|${appHeader.groupName} - ${categoryName}|">Title</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.css"
+    <title th:text="|${title} - 최근 게시물|"></title>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.css"
           integrity="sha512-fxF1t7b0mpb/ytjBeSu/OpgXxCVcX5/O8AJGYvHaWmNfi/lYLtttitFK17K4iKBva4iU9dcZ+BIV7dyD/nDdSw=="
-          crossorigin="anonymous" referrerpolicy="no-referrer" />
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"
             integrity="sha512-Yk47FuYNtuINE1w+t/KT4BQ7JaycTCcrvlSvdK/jry6Kcxqg5vN7/svVWCxZykVzzJHaxXk5T9jnFemZHSYgnw=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script th:src="@{/js/board/board-util.js}"></script>
-    <script th:src="@{/js/category/categoryboard.js}">
-    </script>
+    <script th:src="@{/js/group/groupboard.js}"></script>
 </head>
+
 <div class="wrapper" layout:fragment="content">
     <div class="content-header">
-        <h1 th:text="${categoryName}">카테고리명</h1>
+        <h1>최근 게시물</h1>
         <div class="space-between">
-            <span>간략한 소개글</span>
+            <span>최근 그룹에서 수정된 게시글입니다.</span>
             <button class="new-board" onclick="createBoard()">새 글 만들기</button>
         </div>
     </div>

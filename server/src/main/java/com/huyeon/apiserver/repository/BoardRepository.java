@@ -2,7 +2,7 @@ package com.huyeon.apiserver.repository;
 
 import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.model.entity.Category;
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import com.huyeon.apiserver.model.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,7 +20,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findAllByCategory(Category category);
 
     @Query(value = "select b from Board b where updatedAt < :now and group_id = :group order by updatedAt desc")
-    List<Board> findNextTenLatestInGroup(@Param("group") Groups group, @Param("now") LocalDateTime now, Pageable pageable);
+    List<Board> findNextTenLatestInGroup(@Param("group") WorkGroup group, @Param("now") LocalDateTime now, Pageable pageable);
 
     @Query(value = "select b from Board b " +
             "where updatedAt < :now and category_id = :category " +

@@ -4,13 +4,11 @@ import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.CategoryDto;
 import com.huyeon.apiserver.model.dto.HeaderDto;
 import com.huyeon.apiserver.model.dto.SideBarDto;
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import com.huyeon.apiserver.model.entity.User;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +32,7 @@ public class SideBarAndHeaderService {
     }
 
     public SideBarDto getSideBar(UserDetailsImpl userDetails, String groupUrl) {
-        List<Groups> groups = getGroups(userDetails.getUser());
+        List<WorkGroup> groups = getGroups(userDetails.getUser());
         List<CategoryDto> categories = getHierarchicalCategories(groupUrl);
 
         if (categories == null) categories = Collections.emptyList();
@@ -45,12 +43,12 @@ public class SideBarAndHeaderService {
                 .build();
     }
 
-    private List<Groups> getGroups(User user) {
+    private List<WorkGroup> getGroups(User user) {
         return groupService.getGroups(user);
     }
 
     private List<CategoryDto> getHierarchicalCategories(String groupUrl) {
-        Groups currentGroup = groupService.getGroupByUrl(groupUrl);
+        WorkGroup currentGroup = groupService.getGroupByUrl(groupUrl);
         CategoryDto rootCategory = categoryService.getRootOfCategoryTree(currentGroup);
         return extractRealCategory(rootCategory);
     }

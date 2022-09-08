@@ -28,7 +28,7 @@ public class Board extends AuditEntity implements Auditable {
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Groups group;
+    private WorkGroup group;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoryId")

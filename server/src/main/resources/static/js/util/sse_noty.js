@@ -19,18 +19,50 @@ $(function () {
 });
 
 function addNoty(data) {
-    $("#noty-container").append(
-        `<div class="noty" id="${data.id}">
-                <div class="profile">프로필</div>
-                    <div class="noty-content">
-                        <div class="noty-header">
-                            <div>${data.senderName}</div>
-                            <div class="time">${data.sendTime}</div>
-                        </div>
+    $("#noty-container").prepend(
+        `<div class="noty" id="noty_${data.id}">
+                <div class="noty__profile">프로필</div>
+                <div class="noty__content">
+                    <div class="noty__header">
+                        <div>${data.senderName}</div>
+                        <div class="time">${data.sendTime}</div>
+                    </div>
                     <pre class="message">${data.message}</pre>
+                    <div id="noty__option"></div>
                 </div>
-            </div>`
-    )
+        </div>`
+    );
+
+    let notyOption;
+    if (data.type === "GROUP_INVITE") {
+        notyOption =
+            `<div class="flex-end mb-1">
+                <a onclick="setRead(${data.id})">거절</a>
+                <a onclick="acceptInvite('${data.id}', '${data.url}')">수락</a>
+            </div>`;
+    } else {
+        $("#" + data.id).attr("onclick", `location.href='${data.url}'`);
+        notyOption =
+            `<div class="flex-end"><a onclick="setRead(${data.id})">확인</a></div>`
+    }
+
+    $("#noty__option").append(notyOption);
+}
+
+function acceptInvite(id, groupUrl) {
+    const url = "/api/group/join?groupUrl=" + groupUrl;
+    get(url).catch(error => console.error(error));
+    setRead(id);
+}
+
+function setRead(id) {
+    const request = [id];
+    requestSetRead(request);
+    $("#noty_" + id).remove();
+
+    const $noty = $('#noty-count');
+    const current = parseInt($noty.text());
+    $noty.text(current - 1);
 }
 
 //알림 다이얼로그
@@ -77,7 +109,6 @@ $(function () {
 });
 
 function setReadAll() {
-    const url = "/api/noty";
     const request = [];
 
     $(".noty").each((idx, item) => {
@@ -85,6 +116,10 @@ function setReadAll() {
         request.push(item.id);
     })
 
-    put(url, request)
-        .catch(error => console.error(error));
+    requestSetRead(request);
+}
+
+function requestSetRead(request) {
+    const url = "/api/noty";
+    put(url, request).catch(error => console.error(error));
 }

@@ -1,6 +1,6 @@
 package com.huyeon.apiserver.model.dto;
 
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class SideBarDto {
-    private List<Groups> groups;
+    private List<WorkGroup> groups;
     private List<CategoryDto> categories;
 }

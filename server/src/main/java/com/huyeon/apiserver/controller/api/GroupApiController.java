@@ -4,7 +4,7 @@ import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.GroupDto;
 import com.huyeon.apiserver.model.dto.MemberDto;
 import com.huyeon.apiserver.model.dto.ResMessage;
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import com.huyeon.apiserver.model.entity.User;
 import com.huyeon.apiserver.service.*;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Slf4j
 @RestController
-@Transactional
 @RequestMapping("/api/group")
 @RequiredArgsConstructor
 public class GroupApiController {
@@ -33,7 +31,7 @@ public class GroupApiController {
     public ResponseEntity<?> createGroup(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody GroupDto request) {
-        Groups group = groupService.createGroup(userDetails.getUser(), request);
+        WorkGroup group = groupService.createGroup(userDetails.getUser(), request);
         userGroupService.registerUserToGroup(userDetails.getUser(), group);
         managerService.registerUserAsManager(userDetails.getUser(), group);
         categoryService.createRootCategory(group);
@@ -41,7 +39,7 @@ public class GroupApiController {
         return resMessageOfCreateGroup(group);
     }
 
-    private ResponseEntity<?> resMessageOfCreateGroup(Groups group) {
+    private ResponseEntity<?> resMessageOfCreateGroup(WorkGroup group) {
         GroupDto resData = GroupDto.builder()
                 .name(group.getName())
                 .url(group.getUrlPath())
@@ -65,7 +63,6 @@ public class GroupApiController {
         return new ResponseEntity<>(success, HttpStatus.OK);
     }
 
-    @Transactional
     @DeleteMapping
     public ResponseEntity<?> deleteGroup(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -80,7 +77,7 @@ public class GroupApiController {
             @RequestParam String groupUrl,
             @RequestBody List<MemberDto> request) {
         //request를 시도 -> 성공/실패 사후처리
-        Groups group = groupService.getGroupByUrl(groupUrl);
+        WorkGroup group = groupService.getGroupByUrl(groupUrl);
         boolean success = memberService.saveMemberRole(group, request);
         return new ResponseEntity<>(success, HttpStatus.OK);
     }
@@ -89,7 +86,7 @@ public class GroupApiController {
     public ResponseEntity<?> expelMember(
             @RequestParam String groupUrl,
             @RequestBody MemberDto request) {
-        Groups group = groupService.getGroupByUrl(groupUrl);
+        WorkGroup group = groupService.getGroupByUrl(groupUrl);
         boolean success = userGroupService.expelUserFromGroup(request, group);
         return new ResponseEntity<>(success, HttpStatus.OK);
     }
@@ -98,8 +95,17 @@ public class GroupApiController {
     public ResponseEntity<?> inviteMember(
             @RequestParam String groupUrl,
             @RequestBody String userEmail) {
-        Groups group = groupService.getGroupByUrl(groupUrl);
+        WorkGroup group = groupService.getGroupByUrl(groupUrl);
         groupService.inviteMember(group, userEmail);
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+    @GetMapping("/join")
+    public ResponseEntity<?> joinMember(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam String groupUrl
+    ) {
+        groupService.joinMember(userDetails.getUser(), groupUrl);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

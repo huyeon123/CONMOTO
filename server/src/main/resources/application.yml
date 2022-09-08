@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: test
+    active: dev
 
 ---
 spring:
@@ -43,7 +43,7 @@ spring:
   jpa:
     #    show-sql: true
     hibernate:
-      ddl-auto: create-drop #create-drop : 테이블 생성 및 종료 시점에 삭제, update : 수정사항만 반영
+      ddl-auto: update #create-drop : 테이블 생성 및 종료 시점에 삭제, update : 수정사항만 반영
   datasource:
     url: jdbc:mysql://localhost:3306/skeleton
     username: root

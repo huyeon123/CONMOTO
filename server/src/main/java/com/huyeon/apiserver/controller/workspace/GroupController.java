@@ -3,7 +3,7 @@ package com.huyeon.apiserver.controller.workspace;
 import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.GroupDto;
 import com.huyeon.apiserver.model.dto.MemberDto;
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import com.huyeon.apiserver.model.entity.User;
 import com.huyeon.apiserver.service.GroupService;
 import lombok.RequiredArgsConstructor;
@@ -38,12 +38,12 @@ public class GroupController {
     public String groupManagingPage(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable String groupUrl, Model model) {
-        Groups group = groupService.getGroupByUrl(groupUrl);
+        WorkGroup group = groupService.getGroupByUrl(groupUrl);
         addGroupInfo(group, model);
         return "pages/group/groupmanage";
     }
 
-    private void addGroupInfo(Groups group, Model model) {
+    private void addGroupInfo(WorkGroup group, Model model) {
         GroupDto groupDto = GroupDto.builder()
                 .name(group.getName())
                 .url(group.getUrlPath())
@@ -56,13 +56,13 @@ public class GroupController {
     public String memberManagingPage(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable String groupUrl, Model model) {
-        Groups group = groupService.getGroupByUrl(groupUrl);
+        WorkGroup group = groupService.getGroupByUrl(groupUrl);
         addMemberInfo(group, model);
         addAvailableAuthority(model);
         return "pages/group/membermanage";
     }
 
-    private void addMemberInfo(Groups group, Model model) {
+    private void addMemberInfo(WorkGroup group, Model model) {
         List<User> users = groupService.getUsers(group);
         List<MemberDto> members = users.stream()
                 .map(user -> convertToMemberDto(group, user))
@@ -71,7 +71,7 @@ public class GroupController {
         model.addAttribute("members", members);
     }
 
-    private MemberDto convertToMemberDto(Groups group, User user) {
+    private MemberDto convertToMemberDto(WorkGroup group, User user) {
         return MemberDto.builder()
                 .name(user.getName())
                 .email(user.getEmail())
@@ -79,7 +79,7 @@ public class GroupController {
                 .build();
     }
 
-    private String getGroupRole(Groups group, User user) {
+    private String getGroupRole(WorkGroup group, User user) {
         return groupService.checkRole(group, user);
     }
 

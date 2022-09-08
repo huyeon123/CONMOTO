@@ -1,7 +1,7 @@
 package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.dto.MemberDto;
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import com.huyeon.apiserver.model.entity.User;
 import com.huyeon.apiserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class MemberService {
     private final GroupManagerService managerService;
     private final UserRepository userRepository;
 
-    public boolean saveMemberRole(Groups group, List<MemberDto> request) {
+    public boolean saveMemberRole(WorkGroup group, List<MemberDto> request) {
         for (MemberDto member : request) {
             User user = userRepository.findByEmail(member.getEmail()).orElseThrow();
             String currentRole = groupService.checkRole(group, user);
@@ -38,7 +38,7 @@ public class MemberService {
         return true;
     }
 
-    private void applyChange(User user, Groups group) {
+    private void applyChange(User user, WorkGroup group) {
 
     }
 

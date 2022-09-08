@@ -2,7 +2,7 @@ package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.dto.CategoryDto;
 import com.huyeon.apiserver.model.entity.Category;
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import com.huyeon.apiserver.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import static java.util.stream.Collectors.groupingBy;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public boolean createCategory(CategoryDto request, Groups group) {
+    public boolean createCategory(CategoryDto request, WorkGroup group) {
         Category parentCategory = categoryRepository.findById(request.getCategoryId()).orElseThrow();
 
         Category newCategory = Category.builder()
@@ -34,7 +34,7 @@ public class CategoryService {
         return true;
     }
 
-    public void createRootCategory(Groups group) {
+    public void createRootCategory(WorkGroup group) {
         Category root = Category.builder()
                 .name("==최상위 카테고리==")
                 .parent(null)
@@ -44,7 +44,7 @@ public class CategoryService {
         categoryRepository.save(root);
     }
 
-    public CategoryDto getRootOfCategoryTree(Groups group) {
+    public CategoryDto getRootOfCategoryTree(WorkGroup group) {
         List<CategoryDto> categories = getCategoryList(group);
 
         CategoryDto rootCategoryDto = getRoot(categories);
@@ -74,7 +74,7 @@ public class CategoryService {
         subCategories.forEach(sc -> addSubCategories(sc, groupingByParent));
     }
 
-    public List<CategoryDto> getCategoryList(Groups group) {
+    public List<CategoryDto> getCategoryList(WorkGroup group) {
         return categoryRepository.findAllByGroup(group).stream()
                 .map(c -> CategoryDto.builder()
                         .categoryId(c.getId())
@@ -84,7 +84,7 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    public boolean editCategory(List<CategoryDto> request, Groups group) {
+    public boolean editCategory(List<CategoryDto> request, WorkGroup group) {
         List<CategoryDto> beforeList = getCategoryList(group);
 
         IntStream.range(0, request.size())

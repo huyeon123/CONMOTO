@@ -23,5 +23,5 @@ public class UserGroup {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "groupId")
-    private Groups group;
+    private WorkGroup group;
 }

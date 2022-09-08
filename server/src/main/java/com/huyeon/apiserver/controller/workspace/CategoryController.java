@@ -4,16 +4,14 @@ import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.BoardResDto;
 import com.huyeon.apiserver.model.dto.CategoryDto;
 import com.huyeon.apiserver.model.dto.ContentDto;
-import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.model.entity.Category;
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import com.huyeon.apiserver.service.BoardService;
 import com.huyeon.apiserver.service.CategoryService;
 import com.huyeon.apiserver.service.ContentBlockService;
 import com.huyeon.apiserver.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.buf.UDecoder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,7 +41,7 @@ public class CategoryController {
     }
 
     private List<CategoryDto> categoryOptions(String groupUrl) {
-        Groups group = groupService.getGroupByUrl(groupUrl);
+        WorkGroup group = groupService.getGroupByUrl(groupUrl);
         return categoryService.getCategoryList(group);
     }
 
@@ -57,7 +55,7 @@ public class CategoryController {
     }
 
     private CategoryDto categoryTree(String groupUrl) {
-        Groups group = groupService.getGroupByUrl(groupUrl);
+        WorkGroup group = groupService.getGroupByUrl(groupUrl);
         return categoryService.getRootOfCategoryTree(group);
     }
 

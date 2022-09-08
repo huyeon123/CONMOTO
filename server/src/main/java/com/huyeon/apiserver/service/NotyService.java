@@ -4,13 +4,14 @@ import com.huyeon.apiserver.model.EmitterAdaptor;
 import com.huyeon.apiserver.model.dto.NotyDto;
 import com.huyeon.apiserver.model.dto.NotyEventDto;
 import com.huyeon.apiserver.model.entity.Noty;
-import com.huyeon.apiserver.model.entity.NotyReceiver;
+import com.huyeon.apiserver.model.entity.ReceivedNoty;
 import com.huyeon.apiserver.repository.EmitterRepository;
 import com.huyeon.apiserver.repository.EmitterRepositoryImpl;
 import com.huyeon.apiserver.repository.NotyReceiverRepository;
 import com.huyeon.apiserver.repository.NotyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -72,9 +74,9 @@ public class NotyService {
     }
 
     private void sendUnreadEvent(EmitterAdaptor ea) {
-        List<NotyReceiver> receivedNotices = receiverRepository.findAllByUserEmail(ea.getUserEmail());
+        List<ReceivedNoty> receivedNotices = receiverRepository.findAllByUserEmail(ea.getUserEmail());
         receivedNotices.stream()
-                .filter(NotyReceiver::isUnread)
+                .filter(ReceivedNoty::isUnread)
                 .forEach(receive -> {
                     ea.setData(new NotyDto(receive));
                     sendNotification(ea);
@@ -134,9 +136,17 @@ public class NotyService {
         });
     }
 
+    public List<NotyDto> findAllByUser(String userEmail, int page) {
+        List<ReceivedNoty> received =
+                receiverRepository.findAllByUserEmailOrderByIdDesc(userEmail, PageRequest.of(page, 10));
+        return received.stream()
+                .map(NotyDto::new)
+                .collect(Collectors.toList());
+    }
+
     public void setReadNoty(List<Long> idList) {
         idList.forEach(id -> {
-            NotyReceiver receiver = receiverRepository.findById(id).orElseThrow();
+            ReceivedNoty receiver = receiverRepository.findById(id).orElseThrow();
             receiver.setRead(true);
             receiverRepository.save(receiver);
         });

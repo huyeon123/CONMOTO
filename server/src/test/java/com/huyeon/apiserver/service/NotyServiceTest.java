@@ -1,16 +1,11 @@
 package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.EmitterAdaptor;
-import com.huyeon.apiserver.model.entity.Groups;
-import com.huyeon.apiserver.model.entity.Noty;
-import com.huyeon.apiserver.model.entity.NotyType;
 import com.huyeon.apiserver.repository.GroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 

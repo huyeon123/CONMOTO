@@ -1,7 +1,7 @@
 package com.huyeon.apiserver.controller.api;
 
 import com.huyeon.apiserver.model.dto.CategoryDto;
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import com.huyeon.apiserver.service.CategoryService;
 import com.huyeon.apiserver.service.GroupService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class CategoryApiController {
     public ResponseEntity<?> createCategory(
             @RequestBody CategoryDto request,
             @RequestParam String groupUrl) {
-        Groups group = groupService.getGroupByUrl(groupUrl);
+        WorkGroup group = groupService.getGroupByUrl(groupUrl);
         boolean success = categoryService.createCategory(request, group);
 
         return new ResponseEntity<>(success, HttpStatus.OK);
@@ -34,7 +34,7 @@ public class CategoryApiController {
     public ResponseEntity<?> editCategory(
             @RequestBody List<CategoryDto> request,
             @RequestParam String groupUrl) {
-        Groups group = groupService.getGroupByUrl(groupUrl);
+        WorkGroup group = groupService.getGroupByUrl(groupUrl);
         boolean success = categoryService.editCategory(request, group);
         return new ResponseEntity<>(success, HttpStatus.OK);
     }

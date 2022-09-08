@@ -60,7 +60,7 @@ public class BoardService {
 
     //TODO: Template Method Pattern 적용하기
     public List<BoardResDto> getNext10LatestInGroup(PageReqDto request) {
-        Groups group = getGroupByUrl(request.getQuery());
+        WorkGroup group = getGroupByUrl(request.getQuery());
         List<Board> newest = boardRepository.findNextTenLatestInGroup(group, request.getNow(), PageRequest.of(request.getNextPage(), 10));
         List<BoardResDto> boardDtoList = mapToDtoList(newest);
         addContents(boardDtoList);
@@ -95,7 +95,7 @@ public class BoardService {
 
     //게시글 생성
     public Long createBoard(String email, String groupUrl) {
-        Groups group = getGroupByUrl(groupUrl);
+        WorkGroup group = getGroupByUrl(groupUrl);
 
         Board board = Board.builder()
                 .userEmail(email)
@@ -161,7 +161,7 @@ public class BoardService {
         return List.of();
     }
 
-    private Groups getGroupByUrl(String groupUrl) throws NoSuchElementException{
+    private WorkGroup getGroupByUrl(String groupUrl) throws NoSuchElementException{
         return groupRepository.findByUrlPath(groupUrl).orElseThrow();
     }
 

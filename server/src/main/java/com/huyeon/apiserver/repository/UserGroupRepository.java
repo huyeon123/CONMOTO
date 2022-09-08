@@ -1,6 +1,6 @@
 package com.huyeon.apiserver.repository;
 
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import com.huyeon.apiserver.model.entity.User;
 import com.huyeon.apiserver.model.entity.UserGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,9 +13,9 @@ import java.util.Optional;
 public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
     Optional<List<UserGroup>> findAllByUser(User user);
 
-    Optional<List<UserGroup>> findAllByGroup(Groups group);
+    Optional<List<UserGroup>> findAllByGroup(WorkGroup group);
 
-    void deleteAllByGroup(Groups group);
+    void deleteAllByGroup(WorkGroup group);
 
-    void deleteByUserAndGroup(User user, Groups group);
+    void deleteByUserAndGroup(User user, WorkGroup group);
 }

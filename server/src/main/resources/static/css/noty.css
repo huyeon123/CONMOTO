@@ -18,13 +18,13 @@
     width: 100%;
 }
 
-.noty-header {
+.noty__header {
     display: flex;
     justify-content: space-between;
     margin: 5px;
 }
 
-.profile {
+.noty__profile {
     display: flex;
     justify-content: center;
     width: 60px;
@@ -34,7 +34,7 @@
     border-radius: 3px;
 }
 
-.noty-content {
+.noty__content {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -48,4 +48,9 @@
 #noty {
     display: flex;
     justify-content: center;
+}
+
+#noty__option a {
+    margin-right: 3px;
+    cursor: pointer;
 }

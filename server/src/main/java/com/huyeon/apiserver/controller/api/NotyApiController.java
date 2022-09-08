@@ -2,6 +2,7 @@ package com.huyeon.apiserver.controller.api;
 
 import com.huyeon.apiserver.model.EmitterAdaptor;
 import com.huyeon.apiserver.model.UserDetailsImpl;
+import com.huyeon.apiserver.model.dto.NotyDto;
 import com.huyeon.apiserver.model.dto.PageReqDto;
 import com.huyeon.apiserver.service.NotyService;
 import lombok.RequiredArgsConstructor;
@@ -38,13 +39,13 @@ public class NotyApiController {
         return notyService.subscribe(emitterAdaptor, notyType);
     }
 
-    @GetMapping
+    @GetMapping("/{page}")
     public ResponseEntity<?> userLatestNoty(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody PageReqDto request
+            @PathVariable int page
     ) {
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        List<NotyDto> latestNoty = notyService.findAllByUser(userDetails.getUsername(), page);
+        return new ResponseEntity<>(latestNoty, HttpStatus.OK);
     }
 
     @PutMapping

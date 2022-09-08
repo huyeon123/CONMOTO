@@ -1,6 +1,6 @@
 package com.huyeon.apiserver.repository;
 
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ public class BoardRepositoryTest {
     @Test
     void test_1(){
         //given
-        Groups group = groupRepository.findByUrlPath("test-group").orElseThrow();
+        WorkGroup group = groupRepository.findByUrlPath("test-group").orElseThrow();
         LocalDateTime now = LocalDateTime.now();
 
         //when, then

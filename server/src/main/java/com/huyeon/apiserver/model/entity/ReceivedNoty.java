@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
-public class NotyReceiver {
+public class ReceivedNoty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,5 +40,13 @@ public class NotyReceiver {
 
     public String getMessage() {
         return noty.getMessage();
+    }
+
+    public String getUrl() {
+        return noty.getRedirectUrl();
+    }
+
+    public NotyType getType() {
+        return noty.getType();
     }
 }

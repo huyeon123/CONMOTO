@@ -68,7 +68,7 @@ public class TestDBInit implements CommandLineRunner {
                 .description("어서오세요")
                 .build();
 
-        Groups group = groupService.createGroup(user, testGroup);
+        WorkGroup group = groupService.createGroup(user, testGroup);
         managerService.registerUserAsManager(user, group);
 
         userGroupRepository.save(UserGroup.builder()
@@ -81,7 +81,6 @@ public class TestDBInit implements CommandLineRunner {
                 .name("==최상위 카테고리==")
                 .parent(null)
                 .build();
-
 
         Category category2 = Category.builder()
                 .group(group)

@@ -1,6 +1,5 @@
 package com.huyeon.apiserver.repository;
 
-import com.huyeon.apiserver.model.entity.Groups;
 import com.huyeon.apiserver.model.entity.Noty;
 import com.huyeon.apiserver.model.entity.NotyType;
 import org.junit.jupiter.api.Assertions;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
@@ -40,7 +38,6 @@ public class EmitterRepositoryTest {
         String eventCacheId =  userId + "_" + System.currentTimeMillis();
         Noty noty = Noty.builder()
                 .senderName("groupName or userName")
-                .receivers(List.of("sub@test.com"))
                 .message("그룹에 초대합니다!")
                 .redirectUrl("url")
                 .type(NotyType.GROUP_INVITE)
@@ -82,7 +79,6 @@ public class EmitterRepositoryTest {
         String eventCacheId1 =  userId + "_" + System.currentTimeMillis();
         Noty notification1 = Noty.builder()
                 .senderName("groupName or userName")
-                .receivers(List.of("sub@test.com"))
                 .message("그룹에 초대합니다!")
                 .redirectUrl("url")
                 .type(NotyType.GROUP_INVITE)
@@ -93,7 +89,6 @@ public class EmitterRepositoryTest {
         String eventCacheId2 =  userId + "_" + System.currentTimeMillis();
         Noty notification2 = Noty.builder()
                 .senderName("groupName or userName")
-                .receiveGroup(Groups.builder().name("testGroup").build())
                 .message("그룹에 새로운 멤버가 들어왔습니다!")
                 .type(NotyType.GROUP_NEW_MEMBER)
                 .build();
@@ -103,7 +98,6 @@ public class EmitterRepositoryTest {
         String eventCacheId3 =  userId + "_" + System.currentTimeMillis();
         Noty notification3 = Noty.builder()
                 .senderName("groupName or userName")
-                .receivers(List.of("sub@test.com"))
                 .message("어서오세요!")
                 .redirectUrl("url")
                 .type(NotyType.DIRECT_MESSAGE)

@@ -2,7 +2,7 @@ package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.EmitterAdaptor;
 import com.huyeon.apiserver.model.entity.GroupManager;
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import com.huyeon.apiserver.model.entity.User;
 import com.huyeon.apiserver.repository.CategoryRepository;
 import com.huyeon.apiserver.repository.GroupManagerRepository;
@@ -40,11 +40,11 @@ public class GroupServiceTest {
     @Test
     void test_1() {
         User user = userRepository.findById("user@test.com").orElseThrow();
-        Groups groups = groupRepository.findByUrlPath("test-group").orElseThrow();
+        WorkGroup workGroup = groupRepository.findByUrlPath("test-group").orElseThrow();
         managerRepository.save(
                 GroupManager.builder()
                         .manager(user)
-                        .group(groups)
+                        .group(workGroup)
                         .build()
         );
         String res = groupService.deleteGroup(user, "test-group");
@@ -55,7 +55,7 @@ public class GroupServiceTest {
     @Test
     void inviteMember() {
         //given
-        Groups group = groupRepository.findByUrlPath("test-group").orElseThrow();
+        WorkGroup group = groupRepository.findByUrlPath("test-group").orElseThrow();
         EmitterAdaptor ea = EmitterAdaptor.builder()
                 .userEmail("user@test.com")
                 .lastEventId("")

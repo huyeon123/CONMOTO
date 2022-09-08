@@ -1,7 +1,7 @@
 package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.dto.MemberDto;
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import com.huyeon.apiserver.model.entity.User;
 import com.huyeon.apiserver.model.entity.UserGroup;
 import com.huyeon.apiserver.repository.UserGroupRepository;
@@ -20,7 +20,7 @@ public class UserGroupService {
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
 
-    public void registerUserToGroup(User user, Groups group) {
+    public void registerUserToGroup(User user, WorkGroup group) {
         UserGroup userGroup = UserGroup.builder()
                 .user(user)
                 .group(group)
@@ -29,7 +29,7 @@ public class UserGroupService {
         userGroupRepository.save(userGroup);
     }
 
-    public boolean expelUserFromGroup(MemberDto request, Groups group) {
+    public boolean expelUserFromGroup(MemberDto request, WorkGroup group) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         userGroupRepository.deleteByUserAndGroup(user, group);
         return true;

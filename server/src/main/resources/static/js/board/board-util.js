@@ -181,7 +181,7 @@ function moveToMyPage() {
 }
 
 function moveToMyBoard() {
-    location.href = "./board";
+    location.href = "";
 }
 
 function moveToMyComment() {

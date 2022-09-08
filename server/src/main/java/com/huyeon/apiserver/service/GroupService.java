@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class GroupService {
     private final UserGroupRepository userGroupRepository;
@@ -30,7 +31,7 @@ public class GroupService {
 
     private static final int IDENTIFIER_LENGTH = 10;
 
-    public Groups getGroupByUrl(String urlPath) {
+    public WorkGroup getGroupByUrl(String urlPath) {
         return groupRepository.findByUrlPath(urlPath).orElseThrow();
     }
 
@@ -38,18 +39,18 @@ public class GroupService {
         return groupRepository.findByUrlPath(urlPath).orElseThrow().getName();
     }
 
-    public List<Groups> getGroups(User user) {
+    public List<WorkGroup> getGroups(User user) {
         List<UserGroup> userGroups = userGroupRepository.findAllByUser(user).orElseGet(List::of);
         return userGroups.stream().map(UserGroup::getGroup).collect(Collectors.toList());
     }
 
-    public List<User> getUsers(Groups group) {
+    public List<User> getUsers(WorkGroup group) {
         List<UserGroup> userGroups = userGroupRepository.findAllByGroup(group).orElseGet(List::of);
         return userGroups.stream().map(UserGroup::getUser).collect(Collectors.toList());
     }
 
-    public Groups createGroup(User user, GroupDto request) {
-        Groups group = Groups.builder()
+    public WorkGroup createGroup(User user, GroupDto request) {
+        WorkGroup group = WorkGroup.builder()
                 .name(request.getName())
                 .description(request.getDescription())
                 .owner(user)
@@ -66,7 +67,7 @@ public class GroupService {
         return groupRepository.save(group);
     }
 
-    public boolean exist(String urlPath) {
+    private boolean exist(String urlPath) {
         return groupRepository.existsByUrlPath(urlPath);
     }
 
@@ -90,16 +91,15 @@ public class GroupService {
     }
 
     public boolean editGroup(String groupUrl, GroupDto request) {
-        Groups group = getGroupByUrl(groupUrl);
+        WorkGroup group = getGroupByUrl(groupUrl);
         group.setName(request.getName());
         group.setDescription(request.getDescription());
         groupRepository.save(group);
         return true;
     }
 
-    @Transactional
     public String deleteGroup(User user, String groupUrl) {
-        Groups group = getGroupByUrl(groupUrl);
+        WorkGroup group = getGroupByUrl(groupUrl);
         if (notOnlyMeInGroup(group)) {
             return "다른 멤버가 존재합니다.";
         }
@@ -115,16 +115,16 @@ public class GroupService {
         return "삭제되었습니다.";
     }
 
-    private boolean notOnlyMeInGroup(Groups group) {
+    private boolean notOnlyMeInGroup(WorkGroup group) {
         List<UserGroup> userGroups = userGroupRepository.findAllByGroup(group).orElseThrow();
         return userGroups.size() > 1;
     }
 
-    private boolean isNotGroupOwner(User user, Groups group) {
+    private boolean isNotGroupOwner(User user, WorkGroup group) {
         return !group.getOwner().equals(user);
     }
 
-    public String checkRole(Groups group, User user) {
+    public String checkRole(WorkGroup group, User user) {
         if (isOwner(group, user)) {
             return "그룹 소유자";
         }
@@ -135,31 +135,43 @@ public class GroupService {
         return "일반 멤버";
     }
 
-    private boolean isOwner(Groups group, User user) {
+    private boolean isOwner(WorkGroup group, User user) {
         return group.getOwner().equals(user);
     }
 
-    private boolean isManager(Groups group, User user) {
+    private boolean isManager(WorkGroup group, User user) {
         return managerRepository.existsByGroupAndManager(group, user);
     }
 
-    public void inviteMember(Groups group, String userEmail) {
+    public void inviteMember(WorkGroup group, String userEmail) {
         Noty inviteNoty = Noty.builder()
                 .senderName(group.getName())
                 .message("그룹에 초대합니다!\n" + group.getDescription())
                 .type(NotyType.GROUP_INVITE)
+                .redirectUrl(group.getUrlPath())
                 .build();
 
-        NotyReceiver notyReceiver = NotyReceiver.builder()
+        ReceivedNoty receivedNoty = ReceivedNoty.builder()
                 .userEmail(userEmail)
                 .noty(inviteNoty)
                 .build();
 
         NotyEventDto notyEventDto = NotyEventDto.builder()
                 .noty(inviteNoty)
-                .receivers(List.of(notyReceiver))
+                .receivers(List.of(receivedNoty))
                 .build();
 
         MyEvent.publishEvent(eventPublisher, notyEventDto);
+    }
+
+    public void joinMember(User user, String groupUrl) {
+        WorkGroup group = getGroupByUrl(groupUrl);
+
+        UserGroup userGroup = UserGroup.builder()
+                .user(user)
+                .group(group)
+                .build();
+
+        userGroupRepository.save(userGroup);
     }
 }

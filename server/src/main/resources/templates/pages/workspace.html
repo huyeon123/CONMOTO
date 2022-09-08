@@ -12,22 +12,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"
             integrity="sha512-Yk47FuYNtuINE1w+t/KT4BQ7JaycTCcrvlSvdK/jry6Kcxqg5vN7/svVWCxZykVzzJHaxXk5T9jnFemZHSYgnw=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script th:src="@{/js/board-util.js}"></script>
-    <script th:src="@{/js/groupboard.js}"></script>
+    <script th:src="@{/js/board/board-util.js}"></script>
+    <script th:src="@{/js/group/groupboard.js}"></script>
 </head>
 
 <div class="wrapper" layout:fragment="content">
     <div class="content-header">
-        <h1>최근 게시물</h1>
+        <h1 style="font-family: Azonix, sans-serif">Super Space</h1>
         <div class="space-between">
-            <span>최근 그룹에서 수정된 게시글입니다.</span>
-            <button class="new-board" onclick="createBoard()">새 글 만들기</button>
+            <p>새로운 그룹을 만들거나, 그룹에 가입해보세요!</p>
+            <p>그룹 관리자에게 내 이메일을 알려주면 그룹에 가입할 수 있습니다.</p>
         </div>
     </div>
     <div class="super-space-contents content">
-        <div class="scroll-section">
-            <div class="content-body"></div>
-        </div>
     </div>
 </div>
 </html>

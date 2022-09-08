@@ -8,6 +8,11 @@
     justify-content: space-between;
 }
 
+.flex-end {
+    display: flex;
+    justify-content: flex-end;
+}
+
 .flex-column {
     display: flex;
     flex-direction: column;

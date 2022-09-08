@@ -18,7 +18,7 @@ public class GroupManager {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    private Groups group;
+    private WorkGroup group;
 
     @OneToOne(fetch = FetchType.LAZY)
     private User manager;

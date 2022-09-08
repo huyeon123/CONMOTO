@@ -1,8 +1,7 @@
 package com.huyeon.apiserver.service;
 
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import com.huyeon.apiserver.model.entity.User;
-import com.huyeon.apiserver.repository.GroupManagerRepository;
 import com.huyeon.apiserver.repository.GroupRepository;
 import com.huyeon.apiserver.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,15 +27,15 @@ public class MangerServiceTest {
     @Test
     void test_1(){
         User user = userRepository.findById("user@test.com").orElseThrow();
-        Groups groups = groupRepository.findByUrlPath("test-group").orElseThrow();
-        managerService.registerUserAsManager(user, groups);
+        WorkGroup workGroup = groupRepository.findByUrlPath("test-group").orElseThrow();
+        managerService.registerUserAsManager(user, workGroup);
     }
 
     @DisplayName("매니저 취소 테스트")
     @Test
     void test_2(){
         User user = userRepository.findById("user@test.com").orElseThrow();
-        Groups groups = groupRepository.findByUrlPath("test-group").orElseThrow();
-        managerService.revokeManager(user, groups);
+        WorkGroup workGroup = groupRepository.findByUrlPath("test-group").orElseThrow();
+        managerService.revokeManager(user, workGroup);
     }
 }

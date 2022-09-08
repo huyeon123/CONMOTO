@@ -1,7 +1,7 @@
 package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.dto.CategoryDto;
-import com.huyeon.apiserver.model.entity.Groups;
+import com.huyeon.apiserver.model.entity.WorkGroup;
 import com.huyeon.apiserver.model.entity.User;
 import com.huyeon.apiserver.model.entity.UserGroup;
 import com.huyeon.apiserver.repository.CategoryRepository;
@@ -15,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.event.annotation.BeforeTestClass;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Transactional
 @SpringBootTest
@@ -39,7 +37,7 @@ public class CategoryServiceTest {
     @BeforeTestClass
     public void initTest() {
         User user = userRepository.findByEmail("user@test.com").orElseThrow();
-        Groups testGroup = Groups.builder().name("testGroup").build();
+        WorkGroup testGroup = WorkGroup.builder().name("testGroup").build();
         testGroup = groupRepository.save(testGroup);
 
         UserGroup userGroup = UserGroup.builder()
@@ -54,10 +52,10 @@ public class CategoryServiceTest {
     @Test
     void getRootOfCategoryTreeTest() throws Exception {
         //given
-        Groups groups = groupRepository.findByUrlPath("test-group").orElseThrow();
+        WorkGroup workGroup = groupRepository.findByUrlPath("test-group").orElseThrow();
 
         //when
-        CategoryDto rootCategory = categoryService.getRootOfCategoryTree(groups);
+        CategoryDto rootCategory = categoryService.getRootOfCategoryTree(workGroup);
 
         //then
         Assertions.assertEquals("==최상위 카테고리==", rootCategory.getName());
@@ -75,8 +73,8 @@ public class CategoryServiceTest {
     @DisplayName("카테고리 순서/계층 변경 테스트")
     @Test
     void editCategoryTree() {
-        Groups groups = groupRepository.findByUrlPath("test-group").orElseThrow();
-        CategoryDto rootOfCategoryTree = categoryService.getRootOfCategoryTree(groups);
+        WorkGroup workGroup = groupRepository.findByUrlPath("test-group").orElseThrow();
+        CategoryDto rootOfCategoryTree = categoryService.getRootOfCategoryTree(workGroup);
 
         //parentId만 바꿔주면 알아서 계층은 잡힘
 

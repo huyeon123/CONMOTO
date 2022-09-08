@@ -48,7 +48,7 @@ public class WorkSpaceController {
             Model model) {
         String groupName = groupService.getGroupNameByUrl(groupUrl);
         model.addAttribute("title", groupName);
-        return "pages/workspace";
+        return "pages/group/groupmain";
     }
 
 
