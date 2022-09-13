@@ -32,8 +32,9 @@ dependencies {
     runtimeOnly 'com.h2database:h2:1.4.200'
     runtimeOnly 'mysql:mysql-connector-java'
 
-    // https://mvnrepository.com/artifact/org.jasypt/jasypt
-    implementation 'org.jasypt:jasypt:1.9.2'
+    // https://mvnrepository.com/artifact/com.github.ulisesbocchio/jasypt-spring-boot-starter
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
+
 }
 
 configurations {

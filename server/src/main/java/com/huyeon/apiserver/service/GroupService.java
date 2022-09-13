@@ -40,12 +40,12 @@ public class GroupService {
     }
 
     public List<WorkGroup> getGroups(User user) {
-        List<UserGroup> userGroups = userGroupRepository.findAllByUser(user).orElseGet(List::of);
+        List<UserGroup> userGroups = userGroupRepository.findAllByUser(user);
         return userGroups.stream().map(UserGroup::getGroup).collect(Collectors.toList());
     }
 
     public List<User> getUsers(WorkGroup group) {
-        List<UserGroup> userGroups = userGroupRepository.findAllByGroup(group).orElseGet(List::of);
+        List<UserGroup> userGroups = userGroupRepository.findAllByGroup(group);
         return userGroups.stream().map(UserGroup::getUser).collect(Collectors.toList());
     }
 
@@ -116,7 +116,7 @@ public class GroupService {
     }
 
     private boolean notOnlyMeInGroup(WorkGroup group) {
-        List<UserGroup> userGroups = userGroupRepository.findAllByGroup(group).orElseThrow();
+        List<UserGroup> userGroups = userGroupRepository.findAllByGroup(group);
         return userGroups.size() > 1;
     }
 

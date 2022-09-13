@@ -1,6 +1,10 @@
 $(function () {
     const eventSource = new EventSource("/api/noty/subscribe/default");
 
+    if (eventSource.OPEN) {
+        console.log("[NOTY] : EventStream Successfully Created.");
+    }
+
     eventSource.addEventListener("message", function (event) {
         try {
             const data = JSON.parse(event.data)
@@ -15,6 +19,11 @@ $(function () {
         } catch (e) {
             console.error("JSON")
         }
+    });
+
+    $(window).on("beforeunload", () => {
+        get("/api/noty/close/default")
+            .catch(error => console.error(error));
     });
 });
 
@@ -112,8 +121,7 @@ function setReadAll() {
     const request = [];
 
     $(".noty").each((idx, item) => {
-        console.log(item.id);
-        request.push(item.id);
+        request.push(parseInt(item.id.replace(/[^0-9]/g, "")));
     })
 
     requestSetRead(request);

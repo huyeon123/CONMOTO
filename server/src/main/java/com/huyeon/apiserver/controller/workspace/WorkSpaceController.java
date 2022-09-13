@@ -20,7 +20,7 @@ public class WorkSpaceController {
     private final GroupService groupService;
 
     @GetMapping
-    public String workSpacePage(
+    public String workSpacePages(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             Model model) {
         if (isPossibleRedirect(userDetails)) {

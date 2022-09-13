@@ -26,4 +26,8 @@ public class Category {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "groupId")
     private WorkGroup group;
+
+    public Long getParentId() {
+        return parent.getId();
+    }
 }

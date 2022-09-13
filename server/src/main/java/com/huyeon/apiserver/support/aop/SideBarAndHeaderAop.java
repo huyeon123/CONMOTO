@@ -54,7 +54,7 @@ public class SideBarAndHeaderAop {
 
     private void addSideBardAndHeaderInModel(UserDetailsImpl userDetails, String groupUrl, Model model) {
         SideBarDto sideBar = sideBarAndHeaderService.getSideBar(userDetails, groupUrl);
-        HeaderDto appHeader = sideBarAndHeaderService.getAppHeader(userDetails, groupUrl);
+        HeaderDto appHeader = sideBarAndHeaderService.getAppHeader(userDetails.getUser(), groupUrl);
 
         addAttribute(model, sideBar, appHeader);
     }

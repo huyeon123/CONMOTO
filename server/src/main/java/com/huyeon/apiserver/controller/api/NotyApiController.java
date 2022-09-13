@@ -53,4 +53,13 @@ public class NotyApiController {
         notyService.setReadNoty(idList);
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
+
+    @GetMapping("/close/{notyType}")
+    public ResponseEntity<?> closeEmitter(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable String notyType
+    ) {
+        notyService.completeEmitter(userDetails.getUsername(), notyType);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

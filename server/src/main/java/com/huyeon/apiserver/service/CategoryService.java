@@ -51,17 +51,25 @@ public class CategoryService {
 
         Map<Long, List<CategoryDto>> groupingByParent =
                 groupingByParent(categories);
+
         addSubCategories(rootCategoryDto, groupingByParent);
 
         return rootCategoryDto;
     }
 
-    private Map<Long, List<CategoryDto>> groupingByParent(List<CategoryDto> categories) {
-        return categories.stream().collect(groupingBy(CategoryDto::getParentId));
+    public List<CategoryDto> getCategoryList(WorkGroup group) {
+        return categoryRepository.findAllByGroup(group).stream()
+                .map(CategoryDto::new)
+                .collect(Collectors.toList());
     }
 
     private CategoryDto getRoot(List<CategoryDto> categories) {
         return categories.get(0);
+    }
+
+    private Map<Long, List<CategoryDto>> groupingByParent(List<CategoryDto> categories) {
+        return categories.stream()
+                .collect(groupingBy(CategoryDto::getParentId));
     }
 
     private void addSubCategories(CategoryDto parent, Map<Long, List<CategoryDto>> groupingByParent) {
@@ -72,16 +80,6 @@ public class CategoryService {
         parent.setSubCategories(subCategories);
 
         subCategories.forEach(sc -> addSubCategories(sc, groupingByParent));
-    }
-
-    public List<CategoryDto> getCategoryList(WorkGroup group) {
-        return categoryRepository.findAllByGroup(group).stream()
-                .map(c -> CategoryDto.builder()
-                        .categoryId(c.getId())
-                        .name(c.getName())
-                        .parentId(c.getParent() == null ? 0L : c.getParent().getId())
-                        .build())
-                .collect(Collectors.toList());
     }
 
     public boolean editCategory(List<CategoryDto> request, WorkGroup group) {

@@ -56,7 +56,7 @@ public class NotyService {
 
     private SseEmitter getEmitter(String emitterId) {
         SseEmitter emitter = findOrMakeEmitter(emitterId);
-        setOnCompletion(emitter, emitterId);
+        setOnEvent(emitter, emitterId);
         return emitter;
     }
 
@@ -69,8 +69,9 @@ public class NotyService {
         );
     }
 
-    private void setOnCompletion(SseEmitter emitter, String emitterId) {
+    private void setOnEvent(SseEmitter emitter, String emitterId) {
         emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
+        emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
     }
 
     private void sendUnreadEvent(EmitterAdaptor ea) {
@@ -150,5 +151,15 @@ public class NotyService {
             receiver.setRead(true);
             receiverRepository.save(receiver);
         });
+    }
+
+    public void completeEmitter(String userEmail, String notyType) {
+        String emitterId = makeTypeIncludeId(userEmail, notyType);
+        SseEmitter emitter = findEmitter(emitterId);
+        emitter.complete();
+    }
+
+    private SseEmitter findEmitter(String emitterId) {
+        return emitterRepository.findEmitterById(emitterId).orElseThrow();
     }
 }

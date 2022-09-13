@@ -36,6 +36,15 @@ logging:
   level:
     org.hibernate.type: trace
 ---
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
+
+server:
+  tomcat:
+    threads:
+      max: 6
+
 spring:
   config:
     activate:
@@ -48,5 +57,13 @@ spring:
     url: jdbc:mysql://localhost:3306/skeleton
     username: root
     password: tkfkdg7!
+    hikari:
+      connection-timeout: 3000
+      validation-timeout: 3000
+      maximum-pool-size: 15
+      max-lifetime: 10000
 
+logging:
+  level:
+    com.zaxxer.hikari.pool.HikariPool: debug
 ---
