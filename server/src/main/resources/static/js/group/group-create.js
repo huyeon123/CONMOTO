@@ -1,5 +1,5 @@
 async function createGroup(url = "/api/group") {
-    const groupName = $('#group-name').val();
+    const groupName = $('#new-group-name').val();
     const description = $('#group-description').val();
     const urlPath = $('#url-path').val();
     const request = {

@@ -6,6 +6,7 @@ import com.huyeon.apiserver.model.dto.NotyDto;
 import com.huyeon.apiserver.model.dto.PageReqDto;
 import com.huyeon.apiserver.service.NotyService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/noty")
 @RequiredArgsConstructor
@@ -46,6 +48,12 @@ public class NotyApiController {
     ) {
         List<NotyDto> latestNoty = notyService.findAllByUser(userDetails.getUsername(), page);
         return new ResponseEntity<>(latestNoty, HttpStatus.OK);
+    }
+
+    @GetMapping("/unread")
+    public ResponseEntity<?> unreadNoty(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<NotyDto> unreadEvent = notyService.sendUnreadEvent(userDetails.getUsername());
+        return new ResponseEntity<>(unreadEvent, HttpStatus.OK);
     }
 
     @PutMapping

@@ -161,7 +161,7 @@ public class BoardService {
         return List.of();
     }
 
-    private WorkGroup getGroupByUrl(String groupUrl) throws NoSuchElementException{
+    private WorkGroup getGroupByUrl(String groupUrl){
         return groupRepository.findByUrlPath(groupUrl).orElseThrow();
     }
 

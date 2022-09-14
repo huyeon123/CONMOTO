@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class NotyService {
 
@@ -40,8 +39,6 @@ public class NotyService {
 
         ea.setEmitterId(emitterId);
         ea.setEmitter(emitter);
-
-        sendUnreadEvent(ea);
 
         if (hasLostData(ea.getLastEventId())) {
             sendLostData(ea);
@@ -74,14 +71,12 @@ public class NotyService {
         emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
     }
 
-    private void sendUnreadEvent(EmitterAdaptor ea) {
-        List<ReceivedNoty> receivedNotices = receiverRepository.findAllByUserEmail(ea.getUserEmail());
-        receivedNotices.stream()
+    public List<NotyDto> sendUnreadEvent(String userEmail) {
+        List<ReceivedNoty> receivedNotices = receiverRepository.findAllByUserEmail(userEmail);
+        return receivedNotices.stream()
                 .filter(ReceivedNoty::isUnread)
-                .forEach(receive -> {
-                    ea.setData(new NotyDto(receive));
-                    sendNotification(ea);
-                });
+                .map(NotyDto::new)
+                .collect(Collectors.toList());
     }
 
     private String makeTimeIncludeId(String userEmail) {
@@ -114,6 +109,7 @@ public class NotyService {
                 });
     }
 
+    @Transactional
     public void publish(NotyEventDto noty) {
         Noty newNoty = notyRepository.save(noty.getNoty());
         receiverRepository.saveAll(noty.getReceivers());

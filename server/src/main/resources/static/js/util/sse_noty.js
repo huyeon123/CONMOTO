@@ -1,4 +1,12 @@
 $(function () {
+    get("/api/noty/unread")
+        .then(data => {
+            $("#noty-count").text(data.length);
+            data.forEach(item => {
+                addNoty(item);
+            });
+        })
+
     const eventSource = new EventSource("/api/noty/subscribe/default");
 
     if (eventSource.OPEN) {
@@ -21,7 +29,7 @@ $(function () {
         }
     });
 
-    $(window).on("beforeunload", () => {
+    $(window).on("beforeunload unload", () => {
         get("/api/noty/close/default")
             .catch(error => console.error(error));
     });

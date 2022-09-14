@@ -1,8 +1,13 @@
 spring:
   profiles:
-    active: dev
+    active: test
 
 ---
+server:
+  tomcat:
+    threads:
+      max: 4
+
 spring:
   config:
     activate:
@@ -16,6 +21,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  datasource:
+    hikari:
+      connection-timeout: 3000
+      validation-timeout: 3000
+      maximum-pool-size: 15
+      max-lifetime: 10000
 
   thymeleaf:
     prefix:
@@ -23,8 +34,6 @@ spring:
       - classpath: static/
     suffix:
       - .html
-    #      - .js
-    #      - .css
     cache: false
     check-template-location: true
 
@@ -35,6 +44,7 @@ spring:
 logging:
   level:
     org.hibernate.type: trace
+    com.zaxxer.hikari.pool.HikariPool: debug
 ---
 jasypt:
   encryptor:
@@ -60,7 +70,7 @@ spring:
     hikari:
       connection-timeout: 3000
       validation-timeout: 3000
-      maximum-pool-size: 15
+      maximum-pool-size: 21
       max-lifetime: 10000
 
 logging:

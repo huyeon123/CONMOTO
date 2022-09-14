@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/workspace_layout}">
 <head>
-    <title th:text="|${title} - 최근 게시물|"></title>
+    <title>Welcome!</title>
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.css"
           integrity="sha512-fxF1t7b0mpb/ytjBeSu/OpgXxCVcX5/O8AJGYvHaWmNfi/lYLtttitFK17K4iKBva4iU9dcZ+BIV7dyD/nDdSw=="
@@ -19,7 +19,7 @@
 <div class="wrapper" layout:fragment="content">
     <div class="content-header">
         <h1 style="font-family: Azonix, sans-serif">Super Space</h1>
-        <div class="space-between">
+        <div class="flex-column">
             <p>새로운 그룹을 만들거나, 그룹에 가입해보세요!</p>
             <p>그룹 관리자에게 내 이메일을 알려주면 그룹에 가입할 수 있습니다.</p>
         </div>

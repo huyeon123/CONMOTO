@@ -2,6 +2,7 @@ package com.huyeon.apiserver.controller.workspace;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.service.GroupService;
+import com.huyeon.apiserver.service.SideBarAndHeaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,7 +21,7 @@ public class WorkSpaceController {
     private final GroupService groupService;
 
     @GetMapping
-    public String workSpacePages(
+    public String workSpacePage(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             Model model) {
         if (isPossibleRedirect(userDetails)) {
