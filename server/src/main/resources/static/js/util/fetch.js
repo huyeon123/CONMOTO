@@ -36,7 +36,7 @@ async function postOrPut(url, body, method) {
 
 function getData(response) {
     return response.json()
-        .catch((error) => console.log("실패 : ", error));
+        .catch((error) => console.error("json parsing error : ", error));
 }
 
 async function del(url, body) {
@@ -62,4 +62,15 @@ async function delWithoutBody(url) {
     });
 
     return getData(response);
+}
+
+async function justPost(url, body, method) {
+    return await fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: 'cors',
+        body: JSON.stringify(body)
+    });
 }

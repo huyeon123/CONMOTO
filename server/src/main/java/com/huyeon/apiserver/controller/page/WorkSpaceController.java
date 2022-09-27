@@ -1,8 +1,7 @@
-package com.huyeon.apiserver.controller.workspace;
+package com.huyeon.apiserver.controller.page;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.service.GroupService;
-import com.huyeon.apiserver.service.SideBarAndHeaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

@@ -20,13 +20,8 @@ public class ContentBlockService {
     private final ContentBlockRepository blockRepository;
     private final ContentBlockHistoryRepo blockHistoryRepo;
 
-    //컨텐츠 블럭 가져오기
-    public ContentBlock getContentBlock(Long id) {
-        return blockRepository.findById(id).orElse(new ContentBlock());
-    }
-
     //게시글 컨텐츠 모두 가져오기
-    public List<ContentBlock> getContentBlockByBoardId(Long boardId) {
+    private List<ContentBlock> getContentBlockByBoardId(Long boardId) {
         return blockRepository.findAllByBoardId(boardId);
     }
 

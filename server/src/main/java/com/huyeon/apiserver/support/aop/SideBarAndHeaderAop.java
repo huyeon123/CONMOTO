@@ -22,12 +22,12 @@ public class SideBarAndHeaderAop {
 
     private final SideBarAndHeaderService sideBarAndHeaderService;
 
-    @Pointcut("execution(* com.huyeon.apiserver.controller.workspace.*.*Page(*, *))")
+    @Pointcut("execution(* com.huyeon.apiserver.controller.page.*.*Page(*, *))")
     private void cutNoGroupPage() {
 
     }
 
-    @Pointcut("execution(* com.huyeon.apiserver.controller.workspace.*.*Page(*, String, ..))")
+    @Pointcut("execution(* com.huyeon.apiserver.controller.page.*.*Page(*, String, ..))")
     private void cutGroupPage() {}
 
     @Before("cutNoGroupPage()")

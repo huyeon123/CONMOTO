@@ -28,14 +28,14 @@ function formSubmit(url = "/auth/signup") {
     }
     request.birthday = this.birthday.value;
 
-    const res = post(url, request)
-    res.then((success) => {
-        if (success) {
-            window.location.href = "/";
-        } else {
-            alert("회원가입에 실패했습니다!");
-        }
-    }).catch(error => console.error(error));
+    justPost(url, request)
+        .then((res) => {
+            if (res.status === 201) {
+                window.location.href = "/";
+            } else {
+                alert("회원가입에 실패했습니다!");
+            }
+        }).catch(error => console.error(error));
 }
 
 function duplicateCheck(url = "/auth/check") {
@@ -44,12 +44,12 @@ function duplicateCheck(url = "/auth/check") {
     if (isNotEmailFormat(request.email)) return;
 
     const res = post(url, request);
-    res.then((success) => {
-        if (success) {
+    res.then((isDuplicate) => {
+        if (isDuplicate) {
+            alert("중복된 이메일입니다.");
+        } else {
             alert("사용 가능한 이메일입니다.");
             check = true;
-        } else {
-            alert("중복된 이메일입니다.");
         }
     }).catch(error => console.error(error));
 }

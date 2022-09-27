@@ -13,29 +13,23 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
-
 @Slf4j
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     //회원가입
-    public boolean signUp(UserSignUpReq request) {
-        if (!userRepository.existsByEmail(request.getEmail())) {
-            User user = new User(request);
-            user.encryptPassword(passwordEncoder);
-            userRepository.save(user);
-            return true;
-        }
-        return false;
+    public void signUp(UserSignUpReq request) {
+        User user = new User(request);
+        user.encryptPassword(passwordEncoder);
+        userRepository.save(user);
     }
 
     //로그인
-    public void logIn(UserSignInReq request) throws Exception{
+    public void logIn(UserSignInReq request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
@@ -44,7 +38,7 @@ public class AuthService {
     }
 
     //이메일 중복체크
-    public boolean checkDuplicateEmail(String email) {
+    public boolean isDuplicateEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 }

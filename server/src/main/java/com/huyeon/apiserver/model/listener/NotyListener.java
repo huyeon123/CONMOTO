@@ -1,4 +1,4 @@
-package com.huyeon.apiserver.support;
+package com.huyeon.apiserver.model.listener;
 
 import com.huyeon.apiserver.model.dto.NotyEventDto;
 import com.huyeon.apiserver.model.entity.Noty;

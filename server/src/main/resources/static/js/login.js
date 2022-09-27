@@ -5,17 +5,18 @@ $(document).on('keyup', '#password', (e) => {
 })
 
 function formSubmit(url = "/auth/login") {
-    const request = {};
-    request.email = this.email.value
-    request.password = this.password.value
-    request.rememberMe = this.rememberMe.value === "on";
+    const request = {
+        email: this.email.value,
+        password: this.password.value,
+        rememberMe: this.rememberMe.value === "on"
+    };
 
-    const data = post(url, request);
-    data.then((data) => {
-        if (data) {
-            window.location.href = "/workspace";
-        } else {
-            alert("잘못된 이메일/비밀번호 입니다!");
-        }
-    })
+    justPost(url, request, "POST")
+        .then((res) => {
+            if (res.status === 200) {
+                window.location.href = "/workspace";
+            } else {
+                alert("잘못된 이메일/비밀번호 입니다!");
+            }
+        });
 }
