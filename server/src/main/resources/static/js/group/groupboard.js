@@ -5,13 +5,12 @@ $(function () {
 
 function drawBoardsOfGroup() {
     const request = {
-        type: "GROUP",
         query: groupUrl,
         now: KR_now,
         nextPage: nextPage
     };
 
-    getList(request)
+    getList("group", request)
         .then(data => drawBoards(data))
         .catch(error => console.error(error));
 }

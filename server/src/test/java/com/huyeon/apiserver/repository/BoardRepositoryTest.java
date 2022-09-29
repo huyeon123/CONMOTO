@@ -26,6 +26,6 @@ public class BoardRepositoryTest {
         LocalDateTime now = LocalDateTime.now();
 
         //when, then
-        Assertions.assertDoesNotThrow(() -> boardRepository.findNextTenLatestInGroup(group, now, PageRequest.of(0, 10)));
+        Assertions.assertDoesNotThrow(() -> boardRepository.findNextTenLatest(group, now, PageRequest.of(0, 10)));
     }
 }

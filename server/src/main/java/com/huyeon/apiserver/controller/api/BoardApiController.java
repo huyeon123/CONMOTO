@@ -2,9 +2,8 @@ package com.huyeon.apiserver.controller.api;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.BoardHeaderReqDto;
-import com.huyeon.apiserver.model.dto.PageReqDto;
 import com.huyeon.apiserver.model.dto.BoardResDto;
-import com.huyeon.apiserver.model.dto.ResMessage;
+import com.huyeon.apiserver.model.dto.PageReqDto;
 import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -25,84 +25,47 @@ public class BoardApiController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getBoard(@PathVariable Long id) {
-        Board board = boardService.getBoard(id);
-        return new ResponseEntity<>(board, HttpStatus.OK);
+        Optional<Board> board = boardService.getBoard(id);
+        if (board.isPresent()) {
+            return new ResponseEntity<>(board, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping
     public ResponseEntity<?> createBoard(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam String groupUrl) {
-        try {
-            Long id = boardService.createBoard(userDetails.getUsername(), groupUrl);
-
-            return new ResponseEntity<>(
-                    new ResMessage("게시글이 생성되었습니다.", id, true),
-                    HttpStatus.CREATED);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(
-                    new ResMessage("게시글 생성에 실패했습니다."),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Long id = boardService.createBoard(userDetails.getUsername(), groupUrl);
+        return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
-    @PostMapping("/latest")
-    public ResponseEntity<?> getLatestBoard(
+    @PostMapping("/latest/group")
+    public ResponseEntity<?> getLatestBoardInGroup(
+            @RequestBody PageReqDto request) {
+        List<BoardResDto> latest = boardService.getNext10LatestInGroup(request);
+        return new ResponseEntity<>(latest, HttpStatus.OK);
+    }
+
+    @PostMapping("/latest/category")
+    public ResponseEntity<?> getLatestBoardInCategory(
+            @RequestBody PageReqDto request) {
+        List<BoardResDto> latest = boardService.getNext10LatestInCategory(request);
+        return new ResponseEntity<>(latest, HttpStatus.OK);
+    }
+
+    @PostMapping("/latest/user")
+    public ResponseEntity<?> getLatestBoardInUser(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody PageReqDto request) {
-        if (isRequestFromGroup(request)) {
-            return getLatestBoardInGroup(request);
-        } else if (isRequestFromCategory(request)) {
-            return getLatestBoardInCategory(request);
-        } else if (isRequestFromUser(request)) {
-            return getLatestBoardInUser(request, userDetails);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    private boolean isRequestFromGroup(PageReqDto request) {
-        return request.getType().equals("GROUP");
-    }
-
-    private boolean isRequestFromCategory(PageReqDto request) {
-        return request.getType().equals("CATEGORY");
-    }
-
-    private boolean isRequestFromUser(PageReqDto request) {
-        return request.getType().equals("USER");
-    }
-    private ResponseEntity<?> getLatestBoardInGroup(PageReqDto request) {
-        try {
-            List<BoardResDto> newest = boardService.getNext10LatestInGroup(request);
-            return new ResponseEntity<>(newest, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    private ResponseEntity<?> getLatestBoardInCategory(PageReqDto request) {
-        List<BoardResDto> newest = boardService.getNext10LatestInCategory(request);
-        return new ResponseEntity<>(newest, HttpStatus.OK);
-    }
-
-    private ResponseEntity<?> getLatestBoardInUser(PageReqDto request, UserDetailsImpl userDetails) {
-        List<BoardResDto> newest = boardService.getNext10LatestInUser(request, userDetails.getUser());
-        return new ResponseEntity<>(newest, HttpStatus.OK);
+        List<BoardResDto> latest = boardService.getNext10LatestInUser(request, userDetails.getUser());
+        return new ResponseEntity<>(latest, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editBoard(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable Long id, @RequestBody BoardHeaderReqDto request) {
-        try {
-            boardService.editBoard(request);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> editBoard(@RequestBody BoardHeaderReqDto request) {
+        boardService.editBoard(request);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

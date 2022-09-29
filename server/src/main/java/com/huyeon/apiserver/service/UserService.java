@@ -31,7 +31,7 @@ public class UserService {
     }
 
     //회원정보 수정
-    public boolean editInfo(String email, User editUser) {
+    public void editInfo(String email, User editUser) {
         if (editUser.getEmail().equals(email)) {
             userRepository.findByEmail(email).ifPresent(user -> {
                 user.setName(editUser.getName());
@@ -40,40 +40,26 @@ public class UserService {
                 user.encryptPassword(passwordEncoder);
                 userRepository.save(user);
             });
-            return true;
         }
-        return false;
     }
 
     //회원탈퇴
-    public boolean resign(String email) {
-        try {
-            userRepository.findByEmail(email).ifPresent(user -> {
-                user.setExpireDate(LocalDate.now().plusDays(15));
-                userRepository.save(user);
-            });
-            return true;
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return false;
-        }
+    public void resign(String email) {
+        userRepository.findByEmail(email).ifPresent(user -> {
+            user.setExpireDate(LocalDate.now().plusDays(15));
+            userRepository.save(user);
+        });
     }
 
     //회원탈퇴 취소
-    public boolean cancelResign(String email) {
-        try {
-            userRepository.findByEmail(email).ifPresent(user -> {
-                if (!user.isEnabled()) {
-                    user.setEnabled(true);
-                    user.setExpireDate(null);
-                    userRepository.save(user);
-                }
-            });
-            return true;
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return false;
-        }
+    public void cancelResign(String email) {
+        userRepository.findByEmail(email).ifPresent(user -> {
+            if (!user.isEnabled()) {
+                user.setEnabled(true);
+                user.setExpireDate(null);
+                userRepository.save(user);
+            }
+        });
     }
 
     //회원정보 수정이력 확인

@@ -5,12 +5,11 @@ $(function () {
 
 function drawMyBoards() {
     const request = {
-        type: "USER",
         now: KR_now,
         nextPage: nextPage
     }
 
-    getList(request)
+    getList("user", request)
         .then(data => drawBoards(data, request.type))
         .catch(error => console.error(error));
 }

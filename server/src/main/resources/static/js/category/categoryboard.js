@@ -8,15 +8,14 @@ $(function () {
 
 function drawBoardsOfCategory() {
     const request = {
-        type: "CATEGORY",
         query: categoryName,
         now: KR_now,
         nextPage: nextPage
     }
 
-    getList(request)
+    getList("category", request)
+        .then(res => getData(res))
         .then(data => drawBoards(data, request.type))
-        .catch(error => console.error(error));
 }
 
 function moveToBoard(url) {

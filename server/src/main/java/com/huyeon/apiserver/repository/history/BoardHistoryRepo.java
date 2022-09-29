@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface BoardHistoryRepo extends JpaRepository<BoardHistory, Long> {
-    Optional<List<BoardHistory>> findAllByBoardId(Long boardId);
+    List<BoardHistory> findAllByBoardId(Long boardId);
 }

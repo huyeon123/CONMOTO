@@ -5,22 +5,22 @@ const KR_now = new Date(utc + (2 * KR_TIME_DIFF)); //서버에서 다시 KR_TIME
 let nextPage = 0;
 let isFetching = false;
 
-const getList = (request) => {
+const getList = (where, request) => {
     isFetching = true;
-    const url = "/api/board/latest";
+    const url = "/api/board/latest/" + where;
     return post(url, request);
 };
 
 function createBoard() {
     const url = "/api/board?groupUrl=" + groupUrl;
     get(url)
-        .then((data) => {
-            alert(data.message);
-            if (data.success) {
-                window.location.href = "/workspace/" + groupUrl + "/board/" + data.data;
+        .then(res => {
+            if (canGetData(res)) {
+                const id = getData(res);
+                alert("게시글을 생성했습니다.");
+                window.location.href = "/workspace/" + groupUrl + "/board/" + id;
             }
-        })
-        .catch(error => console.error(error));
+        });
 }
 
 function content_scroll_plugin(getListCallback) {

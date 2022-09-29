@@ -4,12 +4,14 @@ import com.huyeon.apiserver.model.dto.CategoryDto;
 import com.huyeon.apiserver.model.entity.Category;
 import com.huyeon.apiserver.model.entity.WorkGroup;
 import com.huyeon.apiserver.repository.CategoryRepository;
+import com.huyeon.apiserver.repository.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -19,10 +21,13 @@ import static java.util.stream.Collectors.groupingBy;
 @Transactional
 @RequiredArgsConstructor
 public class CategoryService {
+    private final GroupRepository groupRepository;
     private final CategoryRepository categoryRepository;
 
-    public boolean createCategory(CategoryDto request, WorkGroup group) {
-        Category parentCategory = categoryRepository.findById(request.getCategoryId()).orElseThrow();
+    public void createCategory(CategoryDto request, String groupUrl) {
+        WorkGroup group = findGroupByUrl(groupUrl);
+
+        Category parentCategory = findCategoryById(request.getCategoryId()).orElseThrow();
 
         Category newCategory = Category.builder()
                 .name(request.getName())
@@ -30,18 +35,19 @@ public class CategoryService {
                 .group(group)
                 .build();
 
-        categoryRepository.save(newCategory);
-        return true;
+        save(newCategory);
     }
 
-    public void createRootCategory(WorkGroup group) {
-        Category root = Category.builder()
-                .name("==최상위 카테고리==")
-                .parent(null)
-                .group(group)
-                .build();
+    private WorkGroup findGroupByUrl(String urlPath) {
+        return groupRepository.findByUrlPath(urlPath).orElseThrow();
+    }
 
-        categoryRepository.save(root);
+    private Optional<Category> findCategoryById(Long id) {
+        return categoryRepository.findById(id);
+    }
+
+    private void save(Category category) {
+        categoryRepository.save(category);
     }
 
     public CategoryDto getRootOfCategoryTree(WorkGroup group) {
@@ -82,7 +88,8 @@ public class CategoryService {
         subCategories.forEach(sc -> addSubCategories(sc, groupingByParent));
     }
 
-    public boolean editCategory(List<CategoryDto> request, WorkGroup group) {
+    public void editCategory(List<CategoryDto> request, String groupUrl) {
+        WorkGroup group = findGroupByUrl(groupUrl);
         List<CategoryDto> beforeList = getCategoryList(group);
 
         IntStream.range(0, request.size())
@@ -93,7 +100,6 @@ public class CategoryService {
                     changeInfoIfDifferent(beforeList, before, after);
 
                 });
-        return true;
     }
 
     private void changeInfoIfDifferent(List<CategoryDto> beforeList, CategoryDto before, CategoryDto after) {

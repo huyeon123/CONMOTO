@@ -20,12 +20,30 @@ public class ContentBlockService {
     private final ContentBlockRepository blockRepository;
     private final ContentBlockHistoryRepo blockHistoryRepo;
 
-    //게시글 컨텐츠 모두 가져오기
+    public Long createContent(Long boardId) {
+        ContentBlock block = ContentBlock.builder()
+                .boardId(boardId)
+                .build();
+
+        return blockRepository.save(block).getId();
+    }
+
+    public void writeContents(Long contentId, ContentBlock request) {
+        ContentBlock current = blockRepository.findById(contentId).orElseThrow();
+        current.setContent(request.getContent());
+        blockRepository.save(current);
+    }
+
+    public void removeContent(Long id) {
+        ContentBlock content = blockRepository.findById(id).orElseThrow();
+        blockRepository.delete(content);
+    }
+
     private List<ContentBlock> getContentBlockByBoardId(Long boardId) {
         return blockRepository.findAllByBoardId(boardId);
     }
 
-    public List<ContentDto> getSummaryContentResByBoardId(Long boardId){
+    public List<ContentDto> getSummaryContentResByBoardId(Long boardId) {
         List<ContentBlock> contents = blockRepository.findTop3ByBoardId(boardId);
         return mapToContentDto(contents);
     }
@@ -41,32 +59,6 @@ public class ContentBlockService {
                         new ContentDto(content.getId(), content.getContent())
                 )
                 .collect(Collectors.toList());
-    }
-
-    //컨텐츠 추가
-    public Long createContent(Long boardId) {
-        ContentBlock block = ContentBlock.builder()
-                .boardId(boardId)
-                .build();
-        return blockRepository.save(block).getId();
-    }
-
-    //컨텐츠 작성
-    public boolean writeContents(Long contentId, ContentBlock request) {
-        ContentBlock current = blockRepository.findById(contentId).orElseThrow();
-        current.setContent(request.getContent());
-        blockRepository.save(current);
-        return true;
-    }
-
-    //컨텐츠 삭제
-    public boolean removeContent(Long id) {
-        Optional<ContentBlock> optional = blockRepository.findById(id);
-        if (optional.isPresent()) {
-            blockRepository.delete(optional.get());
-            return true;
-        }
-        return false;
     }
 
     //컨텐츠 수정이력

@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class PageReqDto {
-    private String type;
-
     private String query;
 
     private LocalDateTime now;

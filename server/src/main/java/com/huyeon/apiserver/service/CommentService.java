@@ -35,6 +35,41 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentHistoryRepo commentHistoryRepo;
 
+    public List<BoardComment> getCommentInUser(User user, PageReqDto request) {
+        List<Comment> comments = getNextComments(user, request);
+        return mapToBoardComment(comments);
+    }
+
+    private List<Comment> getNextComments(User user, PageReqDto request) {
+        return commentRepository.findNextLatestByUserEmail(
+                user.getEmail(),
+                request.getNow(),
+                PageRequest.of(request.getNextPage(), 10)
+        );
+    }
+
+    private List<BoardComment> mapToBoardComment(List<Comment> comments) {
+        List<BoardComment> boardComments = new ArrayList<>();
+
+        for (Comment comment : comments) {
+            Board board = getBoardByComment(comment);
+            BoardComment boardComment = getBoardComment(board, comment);
+            boardComments.add(boardComment);
+        }
+        return boardComments;
+    }
+
+    public void createComment(String author, Long boardId, Comment comment) {
+        comment.setUserEmail(author);
+        comment.setBoardId(boardId);
+        commentRepository.save(comment);
+    }
+
+    public void removeComment(Long id) {
+        Comment comment = commentRepository.findById(id).orElseThrow();
+        commentRepository.delete(comment);
+    }
+
     public List<CommentDto> getCommentsResponseByBoardId(Long boardId) {
         List<Comment> comments = getCommentsByBoardId(boardId);
         return mapToCommentDto(comments);
@@ -70,30 +105,6 @@ public class CommentService {
         return date.getYears() + "년 전";
     }
 
-    public List<BoardComment> getCommentInUser(User user, PageReqDto request) {
-        List<Comment> comments = getNextComments(user, request);
-        return mapToBoardComment(comments);
-    }
-
-    private List<Comment> getNextComments(User user, PageReqDto request) {
-        return commentRepository.findNextLatestByUserEmail(
-                user.getEmail(),
-                request.getNow(),
-                PageRequest.of(request.getNextPage(), 10)
-        );
-    }
-
-    private List<BoardComment> mapToBoardComment(List<Comment> comments) {
-        List<BoardComment> boardComments = new ArrayList<>();
-
-        for (Comment comment : comments) {
-            Board board = getBoardByComment(comment);
-            BoardComment boardComment = getBoardComment(board, comment);
-            boardComments.add(boardComment);
-        }
-        return boardComments;
-    }
-
     private Board getBoardByComment(Comment comment) {
         return boardRepository.findById(comment.getId()).orElseThrow();
     }
@@ -108,14 +119,6 @@ public class CommentService {
                 .build();
     }
 
-    //댓글 생성
-    public Long createComment(String author, Long boardId, Comment comment) {
-        comment.setUserEmail(author);
-        comment.setBoardId(boardId);
-        return commentRepository.save(comment).getId();
-    }
-
-    //댓글 작성
     public boolean editComment(Long id, String editComment) {
         Optional<Comment> optional = commentRepository.findById(id);
         Comment current = optional.orElse(new Comment());
@@ -126,19 +129,6 @@ public class CommentService {
                 && edit.getId().equals(current.getId())) {
             commentRepository.save(edit);
             return true;
-        }
-        return false;
-    }
-
-    //댓글 삭제
-    public boolean removeComment(String email, Long id) {
-        Optional<Comment> optional = commentRepository.findById(id);
-        if (optional.isPresent()) {
-            Comment comment = optional.get();
-            if (comment.getUserEmail().equals(email)) {
-                commentRepository.delete(comment);
-                return true;
-            }
         }
         return false;
     }

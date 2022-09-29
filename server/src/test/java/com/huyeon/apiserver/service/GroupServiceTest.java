@@ -47,15 +47,14 @@ public class GroupServiceTest {
                         .group(workGroup)
                         .build()
         );
-        String res = groupService.deleteGroup(user, "test-group");
-        System.out.println(res);
+        groupService.deleteGroup(user, "test-group");
     }
 
     @DisplayName("그룹 초대")
     @Test
     void inviteMember() {
         //given
-        WorkGroup group = groupRepository.findByUrlPath("test-group").orElseThrow();
+        String group = "test-group";
         EmitterAdaptor ea = EmitterAdaptor.builder()
                 .userEmail("user@test.com")
                 .lastEventId("")

@@ -7,7 +7,6 @@ import com.huyeon.apiserver.model.entity.Comment;
 import com.huyeon.apiserver.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,15 +33,13 @@ public class CommentApiController {
     public ResponseEntity<?> createComment(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long boardId, @RequestBody Comment comment) {
-        Long commentId = commentService.createComment(userDetails.getUsername(), boardId, comment);
-        return new ResponseEntity<>(commentId > 0, HttpStatus.OK);
+        commentService.createComment(userDetails.getUsername(), boardId, comment);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping
-    public ResponseEntity<?> removeComment(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam Long commentId) {
-        boolean success = commentService.removeComment(userDetails.getUsername(), commentId);
-        return new ResponseEntity<>(success, HttpStatus.OK);
+    public ResponseEntity<?> removeComment(@RequestParam Long commentId) {
+        commentService.removeComment(commentId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

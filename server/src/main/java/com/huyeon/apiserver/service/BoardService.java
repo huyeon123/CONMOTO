@@ -1,15 +1,12 @@
 package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.dto.BoardHeaderReqDto;
-import com.huyeon.apiserver.model.dto.PageReqDto;
 import com.huyeon.apiserver.model.dto.BoardResDto;
 import com.huyeon.apiserver.model.dto.ContentDto;
+import com.huyeon.apiserver.model.dto.PageReqDto;
 import com.huyeon.apiserver.model.entity.*;
 import com.huyeon.apiserver.model.entity.history.BoardHistory;
-import com.huyeon.apiserver.repository.BoardRepository;
-import com.huyeon.apiserver.repository.CategoryRepository;
-import com.huyeon.apiserver.repository.ContentBlockRepository;
-import com.huyeon.apiserver.repository.GroupRepository;
+import com.huyeon.apiserver.repository.*;
 import com.huyeon.apiserver.repository.history.BoardHistoryRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,12 +26,12 @@ public class BoardService {
     private final GroupRepository groupRepository;
     private final CategoryRepository categoryRepository;
     private final BoardRepository boardRepository;
-    private final ContentBlockRepository blockRepository;
+    private final ContentBlockRepository contentRepository;
     private final BoardHistoryRepo boardHistoryRepo;
 
     //게시글 가져오기
-    public Board getBoard(Long id) {
-        return boardRepository.findById(id).orElseThrow();
+    public Optional<Board> getBoard(Long id) {
+        return boardRepository.findById(id);
     }
 
     private List<Board> getBoardsByCategory(Category category) {
@@ -43,7 +39,7 @@ public class BoardService {
     }
 
     public BoardResDto getBoardResponse(Long id) {
-        Board board = getBoard(id);
+        Board board = getBoard(id).orElseThrow();
         return new BoardResDto(board);
     }
 
@@ -58,26 +54,33 @@ public class BoardService {
                 .collect(Collectors.toList());
     }
 
-    //TODO: Template Method Pattern 적용하기
     public List<BoardResDto> getNext10LatestInGroup(PageReqDto request) {
-        WorkGroup group = getGroupByUrl(request.getQuery());
-        List<Board> newest = boardRepository.findNextTenLatestInGroup(group, request.getNow(), PageRequest.of(request.getNextPage(), 10));
+        Optional<WorkGroup> group = getGroupByUrl(request.getQuery());
+
+        if (group.isEmpty()) {
+            return List.of();
+        }
+
+        List<Board> newest = boardRepository.findNextTenLatest(group.get(), request.getNow(), PageRequest.of(request.getNextPage(), 10));
         List<BoardResDto> boardDtoList = mapToDtoList(newest);
+
         addContents(boardDtoList);
         return boardDtoList;
     }
 
     public List<BoardResDto> getNext10LatestInCategory(PageReqDto request) {
         Category category = getCategoryByName(request.getQuery());
-        List<Board> newest = boardRepository.findNextTenLatestInCategory(category, request.getNow(), PageRequest.of(request.getNextPage(), 10));
+
+        List<Board> newest = boardRepository.findNextTenLatest(category, request.getNow(), PageRequest.of(request.getNextPage(), 10));
         List<BoardResDto> boardDtoList = mapToDtoList(newest);
+
         addContents(boardDtoList);
         return boardDtoList;
     }
 
     private void addContents(List<BoardResDto> newest) {
         newest.forEach(board -> {
-            List<ContentDto> summaryContents = blockRepository.findTop3ByBoardId(board.getId())
+            List<ContentDto> summaryContents = contentRepository.findTop3ByBoardId(board.getId())
                     .stream()
                     .map(ContentDto::new)
                     .collect(Collectors.toList());
@@ -87,7 +90,7 @@ public class BoardService {
     }
 
     public List<BoardResDto> getNext10LatestInUser(PageReqDto request, User user) {
-        List<Board> newest = boardRepository.findNextLatestInUser(user, request.getNow(), PageRequest.of(request.getNextPage(), 10));
+        List<Board> newest = boardRepository.findNextLatest(user, request.getNow(), PageRequest.of(request.getNextPage(), 10));
         List<BoardResDto> boardResDtoList = mapToDtoList(newest);
         addContents(boardResDtoList);
         return boardResDtoList;
@@ -95,7 +98,7 @@ public class BoardService {
 
     //게시글 생성
     public Long createBoard(String email, String groupUrl) {
-        WorkGroup group = getGroupByUrl(groupUrl);
+        WorkGroup group = getGroupByUrl(groupUrl).orElseThrow();
 
         Board board = Board.builder()
                 .userEmail(email)
@@ -112,12 +115,12 @@ public class BoardService {
     }
 
     private void createDefaultContent(Long boardId) {
-        blockRepository.save(new ContentBlock(boardId));
+        contentRepository.save(new ContentBlock(boardId));
     }
 
     //게시글 수정
-    public void editBoard(BoardHeaderReqDto request) throws Exception {
-        Board board = getBoard(request.getId());
+    public void editBoard(BoardHeaderReqDto request){
+        Board board = getBoard(request.getId()).orElseThrow();
 
         switch (request.getTarget()) {
             case "title":
@@ -133,14 +136,12 @@ public class BoardService {
             case "status":
                 board.setStatus(request.getStatus());
                 break;
-            default:
-                throw new NoSuchMethodException();
         }
 
         boardRepository.save(board);
     }
-    //게시글 삭제
 
+    //게시글 삭제
     public boolean removeBoard(Long id) {
         Optional<Board> optional = boardRepository.findById(id);
         if (optional.isPresent()) {
@@ -152,17 +153,15 @@ public class BoardService {
 
     //게시글 수정이력
     public List<BoardHistory> boardHistory(Long id) {
-        Optional<Board> board = boardRepository.findById(id);
+        Optional<Board> board = getBoard(id);
         if (board.isPresent()) {
-            Optional<List<BoardHistory>> histories =
-                    boardHistoryRepo.findAllByBoardId(board.get().getId());
-            if (histories.isPresent()) return histories.get();
+            return boardHistoryRepo.findAllByBoardId(board.get().getId());
         }
         return List.of();
     }
 
-    private WorkGroup getGroupByUrl(String groupUrl){
-        return groupRepository.findByUrlPath(groupUrl).orElseThrow();
+    private Optional<WorkGroup> getGroupByUrl(String groupUrl){
+        return groupRepository.findByUrlPath(groupUrl);
     }
 
     private Category getCategoryByName(String categoryName) {

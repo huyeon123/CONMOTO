@@ -38,7 +38,7 @@ public class TagService {
     }
 
     //TODO: ChangeTag로 캡슐화 진행
-    public void editTag(Long boardId, List<TagDto> request) throws Exception{
+    public void editTag(Long boardId, List<TagDto> request){
         Board board = boardRepository.findById(boardId).orElseThrow();
         List<Tag> original = getTagsByBoardId(boardId);
 

@@ -22,22 +22,22 @@ public class UserApiController {
     public ResponseEntity<?> editInfo(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody User editUser) {
-        boolean success = userService.editInfo(userDetails.getUsername(), editUser);
-        return new ResponseEntity<>(success, HttpStatus.OK);
+        userService.editInfo(userDetails.getUsername(), editUser);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     //회원탈퇴
     @DeleteMapping("/resign")
     public ResponseEntity<?> resign(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        boolean success = userService.resign(userDetails.getUsername());
-        return new ResponseEntity<>(success, HttpStatus.OK);
+        userService.resign(userDetails.getUsername());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     //회원탈퇴 복구
     @PutMapping("/resign")
     public ResponseEntity<?> cancelResign(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        boolean success = userService.cancelResign(userDetails.getUsername());
-        return new ResponseEntity<>(success, HttpStatus.OK);
+        userService.cancelResign(userDetails.getUsername());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

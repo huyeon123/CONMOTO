@@ -3,11 +3,9 @@ package com.huyeon.apiserver.controller.api;
 import com.huyeon.apiserver.model.EmitterAdaptor;
 import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.NotyDto;
-import com.huyeon.apiserver.model.dto.PageReqDto;
 import com.huyeon.apiserver.service.NotyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -59,14 +57,13 @@ public class NotyApiController {
     @PutMapping
     public ResponseEntity<?> setReadNoty(@RequestBody List<Long> idList) {
         notyService.setReadNoty(idList);
-        return new ResponseEntity<>(true, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/close/{notyType}")
     public ResponseEntity<?> closeEmitter(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable String notyType
-    ) {
+            @PathVariable String notyType) {
         notyService.completeEmitter(userDetails.getUsername(), notyType);
         return new ResponseEntity<>(HttpStatus.OK);
     }

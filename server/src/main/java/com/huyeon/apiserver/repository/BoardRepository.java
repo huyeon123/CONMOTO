@@ -15,26 +15,22 @@ import java.util.List;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    List<Board> findAllByUserEmail(String email);
-
     List<Board> findAllByCategory(Category category);
 
     @Query(value = "select b from Board b where updatedAt < :now and group_id = :group order by updatedAt desc")
-    List<Board> findNextTenLatestInGroup(@Param("group") WorkGroup group, @Param("now") LocalDateTime now, Pageable pageable);
+    List<Board> findNextTenLatest(@Param("group") WorkGroup group, @Param("now") LocalDateTime now, Pageable pageable);
 
     @Query(value = "select b from Board b " +
             "where updatedAt < :now and category_id = :category " +
             "order by updatedAt desc")
-    List<Board> findNextTenLatestInCategory(
+    List<Board> findNextTenLatest(
             @Param("category") Category category,
             @Param("now") LocalDateTime now,
             Pageable pageable);
 
     @Query(value = "select b from Board b where updatedAt < :now and user_email = :user order by updatedAt desc")
-    List<Board> findNextLatestInUser(
+    List<Board> findNextLatest(
             @Param("user") User user,
             @Param("now") LocalDateTime now,
             Pageable pageable);
-
-    void deleteAllByUserEmail(String email);
 }

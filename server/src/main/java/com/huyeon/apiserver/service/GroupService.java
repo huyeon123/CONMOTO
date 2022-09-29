@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.service;
 
+import com.huyeon.apiserver.exception.NotOnlyMemberException;
 import com.huyeon.apiserver.model.MyEvent;
 import com.huyeon.apiserver.model.dto.GroupDto;
 import com.huyeon.apiserver.model.dto.NotyEventDto;
@@ -11,6 +12,7 @@ import com.huyeon.apiserver.repository.UserGroupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,13 +25,77 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class GroupService {
+    private static final int IDENTIFIER_LENGTH = 10;
+
     private final UserGroupRepository userGroupRepository;
     private final GroupRepository groupRepository;
     private final GroupManagerRepository managerRepository;
     private final CategoryRepository categoryRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    private static final int IDENTIFIER_LENGTH = 10;
+    public GroupDto createGroup(User user, GroupDto request) {
+        WorkGroup group = makeGroup(user, request);
+
+        registerUser(user, group);
+
+        registerUserAsManager(user, group);
+
+        createRootCategory(group);
+
+        return mapToDto(group);
+    }
+
+    private WorkGroup makeGroup(User user, GroupDto request) {
+        WorkGroup group = WorkGroup.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .owner(user)
+                .build();
+
+        String urlPath = request.getUrl();
+
+        if (exist(urlPath)) {
+            urlPath = appendIdentifier(urlPath);
+        }
+
+        group.setUrlPath(urlPath);
+
+        return groupRepository.save(group);
+    }
+
+    private void registerUser(User user, WorkGroup group) {
+        UserGroup userGroup = new UserGroup(user, group);
+        userGroupRepository.save(userGroup);
+    }
+
+    private void registerUserAsManager(User user, WorkGroup group) {
+        GroupManager groupManager = new GroupManager(user, group);
+        managerRepository.save(groupManager);
+    }
+
+    private void createRootCategory(WorkGroup group) {
+        Category root = Category.builder()
+                .name("==최상위 카테고리==")
+                .parent(null)
+                .group(group)
+                .build();
+
+        categoryRepository.save(root);
+    }
+
+    private GroupDto mapToDto(WorkGroup group) {
+        return GroupDto.builder()
+                .name(group.getName())
+                .url(group.getUrlPath())
+                .build();
+    }
+
+    public void editGroup(String groupUrl, GroupDto request) {
+        WorkGroup group = getGroupByUrl(groupUrl);
+        group.setName(request.getName());
+        group.setDescription(request.getDescription());
+        groupRepository.save(group);
+    }
 
     public WorkGroup getGroupByUrl(String urlPath) {
         return groupRepository.findByUrlPath(urlPath).orElseThrow();
@@ -47,24 +113,6 @@ public class GroupService {
     public List<User> getUsers(WorkGroup group) {
         List<UserGroup> userGroups = userGroupRepository.findAllByGroup(group);
         return userGroups.stream().map(UserGroup::getUser).collect(Collectors.toList());
-    }
-
-    public WorkGroup createGroup(User user, GroupDto request) {
-        WorkGroup group = WorkGroup.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .owner(user)
-                .build();
-
-        String urlPath = request.getUrl();
-
-        if (exist(urlPath)) {
-            urlPath = appendIdentifier(urlPath);
-        }
-
-        group.setUrlPath(urlPath);
-
-        return groupRepository.save(group);
     }
 
     private boolean exist(String urlPath) {
@@ -90,29 +138,23 @@ public class GroupService {
                 .toString();
     }
 
-    public boolean editGroup(String groupUrl, GroupDto request) {
+    public void deleteGroup(User user, String groupUrl) {
         WorkGroup group = getGroupByUrl(groupUrl);
-        group.setName(request.getName());
-        group.setDescription(request.getDescription());
-        groupRepository.save(group);
-        return true;
-    }
 
-    public String deleteGroup(User user, String groupUrl) {
-        WorkGroup group = getGroupByUrl(groupUrl);
         if (notOnlyMeInGroup(group)) {
-            return "다른 멤버가 존재합니다.";
+            throw new NotOnlyMemberException("다른 멤버가 존재합니다.");
         }
+
         if (isNotGroupOwner(user, group)) {
-            return "그룹 소유자가 아닙니다.";
+            throw new AccessDeniedException("그룹 소유자가 아닙니다.");
         }
-        List<GroupManager> groupManager = managerRepository.findAllByGroup(group).orElseThrow();
+
+        List<GroupManager> groupManager = managerRepository.findAllByGroup(group);
 
         categoryRepository.deleteAllByGroup(group);
         userGroupRepository.deleteAllByGroup(group);
         managerRepository.deleteAll(groupManager);
         groupRepository.delete(group);
-        return "삭제되었습니다.";
     }
 
     private boolean notOnlyMeInGroup(WorkGroup group) {
@@ -143,7 +185,9 @@ public class GroupService {
         return managerRepository.existsByGroupAndManager(group, user);
     }
 
-    public void inviteMember(WorkGroup group, String userEmail) {
+    public void inviteMember(String groupUrl, String userEmail) {
+        WorkGroup group = getGroupByUrl(groupUrl);
+
         Noty inviteNoty = Noty.builder()
                 .senderName(group.getName())
                 .message("그룹에 초대합니다!\n" + group.getDescription())

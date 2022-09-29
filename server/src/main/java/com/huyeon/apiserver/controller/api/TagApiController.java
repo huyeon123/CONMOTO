@@ -26,12 +26,7 @@ public class TagApiController {
     public ResponseEntity<?> editTag(
             @RequestParam Long boardId,
             @RequestBody List<TagDto> request) {
-        try {
-            tagService.editTag(boardId, request);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        tagService.editTag(boardId, request);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
