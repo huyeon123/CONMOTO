@@ -11,9 +11,9 @@ function formSubmit(url = "/auth/login") {
         rememberMe: this.rememberMe.value === "on"
     };
 
-    justPost(url, request, "POST")
+    post(url, request)
         .then((res) => {
-            if (res.status === 200) {
+            if (res.ok) {
                 window.location.href = "/workspace";
             } else {
                 alert("잘못된 이메일/비밀번호 입니다!");

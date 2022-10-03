@@ -1,37 +1,37 @@
 async function save() {
-    const url = "/api/group/member?groupUrl=" + groupUrl;
+    const url = "/api/group/" + groupUrl + "/member";
     const request = [];
-    $(".member-info").each((idx, member) => {
-        const email = member.children.item(1).outerText;
-        const authority = member.lastElementChild.value;
+    $(".member-info").each((idx) => {
+        const email = $('.member-email').get(idx).outerText;
+        const authority = $('.member-authority').get(idx).value;
         request.push({
             email: email,
             groupRole: authority
         });
     })
 
-    const res = post(url, request);
-    res.then(success => {
-        if (success) {
-            alert("변경 사항이 반영되었습니다.");
-        }
-    })
+    post(url, request)
+        .then(res => {
+            if (res.ok) {
+                alert("변경 사항이 반영되었습니다.");
+            }
+        })
 }
 
-async function expelMember(id) {
-    const url = "/api/group/member?groupUrl=" + groupUrl;
-    const memberInfo = $(".member-info#member_"+id);
+function expelMember(id) {
+    const url = "/api/group/" + groupUrl + "/member";
+    const memberInfo = $(".member-info#member_" + id);
     const email = memberInfo.children(".member-email").text();
     const request = {email: email};
 
-    const res = del(url, request);
-    res.then(success => {
-        if (success) {
-            const name = memberInfo.children(".member-name").text();
-            memberInfo.remove();
-            alert(name + " 사용자가 그룹에서 추방되었습니다.")
-        }
-    });
+    del(url, request)
+        .then(res => {
+            if (res.ok) {
+                const name = memberInfo.children(".member-name").text();
+                memberInfo.remove();
+                alert(name + " 사용자가 그룹에서 추방되었습니다.")
+            }
+        });
 }
 
 function activateExpelMemberBtn() {

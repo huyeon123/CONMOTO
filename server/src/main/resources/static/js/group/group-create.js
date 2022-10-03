@@ -9,11 +9,12 @@ async function createGroup(url = "/api/group") {
     };
 
     post(url, request)
+        .then(res => {
+            if (canGetData(res)) return getData(res);
+        })
         .then((data) => {
-            alert(data.message);
-            if (data.success) {
-                location.href = "/workspace/" + data.data.url;
-            }
+            alert("그룹이 생성되었습니다.");
+            location.href = "/workspace/" + data.url;
         })
         .catch(error => console.error(error));
 }

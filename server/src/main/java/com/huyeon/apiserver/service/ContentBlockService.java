@@ -65,9 +65,7 @@ public class ContentBlockService {
     public List<ContentBlockHistory> contentHistory(Long id) {
         Optional<ContentBlock> block = blockRepository.findById(id);
         if (block.isPresent()) {
-            Optional<List<ContentBlockHistory>> histories =
-                    blockHistoryRepo.findAllByBlockId(block.get().getId());
-            if (histories.isPresent()) return histories.get();
+            return blockHistoryRepo.findAllByBlockId(block.get().getId());
         }
         return List.of();
     }

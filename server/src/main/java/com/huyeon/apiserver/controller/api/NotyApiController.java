@@ -60,7 +60,7 @@ public class NotyApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/close/{notyType}")
+    @DeleteMapping("/close/{notyType}")
     public ResponseEntity<?> closeEmitter(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable String notyType) {

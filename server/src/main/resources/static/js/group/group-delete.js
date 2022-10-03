@@ -12,12 +12,16 @@ async function resignReq() {
         return;
     }
 
-    const url = "/api/group?groupUrl=" + groupUrl;
-    const res = delWithoutBody(url);
-    res.then(data => {
-        alert(data);
-        location.href = "/workspace.js";
-    })
+    const url = "/api/group/" + groupUrl;
+    delWithoutBody(url)
+        .then(res => {
+            if (res.ok) {
+                alert("그룹이 삭제되었습니다.");
+                location.href = "/workspace.js";
+            } else {
+                getData(res).then(message => alert(message));
+            }
+        })
 }
 
 function shouldBeChecked() {

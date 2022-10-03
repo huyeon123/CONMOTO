@@ -1,18 +1,20 @@
 package com.huyeon.apiserver.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.huyeon.apiserver.model.entity.base.AuditEntity;
+import com.huyeon.apiserver.model.listener.Auditable;
+import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-public class GroupManager {
+@EntityListeners(value = {AuditingEntityListener.class})
+public class GroupManager extends AuditEntity implements Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

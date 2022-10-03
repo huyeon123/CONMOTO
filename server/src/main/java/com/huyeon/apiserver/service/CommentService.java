@@ -137,9 +137,7 @@ public class CommentService {
     public List<CommentHistory> commentHistory(Long id) {
         Optional<Comment> comment = commentRepository.findById(id);
         if(comment.isPresent()) {
-            Optional<List<CommentHistory>> histories =
-                    commentHistoryRepo.findAllByCommentId(comment.get().getId());
-            if (histories.isPresent()) return histories.get();
+            return commentHistoryRepo.findAllByCommentId(comment.get().getId());
         }
         return List.of();
     }

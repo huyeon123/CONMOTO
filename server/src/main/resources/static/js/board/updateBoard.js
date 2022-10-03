@@ -67,7 +67,7 @@ $(document).on('keyup', '.tag', (e) => {
 
 /*comment*/
 $(document).on('click', '#addCommentBtn', (e) => {
-    const input = document.createElement('input');
+    const input = document.createElement('textarea');
     input.setAttribute("id", "addCommentInput");
     input.setAttribute("placeholder", "댓글을 작성해주세요. (엔터 시 저장됩니다.)");
     e.target.parentElement.after(input);
@@ -116,7 +116,7 @@ $(document).on('click', '.addContentsBtn', async (e) => {
     const targetLocation = e.target.parentElement.parentElement;
     targetLocation.after(newContentDiv)
 
-    const newContentInput = document.createElement("input");
+    const newContentInput = document.createElement("textarea");
     newContentInput.setAttribute("class", "content")
     newContentInput.setAttribute("placeholder", "내용을 입력하세요")
 
@@ -142,7 +142,7 @@ $(document).on('click', '.addContentsBtn', async (e) => {
 
 $(document).on('click', '.delContentsBtn', async (e) => {
     const target = e.target.parentElement;
-    const delContentRes = await delContentReq("/api/contents/" + boardId + "/?id=", target.id);
+    const delContentRes = await delContentReq("/api/contents/" + boardId + "?id=", target.id);
     if (delContentRes) {
         target.remove()
     }
@@ -183,7 +183,7 @@ const saveContents = async (url, request) => {
 }
 
 const commentReq = async (request) => {
-    const url = "/api/comment/?boardId=" + boardId;
+    const url = "/api/comment?boardId=" + boardId;
 
     await fetch(url, {
         method: "POST",
@@ -202,7 +202,7 @@ const commentReq = async (request) => {
 }
 
 const delCommentReq = async (commentId) => {
-    const url = "/api/comment/?commentId=" + commentId;
+    const url = "/api/comment?commentId=" + commentId;
     await fetch(url, {
         method: "DELETE",
         headers: {

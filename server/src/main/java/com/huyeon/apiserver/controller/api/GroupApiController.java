@@ -5,7 +5,9 @@ import com.huyeon.apiserver.model.dto.GroupDto;
 import com.huyeon.apiserver.model.dto.MemberDto;
 import com.huyeon.apiserver.service.GroupService;
 import com.huyeon.apiserver.service.MemberService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,18 +32,18 @@ public class GroupApiController {
         return new ResponseEntity<>(group, HttpStatus.CREATED);
     }
 
-    @PutMapping
+    @PutMapping("/{groupUrl}")
     public ResponseEntity<?> editGroup(
-            @RequestParam String groupUrl,
+            @PathVariable String groupUrl,
             @RequestBody GroupDto request) {
         groupService.editGroup(groupUrl, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{groupUrl}")
     public ResponseEntity<?> deleteGroup(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam String groupUrl) {
+            @PathVariable String groupUrl) {
         try {
             groupService.deleteGroup(userDetails.getUser(), groupUrl);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -50,35 +52,42 @@ public class GroupApiController {
         }
     }
 
-    @PostMapping("/member")
+    @PostMapping("/{groupUrl}/member")
     public ResponseEntity<?> saveMemberAuthority(
-            @RequestParam String groupUrl,
+            @PathVariable String groupUrl,
             @RequestBody List<MemberDto> request) {
         memberService.saveMemberRole(groupUrl, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/member")
+    @DeleteMapping("/{groupUrl}/member")
     public ResponseEntity<?> expelMember(
-            @RequestParam String groupUrl,
+            @PathVariable String groupUrl,
             @RequestBody MemberDto request) {
         memberService.expelUser(groupUrl, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/invite")
+    @PostMapping("/{groupUrl}/invite")
     public ResponseEntity<?> inviteMember(
-            @RequestParam String groupUrl,
-            @RequestBody String userEmail) {
-        groupService.inviteMember(groupUrl, userEmail);
+            @PathVariable String groupUrl,
+            @RequestBody Invite invite) {
+        groupService.inviteMember(groupUrl, invite.getEmail());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/join")
+    @GetMapping("/{groupUrl}/join")
     public ResponseEntity<?> joinMember(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam String groupUrl) {
+            @PathVariable String groupUrl) {
         groupService.joinMember(userDetails.getUser(), groupUrl);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Getter
+    @Setter
+    private static class Invite {
+        private String email;
+    }
+
 }

@@ -1,10 +1,13 @@
 $(function () {
     get("/api/noty/unread")
-        .then(data => {
-            $("#noty-count").text(data.length);
-            data.forEach(item => {
-                addNoty(item);
-            });
+        .then(res => {
+            if (canGetData(res)) {
+                const data = getData(res);
+                $("#noty-count").text(data.length);
+                data.forEach(item => {
+                    addNoty(item);
+                });
+            }
         })
 
     const eventSource = new EventSource("/api/noty/subscribe/default");
@@ -67,8 +70,15 @@ function addNoty(data) {
 }
 
 function acceptInvite(id, groupUrl) {
-    const url = "/api/group/join?groupUrl=" + groupUrl;
-    get(url).catch(error => console.error(error));
+    const url = "/api/group/" + groupUrl + "/join";
+    get(url)
+        .then(res => {
+            if (res.ok) {
+                alert("그룹에 가입되었습니다.");
+                location.href = "/workspace/" + groupUrl;
+            } else alert("가입에 실패했습니다.");
+        })
+        .catch(error => console.error(error));
     setRead(id);
 }
 

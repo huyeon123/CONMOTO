@@ -39,7 +39,7 @@ public class User extends AuditEntity implements Auditable {
     private LocalDate expireDate;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(foreignKey = @ForeignKey(name = "userId"))
+    @JoinColumn(foreignKey = @ForeignKey(name = "user_email"))
     private Set<Authority> authorities = new HashSet<>();
 
     public User(UserSignUpReq request) {

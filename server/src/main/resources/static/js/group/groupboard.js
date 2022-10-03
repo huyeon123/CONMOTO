@@ -11,6 +11,7 @@ function drawBoardsOfGroup() {
     };
 
     getList("group", request)
+        .then(res => res.json())
         .then(data => drawBoards(data))
         .catch(error => console.error(error));
 }

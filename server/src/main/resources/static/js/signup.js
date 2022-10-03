@@ -28,9 +28,9 @@ function formSubmit(url = "/auth/signup") {
     }
     request.birthday = this.birthday.value;
 
-    justPost(url, request)
+    post(url, request)
         .then((res) => {
-            if (res.status === 201) {
+            if (res.ok) {
                 window.location.href = "/";
             } else {
                 alert("회원가입에 실패했습니다!");
@@ -43,15 +43,18 @@ function duplicateCheck(url = "/auth/check") {
 
     if (isNotEmailFormat(request.email)) return;
 
-    const res = post(url, request);
-    res.then((isDuplicate) => {
-        if (isDuplicate) {
-            alert("중복된 이메일입니다.");
-        } else {
-            alert("사용 가능한 이메일입니다.");
-            check = true;
-        }
-    }).catch(error => console.error(error));
+    post(url, request)
+        .then(res => {
+            if (canGetData(res)) return getData(res);
+        })
+        .then((isDuplicate) => {
+            if (isDuplicate) {
+                alert("중복된 이메일입니다.");
+            } else {
+                alert("사용 가능한 이메일입니다.");
+                check = true;
+            }
+        })
 }
 
 function isNotEmailFormat(email) {

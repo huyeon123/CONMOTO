@@ -5,10 +5,7 @@ import com.huyeon.apiserver.model.MyEvent;
 import com.huyeon.apiserver.model.dto.GroupDto;
 import com.huyeon.apiserver.model.dto.NotyEventDto;
 import com.huyeon.apiserver.model.entity.*;
-import com.huyeon.apiserver.repository.CategoryRepository;
-import com.huyeon.apiserver.repository.GroupManagerRepository;
-import com.huyeon.apiserver.repository.GroupRepository;
-import com.huyeon.apiserver.repository.UserGroupRepository;
+import com.huyeon.apiserver.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -31,6 +28,7 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupManagerRepository managerRepository;
     private final CategoryRepository categoryRepository;
+    private final BoardRepository boardRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public GroupDto createGroup(User user, GroupDto request) {

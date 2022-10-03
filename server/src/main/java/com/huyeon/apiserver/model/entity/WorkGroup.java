@@ -1,20 +1,22 @@
 package com.huyeon.apiserver.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.huyeon.apiserver.model.entity.base.AuditEntity;
+import com.huyeon.apiserver.model.listener.Auditable;
+import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-public class WorkGroup {
+@EntityListeners(value = {AuditingEntityListener.class})
+public class WorkGroup extends AuditEntity implements Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +29,4 @@ public class WorkGroup {
 
     @OneToOne(fetch = FetchType.LAZY)
     private User owner;
-
-    @OneToMany(mappedBy = "user")
-    private List<UserGroup> userList = new ArrayList<>();
 }

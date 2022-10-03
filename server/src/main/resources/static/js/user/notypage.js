@@ -2,13 +2,16 @@ let page = 0;
 
 $(function () {
     const url = "/api/noty/" + page;
-    const res = get(url);
-    res.then(data => {
-        data.forEach(noty => {
-            drawNotyList(noty);
+    get(url)
+        .then(res => {
+            if (canGetData(res)) {
+                const data = getData(res);
+                data.forEach(noty => {
+                    drawNotyList(noty);
+                });
+                page++;
+            }
         });
-        page++;
-    });
 });
 
 function drawNotyList(data) {

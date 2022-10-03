@@ -10,6 +10,7 @@ function drawMyBoards() {
     }
 
     getList("user", request)
+        .then(res => res.json())
         .then(data => drawBoards(data, request.type))
         .catch(error => console.error(error));
 }

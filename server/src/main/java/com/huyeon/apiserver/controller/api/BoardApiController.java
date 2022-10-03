@@ -32,10 +32,10 @@ public class BoardApiController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping
+    @GetMapping("/{groupUrl}/create")
     public ResponseEntity<?> createBoard(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam String groupUrl) {
+            @PathVariable String groupUrl) {
         Long id = boardService.createBoard(userDetails.getUsername(), groupUrl);
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }

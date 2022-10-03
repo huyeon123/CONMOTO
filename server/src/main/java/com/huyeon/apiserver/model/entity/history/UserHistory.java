@@ -2,18 +2,14 @@ package com.huyeon.apiserver.model.entity.history;
 
 import com.huyeon.apiserver.model.entity.base.AuditEntity;
 import com.huyeon.apiserver.model.listener.Auditable;
-import lombok.*;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
-@Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @EntityListeners(value = AuditingEntityListener.class)
 public class UserHistory extends AuditEntity implements Auditable {
@@ -21,7 +17,6 @@ public class UserHistory extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "userEmail")
     private String userEmail;
 
     private String pastName;
@@ -30,4 +25,11 @@ public class UserHistory extends AuditEntity implements Auditable {
 
     private LocalDate pastBirthday;
 
+    @Builder
+    public UserHistory(String userEmail, String pastName, String pastPassword, LocalDate pastBirthday) {
+        this.userEmail = userEmail;
+        this.pastName = pastName;
+        this.pastPassword = pastPassword;
+        this.pastBirthday = pastBirthday;
+    }
 }

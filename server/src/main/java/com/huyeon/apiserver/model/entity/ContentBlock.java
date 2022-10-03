@@ -21,7 +21,7 @@ public class ContentBlock extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "boardId")
+    @JoinColumn(name = "board_id")
     private Long boardId;
 
     @Lob //varchar 보다 큰 내용을 담을 수 있음

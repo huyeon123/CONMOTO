@@ -72,7 +72,7 @@
                 <button type="button" class="delCommentBtn">삭제</button>
                 <button type="button" class="editCommentBtn">수정</button>
                 <label>
-                    <input readonly th:value="${comment.body}">
+                    <textarea readonly th:text="${comment.body}"></textarea>
                 </label>
             </div>
             <div class="comments-elements" th:if="${#lists.size(board.comments) < 1}">

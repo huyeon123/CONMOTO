@@ -91,6 +91,7 @@ public class MemberService {
         managerRepository.deleteByGroupAndManager(group, user);
     }
 
+    @Transactional
     public void expelUser(String groupUrl, MemberDto request) {
         WorkGroup group = findGroupByUrl(groupUrl);
         User user = findUserByEmail(request.getEmail());

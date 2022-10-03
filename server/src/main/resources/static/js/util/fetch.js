@@ -57,5 +57,5 @@ function getData(response) {
 }
 
 function canGetData(res) {
-    return res.status === 200 || res.status === 201;
+    return res.ok;
 }

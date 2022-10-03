@@ -84,7 +84,7 @@ public class GroupController {
     }
 
     private void addAvailableAuthority(Model model) {
-        List<String> authorities = List.of("일반 멤버", "관리자");
+        List<String> authorities = List.of("일반 멤버", "그룹 관리자");
         model.addAttribute("availableAuth", authorities);
     }
 

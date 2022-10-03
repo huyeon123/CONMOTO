@@ -11,6 +11,7 @@ function drawMyComments() {
     }
 
     getComments(request)
+        .then(res => res.json())
         .then(data => drawComments(data))
         .catch(error => console.error(error));
 }

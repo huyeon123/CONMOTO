@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: test
+    active: dev
 
 ---
 server:
@@ -44,7 +44,7 @@ spring:
 logging:
   level:
     org.hibernate.type: trace
-    com.zaxxer.hikari.pool.HikariPool: debug
+#    com.zaxxer.hikari.pool.HikariPool: debug
 ---
 jasypt:
   encryptor:
@@ -60,7 +60,10 @@ spring:
     activate:
       on-profile: dev
   jpa:
-    #    show-sql: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
     hibernate:
       ddl-auto: update #create-drop : 테이블 생성 및 종료 시점에 삭제, update : 수정사항만 반영
   datasource:
@@ -75,5 +78,6 @@ spring:
 
 logging:
   level:
-    com.zaxxer.hikari.pool.HikariPool: debug
+    org.hibernate.type: trace
+#    com.zaxxer.hikari.pool.HikariPool: debug
 ---

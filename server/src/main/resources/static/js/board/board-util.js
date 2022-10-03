@@ -12,13 +12,15 @@ const getList = (where, request) => {
 };
 
 function createBoard() {
-    const url = "/api/board?groupUrl=" + groupUrl;
+    const url = "/api/board/" + groupUrl + "/create";
     get(url)
         .then(res => {
             if (canGetData(res)) {
-                const id = getData(res);
-                alert("게시글을 생성했습니다.");
-                window.location.href = "/workspace/" + groupUrl + "/board/" + id;
+                getData(res)
+                    .then(id => {
+                        alert("게시글을 생성했습니다.");
+                        window.location.href = "/workspace/" + groupUrl + "/board/" + id;
+                    })
             }
         });
 }

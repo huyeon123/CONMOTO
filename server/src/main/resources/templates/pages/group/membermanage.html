@@ -27,14 +27,15 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr class="member-info" th:each="member, index: ${members}" th:id="|member_${index.index}|">
+                <tr class="member-info" th:each="member, index: ${members}" th:id="|member_${index.index}|" th:if="${member.groupRole != '그룹 소유자'}">
                     <td class="member-name" th:text="${member.name}">USER</td>
                     <td class="member-email" th:text="${member.email}">EMAIL</td>
                     <td>
                         <select class="member-authority">
                             <option th:each="authority: ${availableAuth}"
                                     th:value="${authority}"
-                                    th:text="${authority}">
+                                    th:text="${authority}"
+                                    th:selected="${authority == member.groupRole}">
                                 권한
                             </option>
                         </select>

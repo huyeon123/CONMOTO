@@ -29,23 +29,17 @@ function openInviteModal() {
     $("#invite-modal").dialog("open");
 }
 
-async function inviteMember() {
-    const url = "/api/group/invite?groupUrl=" + groupUrl;
-    const email = $("input[name=invite-email]").val();
-    await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: email
-    }).then(res => res.json())
-        .then(success => {
-            if (success) {
+function inviteMember() {
+    const url = "/api/group/" + groupUrl + "/invite";
+    const request = {email: $("input[name=invite-email]").val()};
+    post(url, request)
+        .then(res => {
+            if (res.ok) {
                 alert("해당 유저에게 초대메세지를 보냈습니다.");
             } else {
-                alert("초대 메세지를 보낼 수 없습니다.");
+                alert("초대에 실패했습니다.");
             }
-        });
+        })
 }
 
 function moveToDeletePage() {
@@ -57,9 +51,9 @@ function moveToMemberManagePage() {
 }
 
 function saveGroupInfo() {
-    const url = "/api/group?groupUrl=" + groupUrl;
+    const url = "/api/group/" + groupUrl;
 
-    const changedName = $('#group-name').val();
+    const changedName = $('#group-info-name').val();
     const changedUrl = $('#group-url').val();
     const changedDescription = $('#group-description').val();
     const request = {
@@ -68,6 +62,10 @@ function saveGroupInfo() {
         description: changedDescription
     };
 
-    const res = put(url, request);
-    res.catch(error => console.error(error));
+    put(url, request)
+        .then(res => {
+            if (res.ok) {
+                alert("정상적으로 반영되었습니다.");
+            } else alert("반영에 실패했습니다.");
+        }).catch(error => console.error(error));
 }
