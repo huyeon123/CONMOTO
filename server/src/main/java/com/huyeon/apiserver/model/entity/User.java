@@ -40,13 +40,14 @@ public class User extends AuditEntity implements Auditable {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(foreignKey = @ForeignKey(name = "user_email"))
-    private Set<Authority> authorities = new HashSet<>();
+    private Set<Authority> authorities;
 
     public User(UserSignUpReq request) {
         name = request.getName();
         email = request.getEmail();
         password = request.getPassword();
         enabled = true;
+        authorities = new HashSet<>();
         authorities.add(new Authority(Authority.ROLE_USER));
         if(request.getBirthday() != null) birthday = request.getBirthday();
     }

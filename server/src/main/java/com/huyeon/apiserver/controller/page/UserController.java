@@ -22,7 +22,7 @@ public class UserController {
     //회원정보
     @GetMapping("/info")
     public String myPage(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
-        UserDto user = userService.getUserDto(userDetails);
+        UserDto user = new UserDto(userDetails.getUser());
         model.addAttribute("user", user);
         return "pages/user/myinfo";
     }

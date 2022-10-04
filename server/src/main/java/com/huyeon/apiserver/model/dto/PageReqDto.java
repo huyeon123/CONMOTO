@@ -1,16 +1,12 @@
 package com.huyeon.apiserver.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class PageReqDto {
     private String query;
 

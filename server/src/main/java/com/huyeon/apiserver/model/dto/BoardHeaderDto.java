@@ -3,19 +3,21 @@ package com.huyeon.apiserver.model.dto;
 import com.huyeon.apiserver.model.entity.BoardStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-import java.util.List;
-
-@Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
 @Builder
-public class WorkSpaceDto {
+public class BoardHeaderDto {
+    private Long id;
+
     private String title;
+
+    private String description;
+
+    private Long categoryId;
+
     private BoardStatus status;
-    private String categoryName;
-    private List<String> comments;
-    private List<String> contents;
+
+    private String target;
 }

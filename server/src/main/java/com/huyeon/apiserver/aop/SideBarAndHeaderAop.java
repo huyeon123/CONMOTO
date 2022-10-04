@@ -1,7 +1,7 @@
-package com.huyeon.apiserver.support.aop;
+package com.huyeon.apiserver.aop;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
-import com.huyeon.apiserver.model.dto.HeaderDto;
+import com.huyeon.apiserver.model.dto.AppHeaderDto;
 import com.huyeon.apiserver.model.dto.SideBarDto;
 import com.huyeon.apiserver.service.SideBarAndHeaderService;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class SideBarAndHeaderAop {
         Model model = (Model) args[args.length - 1];
 
         SideBarDto blankSideBar = sideBarAndHeaderService.getBlankSideBar(userDetails.getUser());
-        HeaderDto blankHeader = sideBarAndHeaderService.getBlankHeader(userDetails.getUser());
+        AppHeaderDto blankHeader = sideBarAndHeaderService.getBlankHeader(userDetails.getUser());
 
         addAttribute(model, blankSideBar, blankHeader);
     }
@@ -54,12 +54,12 @@ public class SideBarAndHeaderAop {
 
     private void addSideBardAndHeaderInModel(UserDetailsImpl userDetails, String groupUrl, Model model) {
         SideBarDto sideBar = sideBarAndHeaderService.getSideBar(userDetails, groupUrl);
-        HeaderDto appHeader = sideBarAndHeaderService.getAppHeader(userDetails.getUser(), groupUrl);
+        AppHeaderDto appHeader = sideBarAndHeaderService.getAppHeader(userDetails.getUser(), groupUrl);
 
         addAttribute(model, sideBar, appHeader);
     }
 
-    private void addAttribute(Model model, SideBarDto sideBar, HeaderDto appHeader) {
+    private void addAttribute(Model model, SideBarDto sideBar, AppHeaderDto appHeader) {
         model.addAttribute("sideBar", sideBar);
         model.addAttribute("appHeader", appHeader);
     }

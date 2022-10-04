@@ -1,16 +1,18 @@
 package com.huyeon.apiserver.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.huyeon.apiserver.model.entity.WorkGroup;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter
 public class GroupDto {
     private String name;
     private String url;
     private String description;
+
+    @Builder
+    public GroupDto(WorkGroup group) {
+        name = group.getName();
+        url = group.getUrlPath();
+        description = group.getDescription();
+    }
 }

@@ -1,18 +1,15 @@
 package com.huyeon.apiserver.model.dto;
 
 import com.huyeon.apiserver.model.entity.Category;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Collections;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter
+@Setter
 public class CategoryDto {
     private Long categoryId;
     private String name;
@@ -25,6 +22,7 @@ public class CategoryDto {
         this.parentId = parentId;
     }
 
+    @Builder
     public CategoryDto(Category category) {
         this.categoryId = category.getId();
         this.name = category.getName();

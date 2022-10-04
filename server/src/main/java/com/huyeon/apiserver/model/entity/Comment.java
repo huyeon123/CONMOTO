@@ -8,24 +8,33 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(value = {AuditingEntityListener.class, CommentHistoryListener.class})
 public class Comment extends AuditEntity implements Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
-    private Long boardId;
+    private Board board;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_email")
-    private String userEmail;
+    private User user;
 
     private String comment;
+
+    public String getUserName() {
+        return user.getName();
+    }
+
+    public String getUserEmail() {
+        return user.getEmail();
+    }
 }

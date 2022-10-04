@@ -21,13 +21,14 @@ public class ContentBlock extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
-    private Long boardId;
+    private Board board;
 
     @Lob //varchar 보다 큰 내용을 담을 수 있음
     private String content;
 
-    public ContentBlock(Long boardId) {
-        this.boardId = boardId;
+    public ContentBlock(Board board) {
+        this.board = board;
     }
 }

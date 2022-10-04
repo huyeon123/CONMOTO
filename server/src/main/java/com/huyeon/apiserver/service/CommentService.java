@@ -1,6 +1,5 @@
 package com.huyeon.apiserver.service;
 
-import com.huyeon.apiserver.model.dto.BoardComment;
 import com.huyeon.apiserver.model.dto.CommentDto;
 import com.huyeon.apiserver.model.dto.PageReqDto;
 import com.huyeon.apiserver.model.entity.Board;
@@ -35,7 +34,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentHistoryRepo commentHistoryRepo;
 
-    public List<BoardComment> getCommentInUser(User user, PageReqDto request) {
+    public List<CommentDto> getCommentInUser(User user, PageReqDto request) {
         List<Comment> comments = getNextComments(user, request);
         return mapToBoardComment(comments);
     }
@@ -48,20 +47,56 @@ public class CommentService {
         );
     }
 
-    private List<BoardComment> mapToBoardComment(List<Comment> comments) {
-        List<BoardComment> boardComments = new ArrayList<>();
+    private List<CommentDto> mapToBoardComment(List<Comment> comments) {
+        List<CommentDto> boardComments = new ArrayList<>();
 
         for (Comment comment : comments) {
             Board board = getBoardByComment(comment);
-            BoardComment boardComment = getBoardComment(board, comment);
+            CommentDto boardComment = getBoardComment(board, comment);
             boardComments.add(boardComment);
         }
         return boardComments;
     }
 
-    public void createComment(String author, Long boardId, Comment comment) {
-        comment.setUserEmail(author);
-        comment.setBoardId(boardId);
+    private Board getBoardByComment(Comment comment) {
+        return boardRepository.findById(comment.getId()).orElseThrow();
+    }
+
+    private CommentDto getBoardComment(Board board, Comment comment) {
+        return CommentDto.builder()
+                .id(comment.getId())
+                .title(board.getTitle())
+                .author(comment.getUserName())
+                .location(board.getGroupName() + " - " + board.getCategoryName())
+                .date(comment.getUpdatedAt())
+                .uploadTime(calculateUploadTime(comment.getUpdatedAt()))
+                .comment(comment.getComment())
+                .url("/workspace/" + board.getGroupUrl() + "/board/" + board.getId())
+                .build();
+    }
+
+    private String calculateUploadTime(LocalDateTime updatedAt) {
+        LocalDateTime now = LocalDateTime.now();
+        Duration time = Duration.between(updatedAt, now);
+        long seconds = time.getSeconds();
+        if (seconds < 60) return seconds + "초 전";
+        if (seconds < 3600) return (seconds / 60) + "분 전";
+        if (seconds < 86_400) return (seconds / 3600) + "시간 전";
+
+        Period date = Period.between(updatedAt.toLocalDate(), now.toLocalDate());
+        if(date.getDays() < 7) return date.getDays() + "일 전";
+        if(date.getDays() < 30) return (date.getDays() / 7) + "주 전";
+        if(date.getMonths() < 12) return date.getMonths() + "달 전";
+        return date.getYears() + "년 전";
+    }
+
+    public void createComment(User author, Board board, CommentDto commentDto) {
+        Comment comment = Comment.builder()
+                .board(board)
+                .user(author)
+                .comment(commentDto.getComment())
+                .build();
+
         commentRepository.save(comment);
     }
 
@@ -81,56 +116,15 @@ public class CommentService {
 
     private List<CommentDto> mapToCommentDto(List<Comment> comments) {
         return comments.stream()
-                .map(comment -> CommentDto.builder()
-                        .id(comment.getId())
-                        .author(comment.getUserEmail())
-                        .date(calculateUploadTime(comment.getUpdatedAt()))
-                        .body(comment.getComment())
-                        .build())
+                .map(CommentDto::new)
                 .collect(Collectors.toList());
     }
 
-    private String calculateUploadTime(LocalDateTime createdAt) {
-        LocalDateTime now = LocalDateTime.now();
-        Duration time = Duration.between(createdAt, now);
-        long seconds = time.getSeconds();
-        if (seconds < 60) return seconds + "초 전";
-        if (seconds < 3600) return (seconds / 60) + "분 전";
-        if (seconds < 86_400) return (seconds / 3600) + "시간 전";
+    public void editComment(CommentDto editComment) {
+        Comment comment = commentRepository.findById(editComment.getId()).orElseThrow();
 
-        Period date = Period.between(createdAt.toLocalDate(), now.toLocalDate());
-        if(date.getDays() < 7) return date.getDays() + "일 전";
-        if(date.getDays() < 30) return (date.getDays() / 7) + "주 전";
-        if(date.getMonths() < 12) return date.getMonths() + "달 전";
-        return date.getYears() + "년 전";
-    }
-
-    private Board getBoardByComment(Comment comment) {
-        return boardRepository.findById(comment.getId()).orElseThrow();
-    }
-
-    private BoardComment getBoardComment(Board board, Comment comment) {
-        return BoardComment.builder()
-                .title(board.getTitle())
-                .location(board.getGroupName() + " - " + board.getCategoryName())
-                .time(calculateUploadTime(comment.getUpdatedAt()))
-                .comment(comment.getComment())
-                .url("/workspace/" + board.getGroupUrl() + "/board/" + board.getId())
-                .build();
-    }
-
-    public boolean editComment(Long id, String editComment) {
-        Optional<Comment> optional = commentRepository.findById(id);
-        Comment current = optional.orElse(new Comment());
-
-        Comment edit = readJson(editComment, Comment.class);
-
-        if (edit != null
-                && edit.getId().equals(current.getId())) {
-            commentRepository.save(edit);
-            return true;
-        }
-        return false;
+        comment.setComment(editComment.getComment());
+        commentRepository.save(comment);
     }
 
     //댓글 수정이력

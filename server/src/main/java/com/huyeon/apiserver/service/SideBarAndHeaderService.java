@@ -2,7 +2,7 @@ package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.CategoryDto;
-import com.huyeon.apiserver.model.dto.HeaderDto;
+import com.huyeon.apiserver.model.dto.AppHeaderDto;
 import com.huyeon.apiserver.model.dto.SideBarDto;
 import com.huyeon.apiserver.model.entity.User;
 import com.huyeon.apiserver.model.entity.UserGroup;
@@ -32,11 +32,11 @@ public class SideBarAndHeaderService {
     private final GroupRepository groupRepository;
     private final CategoryRepository categoryRepository;
 
-    public HeaderDto getAppHeader(User user, String groupUrl) {
+    public AppHeaderDto getAppHeader(User user, String groupUrl) {
         String groupName = findGroupNameByUrl(groupUrl);
         String userName = user.getName();
 
-        return HeaderDto.builder()
+        return AppHeaderDto.builder()
                 .groupName(groupName)
                 .userName(userName)
                 .build();
@@ -124,8 +124,8 @@ public class SideBarAndHeaderService {
                 .build();
     }
 
-    public HeaderDto getBlankHeader(User user) {
-        return HeaderDto.builder()
+    public AppHeaderDto getBlankHeader(User user) {
+        return AppHeaderDto.builder()
                 .userName(user.getName())
                 .groupName("그룹을 선택하세요.")
                 .build();

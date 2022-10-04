@@ -1,6 +1,8 @@
 package com.huyeon.apiserver.controller.api;
 
+import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.model.entity.ContentBlock;
+import com.huyeon.apiserver.service.BoardService;
 import com.huyeon.apiserver.service.ContentBlockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,12 +15,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/contents")
 @RequiredArgsConstructor
 public class ContentsApiController {
+    private final BoardService boardService;
     private final ContentBlockService blockService;
 
     @GetMapping("/{boardId}")
     public ResponseEntity<?> createContent(
             @PathVariable Long boardId) {
-        Long blockId = blockService.createContent(boardId);
+        Board board = boardService.getBoard(boardId);
+        Long blockId = blockService.createContent(board);
         return new ResponseEntity<>(blockId, HttpStatus.CREATED);
     }
 

@@ -2,17 +2,13 @@ package com.huyeon.apiserver.model.dto;
 
 import com.huyeon.apiserver.model.entity.Noty;
 import com.huyeon.apiserver.model.entity.ReceivedNoty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
 @Builder
+@AllArgsConstructor
 public class NotyEventDto {
     private Noty noty;
     private List<ReceivedNoty> receivers;

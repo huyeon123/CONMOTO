@@ -2,19 +2,16 @@ package com.huyeon.apiserver.model.dto;
 
 import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.model.entity.BoardStatus;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class BoardResDto {
+@Getter
+@Setter
+public class BoardDto {
     private Long id;
 
     private String author;
@@ -39,7 +36,8 @@ public class BoardResDto {
 
     private LocalDateTime updatedAt;
 
-    public BoardResDto(Board board) {
+    @Builder
+    public BoardDto(Board board) {
         id = board.getId();
         author = board.getUserEmail();
         title = board.getTitle();

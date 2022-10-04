@@ -1,6 +1,7 @@
 package com.huyeon.apiserver.service;
 
 import com.huyeon.apiserver.model.dto.ContentDto;
+import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.model.entity.ContentBlock;
 import com.huyeon.apiserver.model.entity.history.ContentBlockHistory;
 import com.huyeon.apiserver.repository.ContentBlockRepository;
@@ -20,9 +21,9 @@ public class ContentBlockService {
     private final ContentBlockRepository blockRepository;
     private final ContentBlockHistoryRepo blockHistoryRepo;
 
-    public Long createContent(Long boardId) {
+    public Long createContent(Board board) {
         ContentBlock block = ContentBlock.builder()
-                .boardId(boardId)
+                .board(board)
                 .build();
 
         return blockRepository.save(block).getId();
@@ -55,9 +56,7 @@ public class ContentBlockService {
 
     private List<ContentDto> mapToContentDto(List<ContentBlock> contents) {
         return contents.stream()
-                .map(content ->
-                        new ContentDto(content.getId(), content.getContent())
-                )
+                .map(ContentDto::new)
                 .collect(Collectors.toList());
     }
 

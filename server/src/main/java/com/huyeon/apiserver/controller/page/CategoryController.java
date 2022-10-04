@@ -1,7 +1,7 @@
 package com.huyeon.apiserver.controller.page;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
-import com.huyeon.apiserver.model.dto.BoardResDto;
+import com.huyeon.apiserver.model.dto.BoardDto;
 import com.huyeon.apiserver.model.dto.CategoryDto;
 import com.huyeon.apiserver.model.dto.ContentDto;
 import com.huyeon.apiserver.model.entity.Category;
@@ -68,7 +68,7 @@ public class CategoryController {
     ) {
         Category category = categoryService.getCategory(categoryName);
 
-        List<BoardResDto> boards = boardService.getBoardResponsesByCategory(category);
+        List<BoardDto> boards = boardService.getBoardResponsesByCategory(category);
 
         boards.forEach(board -> {
             List<ContentDto> contents = blockService.getSummaryContentResByBoardId(board.getId());

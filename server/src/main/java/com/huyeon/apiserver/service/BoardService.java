@@ -1,7 +1,7 @@
 package com.huyeon.apiserver.service;
 
-import com.huyeon.apiserver.model.dto.BoardHeaderReqDto;
-import com.huyeon.apiserver.model.dto.BoardResDto;
+import com.huyeon.apiserver.model.dto.BoardHeaderDto;
+import com.huyeon.apiserver.model.dto.BoardDto;
 import com.huyeon.apiserver.model.dto.ContentDto;
 import com.huyeon.apiserver.model.dto.PageReqDto;
 import com.huyeon.apiserver.model.entity.*;
@@ -30,31 +30,31 @@ public class BoardService {
     private final BoardHistoryRepo boardHistoryRepo;
 
     //게시글 가져오기
-    public Optional<Board> getBoard(Long id) {
-        return boardRepository.findById(id);
+    public Board getBoard(Long id) {
+        return boardRepository.findById(id).orElseThrow();
     }
 
     private List<Board> getBoardsByCategory(Category category) {
         return boardRepository.findAllByCategory(category);
     }
 
-    public BoardResDto getBoardResponse(Long id) {
-        Board board = getBoard(id).orElseThrow();
-        return new BoardResDto(board);
+    public BoardDto getBoardResponse(Long id) {
+        Board board = getBoard(id);
+        return new BoardDto(board);
     }
 
-    public List<BoardResDto> getBoardResponsesByCategory(Category category) {
+    public List<BoardDto> getBoardResponsesByCategory(Category category) {
         List<Board> boards = getBoardsByCategory(category);
         return mapToDtoList(boards);
     }
 
-    private List<BoardResDto> mapToDtoList(List<Board> boards) {
+    private List<BoardDto> mapToDtoList(List<Board> boards) {
         return boards.stream()
-                .map(BoardResDto::new)
+                .map(BoardDto::new)
                 .collect(Collectors.toList());
     }
 
-    public List<BoardResDto> getNext10LatestInGroup(PageReqDto request) {
+    public List<BoardDto> getNext10LatestInGroup(PageReqDto request) {
         Optional<WorkGroup> group = getGroupByUrl(request.getQuery());
 
         if (group.isEmpty()) {
@@ -62,23 +62,23 @@ public class BoardService {
         }
 
         List<Board> newest = boardRepository.findNextTenLatest(group.get(), request.getNow(), PageRequest.of(request.getNextPage(), 10));
-        List<BoardResDto> boardDtoList = mapToDtoList(newest);
+        List<BoardDto> boardDtoList = mapToDtoList(newest);
 
         addContents(boardDtoList);
         return boardDtoList;
     }
 
-    public List<BoardResDto> getNext10LatestInCategory(PageReqDto request) {
+    public List<BoardDto> getNext10LatestInCategory(PageReqDto request) {
         Category category = getCategoryByName(request.getQuery());
 
         List<Board> newest = boardRepository.findNextTenLatest(category, request.getNow(), PageRequest.of(request.getNextPage(), 10));
-        List<BoardResDto> boardDtoList = mapToDtoList(newest);
+        List<BoardDto> boardDtoList = mapToDtoList(newest);
 
         addContents(boardDtoList);
         return boardDtoList;
     }
 
-    private void addContents(List<BoardResDto> newest) {
+    private void addContents(List<BoardDto> newest) {
         newest.forEach(board -> {
             List<ContentDto> summaryContents = contentRepository.findTop3ByBoardId(board.getId())
                     .stream()
@@ -89,11 +89,11 @@ public class BoardService {
         });
     }
 
-    public List<BoardResDto> getNext10LatestInUser(PageReqDto request, User user) {
+    public List<BoardDto> getNext10LatestInUser(PageReqDto request, User user) {
         List<Board> newest = boardRepository.findNextLatest(user, request.getNow(), PageRequest.of(request.getNextPage(), 10));
-        List<BoardResDto> boardResDtoList = mapToDtoList(newest);
-        addContents(boardResDtoList);
-        return boardResDtoList;
+        List<BoardDto> boardDtoList = mapToDtoList(newest);
+        addContents(boardDtoList);
+        return boardDtoList;
     }
 
     //게시글 생성
@@ -107,20 +107,20 @@ public class BoardService {
                 .status(BoardStatus.READY)
                 .build();
 
-        Long id = boardRepository.save(board).getId();
+        board = boardRepository.save(board);
 
-        createDefaultContent(id);
+        createDefaultContent(board);
 
-        return id;
+        return board.getId();
     }
 
-    private void createDefaultContent(Long boardId) {
-        contentRepository.save(new ContentBlock(boardId));
+    private void createDefaultContent(Board board) {
+        contentRepository.save(new ContentBlock(board));
     }
 
     //게시글 수정
-    public void editBoard(BoardHeaderReqDto request){
-        Board board = getBoard(request.getId()).orElseThrow();
+    public void editBoard(BoardHeaderDto request) {
+        Board board = getBoard(request.getId());
 
         switch (request.getTarget()) {
             case "title":
@@ -153,14 +153,11 @@ public class BoardService {
 
     //게시글 수정이력
     public List<BoardHistory> boardHistory(Long id) {
-        Optional<Board> board = getBoard(id);
-        if (board.isPresent()) {
-            return boardHistoryRepo.findAllByBoardId(board.get().getId());
-        }
-        return List.of();
+        Board board = getBoard(id);
+        return boardHistoryRepo.findAllByBoardId(board.getId());
     }
 
-    private Optional<WorkGroup> getGroupByUrl(String groupUrl){
+    private Optional<WorkGroup> getGroupByUrl(String groupUrl) {
         return groupRepository.findByUrlPath(groupUrl);
     }
 

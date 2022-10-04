@@ -25,11 +25,6 @@ public class UserService {
     private final UserHistoryRepo userHistoryRepo;
     private final PasswordEncoder passwordEncoder;
 
-    public UserDto getUserDto(UserDetailsImpl userDetails) {
-        User user = userDetails.getUser();
-        return new UserDto(user);
-    }
-
     //회원정보 수정
     public void editInfo(String email, User editUser) {
         if (editUser.getEmail().equals(email)) {

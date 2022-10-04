@@ -39,17 +39,8 @@ public class GroupController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable String groupUrl, Model model) {
         WorkGroup group = groupService.getGroupByUrl(groupUrl);
-        addGroupInfo(group, model);
+        model.addAttribute("groupInfo", new GroupDto(group));
         return "pages/group/groupmanage";
-    }
-
-    private void addGroupInfo(WorkGroup group, Model model) {
-        GroupDto groupDto = GroupDto.builder()
-                .name(group.getName())
-                .url(group.getUrlPath())
-                .description(group.getDescription())
-                .build();
-        model.addAttribute("groupInfo", groupDto);
     }
 
     @GetMapping("/{groupUrl}/members")
@@ -57,35 +48,28 @@ public class GroupController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable String groupUrl, Model model) {
         WorkGroup group = groupService.getGroupByUrl(groupUrl);
-        addMemberInfo(group, model);
-        addAvailableAuthority(model);
+        model.addAttribute("groupName", group.getName());
+
+        List<MemberDto> members = getMembers(group);
+        model.addAttribute("members", members);
+
+        model.addAttribute("availableAuth", getAvailableAuthority());
         return "pages/group/membermanage";
     }
 
-    private void addMemberInfo(WorkGroup group, Model model) {
+    private List<MemberDto> getMembers(WorkGroup group) {
         List<User> users = groupService.getUsers(group);
-        List<MemberDto> members = users.stream()
-                .map(user -> convertToMemberDto(group, user))
+        return users.stream()
+                .map(user -> new MemberDto(user, getGroupRole(group, user)))
                 .collect(Collectors.toList());
-        model.addAttribute("groupName", group.getName());
-        model.addAttribute("members", members);
-    }
-
-    private MemberDto convertToMemberDto(WorkGroup group, User user) {
-        return MemberDto.builder()
-                .name(user.getName())
-                .email(user.getEmail())
-                .groupRole(getGroupRole(group, user))
-                .build();
     }
 
     private String getGroupRole(WorkGroup group, User user) {
         return groupService.checkRole(group, user);
     }
 
-    private void addAvailableAuthority(Model model) {
-        List<String> authorities = List.of("일반 멤버", "그룹 관리자");
-        model.addAttribute("availableAuth", authorities);
+    private List<String> getAvailableAuthority() {
+        return List.of("일반 멤버", "그룹 관리자");
     }
 
     @GetMapping("/{groupUrl}/delete")

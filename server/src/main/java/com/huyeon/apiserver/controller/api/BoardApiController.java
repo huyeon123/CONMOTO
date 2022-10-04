@@ -1,8 +1,8 @@
 package com.huyeon.apiserver.controller.api;
 
 import com.huyeon.apiserver.model.UserDetailsImpl;
-import com.huyeon.apiserver.model.dto.BoardHeaderReqDto;
-import com.huyeon.apiserver.model.dto.BoardResDto;
+import com.huyeon.apiserver.model.dto.BoardHeaderDto;
+import com.huyeon.apiserver.model.dto.BoardDto;
 import com.huyeon.apiserver.model.dto.PageReqDto;
 import com.huyeon.apiserver.model.entity.Board;
 import com.huyeon.apiserver.service.BoardService;
@@ -14,7 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RestController
@@ -25,11 +25,12 @@ public class BoardApiController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getBoard(@PathVariable Long id) {
-        Optional<Board> board = boardService.getBoard(id);
-        if (board.isPresent()) {
+        try {
+            Board board = boardService.getBoard(id);
             return new ResponseEntity<>(board, HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/{groupUrl}/create")
@@ -43,14 +44,14 @@ public class BoardApiController {
     @PostMapping("/latest/group")
     public ResponseEntity<?> getLatestBoardInGroup(
             @RequestBody PageReqDto request) {
-        List<BoardResDto> latest = boardService.getNext10LatestInGroup(request);
+        List<BoardDto> latest = boardService.getNext10LatestInGroup(request);
         return new ResponseEntity<>(latest, HttpStatus.OK);
     }
 
     @PostMapping("/latest/category")
     public ResponseEntity<?> getLatestBoardInCategory(
             @RequestBody PageReqDto request) {
-        List<BoardResDto> latest = boardService.getNext10LatestInCategory(request);
+        List<BoardDto> latest = boardService.getNext10LatestInCategory(request);
         return new ResponseEntity<>(latest, HttpStatus.OK);
     }
 
@@ -58,12 +59,12 @@ public class BoardApiController {
     public ResponseEntity<?> getLatestBoardInUser(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody PageReqDto request) {
-        List<BoardResDto> latest = boardService.getNext10LatestInUser(request, userDetails.getUser());
+        List<BoardDto> latest = boardService.getNext10LatestInUser(request, userDetails.getUser());
         return new ResponseEntity<>(latest, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editBoard(@RequestBody BoardHeaderReqDto request) {
+    public ResponseEntity<?> editBoard(@RequestBody BoardHeaderDto request) {
         boardService.editBoard(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }

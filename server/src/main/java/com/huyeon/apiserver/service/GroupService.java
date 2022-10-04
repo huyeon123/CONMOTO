@@ -28,7 +28,6 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupManagerRepository managerRepository;
     private final CategoryRepository categoryRepository;
-    private final BoardRepository boardRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public GroupDto createGroup(User user, GroupDto request) {
@@ -82,10 +81,7 @@ public class GroupService {
     }
 
     private GroupDto mapToDto(WorkGroup group) {
-        return GroupDto.builder()
-                .name(group.getName())
-                .url(group.getUrlPath())
-                .build();
+        return new GroupDto(group);
     }
 
     public void editGroup(String groupUrl, GroupDto request) {
