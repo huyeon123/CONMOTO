@@ -5,10 +5,7 @@ import com.huyeon.apiserver.model.dto.BoardDto;
 import com.huyeon.apiserver.model.dto.CommentDto;
 import com.huyeon.apiserver.model.dto.ContentDto;
 import com.huyeon.apiserver.model.dto.TagDto;
-import com.huyeon.apiserver.service.BoardService;
-import com.huyeon.apiserver.service.CommentService;
-import com.huyeon.apiserver.service.ContentBlockService;
-import com.huyeon.apiserver.service.TagService;
+import com.huyeon.apiserver.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,7 +30,7 @@ public class BoardController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable String groupUrl,
             @PathVariable Long id, Model model) {
-        BoardDto boardResponse = boardService.getBoardResponse(id);
+        BoardDto boardResponse = boardService.getBoardDto(id);
 
         List<TagDto> tags = tagService.getTagResponseByBoardId(boardResponse.getId());
         boardResponse.setTags(tags);

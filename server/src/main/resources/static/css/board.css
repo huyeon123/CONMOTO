@@ -185,3 +185,10 @@ textarea:focus {
     display: flex;
     background-color: red;
 }
+
+.simple-button {
+    padding: 3px 5px; !important;
+    margin: 0;
+    background-color: white;
+    color: black !important;
+}

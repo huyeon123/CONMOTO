@@ -1,28 +1,37 @@
 const boardId = pathname.substr(pathname.lastIndexOf("/") + 1);
 
 /*header*/
-$(document).on('keyup', '#title', async (e) => {
+$(document).on('keyup', '#title', (e) => {
     if (e.keyCode === 13) {
+        const request = {
+            title: $("#title").val(),
+            target: "title"
+        };
         e.target.blur();
-        const request = {title: $("#title").val(), target: "title"};
-        await saveBoard(request);
+        saveBoard(request);
     }
 })
 
-$(document).on('keyup', '#description', async (e) => {
+$(document).on('keyup', '#description', (e) => {
     if (e.keyCode === 13) {
+        const request = {
+            description: $("#description").val(),
+            target: "description"
+        };
         e.target.blur();
-        const request = {description: $("#description").val(), target: "description"};
-        await saveBoard(request);
+        saveBoard(request);
     }
 })
 
-$(document).on('change', '#status', async () => {
-    const request = {status: $("#status option:selected").val(), target: "status"};
-    await saveBoard(request);
+$(document).on('change', '#status', () => {
+    const request = {
+        status: $("#status option:selected").val(),
+        target: "status"
+    };
+    saveBoard(request);
 })
 
-$(document).on('change', '#categoryOption', async () => {
+$(document).on('change', '#categoryOption', () => {
     const categoryId = $("#categoryOption option:selected").val();
 
     if (categoryId === '' || categoryId === undefined) {
@@ -30,8 +39,11 @@ $(document).on('change', '#categoryOption', async () => {
         return;
     }
 
-    const request = {categoryId: categoryId, target: "category"};
-    await saveBoard(request);
+    const request = {
+        categoryId: categoryId,
+        target: "category"
+    };
+    saveBoard(request);
 })
 
 function saveBoard(request) {
@@ -43,6 +55,20 @@ function saveBoard(request) {
             alert("저장에 실패했습니다!");
             console.error(error);
         })
+}
+
+function deleteBoard() {
+    if (!confirm("정말로 삭제하시겠습니까?")) {
+        return;
+    }
+
+    delWithoutBody("/api/board/" + boardId)
+        .then(res => {
+            if (res.ok) {
+                alert("삭제되었습니다.");
+                location.href = "/workspace/" + groupUrl;
+            } else alert("삭제에 실패했습니다.");
+        });
 }
 
 $(document).on('keyup', '.tag', (e) => {
@@ -67,17 +93,15 @@ $(document).on('keyup', '.tag', (e) => {
 
 /*comment*/
 $(document).on('click', '#addCommentBtn', (e) => {
-    const input = document.createElement('textarea');
-    input.setAttribute("id", "addCommentInput");
-    input.setAttribute("placeholder", "댓글을 작성해주세요. (엔터 시 저장됩니다.)");
-    e.target.parentElement.after(input);
+    const input = `<textarea id="addCommentInput" placeholder="댓글을 작성해주세요. (엔터 시 저장됩니다.)"></textarea>`;
+    $(".comments-header").append(input);
 })
 
-$(document).on('keyup', '#addCommentInput', async (e) => {
+$(document).on('keyup', '#addCommentInput', (e) => {
     if (e.keyCode === 13) {
         const request = {comment: e.target.value}
-        await commentReq(request);
         e.target.readOnly = true;
+        setComment(request);
     }
 })
 
@@ -87,72 +111,72 @@ $(document).on('click', '.editCommentBtn', (e) => {
     commentBox.focus();
 })
 
-$(document).on('keyup', '.comment-body', async (e) => {
+$(document).on('keyup', '.comment-body', (e) => {
     if (e.keyCode === 13) {
         const request = {
             comment: e.target.value,
             id: e.target.parentElement.parentElement.id
         }
-        await commentReq(request);
+        setComment(request);
     }
 })
 
-$(document).on('click', '.delCommentBtn', async (e) => {
+$(document).on('click', '.delCommentBtn', (e) => {
     if (confirm("정말로 삭제하시겠습니까?")) {
         const commentId = e.target.parentElement.id;
         e.target.parentElement.remove();
-        await delCommentReq(commentId);
+        deleteComment(commentId);
     }
 })
+
+function setComment(request) {
+    const url = "/api/comment?boardId=" + boardId;
+
+    post(url, request)
+        .then(res => {
+            if (!res.ok) {
+                alert("댓글 저장에 실패했습니다.");
+            }
+        });
+
+    location.reload();
+}
+
+function deleteComment(commentId) {
+    const url = "/api/comment?commentId=" + commentId;
+    delWithoutBody(url)
+        .catch((error) => console.error(error));
+}
 
 /*contents*/
-$(document).on('click', '.addContentsBtn', async (e) => {
-    let contentId = await addContentReq("/api/contents/" + boardId);
+$(document).on('click', '.addContentsBtn', (e) => {
+    makeContentId()
+        .then(contentId => {
+            const newContent = `<div class="contentContainer" id="${contentId}">
+                            <textarea class="content" placeholder="내용을 입력하세요."></textarea>
+                            <div class="content__buttons">
+                                <button type="button" class="delContentsBtn">-</button>
+                                <button type="button" class="addContentsBtn">+</button>
+                            </div>
+                        </div>`;
+            const template = document.createElement("template");
+            template.innerHTML = newContent;
 
-    const newContentDiv = document.createElement("div");
-    newContentDiv.setAttribute("class", "contentContainer")
-    newContentDiv.setAttribute("id", contentId)
-
-    const targetLocation = e.target.parentElement.parentElement;
-    targetLocation.after(newContentDiv)
-
-    const newContentInput = document.createElement("textarea");
-    newContentInput.setAttribute("class", "content")
-    newContentInput.setAttribute("placeholder", "내용을 입력하세요")
-
-    const newButtons = document.createElement("div");
-    newButtons.setAttribute("class", "content__buttons");
-
-    const newContentDelBtn = document.createElement("button");
-    newContentDelBtn.setAttribute("type", "button");
-    newContentDelBtn.setAttribute("class", "delContentsBtn");
-    newContentDelBtn.innerHTML = "-";
-
-    const newContentAddBtn = document.createElement("button");
-    newContentAddBtn.setAttribute("type", "button");
-    newContentAddBtn.setAttribute("class", "addContentsBtn");
-    newContentAddBtn.innerHTML = "+";
-
-    newButtons.appendChild(newContentDelBtn);
-    newButtons.appendChild(newContentAddBtn);
-
-    newContentDiv.appendChild(newContentInput);
-    newContentDiv.appendChild(newButtons);
+            const targetLocation = e.target.parentElement.parentElement;
+            targetLocation.after(template.content.firstChild);
+        })
 })
 
-$(document).on('click', '.delContentsBtn', async (e) => {
-    const target = e.target.parentElement;
-    const delContentRes = await delContentReq("/api/contents/" + boardId + "?id=", target.id);
-    if (delContentRes) {
-        target.remove()
-    }
+$(document).on('click', '.delContentsBtn', (e) => {
+    const target = e.target.parentElement.parentElement;
+    deleteContent("/api/contents/", target);
 })
 
 $(document).on('keyup', '.content', (e) => {
     if (e.keyCode === 13) {
         if (!e.shiftKey) {
             const contentId = e.target.parentElement.id;
-            const url = "/api/contents/" + boardId + "?contentId=" + contentId;
+            const url = "/api/contents/" + contentId;
             const request = {content: e.target.value};
             e.target.blur();
             saveContents(url, request);
@@ -166,86 +190,24 @@ $(document).on('keyup keydown', '.content', () => {
         .height(content.prop('scrollHeight') + 10);
 })
 
-const saveContents = async (url, request) => {
-    await fetch(url, {
-        method: "PUT",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        mode: "cors",
-        body: JSON.stringify(request)
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            return data.success
-        })
-        .catch((error) => console.log("실패 : ", error));
+async function makeContentId() {
+    const url = "/api/contents/" + boardId;
+    return get(url);
 }
 
-const commentReq = async (request) => {
-    const url = "/api/comment?boardId=" + boardId;
-
-    await fetch(url, {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        mode: "cors",
-        body: JSON.stringify(request)
-    })
-        .then((response) => response.json())
-        .then((success) => {
-            if (success) location.reload();
-        })
-        .catch((error) => console.log("실패 : ", error));
-
+function saveContents(url, request) {
+    put(url, request)
+        .catch(error => console.error(error));
 }
 
-const delCommentReq = async (commentId) => {
-    const url = "/api/comment?commentId=" + commentId;
-    await fetch(url, {
-        method: "DELETE",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        mode: "cors",
-    })
-        .catch((error) => console.log("실패 : ", error));
-}
-
-const addContentReq = async (url) => {
-    let id = undefined;
-    await fetch(url, {
-        method: "GET",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        mode: "cors",
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.success) id = data.data
+function deleteContent(url, target) {
+    delWithoutBody(url + target.id)
+        .then(res => {
+            if (res.ok) {
+                target.remove();
+            }
         })
-        .catch((error) => console.log("실패 : ", error));
-    return id;
-}
-
-const delContentReq = async (url, id) => {
-    let success = undefined;
-
-    await fetch(url + id, {
-        method: "DELETE",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        mode: "cors",
-    })
-        .then((response) => {
-            success = response
-        })
-        .catch((error) => console.log("실패 : ", error));
-
-    return success
+        .catch((error) => console.error(error));
 }
 
 function moveToPreviousPage() {

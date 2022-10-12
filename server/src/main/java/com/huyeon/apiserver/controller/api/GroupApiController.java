@@ -80,8 +80,12 @@ public class GroupApiController {
     public ResponseEntity<?> joinMember(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable String groupUrl) {
-        groupService.joinMember(userDetails.getUser(), groupUrl);
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            groupService.joinMember(userDetails.getUser(), groupUrl);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+        }
     }
 
     @Getter

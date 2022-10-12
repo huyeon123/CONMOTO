@@ -11,6 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
+    boolean existsByUserAndGroup(User user, WorkGroup group);
+
     List<UserGroup> findAllByUser(User user);
 
     List<UserGroup> findAllByGroup(WorkGroup group);

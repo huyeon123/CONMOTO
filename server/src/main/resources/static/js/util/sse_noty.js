@@ -2,10 +2,11 @@ $(function () {
     get("/api/noty/unread")
         .then(res => {
             if (canGetData(res)) {
-                const data = getData(res);
-                $("#noty-count").text(data.length);
-                data.forEach(item => {
-                    addNoty(item);
+                getData(res).then(data => {
+                    $("#noty-count").text(data.length);
+                    data.forEach(item => {
+                        addNoty(item);
+                    });
                 });
             }
         })
@@ -33,7 +34,7 @@ $(function () {
     });
 
     $(window).on("beforeunload unload", () => {
-        get("/api/noty/close/default")
+        delWithoutBody("/api/noty/close/default")
             .catch(error => console.error(error));
     });
 });
@@ -76,7 +77,9 @@ function acceptInvite(id, groupUrl) {
             if (res.ok) {
                 alert("그룹에 가입되었습니다.");
                 location.href = "/workspace/" + groupUrl;
-            } else alert("가입에 실패했습니다.");
+            } else {
+                getData(res).then(error => alert(error));
+            }
         })
         .catch(error => console.error(error));
     setRead(id);

@@ -34,11 +34,7 @@ public class BoardService {
         return boardRepository.findById(id).orElseThrow();
     }
 
-    private List<Board> getBoardsByCategory(Category category) {
-        return boardRepository.findAllByCategory(category);
-    }
-
-    public BoardDto getBoardResponse(Long id) {
+    public BoardDto getBoardDto(Long id) {
         Board board = getBoard(id);
         return new BoardDto(board);
     }
@@ -46,6 +42,10 @@ public class BoardService {
     public List<BoardDto> getBoardResponsesByCategory(Category category) {
         List<Board> boards = getBoardsByCategory(category);
         return mapToDtoList(boards);
+    }
+
+    private List<Board> getBoardsByCategory(Category category) {
+        return boardRepository.findAllByCategory(category);
     }
 
     private List<BoardDto> mapToDtoList(List<Board> boards) {
@@ -142,13 +142,9 @@ public class BoardService {
     }
 
     //게시글 삭제
-    public boolean removeBoard(Long id) {
-        Optional<Board> optional = boardRepository.findById(id);
-        if (optional.isPresent()) {
-            boardRepository.delete(optional.get());
-            return true;
-        }
-        return false;
+    public void removeBoard(Long id) {
+        Board board = boardRepository.findById(id).orElseThrow();
+        boardRepository.delete(board);
     }
 
     //게시글 수정이력

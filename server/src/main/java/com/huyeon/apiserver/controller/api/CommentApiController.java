@@ -4,7 +4,6 @@ import com.huyeon.apiserver.model.UserDetailsImpl;
 import com.huyeon.apiserver.model.dto.CommentDto;
 import com.huyeon.apiserver.model.dto.PageReqDto;
 import com.huyeon.apiserver.model.entity.Board;
-import com.huyeon.apiserver.model.entity.Comment;
 import com.huyeon.apiserver.service.BoardService;
 import com.huyeon.apiserver.service.CommentService;
 import lombok.RequiredArgsConstructor;

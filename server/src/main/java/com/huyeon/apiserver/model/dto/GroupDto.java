@@ -4,6 +4,7 @@ import com.huyeon.apiserver.model.entity.WorkGroup;
 import lombok.*;
 
 @Getter
+@AllArgsConstructor
 public class GroupDto {
     private String name;
     private String url;

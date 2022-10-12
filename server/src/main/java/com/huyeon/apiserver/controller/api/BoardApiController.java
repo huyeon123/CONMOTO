@@ -71,7 +71,7 @@ public class BoardApiController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removeBoard(@PathVariable Long id) {
-        boolean success = boardService.removeBoard(id);
-        return new ResponseEntity<>(success, HttpStatus.OK);
+        boardService.removeBoard(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

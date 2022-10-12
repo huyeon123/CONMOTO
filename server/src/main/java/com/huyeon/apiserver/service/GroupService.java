@@ -1,5 +1,6 @@
 package com.huyeon.apiserver.service;
 
+import com.huyeon.apiserver.exception.AlreadyExistException;
 import com.huyeon.apiserver.exception.NotOnlyMemberException;
 import com.huyeon.apiserver.model.MyEvent;
 import com.huyeon.apiserver.model.dto.GroupDto;
@@ -205,11 +206,19 @@ public class GroupService {
     public void joinMember(User user, String groupUrl) {
         WorkGroup group = getGroupByUrl(groupUrl);
 
+        if (isExist(user, group)) {
+            throw new AlreadyExistException("이미 그룹에 가입되어 있습니다.");
+        }
+
         UserGroup userGroup = UserGroup.builder()
                 .user(user)
                 .group(group)
                 .build();
 
         userGroupRepository.save(userGroup);
+    }
+
+    private boolean isExist(User user, WorkGroup group) {
+        return userGroupRepository.existsByUserAndGroup(user, group);
     }
 }

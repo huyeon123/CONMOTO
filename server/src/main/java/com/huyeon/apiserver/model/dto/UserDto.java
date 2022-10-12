@@ -1,13 +1,11 @@
 package com.huyeon.apiserver.model.dto;
 
 import com.huyeon.apiserver.model.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
+@Getter
 public class UserDto {
     private String email;
     private String name;

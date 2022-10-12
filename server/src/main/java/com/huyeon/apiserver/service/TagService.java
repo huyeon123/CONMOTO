@@ -37,7 +37,6 @@ public class TagService {
                 .collect(Collectors.toList());
     }
 
-    //TODO: ChangeTag로 캡슐화 진행
     public void editTag(Long boardId, List<TagDto> request){
         Board board = boardRepository.findById(boardId).orElseThrow();
         List<Tag> original = getTagsByBoardId(boardId);
@@ -54,7 +53,10 @@ public class TagService {
             for (int i = overWriteNum; i < original.size(); i++) {
                 tagRepository.delete(original.get(i));
             }
-        } else if (original.size() < request.size()) {
+            return;
+        }
+
+        if (original.size() < request.size()) {
             for (int i = overWriteNum; i < request.size(); i++) {
                 Tag tag = Tag.builder().board(board)
                         .tag(request.get(i).getTag())

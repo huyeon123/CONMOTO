@@ -10,6 +10,12 @@
 <div class="wrapper" layout:fragment="content">
     <div class="container">
         <div class="board__header">
+            <div class="flex-end">
+                <div>
+                    <button type="button" class="simple-button">변경이력</button>
+                    <button type="button" class="simple-button" onclick="deleteBoard()">삭제</button>
+                </div>
+            </div>
             <div class="header-elements">
                 <label>
                     <input type="text" id="title"
@@ -72,7 +78,7 @@
                 <button type="button" class="delCommentBtn">삭제</button>
                 <button type="button" class="editCommentBtn">수정</button>
                 <label>
-                    <textarea readonly th:text="${comment.comment}"></textarea>
+                    <textarea class="comment-body" readonly th:text="${comment.comment}"></textarea>
                 </label>
             </div>
             <div class="comments-elements" th:if="${#lists.size(board.comments) < 1}">

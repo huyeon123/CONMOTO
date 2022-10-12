@@ -133,7 +133,9 @@ function addContents(contents) {
     if (contents !== null) {
         let contentsHTML = "";
         contents.forEach((content) => {
-            contentsHTML += `<p>${content.content}</p>`;
+            if (content.content != null) {
+                contentsHTML += `<pre>${content.content}</pre>`;
+            }
         })
         return contentsHTML;
     }
