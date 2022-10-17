@@ -5,6 +5,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class UserSignUpReq {
     private String name;
