@@ -3,8 +3,10 @@ package com.huyeon.superspace.domain.auth.controller;
 import com.huyeon.superspace.domain.auth.dto.UserSignInReq;
 import com.huyeon.superspace.domain.auth.dto.UserSignUpReq;
 import com.huyeon.superspace.domain.auth.service.AuthService;
+import com.huyeon.superspace.global.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,12 +27,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> logIn(@RequestBody UserSignInReq request) {
-        try {
-            authService.logIn(request);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (BadCredentialsException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        String jwt = authService.logIn(request);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+
+        return new ResponseEntity<>(jwt, headers, HttpStatus.OK);
     }
 
     @PostMapping("/check")
