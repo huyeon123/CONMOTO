@@ -38,6 +38,7 @@ public class UserService {
     //회원탈퇴
     public void resign(String email) {
         userRepository.findByEmail(email).ifPresent(user -> {
+            user.setEnabled(false);
             user.setExpireDate(LocalDate.now().plusDays(15));
             userRepository.save(user);
         });

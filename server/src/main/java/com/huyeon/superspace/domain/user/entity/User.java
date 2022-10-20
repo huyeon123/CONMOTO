@@ -1,5 +1,6 @@
 package com.huyeon.superspace.domain.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.huyeon.superspace.domain.auth.dto.UserSignUpReq;
 import com.huyeon.superspace.domain.user.listener.UserHistoryListener;
 import com.huyeon.superspace.global.model.AuditEntity;
@@ -38,16 +39,16 @@ public class User extends AuditEntity implements Auditable {
 
     private LocalDate expireDate;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(foreignKey = @ForeignKey(name = "user_email"))
-    private Set<Authority> authorities;
+    private Set<Authority> authorities = new HashSet<>();
 
     public User(UserSignUpReq request) {
         name = request.getName();
         email = request.getEmail();
         password = request.getPassword();
         enabled = true;
-        authorities = new HashSet<>();
         authorities.add(new Authority(Authority.ROLE_USER));
         if(request.getBirthday() != null) birthday = request.getBirthday();
     }
