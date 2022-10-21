@@ -2,13 +2,13 @@ package com.huyeon.superspace.web.aop;
 
 import com.huyeon.superspace.web.common.dto.AppHeaderDto;
 import com.huyeon.superspace.web.common.dto.SideBarDto;
-import com.huyeon.superspace.global.model.UserDetailsImpl;
 import com.huyeon.superspace.web.common.service.SideBarAndHeaderService;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
@@ -33,11 +33,11 @@ public class SideBarAndHeaderAop {
     @Before("cutNoGroupPage()")
     private void extractNoGroupPageArgs(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
-        UserDetailsImpl userDetails = (UserDetailsImpl) args[USER_DETAIL];
+        UserDetails userDetails = (UserDetails) args[USER_DETAIL];
         Model model = (Model) args[args.length - 1];
 
-        SideBarDto blankSideBar = sideBarAndHeaderService.getBlankSideBar(userDetails.getUser());
-        AppHeaderDto blankHeader = sideBarAndHeaderService.getBlankHeader(userDetails.getUser());
+        SideBarDto blankSideBar = sideBarAndHeaderService.getBlankSideBar(userDetails.getUsername());
+        AppHeaderDto blankHeader = sideBarAndHeaderService.getBlankHeader(userDetails.getUsername());
 
         addAttribute(model, blankSideBar, blankHeader);
     }
@@ -45,16 +45,16 @@ public class SideBarAndHeaderAop {
     @Before("cutGroupPage()")
     private void extractGroupPageArgs(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
-        UserDetailsImpl userDetails = (UserDetailsImpl) args[USER_DETAIL];
+        UserDetails userDetails = (UserDetails) args[USER_DETAIL];
         String groupUrl = (String) args[GROUP_URL];
         Model model = (Model) args[args.length - 1];
 
         addSideBardAndHeaderInModel(userDetails, groupUrl, model);
     }
 
-    private void addSideBardAndHeaderInModel(UserDetailsImpl userDetails, String groupUrl, Model model) {
+    private void addSideBardAndHeaderInModel(UserDetails userDetails, String groupUrl, Model model) {
         SideBarDto sideBar = sideBarAndHeaderService.getSideBar(userDetails, groupUrl);
-        AppHeaderDto appHeader = sideBarAndHeaderService.getAppHeader(userDetails.getUser(), groupUrl);
+        AppHeaderDto appHeader = sideBarAndHeaderService.getAppHeader(userDetails.getUsername(), groupUrl);
 
         addAttribute(model, sideBar, appHeader);
     }

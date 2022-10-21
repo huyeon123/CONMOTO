@@ -11,6 +11,7 @@ import com.huyeon.superspace.domain.group.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +32,7 @@ public class GroupController {
     @NotGroupPage
     @GetMapping
     public String workSpacePage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             Model model) {
         if (isPossibleRedirect(userDetails)) {
             return redirectFirstGroup(userDetails);
@@ -39,22 +40,22 @@ public class GroupController {
         return "pages/workspace";
     }
 
-    private boolean isPossibleRedirect(UserDetailsImpl userDetails) {
-        return !groupService.getGroups(userDetails.getUser()).isEmpty();
+    private boolean isPossibleRedirect(UserDetails userDetails) {
+        return !groupService.getGroups(userDetails.getUsername()).isEmpty();
     }
 
-    private String redirectFirstGroup(UserDetailsImpl userDetails) {
+    private String redirectFirstGroup(UserDetails userDetails) {
         return "redirect:/workspace/" + firstGroupUrl(userDetails);
     }
 
-    private String firstGroupUrl(UserDetailsImpl userDetails) {
-        return groupService.getGroups(userDetails.getUser()).get(0).getUrlPath();
+    private String firstGroupUrl(UserDetails userDetails) {
+        return groupService.getGroups(userDetails.getUsername()).get(0).getUrlPath();
     }
 
     @GroupPage
     @GetMapping("/{groupUrl}")
     public String workSpacePage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String groupUrl,
             Model model) {
         String groupName = groupService.getGroupNameByUrl(groupUrl);
@@ -65,7 +66,7 @@ public class GroupController {
     @NotGroupPage
     @GetMapping("/new")
     public String createGroupPage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             Model model
     ) {
         return "pages/group/creategroup";
@@ -74,7 +75,7 @@ public class GroupController {
     @GroupPage
     @GetMapping("/{groupUrl}/manage")
     public String groupManagingPage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String groupUrl, Model model) {
         WorkGroup group = groupService.getGroupByUrl(groupUrl);
         model.addAttribute("groupInfo", new GroupDto(group));
@@ -84,7 +85,7 @@ public class GroupController {
     @GroupPage
     @GetMapping("/{groupUrl}/members")
     public String memberManagingPage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String groupUrl, Model model) {
         WorkGroup group = groupService.getGroupByUrl(groupUrl);
         model.addAttribute("groupName", group.getName());
@@ -114,7 +115,7 @@ public class GroupController {
     @GroupPage
     @GetMapping("/{groupUrl}/delete")
     public String groupDeletePage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String groupUrl, Model model) {
         String groupName = groupService.getGroupNameByUrl(groupUrl);
         model.addAttribute("groupName", groupName);

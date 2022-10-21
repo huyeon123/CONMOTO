@@ -1,9 +1,11 @@
 package com.huyeon.superspace.domain.group.repository;
 
+import com.huyeon.superspace.domain.group.entity.UserGroup;
 import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.user.entity.User;
-import com.huyeon.superspace.domain.group.entity.UserGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,7 +14,8 @@ import java.util.List;
 public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
     boolean existsByUserAndGroup(User user, WorkGroup group);
 
-    List<UserGroup> findAllByUser(User user);
+    @Query(value = "select ug from UserGroup ug where user_email = :email")
+    List<UserGroup> findGroupsByEmail(@Param("email") String email);
 
     List<UserGroup> findAllByGroup(WorkGroup group);
 

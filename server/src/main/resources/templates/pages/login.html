@@ -11,14 +11,14 @@
 <body>
 <div class="display">
     <img th:src="@{/img/logo.jpg}" alt="SUPER SPACE" id="logo">
-    <form id="sign_in">
+    <form id="sign_in" action="/auth/login" method="post">
         <div class="container">
             <label class="form__element">
                 <b>이메일</b>
                 <input type="text"
                        placeholder="이메일을 입력해주세요."
                        id="email"
-                       name="email"
+                       name="username"
                        required
                        autofocus>
             </label>
@@ -32,12 +32,12 @@
                        required>
             </label>
 
-            <button type="button" onclick="formSubmit()">로그인</button>
+            <button type="submit">로그인</button>
             <label>
                 <input type="checkbox"
                        checked="checked"
                        id="rememberMe"
-                       name="remember">
+                       name="remember-me">
                 자동 로그인
             </label>
         </div>

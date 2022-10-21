@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.filter.CorsFilter;
 
 @AllArgsConstructor
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     private final TokenProvider tokenProvider;
@@ -31,6 +31,16 @@ public class SecurityConfig {
         http
                 //JWT 사용
                 .csrf().disable()
+
+                .httpBasic().disable()
+
+                .formLogin(
+                        login -> login.loginPage("/login")
+                                .loginProcessingUrl("/auth/login")
+                                .permitAll()
+                                .defaultSuccessUrl("/workspace", false)
+                                .failureUrl("/")
+                )
 
                 .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
 
@@ -52,7 +62,10 @@ public class SecurityConfig {
 
                 //JWT Config
                 .and()
-                .apply(new JwtSecurityConfig(tokenProvider));
+                .apply(new JwtSecurityConfig(tokenProvider))
+
+                .and()
+                .rememberMe();
 
         return http.build();
     }

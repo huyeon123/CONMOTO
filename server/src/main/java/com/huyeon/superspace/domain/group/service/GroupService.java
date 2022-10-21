@@ -110,8 +110,8 @@ public class GroupService {
         return groupRepository.findByUrlPath(urlPath).orElseThrow().getName();
     }
 
-    public List<WorkGroup> getGroups(User user) {
-        List<UserGroup> userGroups = userGroupRepository.findAllByUser(user);
+    public List<WorkGroup> getGroups(String email) {
+        List<UserGroup> userGroups = userGroupRepository.findGroupsByEmail(email);
         return userGroups.stream().map(UserGroup::getGroup).collect(Collectors.toList());
     }
 

@@ -1,10 +1,9 @@
 package com.huyeon.superspace.web.common.service;
 
-import com.huyeon.superspace.global.model.UserDetailsImpl;
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
+import com.huyeon.superspace.domain.user.repository.UserRepository;
 import com.huyeon.superspace.web.common.dto.AppHeaderDto;
 import com.huyeon.superspace.web.common.dto.SideBarDto;
-import com.huyeon.superspace.domain.user.entity.User;
 import com.huyeon.superspace.domain.group.entity.UserGroup;
 import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.board.repository.CategoryRepository;
@@ -12,6 +11,7 @@ import com.huyeon.superspace.domain.group.repository.GroupRepository;
 import com.huyeon.superspace.domain.group.repository.UserGroupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -28,13 +28,14 @@ import static java.util.stream.Collectors.groupingBy;
 @RequiredArgsConstructor
 public class SideBarAndHeaderService {
 
+    private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
     private final GroupRepository groupRepository;
     private final CategoryRepository categoryRepository;
 
-    public AppHeaderDto getAppHeader(User user, String groupUrl) {
+    public AppHeaderDto getAppHeader(String email, String groupUrl) {
         String groupName = findGroupNameByUrl(groupUrl);
-        String userName = user.getName();
+        String userName = findUserNameByEmail(email);
 
         return AppHeaderDto.builder()
                 .groupName(groupName)
@@ -46,8 +47,12 @@ public class SideBarAndHeaderService {
         return groupRepository.findNameByUrl(urlPath).orElseThrow();
     }
 
-    public SideBarDto getSideBar(UserDetailsImpl userDetails, String groupUrl) {
-        List<WorkGroup> groups = getGroups(userDetails.getUser());
+    private String findUserNameByEmail(String email) {
+        return userRepository.findNameByEmail(email).orElseThrow();
+    }
+
+    public SideBarDto getSideBar(UserDetails userDetails, String groupUrl) {
+        List<WorkGroup> groups = getGroups(userDetails.getUsername());
         List<CategoryDto> categories = getHierarchicalCategories(groupUrl);
 
         if (categories == null) categories = Collections.emptyList();
@@ -58,8 +63,8 @@ public class SideBarAndHeaderService {
                 .build();
     }
 
-    private List<WorkGroup> getGroups(User user) {
-        List<UserGroup> userGroups = userGroupRepository.findAllByUser(user);
+    private List<WorkGroup> getGroups(String email) {
+        List<UserGroup> userGroups = userGroupRepository.findGroupsByEmail(email);
         return userGroups.stream()
                 .map(UserGroup::getGroup)
                 .collect(Collectors.toList());
@@ -117,16 +122,18 @@ public class SideBarAndHeaderService {
         return rootCategory.getSubCategories();
     }
 
-    public SideBarDto getBlankSideBar(User user) {
+    public SideBarDto getBlankSideBar(String user) {
         return SideBarDto.builder()
                 .groups(getGroups(user))
                 .categories(List.of(new CategoryDto(-1L, "그룹을 선택하세요.", -1L)))
                 .build();
     }
 
-    public AppHeaderDto getBlankHeader(User user) {
+    public AppHeaderDto getBlankHeader(String email) {
+        String username = findUserNameByEmail(email);
+
         return AppHeaderDto.builder()
-                .userName(user.getName())
+                .userName(username)
                 .groupName("그룹을 선택하세요.")
                 .build();
     }
