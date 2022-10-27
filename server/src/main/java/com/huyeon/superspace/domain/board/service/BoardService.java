@@ -13,7 +13,6 @@ import com.huyeon.superspace.domain.board.repository.CategoryRepository;
 import com.huyeon.superspace.domain.board.repository.ContentBlockRepository;
 import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.group.repository.GroupRepository;
-import com.huyeon.superspace.domain.user.entity.User;
 import com.huyeon.superspace.domain.board.entity.history.BoardHistory;
 import com.huyeon.superspace.domain.board.repository.history.BoardHistoryRepo;
 import lombok.RequiredArgsConstructor;
@@ -97,8 +96,8 @@ public class BoardService {
         });
     }
 
-    public List<BoardDto> getNext10LatestInUser(PageReqDto request, User user) {
-        List<Board> newest = boardRepository.findNextLatest(user, request.getNow(), PageRequest.of(request.getNextPage(), 10));
+    public List<BoardDto> getNext10LatestInUser(PageReqDto request, String email) {
+        List<Board> newest = boardRepository.findNextLatest(email, request.getNow(), PageRequest.of(request.getNextPage(), 10));
         List<BoardDto> boardDtoList = mapToDtoList(newest);
         addContents(boardDtoList);
         return boardDtoList;

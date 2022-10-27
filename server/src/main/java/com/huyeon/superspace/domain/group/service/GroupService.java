@@ -14,6 +14,7 @@ import com.huyeon.superspace.domain.noty.entity.ReceivedNoty;
 import com.huyeon.superspace.domain.user.entity.User;
 import com.huyeon.superspace.domain.group.exception.AlreadyExistException;
 import com.huyeon.superspace.domain.group.exception.NotOnlyMemberException;
+import com.huyeon.superspace.domain.user.repository.UserRepository;
 import com.huyeon.superspace.global.model.EventPublisher;
 import com.huyeon.superspace.domain.group.dto.GroupDto;
 import com.huyeon.superspace.global.dto.NotyEventDto;
@@ -35,13 +36,16 @@ import java.util.stream.Collectors;
 public class GroupService {
     private static final int IDENTIFIER_LENGTH = 10;
 
+    private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
     private final GroupRepository groupRepository;
     private final GroupManagerRepository managerRepository;
     private final CategoryRepository categoryRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public GroupDto createGroup(User user, GroupDto request) {
+    public GroupDto createGroup(String email, GroupDto request) {
+        User user = findUserByEmail(email);
+
         WorkGroup group = makeGroup(user, request);
 
         registerUser(user, group);
@@ -51,6 +55,10 @@ public class GroupService {
         createRootCategory(group);
 
         return mapToDto(group);
+    }
+
+    private User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow();
     }
 
     private WorkGroup makeGroup(User user, GroupDto request) {
@@ -125,10 +133,7 @@ public class GroupService {
     }
 
     private String appendIdentifier(String urlPath) {
-        StringBuilder sb = new StringBuilder(urlPath);
-        sb.append("-");
-        sb.append(generateIdentifier());
-        return sb.toString();
+        return urlPath + "-" + generateIdentifier();
     }
 
     private String generateIdentifier() {
@@ -143,14 +148,14 @@ public class GroupService {
                 .toString();
     }
 
-    public void deleteGroup(User user, String groupUrl) {
+    public void deleteGroup(String email, String groupUrl) {
         WorkGroup group = getGroupByUrl(groupUrl);
 
         if (notOnlyMeInGroup(group)) {
             throw new NotOnlyMemberException("다른 멤버가 존재합니다.");
         }
 
-        if (isNotGroupOwner(user, group)) {
+        if (isNotGroupOwner(email, group)) {
             throw new AccessDeniedException("그룹 소유자가 아닙니다.");
         }
 
@@ -167,8 +172,8 @@ public class GroupService {
         return userGroups.size() > 1;
     }
 
-    private boolean isNotGroupOwner(User user, WorkGroup group) {
-        return !group.getOwner().equals(user);
+    private boolean isNotGroupOwner(String email, WorkGroup group) {
+        return !group.getOwner().getEmail().equals(email);
     }
 
     public String checkRole(WorkGroup group, User user) {
@@ -213,7 +218,8 @@ public class GroupService {
         EventPublisher.publishEvent(eventPublisher, notyEventDto);
     }
 
-    public void joinMember(User user, String groupUrl) {
+    public void joinMember(String email, String groupUrl) {
+        User user = findUserByEmail(email);
         WorkGroup group = getGroupByUrl(groupUrl);
 
         if (isExist(user, group)) {

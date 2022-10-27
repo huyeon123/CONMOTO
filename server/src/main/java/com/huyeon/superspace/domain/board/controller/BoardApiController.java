@@ -1,8 +1,7 @@
 package com.huyeon.superspace.domain.board.controller;
 
-import com.huyeon.superspace.global.model.UserDetailsImpl;
-import com.huyeon.superspace.domain.board.dto.BoardHeaderDto;
 import com.huyeon.superspace.domain.board.dto.BoardDto;
+import com.huyeon.superspace.domain.board.dto.BoardHeaderDto;
 import com.huyeon.superspace.domain.board.dto.PageReqDto;
 import com.huyeon.superspace.domain.board.entity.Board;
 import com.huyeon.superspace.domain.board.service.BoardService;
@@ -11,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class BoardApiController {
 
     @GetMapping("/{groupUrl}/create")
     public ResponseEntity<?> createBoard(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String groupUrl) {
         Long id = boardService.createBoard(userDetails.getUsername(), groupUrl);
         return new ResponseEntity<>(id, HttpStatus.CREATED);
@@ -57,9 +57,9 @@ public class BoardApiController {
 
     @PostMapping("/latest/user")
     public ResponseEntity<?> getLatestBoardInUser(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody PageReqDto request) {
-        List<BoardDto> latest = boardService.getNext10LatestInUser(request, userDetails.getUser());
+        List<BoardDto> latest = boardService.getNext10LatestInUser(request, userDetails.getUsername());
         return new ResponseEntity<>(latest, HttpStatus.OK);
     }
 

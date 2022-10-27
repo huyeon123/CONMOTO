@@ -1,6 +1,5 @@
 package com.huyeon.superspace.global.jwt;
 
-import com.huyeon.superspace.global.model.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

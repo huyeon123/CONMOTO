@@ -4,11 +4,12 @@ import com.huyeon.superspace.domain.board.dto.CommentDto;
 import com.huyeon.superspace.domain.board.dto.PageReqDto;
 import com.huyeon.superspace.domain.board.entity.Board;
 import com.huyeon.superspace.domain.board.entity.Comment;
-import com.huyeon.superspace.domain.user.entity.User;
 import com.huyeon.superspace.domain.board.entity.history.CommentHistory;
 import com.huyeon.superspace.domain.board.repository.BoardRepository;
 import com.huyeon.superspace.domain.board.repository.CommentRepository;
 import com.huyeon.superspace.domain.board.repository.history.CommentHistoryRepo;
+import com.huyeon.superspace.domain.user.entity.User;
+import com.huyeon.superspace.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -30,18 +31,19 @@ import static com.huyeon.superspace.global.support.JsonParse.readJson;
 @Transactional
 @RequiredArgsConstructor
 public class CommentService {
+    private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
     private final CommentHistoryRepo commentHistoryRepo;
 
-    public List<CommentDto> getCommentInUser(User user, PageReqDto request) {
-        List<Comment> comments = getNextComments(user, request);
+    public List<CommentDto> getCommentInUser(String email, PageReqDto request) {
+        List<Comment> comments = getNextComments(email, request);
         return mapToBoardComment(comments);
     }
 
-    private List<Comment> getNextComments(User user, PageReqDto request) {
+    private List<Comment> getNextComments(String email, PageReqDto request) {
         return commentRepository.findNextLatestByUserEmail(
-                user.getEmail(),
+                email,
                 request.getNow(),
                 PageRequest.of(request.getNextPage(), 10)
         );
@@ -90,7 +92,9 @@ public class CommentService {
         return date.getYears() + "년 전";
     }
 
-    public void createComment(User author, Board board, CommentDto commentDto) {
+    public void createComment(String email, Board board, CommentDto commentDto) {
+        User author = findUserByEmail(email);
+
         Comment comment = Comment.builder()
                 .board(board)
                 .user(author)
@@ -98,6 +102,10 @@ public class CommentService {
                 .build();
 
         commentRepository.save(comment);
+    }
+
+    private User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow();
     }
 
     public void removeComment(Long id) {

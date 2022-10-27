@@ -1,18 +1,18 @@
 package com.huyeon.superspace.web.domain.board;
 
+import com.huyeon.superspace.domain.board.dto.BoardDto;
+import com.huyeon.superspace.domain.board.dto.CommentDto;
+import com.huyeon.superspace.domain.board.dto.ContentDto;
+import com.huyeon.superspace.domain.board.dto.TagDto;
 import com.huyeon.superspace.domain.board.service.BoardService;
 import com.huyeon.superspace.domain.board.service.CommentService;
 import com.huyeon.superspace.domain.board.service.ContentBlockService;
 import com.huyeon.superspace.domain.board.service.TagService;
 import com.huyeon.superspace.web.annotation.GroupPage;
-import com.huyeon.superspace.global.model.UserDetailsImpl;
-import com.huyeon.superspace.domain.board.dto.BoardDto;
-import com.huyeon.superspace.domain.board.dto.CommentDto;
-import com.huyeon.superspace.domain.board.dto.ContentDto;
-import com.huyeon.superspace.domain.board.dto.TagDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +32,7 @@ public class BoardController {
     @GroupPage
     @GetMapping("/workspace/{groupUrl}/board/{id}")
     public String boardPage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String groupUrl,
             @PathVariable Long id, Model model) {
         BoardDto boardResponse = boardService.getBoardDto(id);

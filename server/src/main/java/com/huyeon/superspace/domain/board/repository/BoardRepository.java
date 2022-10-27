@@ -28,9 +28,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             @Param("now") LocalDateTime now,
             Pageable pageable);
 
-    @Query(value = "select b from Board b where updatedAt < :now and user_email = :user order by updatedAt desc")
+    @Query(value = "select b from Board b where updatedAt < :now and user_email = :email order by updatedAt desc")
     List<Board> findNextLatest(
-            @Param("user") User user,
+            @Param("email") String email,
             @Param("now") LocalDateTime now,
             Pageable pageable);
 }

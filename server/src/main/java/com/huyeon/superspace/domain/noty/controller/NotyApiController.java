@@ -1,7 +1,6 @@
 package com.huyeon.superspace.domain.noty.controller;
 
 import com.huyeon.superspace.domain.noty.dto.EmitterAdaptor;
-import com.huyeon.superspace.global.model.UserDetailsImpl;
 import com.huyeon.superspace.domain.noty.dto.NotyDto;
 import com.huyeon.superspace.domain.noty.service.NotyService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -24,7 +24,7 @@ public class NotyApiController {
     @GetMapping(value = "/subscribe/{notyType}", produces = "text/event-stream")
     @ResponseStatus(HttpStatus.OK)
     public SseEmitter subscribe(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String notyType,
             @RequestHeader(value = "Last-Event-ID",
                     required = false,
@@ -41,7 +41,7 @@ public class NotyApiController {
 
     @GetMapping("/{page}")
     public ResponseEntity<?> userLatestNoty(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable int page
     ) {
         List<NotyDto> latestNoty = notyService.findAllByUser(userDetails.getUsername(), page);
@@ -49,7 +49,7 @@ public class NotyApiController {
     }
 
     @GetMapping("/unread")
-    public ResponseEntity<?> unreadNoty(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> unreadNoty(@AuthenticationPrincipal UserDetails userDetails) {
         List<NotyDto> unreadEvent = notyService.sendUnreadEvent(userDetails.getUsername());
         return new ResponseEntity<>(unreadEvent, HttpStatus.OK);
     }
@@ -62,7 +62,7 @@ public class NotyApiController {
 
     @DeleteMapping("/close/{notyType}")
     public ResponseEntity<?> closeEmitter(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String notyType) {
         notyService.completeEmitter(userDetails.getUsername(), notyType);
         return new ResponseEntity<>(HttpStatus.OK);

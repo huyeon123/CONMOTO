@@ -1,7 +1,6 @@
 package com.huyeon.superspace.domain.auth.service;
 
 import com.huyeon.superspace.domain.auth.repository.AuthRepository;
-import com.huyeon.superspace.global.model.UserDetailsImpl;
 import com.huyeon.superspace.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

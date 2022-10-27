@@ -2,8 +2,9 @@ package com.huyeon.superspace.domain.user.service;
 
 import com.huyeon.superspace.domain.user.entity.User;
 import com.huyeon.superspace.domain.user.entity.UserHistory;
-import com.huyeon.superspace.domain.user.repository.UserRepository;
 import com.huyeon.superspace.domain.user.repository.UserHistoryRepo;
+import com.huyeon.superspace.domain.user.repository.UserRepository;
+import com.huyeon.superspace.web.domain.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +23,11 @@ public class UserService {
     private final UserHistoryRepo userHistoryRepo;
     private final PasswordEncoder passwordEncoder;
 
-    //회원정보 수정
+    public UserDto getUser(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+        return new UserDto(user);
+    }
+
     public void editInfo(String email, User editUser) {
         if (editUser.getEmail().equals(email)) {
             userRepository.findByEmail(email).ifPresent(user -> {
@@ -35,7 +40,6 @@ public class UserService {
         }
     }
 
-    //회원탈퇴
     public void resign(String email) {
         userRepository.findByEmail(email).ifPresent(user -> {
             user.setEnabled(false);
@@ -44,7 +48,6 @@ public class UserService {
         });
     }
 
-    //회원탈퇴 취소
     public void cancelResign(String email) {
         userRepository.findByEmail(email).ifPresent(user -> {
             if (!user.isEnabled()) {
@@ -55,7 +58,6 @@ public class UserService {
         });
     }
 
-    //회원정보 수정이력 확인
     public List<UserHistory> myInfoHistory(String email) {
         return userHistoryRepo.findAllByUserEmail(email);
     }

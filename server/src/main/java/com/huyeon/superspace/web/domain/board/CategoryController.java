@@ -1,19 +1,19 @@
 package com.huyeon.superspace.web.domain.board;
 
-import com.huyeon.superspace.web.annotation.GroupPage;
-import com.huyeon.superspace.global.model.UserDetailsImpl;
 import com.huyeon.superspace.domain.board.dto.BoardDto;
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
 import com.huyeon.superspace.domain.board.dto.ContentDto;
 import com.huyeon.superspace.domain.board.entity.Category;
-import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.board.service.BoardService;
 import com.huyeon.superspace.domain.board.service.CategoryService;
 import com.huyeon.superspace.domain.board.service.ContentBlockService;
+import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.group.service.GroupService;
+import com.huyeon.superspace.web.annotation.GroupPage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +35,7 @@ public class CategoryController {
     @GroupPage
     @GetMapping("/new-category")
     public String createCategoryPage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String groupUrl,
             Model model) {
         model.addAttribute("categoryOptions", categoryOptions(groupUrl));
@@ -50,7 +50,7 @@ public class CategoryController {
     @GroupPage
     @GetMapping("/category")
     public String manageCategoryPage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String groupUrl,
             Model model) {
         model.addAttribute("rootCategory", categoryTree(groupUrl));
@@ -65,7 +65,7 @@ public class CategoryController {
     @GroupPage
     @GetMapping("/{categoryName}")
     public String categoryPage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String groupUrl,
             @PathVariable String categoryName,
             Model model

@@ -14,6 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
+    @Transactional
     public void signUp(UserSignUpReq request) {
         User user = new User(request);
         user.encryptPassword(passwordEncoder);

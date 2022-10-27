@@ -1,6 +1,5 @@
 package com.huyeon.superspace.domain.board.controller;
 
-import com.huyeon.superspace.global.model.UserDetailsImpl;
 import com.huyeon.superspace.domain.board.dto.CommentDto;
 import com.huyeon.superspace.domain.board.dto.PageReqDto;
 import com.huyeon.superspace.domain.board.entity.Board;
@@ -11,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,18 +25,18 @@ public class CommentApiController {
 
     @PostMapping("/latest")
     public ResponseEntity<?> getComment(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody PageReqDto request) {
-        List<CommentDto> commentsRes = commentService.getCommentInUser(userDetails.getUser(), request);
+        List<CommentDto> commentsRes = commentService.getCommentInUser(userDetails.getUsername(), request);
         return new ResponseEntity<>(commentsRes, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<?> createComment(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam Long boardId, @RequestBody CommentDto comment) {
         Board board = boardService.getBoard(boardId);
-        commentService.createComment(userDetails.getUser(), board, comment);
+        commentService.createComment(userDetails.getUsername(), board, comment);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

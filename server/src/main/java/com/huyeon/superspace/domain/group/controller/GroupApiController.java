@@ -1,6 +1,5 @@
 package com.huyeon.superspace.domain.group.controller;
 
-import com.huyeon.superspace.global.model.UserDetailsImpl;
 import com.huyeon.superspace.domain.group.dto.GroupDto;
 import com.huyeon.superspace.domain.group.dto.MemberDto;
 import com.huyeon.superspace.domain.group.service.GroupService;
@@ -12,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,9 +26,9 @@ public class GroupApiController {
 
     @PostMapping
     public ResponseEntity<?> createGroup(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody GroupDto request) {
-        GroupDto group = groupService.createGroup(userDetails.getUser(), request);
+        GroupDto group = groupService.createGroup(userDetails.getUsername(), request);
         return new ResponseEntity<>(group, HttpStatus.CREATED);
     }
 
@@ -42,10 +42,10 @@ public class GroupApiController {
 
     @DeleteMapping("/{groupUrl}")
     public ResponseEntity<?> deleteGroup(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String groupUrl) {
         try {
-            groupService.deleteGroup(userDetails.getUser(), groupUrl);
+            groupService.deleteGroup(userDetails.getUsername(), groupUrl);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -78,10 +78,10 @@ public class GroupApiController {
 
     @GetMapping("/{groupUrl}/join")
     public ResponseEntity<?> joinMember(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String groupUrl) {
         try {
-            groupService.joinMember(userDetails.getUser(), groupUrl);
+            groupService.joinMember(userDetails.getUsername(), groupUrl);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);

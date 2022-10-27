@@ -1,13 +1,12 @@
 package com.huyeon.superspace.web.domain.group;
 
-import com.huyeon.superspace.web.annotation.GroupPage;
-import com.huyeon.superspace.web.annotation.NotGroupPage;
-import com.huyeon.superspace.global.model.UserDetailsImpl;
 import com.huyeon.superspace.domain.group.dto.GroupDto;
 import com.huyeon.superspace.domain.group.dto.MemberDto;
 import com.huyeon.superspace.domain.group.entity.WorkGroup;
-import com.huyeon.superspace.domain.user.entity.User;
 import com.huyeon.superspace.domain.group.service.GroupService;
+import com.huyeon.superspace.domain.user.entity.User;
+import com.huyeon.superspace.web.annotation.GroupPage;
+import com.huyeon.superspace.web.annotation.NotGroupPage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
