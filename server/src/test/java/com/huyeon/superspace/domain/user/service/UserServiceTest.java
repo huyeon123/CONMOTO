@@ -80,6 +80,11 @@ public class UserServiceTest {
     @Test
     @DisplayName("회원정보 변경이력 확인")
     void myInfoHistory(){
+        //given
+        User user = userRepository.findByEmail("test@test.com").orElseThrow();
+        user.setBirthday(LocalDate.now());
+        userRepository.save(user);
+
         //when
         List<UserHistory> userHistories = userService.myInfoHistory(email);
 

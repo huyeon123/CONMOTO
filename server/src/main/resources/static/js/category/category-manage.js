@@ -82,13 +82,14 @@ async function save() {
 
     const request = getCategoryInfo();
 
-    const res = await put(url, request);
-    res.then(success => {
-        if (success) {
-            alert("정상 반영되었습니다.");
-            window.location.href = "/workspace/" + groupUrl;
-        }
-    }).catch(error => console.error(error));
+    put(url, request)
+        .then(res => {
+            if (res.ok) {
+                alert("정상 반영되었습니다.");
+                window.location.href = "/workspace/" + groupUrl;
+            }
+        })
+        .catch(error => console.error(error));
 }
 
 function getCategoryInfo() {
@@ -146,17 +147,17 @@ function checkThirdLevelCategoryValidate(upperCategoryLevel) {
 function extractAndPush(idx, category, family, request) {
     const name = category.value;
     //root를 제외했기 때문에 +1을 해줌
-    const parentIdx = extractParentLevel(idx + 1, category, family);
+    const parentOrder = extractParentOrder(idx + 1, category, family);
 
     const categoryDto = {
         name: name,
-        parentId: parentIdx,
+        parentOrder: parentOrder,
     }
 
     request.push(categoryDto);
 }
 
-function extractParentLevel(categoryIdx, category, family) {
+function extractParentOrder(categoryIdx, category, family) {
     const categoryLevel = getCategoryLevel(category);
     if (categoryLevel === 1) {
         family.level1 = categoryIdx;
@@ -170,7 +171,7 @@ function extractParentLevel(categoryIdx, category, family) {
 }
 
 function getCategoryLevel(category) {
-    const containerClasses = category.parentElement.classList;
+    const containerClasses = category.parentElement.parentElement.classList;
     if (containerClasses.contains("level1")) {
         return 1;
     } else if (containerClasses.contains("level2")) {

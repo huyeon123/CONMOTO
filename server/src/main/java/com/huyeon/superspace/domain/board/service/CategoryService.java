@@ -90,56 +90,57 @@ public class CategoryService {
 
     public void editCategory(List<CategoryDto> request, String groupUrl) {
         WorkGroup group = findGroupByUrl(groupUrl);
-        List<CategoryDto> beforeList = getCategoryList(group);
+        List<CategoryDto> originalList = getCategoryList(group);
 
         IntStream.range(0, request.size())
                 .forEach(i -> {
-                    CategoryDto before = beforeList.get(i + 1);
-                    CategoryDto after = request.get(i);
+                    CategoryDto origin = originalList.get(i + 1);
+                    CategoryDto change = request.get(i);
 
-                    changeInfoIfDifferent(beforeList, before, after);
+                    changeInfoIfDifferent(originalList, origin, change);
 
                 });
     }
 
-    private void changeInfoIfDifferent(List<CategoryDto> beforeList, CategoryDto before, CategoryDto after) {
-        boolean nameChanged = isNameChanged(before, after);
-        boolean parentChanged = isParentChanged(beforeList, before, after);
+    private void changeInfoIfDifferent(List<CategoryDto> originalList, CategoryDto origin, CategoryDto change) {
+        boolean nameChanged = isNameChanged(origin, change);
+        boolean parentChanged = isParentChanged(originalList, origin, change);
+
         if (nameChanged || parentChanged) {
-            Category category = categoryRepository.findById(before.getCategoryId()).orElseThrow();
+            Category category = categoryRepository.findById(origin.getCategoryId()).orElseThrow();
             if (nameChanged) {
-                changeName(category, after);
+                changeName(category, change);
             }
 
             if (parentChanged) {
-                changeParent(beforeList, category, after);
+                changeParent(originalList, category, change);
             }
         }
     }
 
-    private boolean isNameChanged(CategoryDto before, CategoryDto after) {
-        return !before.getName().equals(after.getName());
+    private boolean isNameChanged(CategoryDto origin, CategoryDto change) {
+        return !origin.getName().equals(change.getName());
     }
 
-    private boolean isParentChanged(List<CategoryDto> beforeList, CategoryDto before, CategoryDto after) {
-        Long parentId = getParentId(beforeList, after);
-        return !before.getParentId().equals(parentId);
+    private boolean isParentChanged(List<CategoryDto> originalList, CategoryDto origin, CategoryDto change) {
+        Long parentId = getParentId(originalList, change);
+        return !origin.getParentId().equals(parentId);
     }
 
-    private void changeName(Category before, CategoryDto after) {
-        before.setName(after.getName());
-        categoryRepository.save(before);
+    private Long getParentId(List<CategoryDto> originalList, CategoryDto change) {
+        return originalList.get(change.getParentOrder()).getCategoryId();
     }
 
-    private void changeParent(List<CategoryDto> beforeList, Category before, CategoryDto after) {
-        Long parentId = getParentId(beforeList, after);
+    private void changeName(Category origin, CategoryDto change) {
+        origin.setName(change.getName());
+        categoryRepository.save(origin);
+    }
+
+    private void changeParent(List<CategoryDto> originalList, Category origin, CategoryDto change) {
+        Long parentId = getParentId(originalList, change);
         Category parent = categoryRepository.findById(parentId).orElseThrow();
-        before.setParent(parent);
-        categoryRepository.save(before);
-    }
-
-    private Long getParentId(List<CategoryDto> beforeList, CategoryDto after) {
-        return beforeList.get(after.getParentId().intValue()).getCategoryId();
+        origin.setParent(parent);
+        categoryRepository.save(origin);
     }
 
     public Category getCategory(String categoryName) {

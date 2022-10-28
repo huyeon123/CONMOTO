@@ -1,11 +1,9 @@
 package com.huyeon.superspace.domain.board.repository;
 
-import com.huyeon.superspace.domain.board.repository.BoardRepository;
-import com.huyeon.superspace.domain.group.repository.GroupRepository;
+import com.huyeon.superspace.domain.board.entity.Board;
 import com.huyeon.superspace.domain.group.entity.WorkGroup;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.huyeon.superspace.domain.group.repository.GroupRepository;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
@@ -20,14 +18,9 @@ public class BoardRepositoryTest {
     @Autowired
     GroupRepository groupRepository;
 
-    @DisplayName("다음 최신 게시물들을 가져오는 쿼리 테스트(최대 10개)")
-    @Test
-    void test_1(){
-        //given
-        WorkGroup group = groupRepository.findByUrlPath("test-group").orElseThrow();
-        LocalDateTime now = LocalDateTime.now();
+    @BeforeAll
+    static void init() {
 
-        //when, then
-        Assertions.assertDoesNotThrow(() -> boardRepository.findNextTenLatest(group, now, PageRequest.of(0, 10)));
     }
+
 }

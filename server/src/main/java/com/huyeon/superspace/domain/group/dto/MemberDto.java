@@ -4,6 +4,8 @@ import com.huyeon.superspace.domain.user.entity.User;
 import lombok.*;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class MemberDto {
     private String name;
     private String email;

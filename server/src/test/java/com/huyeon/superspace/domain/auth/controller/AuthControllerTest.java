@@ -14,8 +14,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import javax.servlet.http.Cookie;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -53,17 +54,15 @@ public class AuthControllerTest {
         //given
         UserSignUpReq signUpReq = new UserSignUpReq("TEST_USER", "test@test.com", "12345", null);
         authService.signUp(signUpReq);
-        UserSignInReq signInReq = new UserSignInReq("test@test.com", "12345", false);
 
         //when
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(signInReq))
+                MockMvcRequestBuilders.post("/auth/login?username=test@test.com&password=12345&remember-me=true")
         );
 
         //then
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isFound())
+                .andExpect(cookie().exists("remember-me"));
     }
 
     @Test

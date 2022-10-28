@@ -2,19 +2,18 @@ package com.huyeon.superspace.domain.user.repository;
 
 import com.huyeon.superspace.domain.auth.dto.UserSignUpReq;
 import com.huyeon.superspace.domain.user.entity.User;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Transactional
 @SpringBootTest
 public class UserRepositoryTest {
 

@@ -14,12 +14,13 @@ public class CategoryDto {
     private Long categoryId;
     private String name;
     private Long parentId;
+    private int parentOrder;
     private List<CategoryDto> subCategories;
 
-    public CategoryDto(Long categoryId, String name, Long parentId) {
+    public CategoryDto(Long categoryId, String name, int parentOrder) {
         this.categoryId = categoryId;
         this.name = name;
-        this.parentId = parentId;
+        this.parentOrder = parentOrder;
     }
 
     @Builder

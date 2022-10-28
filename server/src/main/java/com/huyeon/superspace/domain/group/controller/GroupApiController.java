@@ -72,7 +72,7 @@ public class GroupApiController {
     public ResponseEntity<?> inviteMember(
             @PathVariable String groupUrl,
             @RequestBody Invite invite) {
-        groupService.inviteMember(groupUrl, invite.getEmail());
+        memberService.inviteMember(groupUrl, invite.getEmail());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -81,7 +81,7 @@ public class GroupApiController {
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String groupUrl) {
         try {
-            groupService.joinMember(userDetails.getUsername(), groupUrl);
+            memberService.joinMember(userDetails.getUsername(), groupUrl);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);

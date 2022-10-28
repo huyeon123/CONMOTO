@@ -125,7 +125,7 @@ public class SideBarAndHeaderService {
     public SideBarDto getBlankSideBar(String user) {
         return SideBarDto.builder()
                 .groups(getGroups(user))
-                .categories(List.of(new CategoryDto(-1L, "그룹을 선택하세요.", -1L)))
+                .categories(List.of(new CategoryDto(-1L, "그룹을 선택하세요.", -1)))
                 .build();
     }
 

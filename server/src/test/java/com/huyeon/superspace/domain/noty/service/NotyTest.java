@@ -1,4 +1,4 @@
-package com.huyeon.superspace.domain.group.service;
+package com.huyeon.superspace.domain.noty.service;
 
 import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.noty.entity.Noty;

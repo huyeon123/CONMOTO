@@ -41,7 +41,6 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupManagerRepository managerRepository;
     private final CategoryRepository categoryRepository;
-    private final ApplicationEventPublisher eventPublisher;
 
     public GroupDto createGroup(String email, GroupDto request) {
         User user = findUserByEmail(email);
@@ -57,7 +56,7 @@ public class GroupService {
         return mapToDto(group);
     }
 
-    private User findUserByEmail(String email) {
+    public User findUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow();
     }
 
@@ -106,6 +105,7 @@ public class GroupService {
     public void editGroup(String groupUrl, GroupDto request) {
         WorkGroup group = getGroupByUrl(groupUrl);
         group.setName(request.getName());
+        group.setUrlPath(request.getUrl());
         group.setDescription(request.getDescription());
         groupRepository.save(group);
     }
@@ -193,48 +193,5 @@ public class GroupService {
 
     private boolean isManager(WorkGroup group, User user) {
         return managerRepository.existsByGroupAndManager(group, user);
-    }
-
-    public void inviteMember(String groupUrl, String userEmail) {
-        WorkGroup group = getGroupByUrl(groupUrl);
-
-        Noty inviteNoty = Noty.builder()
-                .senderName(group.getName())
-                .message("그룹에 초대합니다!\n" + group.getDescription())
-                .type(NotyType.GROUP_INVITE)
-                .redirectUrl(group.getUrlPath())
-                .build();
-
-        ReceivedNoty receivedNoty = ReceivedNoty.builder()
-                .userEmail(userEmail)
-                .noty(inviteNoty)
-                .build();
-
-        NotyEventDto notyEventDto = NotyEventDto.builder()
-                .noty(inviteNoty)
-                .receivers(List.of(receivedNoty))
-                .build();
-
-        EventPublisher.publishEvent(eventPublisher, notyEventDto);
-    }
-
-    public void joinMember(String email, String groupUrl) {
-        User user = findUserByEmail(email);
-        WorkGroup group = getGroupByUrl(groupUrl);
-
-        if (isExist(user, group)) {
-            throw new AlreadyExistException("이미 그룹에 가입되어 있습니다.");
-        }
-
-        UserGroup userGroup = UserGroup.builder()
-                .user(user)
-                .group(group)
-                .build();
-
-        userGroupRepository.save(userGroup);
-    }
-
-    private boolean isExist(User user, WorkGroup group) {
-        return userGroupRepository.existsByUserAndGroup(user, group);
     }
 }

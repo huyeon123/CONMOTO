@@ -42,7 +42,7 @@ public class UserService {
 
     public void resign(String email) {
         userRepository.findByEmail(email).ifPresent(user -> {
-            user.setEnabled(false);
+            //user.setEnabled(false); => expire date가 지나면 DB에 의해 레코드가 삭제되므로 설정필요 없음. 설정하면 탈퇴 취소가 불가능.
             user.setExpireDate(LocalDate.now().plusDays(15));
             userRepository.save(user);
         });
@@ -50,7 +50,7 @@ public class UserService {
 
     public void cancelResign(String email) {
         userRepository.findByEmail(email).ifPresent(user -> {
-            if (!user.isEnabled()) {
+            if (user.getExpireDate() != null) {
                 user.setEnabled(true);
                 user.setExpireDate(null);
                 userRepository.save(user);

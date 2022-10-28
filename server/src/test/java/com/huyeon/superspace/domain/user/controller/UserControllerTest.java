@@ -13,9 +13,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
 import java.time.LocalDate;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -27,27 +30,27 @@ public class UserControllerTest {
     UserService userService;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
     MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
 
-    @BeforeAll
-    void init() {
-        UserSignUpReq request = new UserSignUpReq("TEST_USER", "test@test.com", "12345", null);
-        User user = new User(request);
-        userRepository.save(user);
-    }
+    Cookie cookie;
 
-    @AfterAll
-    void clear() {
-        userRepository.deleteById("test@test.com");
+    @BeforeAll
+    void login() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .post("/auth/login?username=test@test.com&password=12345&remember-me=true")
+                )
+                .andExpect(cookie().exists("remember-me"))
+                .andExpect(result -> {
+                    cookie = result.getResponse().getCookie("remember-me");
+                });
     }
 
     @Test
+    @Transactional
     @DisplayName("회원정보 수정")
     void editInfo() throws Exception {
         //given
@@ -56,6 +59,7 @@ public class UserControllerTest {
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/user/edit")
+                        .cookie(cookie)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(changeUser))
         );
@@ -79,11 +83,13 @@ public class UserControllerTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("회원탈퇴")
     void resign() throws Exception {
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete("/api/user/resign")
+                        .cookie(cookie)
         );
 
         //then
@@ -91,6 +97,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("회원탈퇴 취소")
     void cancelResign() throws Exception {
         //given
@@ -99,6 +106,7 @@ public class UserControllerTest {
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/user/resign")
+                        .cookie(cookie)
         );
 
         //then

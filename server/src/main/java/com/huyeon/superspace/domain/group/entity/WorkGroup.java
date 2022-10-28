@@ -20,6 +20,7 @@ public class WorkGroup extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NonNull
     private String name;
 
     private String urlPath;

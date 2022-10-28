@@ -81,8 +81,10 @@ $(document).on('keyup', '.tag', (e) => {
         })
 
         put(url, request)
-            .then(() => {
-                $('#tags').append(`<input class="tag" placeholder="#태그 추가">`);
+            .then((res) => {
+                if (res.ok) {
+                    $('#tags').append(`<input class="tag" placeholder="#태그 추가">`);
+                }
             })
             .catch((error) => {
                 alert("태그 저장에 실패했습니다!");

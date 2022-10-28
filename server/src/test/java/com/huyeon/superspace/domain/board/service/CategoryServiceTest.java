@@ -1,83 +1,113 @@
 package com.huyeon.superspace.domain.board.service;
 
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
-import com.huyeon.superspace.domain.board.service.CategoryService;
-import com.huyeon.superspace.domain.group.entity.WorkGroup;
-import com.huyeon.superspace.domain.user.entity.User;
-import com.huyeon.superspace.domain.group.entity.UserGroup;
+import com.huyeon.superspace.domain.board.entity.Category;
 import com.huyeon.superspace.domain.board.repository.CategoryRepository;
+import com.huyeon.superspace.domain.group.dto.GroupDto;
+import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.group.repository.GroupRepository;
-import com.huyeon.superspace.domain.group.repository.UserGroupRepository;
-import com.huyeon.superspace.domain.user.repository.UserRepository;
-import org.junit.jupiter.api.Assertions;
+import com.huyeon.superspace.domain.group.service.GroupService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 public class CategoryServiceTest {
+    @Autowired
+    private GroupService groupService;
+
+    @Autowired
+    private GroupRepository groupRepository;
+
     @Autowired
     private CategoryService categoryService;
 
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @Autowired
-    private GroupRepository groupRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private UserGroupRepository userGroupRepository;
-
-    @BeforeTestClass
+    @BeforeAll
     public void initTest() {
-        User user = userRepository.findByEmail("user@test.com").orElseThrow();
-        WorkGroup testGroup = WorkGroup.builder().name("testGroup").build();
-        testGroup = groupRepository.save(testGroup);
+        String email = "test@test.com";
+        GroupDto request = new GroupDto("테스트그룹", "test-group", "test");
+        groupService.createGroup(email, request);
+    }
 
-        UserGroup userGroup = UserGroup.builder()
-                .user(user)
-                .group(testGroup)
-                .build();
+    @Test
+    @DisplayName("카테고리 생성")
+    void createCategory(){
+        //given
+        CategoryDto request = new CategoryDto(1L, "Level 1-1", -1);
+        String groupUrl = "test-group";
 
-        userGroupRepository.save(userGroup);
+        //when
+        categoryService.createCategory(request, groupUrl);
+
+        //then
+        Optional<Category> category = categoryRepository.findById(2L);
+        assertTrue(category.isPresent());
+        assertEquals("Level 1-1", category.get().getName());
+        assertEquals(1L, category.get().getParentId());
     }
 
     @DisplayName("카테고리 조회 테스트")
     @Test
-    void getRootOfCategoryTreeTest() throws Exception {
+    void getRootOfCategoryTreeTest(){
         //given
-        WorkGroup workGroup = groupRepository.findByUrlPath("test-group").orElseThrow();
+        WorkGroup workGroup = createTestCategory();
 
         //when
         CategoryDto rootCategory = categoryService.getRootOfCategoryTree(workGroup);
 
         //then
-        Assertions.assertEquals("==최상위 카테고리==", rootCategory.getName());
-        Assertions.assertEquals("Level 1-1",
-                rootCategory.getSubCategories().get(0) //Root
-                        .getSubCategories().get(0) //Level 1-1
-                        .getName());
-        Assertions.assertEquals("Level 2-2",
-                rootCategory.getSubCategories().get(0) //Root
-                        .getSubCategories().get(0) //Level 1-1
-                        .getSubCategories().get(1) //Level 2-2
-                        .getName());
+        assertEquals("==최상위 카테고리==", rootCategory.getName());
+        assertEquals("Level 1-1", rootCategory.getSubCategories().get(0).getName());
     }
 
-    @DisplayName("카테고리 순서/계층 변경 테스트")
+    private WorkGroup createTestCategory() {
+        String groupUrl = "test-group";
+
+        CategoryDto request1 = new CategoryDto(1L, "Level 1-1", -1);
+        categoryService.createCategory(request1, groupUrl);
+
+        CategoryDto request2 = new CategoryDto(2L, "Level 2-1", -1);
+        categoryService.createCategory(request2, groupUrl);
+
+        return groupRepository.findByUrlPath(groupUrl).orElseThrow();
+    }
+
     @Test
-    void editCategoryTree() {
-        WorkGroup workGroup = groupRepository.findByUrlPath("test-group").orElseThrow();
-        CategoryDto rootOfCategoryTree = categoryService.getRootOfCategoryTree(workGroup);
+    @Transactional
+    @DisplayName("카테고리 순서/계층 변경 테스트")
+    void editCategory(){
+        //given
+        WorkGroup workGroup = createTestCategory();
 
-        //parentId만 바꿔주면 알아서 계층은 잡힘
+        //when: Level 1-1과 Level 2-1의 순서 및 계층 변경
+        CategoryDto categoryDto1 = new CategoryDto(null, "Level 2-1", 0);
+        CategoryDto categoryDto2 = new CategoryDto(null, "Level 1-1", 1);
+        List<CategoryDto> newList = List.of(categoryDto1, categoryDto2);
 
+        categoryService.editCategory(newList, workGroup.getUrlPath());
+
+        //then
+        CategoryDto root = categoryService.getRootOfCategoryTree(workGroup);
+        List<CategoryDto> subCategories = root.getSubCategories();
+        assertEquals("Level 2-1", subCategories.get(0).getName());
+        assertEquals(1L, subCategories.get(0).getParentId());
+        assertEquals("Level 1-1",
+                subCategories.get(0).getSubCategories().get(0).getName());
+        assertEquals(2L,
+                subCategories.get(0).getSubCategories().get(0).getParentId());
     }
 }
