@@ -21,11 +21,10 @@ import java.util.List;
 public class NotyApiController {
     private final NotyService notyService;
 
-    @GetMapping(value = "/subscribe/{notyType}", produces = "text/event-stream")
+    @GetMapping(value = "/subscribe", produces = "text/event-stream")
     @ResponseStatus(HttpStatus.OK)
     public SseEmitter subscribe(
             @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable String notyType,
             @RequestHeader(value = "Last-Event-ID",
                     required = false,
                     defaultValue = ""
@@ -36,7 +35,7 @@ public class NotyApiController {
                 .lastEventId(lastEventId)
                 .build();
 
-        return notyService.subscribe(emitterAdaptor, notyType);
+        return notyService.subscribe(emitterAdaptor);
     }
 
     @GetMapping("/{page}")
@@ -50,21 +49,13 @@ public class NotyApiController {
 
     @GetMapping("/unread")
     public ResponseEntity<?> unreadNoty(@AuthenticationPrincipal UserDetails userDetails) {
-        List<NotyDto> unreadEvent = notyService.sendUnreadEvent(userDetails.getUsername());
+        List<NotyDto> unreadEvent = notyService.findUnreadEvent(userDetails.getUsername());
         return new ResponseEntity<>(unreadEvent, HttpStatus.OK);
     }
 
     @PutMapping
     public ResponseEntity<?> setReadNoty(@RequestBody List<Long> idList) {
         notyService.setReadNoty(idList);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @DeleteMapping("/close/{notyType}")
-    public ResponseEntity<?> closeEmitter(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable String notyType) {
-        notyService.completeEmitter(userDetails.getUsername(), notyType);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

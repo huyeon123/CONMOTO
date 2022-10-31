@@ -32,8 +32,8 @@ public class NotyService {
     private final NotyReceiverRepository receiverRepository;
     private final EmitterRepository emitterRepository;
 
-    public SseEmitter subscribe(EmitterAdaptor ea, String notyType) {
-        String emitterId = makeTypeIncludeId(ea.getUserEmail(), notyType);
+    public SseEmitter subscribe(EmitterAdaptor ea) {
+        String emitterId = makeTypeIncludeId(ea.getUserEmail());
         SseEmitter emitter = getEmitter(emitterId);
 
         ea.setEmitterId(emitterId);
@@ -46,8 +46,8 @@ public class NotyService {
         return emitter;
     }
 
-    private String makeTypeIncludeId(String userEmail, String notyType) {
-        return userEmail + "_" + notyType;
+    private String makeTypeIncludeId(String userEmail) {
+        return userEmail + "_" + System.currentTimeMillis();
     }
 
     private SseEmitter getEmitter(String emitterId) {
@@ -70,7 +70,7 @@ public class NotyService {
         emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
     }
 
-    public List<NotyDto> sendUnreadEvent(String userEmail) {
+    public List<NotyDto> findUnreadEvent(String userEmail) {
         List<ReceivedNoty> receivedNotices = receiverRepository.findAllByUserEmail(userEmail);
         return receivedNotices.stream()
                 .filter(ReceivedNoty::isUnread)
@@ -146,15 +146,5 @@ public class NotyService {
             receiver.setRead(true);
             receiverRepository.save(receiver);
         });
-    }
-
-    public void completeEmitter(String userEmail, String notyType) {
-        String emitterId = makeTypeIncludeId(userEmail, notyType);
-        SseEmitter emitter = findEmitter(emitterId);
-        emitter.complete();
-    }
-
-    private SseEmitter findEmitter(String emitterId) {
-        return emitterRepository.findEmitterById(emitterId).orElseThrow();
     }
 }

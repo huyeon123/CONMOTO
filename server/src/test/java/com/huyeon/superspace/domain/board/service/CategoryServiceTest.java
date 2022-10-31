@@ -21,6 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Transactional
 @SpringBootTest
 public class CategoryServiceTest {
     @Autowired
@@ -112,7 +113,6 @@ public class CategoryServiceTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("카테고리 순서/계층 변경 테스트")
     void editCategory(){
         //given

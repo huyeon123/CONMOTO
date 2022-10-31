@@ -1,6 +1,5 @@
 package com.huyeon.superspace.domain.noty.repository;
 
-import com.huyeon.superspace.domain.noty.repository.EmitterRepository;
 import com.huyeon.superspace.domain.noty.entity.Noty;
 import com.huyeon.superspace.domain.noty.entity.NotyType;
 import org.junit.jupiter.api.Assertions;

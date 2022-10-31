@@ -2,7 +2,6 @@ package com.huyeon.superspace.domain.board.controller;
 
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
 import com.huyeon.superspace.domain.board.service.CategoryService;
-import com.huyeon.superspace.domain.group.service.GroupService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,11 +32,14 @@ public class CategoryControllerTest {
     @Autowired
     ControllerTestUtil util;
 
+    @Autowired
+    MockMvc mockMvc;
+
     Cookie cookie;
 
     @BeforeAll
     void init() throws Exception {
-        cookie = util.login();
+        cookie = util.login(mockMvc);
         util.createTestGroup();
     }
 
@@ -47,7 +50,7 @@ public class CategoryControllerTest {
         CategoryDto request = new CategoryDto(1L, "Level 1-1", 0);
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/category?groupUrl=test-group")
                         .cookie(cookie)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -69,7 +72,7 @@ public class CategoryControllerTest {
         );
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/category?groupUrl=test-group")
                         .cookie(cookie)
                         .contentType(MediaType.APPLICATION_JSON)

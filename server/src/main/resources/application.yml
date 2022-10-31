@@ -49,7 +49,7 @@ jwt:
 logging:
   level:
     org.hibernate.type: trace
-#    com.zaxxer.hikari.pool.HikariPool: debug
+    com.zaxxer.hikari.pool.HikariPool: debug
 ---
 jasypt:
   encryptor:

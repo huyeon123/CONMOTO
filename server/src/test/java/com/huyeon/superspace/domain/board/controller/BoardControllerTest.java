@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,11 +34,14 @@ public class BoardControllerTest {
     @Autowired
     ControllerTestUtil util;
 
+    @Autowired
+    MockMvc mockMvc;
+
     Cookie cookie;
 
     @BeforeAll
     void init() throws Exception {
-        cookie = util.login();
+        cookie = util.login(mockMvc);
         util.createTestGroup();
     }
 
@@ -48,7 +52,7 @@ public class BoardControllerTest {
         String groupUrl = "test-group";
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/board/" + groupUrl + "/create")
                         .cookie(cookie)
         );
@@ -69,7 +73,7 @@ public class BoardControllerTest {
         Long boardId = util.createTestBoard();
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/board/" + boardId)
                         .cookie(cookie)
         );
@@ -95,7 +99,7 @@ public class BoardControllerTest {
                 .build();
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/board/" + boardId)
                         .cookie(cookie)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +117,7 @@ public class BoardControllerTest {
         Long boardId = util.createTestBoard();
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete("/api/board/" + boardId)
                         .cookie(cookie)
         );
@@ -131,7 +135,7 @@ public class BoardControllerTest {
         PageReqDto request = new PageReqDto(groupUrl, LocalDateTime.now().plusSeconds(5), 0);
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/board/latest/group")
                         .cookie(cookie)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -158,7 +162,7 @@ public class BoardControllerTest {
         PageReqDto request = new PageReqDto(categoryName, LocalDateTime.now().plusSeconds(5), 0);
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/board/latest/category")
                         .cookie(cookie)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -185,7 +189,7 @@ public class BoardControllerTest {
         PageReqDto request = new PageReqDto(null, LocalDateTime.now().plusSeconds(5), 0);
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/board/latest/user")
                         .cookie(cookie)
                         .contentType(MediaType.APPLICATION_JSON)

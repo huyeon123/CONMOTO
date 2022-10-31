@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,9 @@ public class ContentsControllerTest {
 
     @Autowired
     ControllerTestUtil util;
+    
+    @Autowired
+    MockMvc mockMvc;
 
     Cookie cookie;
 
@@ -37,7 +41,7 @@ public class ContentsControllerTest {
 
     @BeforeAll
     void init() throws Exception {
-        cookie = util.login();
+        cookie = util.login(mockMvc);
         util.createTestGroup();
         boardId = util.createTestBoard();
     }
@@ -46,7 +50,7 @@ public class ContentsControllerTest {
     @DisplayName("컨텐츠 생성")
     void createContent() throws Exception {
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/contents/" + boardId)
                         .cookie(cookie)
         );
@@ -68,7 +72,7 @@ public class ContentsControllerTest {
         ContentDto request = new ContentDto("테스트 컨텐츠");
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/contents/" + contentId)
                         .cookie(cookie)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -86,7 +90,7 @@ public class ContentsControllerTest {
         Long contentId = contentService.createContent(boardId);
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete("/api/contents/" + contentId)
                         .cookie(cookie)
         );

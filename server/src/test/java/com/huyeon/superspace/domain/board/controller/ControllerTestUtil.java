@@ -26,12 +26,9 @@ class ControllerTestUtil {
     BoardService boardService;
 
     @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
     ObjectMapper objectMapper;
 
-    protected Cookie login() throws Exception {
+    protected Cookie login(MockMvc mockMvc) throws Exception {
         Cookie[] cookie = new Cookie[1];
         mockMvc.perform(
                         MockMvcRequestBuilders

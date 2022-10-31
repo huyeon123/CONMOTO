@@ -11,7 +11,7 @@ $(function () {
             }
         })
 
-    const eventSource = new EventSource("/api/noty/subscribe/default");
+    const eventSource = new EventSource("/api/noty/subscribe");
 
     if (eventSource.OPEN) {
         console.log("[NOTY] : EventStream Successfully Created.");
@@ -31,11 +31,6 @@ $(function () {
         } catch (e) {
             console.error("JSON")
         }
-    });
-
-    $(window).on("beforeunload unload", () => {
-        delWithoutBody("/api/noty/close/default")
-            .catch(error => console.error(error));
     });
 });
 

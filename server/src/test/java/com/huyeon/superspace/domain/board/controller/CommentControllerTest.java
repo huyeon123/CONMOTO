@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,9 @@ public class CommentControllerTest {
 
     @Autowired
     ControllerTestUtil util;
+    
+    @Autowired
+    MockMvc mockMvc;
 
     Cookie cookie;
 
@@ -38,7 +42,7 @@ public class CommentControllerTest {
 
     @BeforeAll
     void init() throws Exception {
-        cookie = util.login();
+        cookie = util.login(mockMvc);
         util.createTestGroup();
         boardId = util.createTestBoard();
     }
@@ -50,7 +54,7 @@ public class CommentControllerTest {
         CommentDto request = CommentDto.builder().comment("테스트 댓글").build();
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/comment?boardId=" + boardId)
                         .cookie(cookie)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -69,7 +73,7 @@ public class CommentControllerTest {
         PageReqDto request = new PageReqDto(null, LocalDateTime.now().plusSeconds(5), 0);
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/comment/latest")
                         .cookie(cookie)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -96,7 +100,7 @@ public class CommentControllerTest {
                 .build();
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/comment")
                         .cookie(cookie)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -114,7 +118,7 @@ public class CommentControllerTest {
         Long commentId = createTestComment();
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete("/api/comment?commentId=" + commentId)
                         .cookie(cookie)
         );

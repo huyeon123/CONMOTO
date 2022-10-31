@@ -1,7 +1,6 @@
 package com.huyeon.superspace.domain.board.controller;
 
 import com.huyeon.superspace.domain.board.dto.TagDto;
-import com.huyeon.superspace.domain.board.service.TagService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +27,9 @@ public class TagControllerTest {
 
     @Autowired
     ControllerTestUtil util;
+    
+    @Autowired
+    MockMvc mockMvc;
 
     Cookie cookie;
 
@@ -34,7 +37,7 @@ public class TagControllerTest {
 
     @BeforeAll
     void init() throws Exception {
-        cookie = util.login();
+        cookie = util.login(mockMvc);
         util.createTestGroup();
         boardId = util.createTestBoard();
     }
@@ -46,7 +49,7 @@ public class TagControllerTest {
         List<TagDto> request = List.of(new TagDto("태그1"), new TagDto("태그2"));
 
         //when
-        ResultActions resultActions = util.mockMvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/tag?boardId=" + boardId)
                         .cookie(cookie)
                         .contentType(MediaType.APPLICATION_JSON)
