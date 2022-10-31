@@ -2,8 +2,6 @@ package com.huyeon.superspace.domain.board.controller;
 
 import com.huyeon.superspace.domain.board.dto.CommentDto;
 import com.huyeon.superspace.domain.board.dto.PageReqDto;
-import com.huyeon.superspace.domain.board.entity.Board;
-import com.huyeon.superspace.domain.board.service.BoardService;
 import com.huyeon.superspace.domain.board.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +18,6 @@ import java.util.List;
 @RequestMapping("/api/comment")
 @RequiredArgsConstructor
 public class CommentApiController {
-    private final BoardService boardService;
     private final CommentService commentService;
 
     @PostMapping("/latest")
@@ -35,9 +32,8 @@ public class CommentApiController {
     public ResponseEntity<?> createComment(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam Long boardId, @RequestBody CommentDto comment) {
-        Board board = boardService.getBoard(boardId);
-        commentService.createComment(userDetails.getUsername(), board, comment);
-        return new ResponseEntity<>(HttpStatus.OK);
+        commentService.createComment(userDetails.getUsername(), boardId, comment);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping

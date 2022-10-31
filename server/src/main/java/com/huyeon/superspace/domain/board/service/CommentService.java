@@ -21,10 +21,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static com.huyeon.superspace.global.support.JsonParse.readJson;
 
 @Slf4j
 @Service
@@ -53,15 +50,11 @@ public class CommentService {
         List<CommentDto> boardComments = new ArrayList<>();
 
         for (Comment comment : comments) {
-            Board board = getBoardByComment(comment);
+            Board board = comment.getBoard();
             CommentDto boardComment = getBoardComment(board, comment);
             boardComments.add(boardComment);
         }
         return boardComments;
-    }
-
-    private Board getBoardByComment(Comment comment) {
-        return boardRepository.findById(comment.getId()).orElseThrow();
     }
 
     private CommentDto getBoardComment(Board board, Comment comment) {
@@ -92,7 +85,8 @@ public class CommentService {
         return date.getYears() + "년 전";
     }
 
-    public void createComment(String email, Board board, CommentDto commentDto) {
+    public Long createComment(String email, Long boardId, CommentDto commentDto) {
+        Board board = findBoardById(boardId);
         User author = findUserByEmail(email);
 
         Comment comment = Comment.builder()
@@ -101,16 +95,19 @@ public class CommentService {
                 .comment(commentDto.getComment())
                 .build();
 
-        commentRepository.save(comment);
+        return commentRepository.save(comment).getId();
+    }
+
+    private Board findBoardById(Long boardId) {
+        return boardRepository.findById(boardId).orElseThrow();
     }
 
     private User findUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow();
     }
 
-    public void removeComment(Long id) {
-        Comment comment = commentRepository.findById(id).orElseThrow();
-        commentRepository.delete(comment);
+    public void removeComment(Long commentId) {
+        commentRepository.deleteById(commentId);
     }
 
     public List<CommentDto> getCommentsResponseByBoardId(Long boardId) {
@@ -136,11 +133,7 @@ public class CommentService {
     }
 
     //댓글 수정이력
-    public List<CommentHistory> commentHistory(Long id) {
-        Optional<Comment> comment = commentRepository.findById(id);
-        if(comment.isPresent()) {
-            return commentHistoryRepo.findAllByCommentId(comment.get().getId());
-        }
-        return List.of();
+    public List<CommentHistory> commentHistory(Long commentId) {
+        return commentHistoryRepo.findAllByCommentId(commentId);
     }
 }

@@ -12,8 +12,6 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findAllByGroup(WorkGroup group);
 
-    List<Category> findAllByParent(Category parent);
-
     Optional<Category> findByName(String categoryName);
 
     void deleteAllByGroup(WorkGroup group);

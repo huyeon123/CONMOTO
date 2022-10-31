@@ -37,7 +37,7 @@ public class BoardService {
     private final BoardHistoryRepo boardHistoryRepo;
 
     //게시글 가져오기
-    public Board getBoard(Long id) {
+    private Board getBoard(Long id) {
         return boardRepository.findById(id).orElseThrow();
     }
 
@@ -97,7 +97,7 @@ public class BoardService {
     }
 
     public List<BoardDto> getNext10LatestInUser(PageReqDto request, String email) {
-        List<Board> newest = boardRepository.findNextLatest(email, request.getNow(), PageRequest.of(request.getNextPage(), 10));
+        List<Board> newest = boardRepository.findNextTenLatest(email, request.getNow(), PageRequest.of(request.getNextPage(), 10));
         List<BoardDto> boardDtoList = mapToDtoList(newest);
         addContents(boardDtoList);
         return boardDtoList;
@@ -155,7 +155,7 @@ public class BoardService {
     }
 
     //게시글 수정이력
-    public List<BoardHistory> boardHistory(Long id) {
+    public List<BoardHistory> findBoardHistory(Long id) {
         Board board = getBoard(id);
         return boardHistoryRepo.findAllByBoardId(board.getId());
     }

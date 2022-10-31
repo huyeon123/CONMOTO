@@ -1,15 +1,15 @@
 package com.huyeon.superspace.domain.board.dto;
 
 import com.huyeon.superspace.domain.board.entity.Category;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Collections;
 import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CategoryDto {
     private Long categoryId;
     private String name;

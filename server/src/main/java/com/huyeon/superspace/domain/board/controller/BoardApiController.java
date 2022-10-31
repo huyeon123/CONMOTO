@@ -3,7 +3,6 @@ package com.huyeon.superspace.domain.board.controller;
 import com.huyeon.superspace.domain.board.dto.BoardDto;
 import com.huyeon.superspace.domain.board.dto.BoardHeaderDto;
 import com.huyeon.superspace.domain.board.dto.PageReqDto;
-import com.huyeon.superspace.domain.board.entity.Board;
 import com.huyeon.superspace.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,7 @@ public class BoardApiController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getBoard(@PathVariable Long id) {
         try {
-            Board board = boardService.getBoard(id);
+            BoardDto board = boardService.getBoardDto(id);
             return new ResponseEntity<>(board, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

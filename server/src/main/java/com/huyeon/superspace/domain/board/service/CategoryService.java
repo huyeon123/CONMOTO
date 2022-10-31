@@ -143,6 +143,7 @@ public class CategoryService {
         categoryRepository.save(origin);
     }
 
+    @Transactional(readOnly = true)
     public Category getCategory(String categoryName) {
         return categoryRepository.findByName(categoryName).orElseThrow();
     }

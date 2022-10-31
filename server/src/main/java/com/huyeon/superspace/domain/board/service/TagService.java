@@ -27,7 +27,7 @@ public class TagService {
     }
 
     private List<Tag> getTagsByBoardId(Long boardId) {
-        return tagRepository.findAllByBoardId(boardId).orElse(List.of());
+        return tagRepository.findAllByBoardId(boardId);
     }
 
     private List<TagDto> mapToTagDto(List<Tag> tags) {

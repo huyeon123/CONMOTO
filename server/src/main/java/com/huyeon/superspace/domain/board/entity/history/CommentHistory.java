@@ -3,12 +3,14 @@ package com.huyeon.superspace.domain.board.entity.history;
 import com.huyeon.superspace.global.model.AuditEntity;
 import com.huyeon.superspace.global.model.Auditable;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
 @NoArgsConstructor
+@Getter
 @Entity
 @EntityListeners(value = AuditingEntityListener.class)
 public class CommentHistory extends AuditEntity implements Auditable {

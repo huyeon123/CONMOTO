@@ -1,8 +1,7 @@
 package com.huyeon.superspace.domain.board.controller;
 
-import com.huyeon.superspace.domain.board.entity.Board;
+import com.huyeon.superspace.domain.board.dto.ContentDto;
 import com.huyeon.superspace.domain.board.entity.ContentBlock;
-import com.huyeon.superspace.domain.board.service.BoardService;
 import com.huyeon.superspace.domain.board.service.ContentBlockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,21 +14,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/contents")
 @RequiredArgsConstructor
 public class ContentsApiController {
-    private final BoardService boardService;
     private final ContentBlockService blockService;
 
     @GetMapping("/{boardId}")
     public ResponseEntity<?> createContent(
             @PathVariable Long boardId) {
-        Board board = boardService.getBoard(boardId);
-        Long blockId = blockService.createContent(board);
+        Long blockId = blockService.createContent(boardId);
         return new ResponseEntity<>(blockId, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editContents(
             @PathVariable Long id,
-            @RequestBody ContentBlock request) {
+            @RequestBody ContentDto request) {
         blockService.writeContents(id, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }

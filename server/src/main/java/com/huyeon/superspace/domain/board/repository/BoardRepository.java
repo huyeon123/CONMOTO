@@ -3,7 +3,6 @@ package com.huyeon.superspace.domain.board.repository;
 import com.huyeon.superspace.domain.board.entity.Board;
 import com.huyeon.superspace.domain.board.entity.Category;
 import com.huyeon.superspace.domain.group.entity.WorkGroup;
-import com.huyeon.superspace.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,7 +28,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             Pageable pageable);
 
     @Query(value = "select b from Board b where updatedAt < :now and user_email = :email order by updatedAt desc")
-    List<Board> findNextLatest(
+    List<Board> findNextTenLatest(
             @Param("email") String email,
             @Param("now") LocalDateTime now,
             Pageable pageable);

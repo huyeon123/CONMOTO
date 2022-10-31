@@ -1,16 +1,16 @@
 package com.huyeon.superspace.domain.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.huyeon.superspace.domain.board.entity.Board;
 import com.huyeon.superspace.domain.board.entity.BoardStatus;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class BoardDto {
     private Long id;
 
@@ -34,6 +34,7 @@ public class BoardDto {
 
     private String url;
 
+    @JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime updatedAt;
 
     @Builder

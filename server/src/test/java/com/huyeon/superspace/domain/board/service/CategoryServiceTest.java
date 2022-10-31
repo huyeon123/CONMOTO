@@ -18,8 +18,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -60,7 +59,20 @@ public class CategoryServiceTest {
         assertEquals(1L, category.get().getParentId());
     }
 
-    @DisplayName("카테고리 조회 테스트")
+    @Test
+    @DisplayName("특정 카테고리 조회")
+    void getCategory(){
+        //given
+        String categoryName = "==최상위 카테고리==";
+
+        //when
+        Category category = categoryService.getCategory(categoryName);
+
+        //then
+        assertEquals(categoryName, category.getName());
+    }
+
+    @DisplayName("그룹 내 카테고리 계층 조회 테스트")
     @Test
     void getRootOfCategoryTreeTest(){
         //given
@@ -84,6 +96,19 @@ public class CategoryServiceTest {
         categoryService.createCategory(request2, groupUrl);
 
         return groupRepository.findByUrlPath(groupUrl).orElseThrow();
+    }
+
+    @Test
+    @DisplayName("그룹 내 카테고리 조회 테스트")
+    void getCategoryList(){
+        //given
+        WorkGroup group = createTestCategory();
+
+        //when
+        List<CategoryDto> categories = categoryService.getCategoryList(group);
+
+        //then
+        assertFalse(categories.isEmpty());
     }
 
     @Test

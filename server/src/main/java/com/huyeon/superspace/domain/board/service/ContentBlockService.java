@@ -4,6 +4,7 @@ import com.huyeon.superspace.domain.board.dto.ContentDto;
 import com.huyeon.superspace.domain.board.entity.Board;
 import com.huyeon.superspace.domain.board.entity.ContentBlock;
 import com.huyeon.superspace.domain.board.entity.history.ContentBlockHistory;
+import com.huyeon.superspace.domain.board.repository.BoardRepository;
 import com.huyeon.superspace.domain.board.repository.ContentBlockRepository;
 import com.huyeon.superspace.domain.board.repository.history.ContentBlockHistoryRepo;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ContentBlockService {
+    private final BoardRepository boardRepository;
     private final ContentBlockRepository blockRepository;
     private final ContentBlockHistoryRepo blockHistoryRepo;
 
-    public Long createContent(Board board) {
+    public Long createContent(Long boardId) {
+        Board board = findBoardById(boardId);
+
         ContentBlock block = ContentBlock.builder()
                 .board(board)
                 .build();
@@ -29,7 +33,11 @@ public class ContentBlockService {
         return blockRepository.save(block).getId();
     }
 
-    public void writeContents(Long contentId, ContentBlock request) {
+    private Board findBoardById(Long boardId) {
+        return boardRepository.findById(boardId).orElseThrow();
+    }
+
+    public void writeContents(Long contentId, ContentDto request) {
         ContentBlock current = blockRepository.findById(contentId).orElseThrow();
         current.setContent(request.getContent());
         blockRepository.save(current);
@@ -61,11 +69,7 @@ public class ContentBlockService {
     }
 
     //컨텐츠 수정이력
-    public List<ContentBlockHistory> contentHistory(Long id) {
-        Optional<ContentBlock> block = blockRepository.findById(id);
-        if (block.isPresent()) {
-            return blockHistoryRepo.findAllByBlockId(block.get().getId());
-        }
-        return List.of();
+    public List<ContentBlockHistory> contentHistory(Long contentId) {
+        return blockHistoryRepo.findAllByBlockId(contentId);
     }
 }
