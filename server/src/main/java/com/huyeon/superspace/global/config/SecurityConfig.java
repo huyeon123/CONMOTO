@@ -34,14 +34,20 @@ public class SecurityConfig {
 
                 .httpBasic().disable()
 
-                .formLogin(
-                        login -> login.loginPage("/login")
-                                .loginProcessingUrl("/auth/login")
-                                .permitAll()
-                                .defaultSuccessUrl("/workspace", false)
-                                .failureUrl("/")
-                )
+                .formLogin()
+                .loginPage("/login")
+                .loginProcessingUrl("/auth/login")
+                .permitAll()
+                .defaultSuccessUrl("/workspace", false)
+                .failureUrl("/")
 
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .deleteCookies("remember-me", "JSESSIONID")
+
+                .and()
                 .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
 
                 .sessionManagement()

@@ -100,6 +100,10 @@ button.save {
     background-color: #77d78d;
 }
 
+.margin-5 {
+    margin: 5px;
+}
+
 .margin-top-10 {
     margin-top: 10px;
 }
@@ -117,4 +121,12 @@ button.save {
 .time {
     color: gray;
     font-size: 14px;
+}
+
+.opacity-90 {
+    opacity: 0.9;
+}
+
+.pointer {
+    cursor: pointer;
 }

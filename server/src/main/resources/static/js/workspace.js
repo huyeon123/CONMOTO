@@ -18,6 +18,10 @@ function moveToManageCategoryPage() {
     window.location.href = "/workspace/" + groupUrl + "/category";
 }
 
+function moveToLogoutPage() {
+    window.location.href = "/logout";
+}
+
 $(document).on('mouseover', '#super-space-app__sidebar', () => {
     $("#sidebar__fold").animate({
         opacity: 1
