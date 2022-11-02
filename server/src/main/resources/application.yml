@@ -1,91 +1,18 @@
 spring:
-  profiles:
-    active: test
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
----
-server:
-  tomcat:
-    threads:
-      max: 4
-
-spring:
   config:
-    activate:
-      on-profile: test
-  h2:
-    console:
-      enabled: true
-  jpa:
-    defer-datasource-initialization: true #data.sql같은 datasource를 시스템 실행 이후에 적용
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-  datasource:
-    hikari:
-      connection-timeout: 3000
-      validation-timeout: 3000
-      maximum-pool-size: 15
-      max-lifetime: 10000
-
-  thymeleaf:
-    prefix:
-      - classpath: templates/
-      - classpath: static/
-    suffix:
-      - .html
-    cache: false
-    check-template-location: true
-
-  devtools:
-    livereload:
-      enabled: true
+    import: optional:configserver:http://localhost:8888
+  application:
+    name: was
+  profiles:
+    active: test
 
 jwt:
   header: Authorization
   secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
   token-validity-in-seconds: 86400
 
-logging:
-  level:
-    org.hibernate.type: trace
-    com.zaxxer.hikari.pool.HikariPool: debug
----
-jasypt:
-  encryptor:
-    bean: jasyptStringEncryptor
-
-server:
-  tomcat:
-    threads:
-      max: 6
-
-spring:
-  config:
-    activate:
-      on-profile: dev
-  jpa:
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-    hibernate:
-      ddl-auto: update #create-drop : 테이블 생성 및 종료 시점에 삭제, update : 수정사항만 반영
-  datasource:
-    url: jdbc:mysql://localhost:3306/skeleton
-    username: root
-    password: tkfkdg7!
-    hikari:
-      connection-timeout: 3000
-      validation-timeout: 3000
-      maximum-pool-size: 21
-      max-lifetime: 10000
-
-logging:
-  level:
-    org.hibernate.type: trace
-#    com.zaxxer.hikari.pool.HikariPool: debug
----
+encrypt:
+  key: ${ENCRYPT_KEY}

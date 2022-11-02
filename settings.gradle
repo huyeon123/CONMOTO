@@ -1,2 +1,3 @@
 rootProject.name = 'skeleton'
 include 'server'
+include 'config-server'
