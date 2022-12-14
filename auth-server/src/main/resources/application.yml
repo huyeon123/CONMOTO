@@ -1,0 +1,13 @@
+server:
+  port: 8002
+
+spring:
+  config:
+    import: optional:configserver:http://localhost:8888
+  application:
+    name: auth
+  profiles:
+    active: dev
+
+encrypt:
+  key: ${ENCRYPT_KEY}

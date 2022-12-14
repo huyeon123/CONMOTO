@@ -1,0 +1,13 @@
+server:
+  port: 8001
+
+spring:
+  config:
+    import: optional:configserver:http://localhost:8888
+  application:
+    name: gateway
+  profiles:
+    active: dev
+
+encrypt:
+  key: ${ENCRYPT_KEY}
