@@ -1,0 +1,14 @@
+dependencies {
+    // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-gateway
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway:3.1.4'
+
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
