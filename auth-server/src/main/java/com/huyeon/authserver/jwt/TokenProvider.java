@@ -1,5 +1,6 @@
 package com.huyeon.authserver.jwt;
 
+import com.huyeon.authserver.auth.dto.UserTokenInfo;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -11,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -23,19 +25,17 @@ import java.util.stream.Collectors;
 @Component
 public class TokenProvider implements InitializingBean {
     private static final String AUTHORITIES_KEY = "auth";
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L; //30분
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000L; //7일
     private final String secret;
-    private final long tokenValidityInMilliseconds;
     private Key key;
 
     /**
      * Bean이 생성되고 생성자에서 yaml 파일에 설정해 놓은 값을 주입 받은 후
      * secret값을 Base64로 Decode해 key변수에 할당 (afterPropertiesSet)
      */
-    public TokenProvider(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.token-validity-in-seconds}") long tokenValidityInMilliseconds) {
+    public TokenProvider(@Value("${jwt.secret}") String secret) {
         this.secret = secret;
-        this.tokenValidityInMilliseconds = tokenValidityInMilliseconds * 1000;
     }
 
     @Override
@@ -44,19 +44,44 @@ public class TokenProvider implements InitializingBean {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createToken(Authentication authentication) {
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
+    public UserTokenInfo createToken(Authentication authentication) {
         long now = new Date().getTime();
-        Date validity = new Date(now + tokenValidityInMilliseconds);
+
+        String accessToken = createAccessToken((UserDetails) authentication.getPrincipal(), now);
+        String refreshToken = createRefreshToken(authentication.getName(), now);
+
+        return UserTokenInfo.builder()
+                .accessToken(accessToken)
+                .accessTokenExpireTime(ACCESS_TOKEN_EXPIRE_TIME)
+                .refreshToken(refreshToken)
+                .refreshTokenExpireTime(REFRESH_TOKEN_EXPIRE_TIME)
+                .build();
+    }
+
+    public String createAccessToken(UserDetails userDetails, long now) {
+        String authorities = getAuthorities(userDetails);
+        Date accessTokenExpiration = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
 
         return Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(userDetails.getUsername())
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(validity)
+                .setExpiration(accessTokenExpiration)
+                .compact();
+    }
+
+    private String getAuthorities(UserDetails userDetails) {
+        return userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+    }
+
+    private String createRefreshToken(String userEmail, long now) {
+        Date refreshTokenExpiration = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
+
+        return userEmail + "-" + Jwts.builder()
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setExpiration(refreshTokenExpiration)
                 .compact();
     }
 
@@ -85,11 +110,6 @@ public class TokenProvider implements InitializingBean {
                 .parseClaimsJws(token);
     }
 
-    public String getSubject(String token) {
-        Claims claims = getClaim(token);
-        return claims.getSubject();
-    }
-
     public boolean validateToken(String token) {
         try {
             parseClaims(token);
@@ -102,6 +122,15 @@ public class TokenProvider implements InitializingBean {
             log.info("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
             log.info("JWT 토큰이 잘못되었습니다.");
+        }
+        return false;
+    }
+
+    public boolean isExpired(String token) {
+        try {
+            parseClaims(token);
+        } catch (ExpiredJwtException e) {
+            return true;
         }
         return false;
     }
