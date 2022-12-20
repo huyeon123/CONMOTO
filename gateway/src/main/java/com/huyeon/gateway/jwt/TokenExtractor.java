@@ -14,7 +14,6 @@ import java.security.Key;
 @Component
 public class TokenExtractor implements InitializingBean {
     private final String secret;
-    private final long tokenValidityInMilliseconds;
     private Key key;
 
     /**
@@ -22,10 +21,8 @@ public class TokenExtractor implements InitializingBean {
      * secret값을 Base64로 Decode해 key변수에 할당 (afterPropertiesSet)
      */
     public TokenExtractor(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.token-validity-in-seconds}") long tokenValidityInMilliseconds) {
+            @Value("${jwt.secret}") String secret) {
         this.secret = secret;
-        this.tokenValidityInMilliseconds = tokenValidityInMilliseconds * 1000;
     }
 
     @Override

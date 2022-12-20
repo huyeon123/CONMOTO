@@ -26,25 +26,37 @@ public class JwtAuthGatewayFilter extends AbstractGatewayFilterFactory<JwtAuthGa
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
-            try {
-                String token = resolveAuthToken(exchange);
-                if (tokenExtractor.validateToken(token)) {
-                    String email = tokenExtractor.getSubject(token);
+            String accessToken = resolveAccessToken(exchange);
 
-                    addAuthHeaders(exchange.getRequest(), email);
-
-                    return chain.filter(exchange);
-                }
-            } catch (NullPointerException e) {
-                log.info("JWT 토큰을 획득할 수 없습니다.");
+            if (isValidToken(accessToken)) {
+                attachAuthId(exchange, accessToken);
+            } else {
+                return onError(exchange, "유효하지 않는 JWT 입니다.", HttpStatus.UNAUTHORIZED);
             }
-            return onError(exchange, "JWT 토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED);
+
+            return chain.filter(exchange);
         };
     }
 
-    private String resolveAuthToken(ServerWebExchange exchange) throws NullPointerException{
-        return exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION)
-                .get(0).substring(7);
+    private boolean isValidToken(String token) {
+        return token != null && tokenExtractor.validateToken(token);
+    }
+
+    private String resolveAccessToken(ServerWebExchange exchange) {
+        try {
+            return exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION)
+                    .get(0).substring(7);
+        } catch (NullPointerException e) {
+            log.info("JWT를 획득할 수 없습니다.");
+            return null;
+        }
+    }
+
+    private void attachAuthId(
+            ServerWebExchange exchange,
+            String token) {
+        String email = tokenExtractor.getSubject(token);
+        addAuthHeaders(exchange.getRequest(), email);
     }
 
 
@@ -54,13 +66,10 @@ public class JwtAuthGatewayFilter extends AbstractGatewayFilterFactory<JwtAuthGa
                 .build();
     }
 
-    private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
+    private Mono<Void> onError(ServerWebExchange exchange, String msg, HttpStatus status) {
         ServerHttpResponse response = exchange.getResponse();
-
-        response.setStatusCode(httpStatus);
-
-        log.error(err);
-
+        response.setStatusCode(status);
+        log.info(msg);
         return response.setComplete();
     }
 
