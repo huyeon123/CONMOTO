@@ -2,7 +2,6 @@ package com.huyeon.authserver.config;
 
 import com.huyeon.authserver.jwt.JwtAccessDeniedHandler;
 import com.huyeon.authserver.jwt.JwtAuthenticationEntryPoint;
-import com.huyeon.authserver.jwt.TokenProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,14 +19,13 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity(debug = true)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
-    private final TokenProvider tokenProvider;
     private final CorsFilter corsFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+        return http
                 //JWT 사용
                 .csrf().disable()
 
@@ -54,17 +52,12 @@ public class SecurityConfig {
                 //Authorize Request
                 .and()
                 .authorizeHttpRequests()
-                .antMatchers("/", "/**").permitAll()
+                .antMatchers("/auth/**").permitAll()
                 .anyRequest().authenticated()
 
                 //JWT Config
                 .and()
-                .apply(new JwtSecurityConfig(tokenProvider))
-
-                .and()
-                .rememberMe();
-
-        return http.build();
+                .build();
     }
 
     @Bean
