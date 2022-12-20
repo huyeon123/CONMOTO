@@ -1,0 +1,29 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+
+    // LocalDateTime 형식을 바인딩하기 위해 잭슨 모듈 추가
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2'
+
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools
+    developmentOnly 'org.springframework.boot:spring-boot-devtools:2.7.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    implementation 'org.springframework.cloud:spring-cloud-starter-config:3.1.4'
+}
+
+configurations {
+    runtimeClasspath{
+        extendsFrom developmentOnly
+    }
+}
