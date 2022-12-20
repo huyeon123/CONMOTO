@@ -1,6 +1,3 @@
-server:
-  port: 8001
-
 spring:
   config:
     import: optional:configserver:http://localhost:8888
