@@ -1,5 +1,6 @@
 rootProject.name = 'skeleton'
-include 'server'
+include 'api-server'
+include 'front-server'
 include 'config-server'
 include 'auth-server'
 include 'gateway'
