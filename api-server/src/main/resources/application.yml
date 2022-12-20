@@ -1,0 +1,13 @@
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  config:
+    import: optional:configserver:http://localhost:8888
+  application:
+    name: was
+  profiles:
+    active: dev
+
+encrypt:
+  key: ${ENCRYPT_KEY}
