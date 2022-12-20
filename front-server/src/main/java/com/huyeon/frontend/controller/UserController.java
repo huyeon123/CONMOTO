@@ -1,6 +1,6 @@
 package com.huyeon.frontend.controller;
 
-import com.huyeon.frontend.aop.RequestAop;
+import com.huyeon.frontend.aop.refreshAccessTokenAop;
 import com.huyeon.frontend.util.Fetch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Slf4j
@@ -21,7 +20,7 @@ public class UserController {
 
     @GetMapping("/info")
     public String myPage(
-            @CookieValue(RequestAop.REFRESH_KEY) String refreshToken,
+            @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
             Model model) {
         fetch.bindResponse(
@@ -33,7 +32,7 @@ public class UserController {
 
     @GetMapping("/board")
     public String myBoardPage(
-            @CookieValue(RequestAop.REFRESH_KEY) String refreshToken,
+            @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
             Model model) {
         fetch.bindResponse(
@@ -45,7 +44,7 @@ public class UserController {
 
     @GetMapping("/comment")
     public String myCommentPage(
-            @CookieValue(RequestAop.REFRESH_KEY) String refreshToken,
+            @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
             Model model) {
         fetch.bindResponse(
@@ -57,7 +56,7 @@ public class UserController {
 
     @GetMapping("/resign")
     public String resignPage(
-            @CookieValue(RequestAop.REFRESH_KEY) String refreshToken,
+            @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
             Model model) {
         fetch.bindResponse(
@@ -69,7 +68,7 @@ public class UserController {
 
     @GetMapping("/noty")
     public String notyCenterPage(
-            @CookieValue(RequestAop.REFRESH_KEY) String refreshToken,
+            @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
             Model model) {
         fetch.bindResponse(

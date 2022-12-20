@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/workspace_layout}">
+<head>
+    <title>카테고리 관리 페이지</title>
+    <link th:href="@{/css/category-manage.css}" rel="stylesheet">
+    <script th:src="@{/js/category/category-manage.js}"></script>
+</head>
+<div class="flex-column-center wrapper" layout:fragment="content">
+    <div class="content__header">
+        <h1>카테고리 관리</h1>
+        <span>현재 그룹의 카테고리를 수정할 수 있습니다.</span>
+    </div>
+    <div class="content__body">
+        <ul id="sortable">
+            <li class="list-group-item ui-state-default" id="root">
+                <input th:id="${rootCategory.categoryId}" name="root" th:value="${rootCategory.name}"
+                       placeholder="TEST">
+            </li>
+            <div th:each="category, index : ${rootCategory.subCategories}">
+                <li class="list-group-item list-group-item-action ui-state-default level1">
+                    <div class="flex-horizon-center">
+                        <input th:id="${category.categoryId}" th:value="${category.name}" placeholder="L1">
+                        <span class="edit material-icons md-18 gray material-symbols-outlined">edit</span>
+                    </div>
+                </li>
+                <div th:each="category2: ${category.subCategories}">
+                    <li class="list-group-item list-group-item-action ui-state-default level2">
+                        <div class="flex-horizon-center">
+                            <input th:id="${category2.categoryId}" th:value="${category2.name}" placeholder="L2">
+                            <span class="edit material-icons md-18 gray material-symbols-outlined">edit</span>
+                        </div>
+                    </li>
+                    <div th:each="category3: ${category2.subCategories}">
+                        <li class="list-group-item list-group-item-action ui-state-default level3">
+                            <div class="flex-horizon-center">
+                                <input th:id="${category3.categoryId}" th:value="${category3.name}" placeholder="L3">
+                                <span class="edit material-icons md-18 gray material-symbols-outlined">edit</span>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </div>
+        </ul>
+        <div class="flex-space-between">
+            <button class="warn margin-top-10" type="button" onclick="location.href='/workspace'">취소</button>
+            <button class="default margin-top-10" type="button" onclick="save()">저장</button>
+        </div>
+    </div>
+</div>
+</html>

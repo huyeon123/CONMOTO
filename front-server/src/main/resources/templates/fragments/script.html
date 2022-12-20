@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lagn="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<th:block th:fragment="scriptFragment">
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+    <script src="https://unpkg.com/event-source-polyfill@1.0.25/src/eventsource.js"></script>
+    <script th:src="@{/js/util/fetch.js}"></script>
+    <script th:src="@{/js/util/sse_noty.js}"></script>
+    <script th:src="@{/js/workspace.js}"></script>
+    <script th:src="@{/js/util/bootstrap.js}"></script>
+</th:block>
+</html>

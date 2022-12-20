@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<div id="super-space-app__sidebar" th:fragment="sideBarFragment">
+    <div class="sidebar">
+        <div id="logo" class="sidebar-section">
+            <div id="super-space__title">SUPER SPACE</div>
+            <i class="material-icons" id="sidebar__fold">first_page</i>
+        </div>
+        <div id="info" class="sidebar-section">
+            <div style="width: 100%">
+                <div class="items" th:onclick="|location.href='@{/user/info}'|">내 활동</div>
+                <div class="items" th:onclick="|location.href='@{/user/noty}'|">알림</div>
+            </div>
+        </div>
+        <div id="group-list" class="sidebar-section">
+            <div class="sidebar-header">
+                <span>그룹 리스트</span>
+                <i class="material-icons md-18 gray" onclick="moveToCreateGroupPage()">add</i>
+            </div>
+            <div id="group-container" th:each="group: ${sideBar.groups}">
+                <div class="sidebar-elements">
+                    <span th:utext="|> ${group.name}|" th:onclick="|location.href='@{/workspace/{groupUrl}(groupUrl=${group.url})}'|"> GROUP NAME</span>
+                    <i class="material-icons md-16 gray" th:id="${group.url}" onclick="moveToGroupManagingPage(this.id)">settings</i>
+                </div>
+            </div>
+        </div>
+        <div id="category" class="sidebar-section">
+            <div class="sidebar-header">
+                <span>카테고리</span>
+                <div>
+                    <i class="material-icons md-18 gray" onclick="moveToCreateCategoryPage()">add</i>
+                    <i class="material-icons md-16 gray" onclick="moveToManageCategoryPage()">settings</i>
+                </div>
+            </div>
+            <div id="category-container" th:each="category: ${sideBar.categories}">
+                <div class="sidebar-elements">
+                    <span th:utext="|> ${category.name}|" onclick="moveToCategoryPage(this)"></span>
+                </div>
+                <div class="sidebar-elements level2"
+                     th:each="category2: ${category.subCategories}">
+                    <span th:utext="|> ${category2.name}|" onclick="moveToCategoryPage(this)"> > TT </span>
+                    <div class="sidebar-elements"
+                         th:each="category3: ${category2.subCategories}">
+                        <span th:utext="|> ${category3.name}|" onclick="moveToCategoryPage(this)"> > TT </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="margin-5 pointer" onclick="moveToLogoutPage()"><b class="opacity-90">로그아웃</b></div>
+</div>
+</html>
