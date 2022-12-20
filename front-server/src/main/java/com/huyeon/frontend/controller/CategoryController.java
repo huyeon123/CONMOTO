@@ -1,6 +1,6 @@
 package com.huyeon.frontend.controller;
 
-import com.huyeon.frontend.aop.RequestAop;
+import com.huyeon.frontend.aop.refreshAccessTokenAop;
 import com.huyeon.frontend.util.Fetch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ public class CategoryController {
 
     @GetMapping("/new-category")
     public String createCategoryPage(
-            @CookieValue(RequestAop.REFRESH_KEY) String refreshToken,
+            @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
             @PathVariable String groupUrl,
             Model model) {
@@ -34,7 +34,7 @@ public class CategoryController {
 
     @GetMapping("/category")
     public String manageCategoryPage(
-            @CookieValue(RequestAop.REFRESH_KEY) String refreshToken,
+            @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
             @PathVariable String groupUrl,
             Model model) {
@@ -48,7 +48,7 @@ public class CategoryController {
 
     @GetMapping("/{categoryName}")
     public String categoryPage(
-            @CookieValue(RequestAop.REFRESH_KEY) String refreshToken,
+            @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
             @PathVariable String groupUrl,
             @PathVariable String categoryName,

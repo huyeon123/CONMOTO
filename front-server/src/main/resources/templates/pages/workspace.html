@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/workspace_layout}">
+<head>
+    <title>Welcome!</title>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.css"
+          integrity="sha512-fxF1t7b0mpb/ytjBeSu/OpgXxCVcX5/O8AJGYvHaWmNfi/lYLtttitFK17K4iKBva4iU9dcZ+BIV7dyD/nDdSw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"
+            integrity="sha512-Yk47FuYNtuINE1w+t/KT4BQ7JaycTCcrvlSvdK/jry6Kcxqg5vN7/svVWCxZykVzzJHaxXk5T9jnFemZHSYgnw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script th:src="@{/js/board/board-util.js}"></script>
+    <script th:src="@{/js/group/groupboard.js}"></script>
+</head>
+
+<div class="wrapper" layout:fragment="content">
+    <div class="content-header">
+        <h1 style="font-family: Azonix, sans-serif">Super Space</h1>
+        <div class="flex-column">
+            <p>새로운 그룹을 만들거나, 그룹에 가입해보세요!</p>
+            <p>그룹 관리자에게 내 이메일을 알려주면 그룹에 가입할 수 있습니다.</p>
+        </div>
+    </div>
+    <div class="super-space-contents content">
+    </div>
+</div>
+</html>

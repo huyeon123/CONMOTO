@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/workspace_layout}">
+<head>
+    <title th:text="|${groupName} - 그룹 삭제|"></title>
+    <script th:src="@{/js/group/group-delete.js}"></script>
+</head>
+<div class="flex-column-center wrapper" layout:fragment="content">
+    <div class="content__header">
+        <h1 th:text="|${groupName} - 그룹 삭제|"></h1>
+        <span>해당 그룹을 삭제합니다.</span>
+    </div>
+    <div class="content__body">
+        <h2 style="font-weight: 600">정말로 그룹을 삭제하시겠습니까?</h2>
+        <p>다음 아래의 사항을 확인해주세요.</p>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">멤버가 본인 외 <span style="color: red">타인이 있을 경우 삭제가 불가능</span>합니다.</li>
+            <li class="list-group-item">그룹 삭제 시 카테고리, 게시글 등 <span style="color: red">관련 데이터도 모두 삭제</span>됩니다.</li>
+            <li class="list-group-item" style="font-weight: bold; color: red">삭제 버튼 클릭 시 바로 삭제되며, 복구가 불가능합니다.</li>
+        </ul>
+        <p id="today"></p>
+        <div class="content__body__block">
+            <label class="flex-horizon-center">
+                <span>동의합니다.</span>
+                <input id="agree" type="checkbox" class="check-box">
+            </label>
+        </div>
+        <div class="content__body__block space-between">
+            <button type="button" class="default" onclick="location.href='/workspace'">취소</button>
+            <button type="button" class="warn" onclick="resignReq()">삭제</button>
+        </div>
+    </div>
+</div>
+</html>

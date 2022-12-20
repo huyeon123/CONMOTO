@@ -1,0 +1,104 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h2 {
+    text-align: center;
+}
+
+b {
+    font-size: 20px;
+    padding: 5px 0;
+}
+
+form {
+    border: 3px solid #f1f1f1;
+}
+
+.display {
+    width: 100%;
+}
+
+.form__element {
+    margin: 10px;
+}
+
+input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+button {
+    width: 100%;
+    padding: 10px 15px;
+    margin: 8px 0;
+    border: none;
+    font-size: 20px;
+    background-color: #04AA6D;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+.cancel-btn {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+    font-size: 13px;
+}
+
+.duplicate-check {
+    width: auto;
+    margin-left: 5px;
+    padding: 4px 10px;
+    background-color: #6c757d;
+    border-radius: 5px;
+    font-size: 13px;
+}
+
+.container {
+    padding: 16px;
+}
+
+.support {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 16px;
+    background-color: #f1f1f1;
+}
+
+.support > div {
+    margin-top: 5px;
+}
+
+#sign_in {
+    width: 700px;
+    border-radius: 5px;
+    margin: 0 auto;
+    align-items: center;
+}
+
+#sign_up {
+    width: 800px;
+    border-radius: 5px;
+}
+
+#logo {
+    display: flex;
+    min-width: 600px;
+    margin: 0 auto;
+}

@@ -1,0 +1,46 @@
+li {
+    list-style: none;
+}
+
+input {
+    width: fit-content;
+    height: 30px;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+}
+
+input:focus {
+    outline: none;
+}
+
+.ui-state-default {
+    display: flex;
+    height: 55px;
+    padding: 5px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ui-state-highlight {
+    height: 50px;
+}
+
+.level2 {
+    width: 95%;
+    float: right;
+}
+
+.level3 {
+    width: 90%;
+    float: right;
+}
+
+.change-level {
+    padding: 5px 5px 0;
+    margin: 3px;
+}
+
+.edit {
+    cursor: pointer;
+}

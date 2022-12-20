@@ -1,0 +1,132 @@
+.flex-horizon-center {
+    display: flex;
+    align-items: center;
+}
+
+.flex-space-between {
+    display: flex;
+    justify-content: space-between;
+}
+
+.flex-end {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-column-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.wrapper {
+    padding-left: calc(90px + env(safe-area-inset-left));
+    padding-right: calc(90px + env(safe-area-inset-right));
+}
+
+.board-wrapper {
+    padding-top: calc(30px + env(safe-area-inset-top));
+    padding-left: calc(70px + env(safe-area-inset-left));
+    padding-right: calc(70px + env(safe-area-inset-right));
+}
+
+.content__header {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    min-width: 700px;
+    min-height: 100px;
+    padding: 0 12px 10px;
+    border-bottom: 1px solid #b9bbbe;
+}
+
+.content__body {
+    display: flex;
+    flex-flow: column;
+    margin-top: 15px;
+    width: 70%;
+    min-width: 600px;
+}
+
+.content__body__block {
+    margin: 5px 0;
+}
+
+span.label {
+    width: fit-content;
+    min-width: 100px;
+    display: inline-block;
+    vertical-align: center;
+    padding: 5px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+input {
+    width: 90%;
+    height: 30px;
+    border-radius: 3px;
+    border: thin #85858d;
+    font-size: 15px;
+}
+
+input:focus {
+    outline: none;
+}
+
+button {
+    width: fit-content;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 3px !important;
+    padding: 5px 10px;
+    cursor: Pointer;
+}
+
+button.default {
+    background-color: #4d91f5;
+}
+
+button.warn {
+    background-color: #f54d4d;
+}
+
+button.save {
+    background-color: #77d78d;
+}
+
+.margin-5 {
+    margin: 5px;
+}
+
+.margin-top-10 {
+    margin-top: 10px;
+}
+
+.padding-side-5 {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.check-box {
+    width: auto;
+    margin: 5px;
+}
+
+.time {
+    color: gray;
+    font-size: 14px;
+}
+
+.opacity-90 {
+    opacity: 0.9;
+}
+
+.pointer {
+    cursor: pointer;
+}

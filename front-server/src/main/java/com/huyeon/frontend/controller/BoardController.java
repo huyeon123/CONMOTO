@@ -1,6 +1,6 @@
 package com.huyeon.frontend.controller;
 
-import com.huyeon.frontend.aop.RequestAop;
+import com.huyeon.frontend.aop.refreshAccessTokenAop;
 import com.huyeon.frontend.util.Fetch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class BoardController {
 
     @GetMapping("/{groupUrl}/board/{id}")
     public String boardPage(
-            @CookieValue(RequestAop.REFRESH_KEY) String refreshToken,
+            @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
             @PathVariable String groupUrl,
             @PathVariable Long id, Model model) {
