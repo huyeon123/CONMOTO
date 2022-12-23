@@ -29,18 +29,4 @@ public class UserController {
         response.put("user", user);
         return response;
     }
-
-    @NotGroupPage
-    @GetMapping("/resign")
-    public Map<String, Object> resignPage(@RequestHeader("X-Authorization-Id") String userEmail) {
-        //Todo: 사용자 회원탈퇴
-        return new HashMap<>();
-    }
-
-    @NotGroupPage
-    @GetMapping("/noty")
-    public Map<String, Object> notyCenterPage(@RequestHeader("X-Authorization-Id") String userEmail) {
-        //Todo: 사용자 수신 알림 반환
-        return new HashMap<>();
-    }
 }
