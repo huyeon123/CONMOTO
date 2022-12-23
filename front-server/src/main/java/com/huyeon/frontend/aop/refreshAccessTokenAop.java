@@ -13,6 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -24,7 +27,6 @@ public class refreshAccessTokenAop {
 
     @Pointcut("within(com.huyeon.frontend.controller..*) && !@annotation(PurePage)")
     public void needSideBarAndHeader() {
-
     }
 
     @Around("needSideBarAndHeader()")
@@ -41,34 +43,26 @@ public class refreshAccessTokenAop {
     }
 
     private String generateNewAccessToken(String refreshToken) {
-        if (refreshToken != null) {
-            String resolveRefreshToken = resolveRefreshToken(refreshToken);
-            if (isNotValidToken(resolveRefreshToken)) return null;
-        }
+        if (isNotValidToken(refreshToken)) return null;
+
         RestTemplate restTemplate = new RestTemplate();
 
         return restTemplate.exchange(
                 AUTH_SERVER_ADDR + "/refresh",
                 HttpMethod.GET,
-                getRequestBody(refreshToken),
+                getRequestBody(),
                 String.class
         ).getBody();
-    }
-
-    private String resolveRefreshToken(String refreshToken) {
-        int delimiterIndex = refreshToken.indexOf("-");
-        return refreshToken.substring(delimiterIndex + 1);
     }
 
     private boolean isNotValidToken(String token) {
         return token == null || !tokenExtractor.validateToken(token);
     }
 
-    private HttpEntity<?> getRequestBody(String refreshToken) {
+    private HttpEntity<?> getRequestBody() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set(REFRESH_KEY, refreshToken);
 
-        return new HttpEntity<>(refreshToken, httpHeaders);
+        return new HttpEntity<>(httpHeaders);
     }
 }
