@@ -9,6 +9,7 @@ import java.util.List;
 
 @Getter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class SideBarDto {
     private List<GroupDto> groups;
