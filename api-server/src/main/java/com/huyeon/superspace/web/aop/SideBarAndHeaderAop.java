@@ -1,14 +1,10 @@
 package com.huyeon.superspace.web.aop;
 
-import com.huyeon.superspace.web.common.dto.AppHeaderDto;
-import com.huyeon.superspace.web.common.dto.SideBarDto;
 import com.huyeon.superspace.web.common.service.SideBarAndHeaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -38,10 +34,9 @@ public class SideBarAndHeaderAop {
         Object[] args = joinPoint.getArgs();
         String userEmail = (String) args[USER_EMAIL];
 
-        SideBarDto blankSideBar = sideBarAndHeaderService.getBlankSideBar(userEmail);
-        AppHeaderDto blankHeader = sideBarAndHeaderService.getBlankHeader(userEmail);
+        Map<String, Object> blankHeaderAndSideBar = sideBarAndHeaderService.getBlankHeaderAndSideBar(userEmail);
 
-        putAll(returnValue, blankSideBar, blankHeader);
+        returnValue.putAll(blankHeaderAndSideBar);
     }
 
     @AfterReturning(value = "cutGroupPage()", returning = "returnValue")
@@ -50,14 +45,8 @@ public class SideBarAndHeaderAop {
         String userEmail = (String) args[USER_EMAIL];
         String groupUrl = (String) args[GROUP_URL];
 
-        SideBarDto sideBar = sideBarAndHeaderService.getSideBar(userEmail, groupUrl);
-        AppHeaderDto appHeader = sideBarAndHeaderService.getAppHeader(userEmail, groupUrl);
+        Map<String, Object> headerAndSideBar = sideBarAndHeaderService.getHeaderAndSideBar(userEmail, groupUrl);
 
-        putAll(returnValue, sideBar, appHeader);
-    }
-
-    private void putAll(Map<String, Object> response, SideBarDto sideBar, AppHeaderDto appHeader) {
-        response.put("sideBar", sideBar);
-        response.put("appHeader", appHeader);
+        returnValue.putAll(headerAndSideBar);
     }
 }

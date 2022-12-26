@@ -8,6 +8,7 @@ import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.group.repository.GroupRepository;
 import com.huyeon.superspace.domain.group.repository.UserGroupRepository;
 import com.huyeon.superspace.domain.user.repository.UserRepository;
+import com.huyeon.superspace.global.support.CacheUtils;
 import com.huyeon.superspace.web.common.dto.AppHeaderDto;
 import com.huyeon.superspace.web.common.dto.SideBarDto;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,10 @@ import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
@@ -28,12 +30,31 @@ import static java.util.stream.Collectors.groupingBy;
 @RequiredArgsConstructor
 public class SideBarAndHeaderService {
 
+    private static final String CACHE_KEY_TYPE = "HSB"; //Header and SideBar
+
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
     private final GroupRepository groupRepository;
     private final CategoryRepository categoryRepository;
+    private final CacheUtils cacheUtils;
 
-    public AppHeaderDto getAppHeader(String email, String groupUrl) {
+    public Map<String, Object> getHeaderAndSideBar(String email, String groupUrl) {
+        String key = String.format("%s:%s:%s", CACHE_KEY_TYPE, email, groupUrl);
+        Map<String, Object> cache = cacheUtils.findCache(key);
+
+        if (!cache.isEmpty()) return cache;
+
+        AppHeaderDto appHeader = getAppHeader(email, groupUrl);
+        SideBarDto sideBar = getSideBar(email, groupUrl);
+        
+        Map<String, Object> value = Map.of("appHeader", appHeader, "sideBar", sideBar);
+        cacheUtils.setExpire(key, 1, TimeUnit.DAYS);
+        cacheUtils.saveCache(key, value);
+
+        return value;
+    }
+
+    private AppHeaderDto getAppHeader(String email, String groupUrl) {
         String groupName = findGroupNameByUrl(groupUrl);
         String userName = findUserNameByEmail(email);
 
@@ -51,7 +72,7 @@ public class SideBarAndHeaderService {
         return userRepository.findNameByEmail(email).orElseThrow();
     }
 
-    public SideBarDto getSideBar(String userEmail, String groupUrl) {
+    private SideBarDto getSideBar(String userEmail, String groupUrl) {
         List<GroupDto> groups = getGroups(userEmail);
         List<CategoryDto> categories = getHierarchicalCategories(groupUrl);
 
@@ -68,7 +89,7 @@ public class SideBarAndHeaderService {
         return userGroups.stream()
                 .map(UserGroup::getGroup)
                 .map(GroupDto::new)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private List<CategoryDto> getHierarchicalCategories(String groupUrl) {
@@ -81,7 +102,7 @@ public class SideBarAndHeaderService {
         return groupRepository.findByUrlPath(urlPath).orElseThrow();
     }
 
-    public CategoryDto getRootOfCategoryTree(WorkGroup group) {
+    private CategoryDto getRootOfCategoryTree(WorkGroup group) {
         List<CategoryDto> categories = getCategoryList(group);
 
         CategoryDto rootCategoryDto = getRoot(categories);
@@ -97,7 +118,7 @@ public class SideBarAndHeaderService {
     private List<CategoryDto> getCategoryList(WorkGroup group) {
         return categoryRepository.findAllByGroup(group).stream()
                 .map(CategoryDto::new)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private CategoryDto getRoot(List<CategoryDto> categories) {
@@ -123,9 +144,16 @@ public class SideBarAndHeaderService {
         return rootCategory.getSubCategories();
     }
 
-    public SideBarDto getBlankSideBar(String user) {
+    public Map<String, Object> getBlankHeaderAndSideBar(String email) {
+        AppHeaderDto blankHeader = getBlankHeader(email);
+        SideBarDto blankSideBar = getBlankSideBar(email);
+
+        return Map.of("appHeader", blankHeader, "sideBar", blankSideBar);
+    }
+
+    public SideBarDto getBlankSideBar(String email) {
         return SideBarDto.builder()
-                .groups(getGroups(user))
+                .groups(getGroups(email))
                 .categories(List.of(new CategoryDto(-1L, "그룹을 선택하세요.", -1)))
                 .build();
     }
