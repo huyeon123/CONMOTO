@@ -79,7 +79,8 @@ public class TokenProvider implements InitializingBean {
     private String createRefreshToken(String userEmail, long now) {
         Date refreshTokenExpiration = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
 
-        return userEmail + "-" + Jwts.builder()
+        return Jwts.builder()
+                .setSubject(userEmail)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(refreshTokenExpiration)
                 .compact();
@@ -101,6 +102,10 @@ public class TokenProvider implements InitializingBean {
 
     private Claims getClaim(String token) {
         return parseClaims(token).getBody();
+    }
+
+    public String getSubject(String token) {
+        return getClaim(token).getSubject();
     }
 
     private Jws<Claims> parseClaims(String token) {

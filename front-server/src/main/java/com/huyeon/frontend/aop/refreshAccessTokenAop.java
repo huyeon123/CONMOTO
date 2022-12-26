@@ -24,7 +24,6 @@ public class refreshAccessTokenAop {
 
     @Pointcut("within(com.huyeon.frontend.controller..*) && !@annotation(PurePage)")
     public void needSideBarAndHeader() {
-
     }
 
     @Around("needSideBarAndHeader()")
@@ -41,10 +40,8 @@ public class refreshAccessTokenAop {
     }
 
     private String generateNewAccessToken(String refreshToken) {
-        if (refreshToken != null) {
-            String resolveRefreshToken = resolveRefreshToken(refreshToken);
-            if (isNotValidToken(resolveRefreshToken)) return null;
-        }
+        if (isNotValidToken(refreshToken)) return null;
+
         RestTemplate restTemplate = new RestTemplate();
 
         return restTemplate.exchange(
@@ -53,11 +50,6 @@ public class refreshAccessTokenAop {
                 getRequestBody(refreshToken),
                 String.class
         ).getBody();
-    }
-
-    private String resolveRefreshToken(String refreshToken) {
-        int delimiterIndex = refreshToken.indexOf("-");
-        return refreshToken.substring(delimiterIndex + 1);
     }
 
     private boolean isNotValidToken(String token) {
@@ -69,6 +61,6 @@ public class refreshAccessTokenAop {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set(REFRESH_KEY, refreshToken);
 
-        return new HttpEntity<>(refreshToken, httpHeaders);
+        return new HttpEntity<>(httpHeaders);
     }
 }

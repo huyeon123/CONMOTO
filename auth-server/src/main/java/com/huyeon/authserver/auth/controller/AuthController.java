@@ -4,16 +4,12 @@ import com.huyeon.authserver.auth.dto.UserSignInReq;
 import com.huyeon.authserver.auth.dto.UserSignUpReq;
 import com.huyeon.authserver.auth.dto.UserTokenInfo;
 import com.huyeon.authserver.auth.service.AuthService;
-import com.huyeon.authserver.jwt.JwtFilter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -27,8 +23,8 @@ import java.util.Map;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private static final int ACCESS_TOKEN_EXPIRE_TIME = 30 * 60;
-    private static final int REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60;
+
+    private static final String REFRESH_KEY_NAME = "Super-Space-Refresh";
     private final AuthService authService;
 
     @PostMapping("/signup")
@@ -41,19 +37,16 @@ public class AuthController {
     public String logIn(@RequestBody UserSignInReq request, HttpServletResponse response) {
         UserTokenInfo userTokenInfo = authService.logIn(request);
 
-        //TODO: Refresh Token Redis 저장 - Service단에서
-        Cookie access = setCookie("Super-Space-Access", userTokenInfo.getAccessToken(), ACCESS_TOKEN_EXPIRE_TIME);
-        Cookie refresh = setCookie("Super-Space-Refresh", userTokenInfo.getRefreshToken(), REFRESH_TOKEN_EXPIRE_TIME);
-        response.addCookie(access);
+        Cookie refresh = setCookie(userTokenInfo);
         response.addCookie(refresh);
 
         return userTokenInfo.getAccessToken();
     }
 
-    private Cookie setCookie(String name, String token, int expireTime) {
-        Cookie cookie = new Cookie(name, token);
+    private Cookie setCookie(UserTokenInfo token) {
+        Cookie cookie = new Cookie(REFRESH_KEY_NAME, token.getRefreshToken());
         cookie.setPath("/");
-        cookie.setMaxAge(expireTime);
+        cookie.setMaxAge((int) (token.getRefreshTokenExpireTime() / 1000));
         cookie.setHttpOnly(true);
 
         return cookie;
@@ -65,23 +58,15 @@ public class AuthController {
     }
 
     @GetMapping("/refresh")
-    public String generateNewAccessToken(HttpServletRequest request) {
-        String refreshToken = findRefreshToken(request);
+    public String generateNewAccessToken(
+            HttpServletRequest request,
+            @CookieValue(name = REFRESH_KEY_NAME, required = false) String refreshToken) {
+        if (refreshToken == null) refreshToken = getRefreshToken(request);
         return authService.generateNewAccessToken(refreshToken);
     }
 
-    private String findRefreshToken(HttpServletRequest request) {
-        String header = request.getHeader("Super-Space-Refresh");
-
-        if (header == null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (cookie.getName().equals("Super-Space-Refresh")) {
-                    return cookie.getValue();
-                }
-            }
-        }
-
-        return header;
+    private String getRefreshToken(HttpServletRequest request) {
+        return request.getHeader(REFRESH_KEY_NAME);
     }
 
     @Getter

@@ -4,6 +4,7 @@ import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import lombok.*;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class GroupDto {
     private String name;
