@@ -47,7 +47,7 @@ public class refreshAccessTokenAop {
         return restTemplate.exchange(
                 AUTH_SERVER_ADDR + "/refresh",
                 HttpMethod.GET,
-                getRequestBody(),
+                getRequestBody(refreshToken),
                 String.class
         ).getBody();
     }
@@ -56,9 +56,10 @@ public class refreshAccessTokenAop {
         return token == null || !tokenExtractor.validateToken(token);
     }
 
-    private HttpEntity<?> getRequestBody() {
+    private HttpEntity<?> getRequestBody(String refreshToken) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.set(REFRESH_KEY, refreshToken);
 
         return new HttpEntity<>(httpHeaders);
     }

@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
+    private static final String REFRESH_KEY_NAME = "Super-Space-Refresh";
     private final AuthService authService;
 
     @PostMapping("/signup")
@@ -40,7 +42,7 @@ public class AuthController {
     }
 
     private Cookie setCookie(UserTokenInfo token) {
-        Cookie cookie = new Cookie("Super-Space-Refresh", token.getRefreshToken());
+        Cookie cookie = new Cookie(REFRESH_KEY_NAME, token.getRefreshToken());
         cookie.setPath("/");
         cookie.setMaxAge((int) (token.getRefreshTokenExpireTime() / 1000));
         cookie.setHttpOnly(true);
@@ -54,8 +56,15 @@ public class AuthController {
     }
 
     @GetMapping("/refresh")
-    public String generateNewAccessToken(@CookieValue(name = "Super-Space-Refresh") String refreshToken) {
+    public String generateNewAccessToken(
+            HttpServletRequest request,
+            @CookieValue(name = REFRESH_KEY_NAME, required = false) String refreshToken) {
+        if (refreshToken == null) refreshToken = getRefreshToken(request);
         return authService.generateNewAccessToken(refreshToken);
+    }
+
+    private String getRefreshToken(HttpServletRequest request) {
+        return request.getHeader(REFRESH_KEY_NAME);
     }
 
     @Getter
