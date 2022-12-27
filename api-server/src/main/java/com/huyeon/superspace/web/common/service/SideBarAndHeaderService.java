@@ -5,6 +5,7 @@ import com.huyeon.superspace.domain.board.repository.CategoryRepository;
 import com.huyeon.superspace.domain.group.dto.GroupDto;
 import com.huyeon.superspace.domain.group.entity.UserGroup;
 import com.huyeon.superspace.domain.group.entity.WorkGroup;
+import com.huyeon.superspace.domain.group.repository.GroupManagerRepository;
 import com.huyeon.superspace.domain.group.repository.GroupRepository;
 import com.huyeon.superspace.domain.group.repository.UserGroupRepository;
 import com.huyeon.superspace.domain.user.repository.UserRepository;
@@ -35,6 +36,7 @@ public class SideBarAndHeaderService {
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
     private final GroupRepository groupRepository;
+    private final GroupManagerRepository managerRepository;
     private final CategoryRepository categoryRepository;
     private final CacheUtils cacheUtils;
 
@@ -46,9 +48,15 @@ public class SideBarAndHeaderService {
 
         AppHeaderDto appHeader = getAppHeader(email, groupUrl);
         SideBarDto sideBar = getSideBar(email, groupUrl);
-        
-        Map<String, Object> value = Map.of("appHeader", appHeader, "sideBar", sideBar);
-        cacheUtils.setExpire(key, 1, TimeUnit.DAYS);
+        String role = getRole(email, groupUrl);
+
+        Map<String, Object> value = Map.of(
+                "appHeader", appHeader,
+                "sideBar", sideBar,
+                "role", role
+        );
+
+        cacheUtils.setExpire(key, 1, TimeUnit.MINUTES);
         cacheUtils.saveCache(key, value);
 
         return value;
@@ -75,6 +83,7 @@ public class SideBarAndHeaderService {
     private SideBarDto getSideBar(String userEmail, String groupUrl) {
         List<GroupDto> groups = getGroups(userEmail);
         List<CategoryDto> categories = getHierarchicalCategories(groupUrl);
+        addUserRole(groups, userEmail);
 
         if (categories == null) categories = Collections.emptyList();
 
@@ -90,6 +99,15 @@ public class SideBarAndHeaderService {
                 .map(UserGroup::getGroup)
                 .map(GroupDto::new)
                 .collect(toList());
+    }
+
+    private void addUserRole(List<GroupDto> groups, String userEmail) {
+        for (GroupDto group : groups) {
+            String groupUrl = group.getUrl();
+            String role = getRole(userEmail, groupUrl);
+            group.setRole(role);
+        }
+
     }
 
     private List<CategoryDto> getHierarchicalCategories(String groupUrl) {
@@ -152,9 +170,12 @@ public class SideBarAndHeaderService {
     }
 
     public SideBarDto getBlankSideBar(String email) {
+        List<GroupDto> groups = getGroups(email);
+        addUserRole(groups, email);
+
         return SideBarDto.builder()
-                .groups(getGroups(email))
-                .categories(List.of(new CategoryDto(-1L, "그룹을 선택하세요.", -1)))
+                .groups(groups)
+                .categories(List.of())
                 .build();
     }
 
@@ -165,5 +186,12 @@ public class SideBarAndHeaderService {
                 .userName(username)
                 .groupName("그룹을 선택하세요.")
                 .build();
+    }
+
+    public String getRole(String email, String groupUrl) {
+        boolean isManager = managerRepository.existsByEmailAndUrl(email, groupUrl);
+
+        if (isManager) return "ROLE_MANAGER";
+        else return "ROLE_MEMBER";
     }
 }

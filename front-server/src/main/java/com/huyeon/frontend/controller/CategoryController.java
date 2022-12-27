@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Map;
+
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -25,10 +27,9 @@ public class CategoryController {
             String newAccessToken,
             @PathVariable String groupUrl,
             Model model) {
-        fetch.bindResponse(
-                "/workspace/" + groupUrl + "/new-category",
-                newAccessToken, model
-        );
+        Map<String, Object> response = fetch.get("/workspace/" + groupUrl + "/new-category", newAccessToken);
+        if (fetch.hasNoPermission(response)) return "pages/AccessDenied";
+        model.addAllAttributes(response);
         return "pages/category/newcategory";
     }
 
@@ -38,10 +39,9 @@ public class CategoryController {
             String newAccessToken,
             @PathVariable String groupUrl,
             Model model) {
-        fetch.bindResponse(
-                "/workspace/" + groupUrl + "/category",
-                newAccessToken, model
-        );
+        Map<String, Object> response = fetch.get("/workspace/" + groupUrl + "/category", newAccessToken);
+        if (fetch.hasNoPermission(response)) return "pages/AccessDenied";
+        model.addAllAttributes(response);
         return "pages/category/categorymanage";
     }
 

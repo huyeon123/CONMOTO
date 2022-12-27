@@ -6,7 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -45,10 +50,12 @@ public class GroupController {
 
     @GetMapping("/{groupUrl}/manage")
     public String groupManagingPage(
-            @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
+            @CookieValue(value = refreshAccessTokenAop.REFRESH_KEY, required = false) String refreshToken,
             String newAccessToken,
             @PathVariable String groupUrl, Model model) {
-        fetch.bindResponse("/workspace/" + groupUrl + "/manage", newAccessToken, model);
+        Map<String, Object> response = fetch.get("/workspace/" + groupUrl + "/manage", newAccessToken);
+        if (fetch.hasNoPermission(response)) return "pages/AccessDenied";
+        model.addAllAttributes(response);
         return "pages/group/groupmanage";
     }
 
@@ -57,7 +64,9 @@ public class GroupController {
             @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
             @PathVariable String groupUrl, Model model) {
-        fetch.bindResponse("/workspace/" + groupUrl + "/members", newAccessToken, model);
+        Map<String, Object> response = fetch.get("/workspace/" + groupUrl + "/members", newAccessToken);
+        if (fetch.hasNoPermission(response)) return "pages/AccessDenied";
+        model.addAllAttributes(response);
         return "pages/group/membermanage";
     }
 
@@ -66,7 +75,9 @@ public class GroupController {
             @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
             @PathVariable String groupUrl, Model model) {
-        fetch.bindResponse("/workspace/" + groupUrl + "/delete", newAccessToken, model);
+        Map<String, Object> response = fetch.get("/workspace/" + groupUrl + "/delete", newAccessToken);
+        if (fetch.hasNoPermission(response)) return "pages/AccessDenied";
+        model.addAllAttributes(response);
         return "pages/group/deletegroup";
     }
 }

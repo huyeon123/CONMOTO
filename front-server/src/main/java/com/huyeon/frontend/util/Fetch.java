@@ -53,4 +53,9 @@ public class Fetch {
             model.addAllAttributes(body);
         }
     }
+
+    public boolean hasNoPermission(Map<String, Object> response) {
+        String status = (String) response.get("status");
+        return status != null && status.startsWith("fail:");
+    }
 }
