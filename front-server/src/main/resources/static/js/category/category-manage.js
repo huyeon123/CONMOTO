@@ -1,6 +1,17 @@
 $(function () {
     $("input").attr("readonly", true);
 
+    $("input").each((idx, element) => {
+        const value = element.value;
+        const parent = element.parentElement;
+        parent.innerHTML += "<div id='virtual_dom'>" + value + "</div>";
+
+        const calWidth = $('#virtual_dom').width() + 10;
+        $('#virtual_dom').remove();
+
+        $('#' + element.id).css("width", calWidth);
+    })
+
     $("#sortable")
         .sortable({
             revert: true,
@@ -181,9 +192,14 @@ function getCategoryLevel(category) {
     }
 }
 
-$(document).on('click', '.edit', (e) => {
+$(document).on('click', '.material-symbols-outlined.edit', (e) => {
     const target = e.target.previousElementSibling;
     target.readOnly = false;
+});
+
+$(document).on('click', '.material-symbols-outlined.delete', (e) => {
+    const target = e.target.parentElement.parentElement;
+    target.remove();
 });
 
 $(document).on('keyup', 'input', (e) => {
@@ -191,4 +207,20 @@ $(document).on('keyup', 'input', (e) => {
         e.target.blur();
         e.target.readOnly = true;
     }
+});
+
+$(document).on('keydown', 'input', (e) => {
+    const eventLocationId = e.target.id;
+    const $eventLocation = $('#' + eventLocationId);
+    const $parent = $eventLocation.parent();
+    const value = e.target.value;
+
+    const $virtual_dom = $('<div id="virtual_dom">' + value + '</div>');
+    $parent.append($virtual_dom);
+
+    const calWidth = $('#virtual_dom').width() + 10;
+    const newWidth = calWidth < 850 ? calWidth : 850;
+    $('#virtual_dom').remove();
+
+    $eventLocation.css("width", newWidth);
 });

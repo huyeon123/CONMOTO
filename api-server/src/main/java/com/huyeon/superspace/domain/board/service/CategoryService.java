@@ -98,8 +98,16 @@ public class CategoryService {
                     CategoryDto change = request.get(i);
 
                     changeInfoIfDifferent(originalList, origin, change);
-
                 });
+
+        //request 개수가 더 작으면 이후에 있는 origin은 다 삭제
+        if (originalList.size() - 1 > request.size()) {
+            IntStream.range(request.size(), originalList.size())
+                    .forEach(i -> {
+                        CategoryDto origin = originalList.get(i);
+                        categoryRepository.deleteById(origin.getCategoryId());
+                    });
+        }
     }
 
     private void changeInfoIfDifferent(List<CategoryDto> originalList, CategoryDto origin, CategoryDto change) {
