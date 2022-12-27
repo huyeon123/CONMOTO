@@ -56,8 +56,8 @@ public class SideBarAndHeaderService {
                 "role", role
         );
 
-        cacheUtils.setExpire(key, 1, TimeUnit.MINUTES);
         cacheUtils.saveCache(key, value);
+        cacheUtils.setExpire(key, 1, TimeUnit.MINUTES);
 
         return value;
     }
