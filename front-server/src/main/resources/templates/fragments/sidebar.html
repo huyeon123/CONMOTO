@@ -20,14 +20,14 @@
             <div id="group-container" th:each="group: ${sideBar.groups}">
                 <div class="sidebar-elements">
                     <span th:utext="|> ${group.name}|" th:onclick="|location.href='@{/workspace/{groupUrl}(groupUrl=${group.url})}'|"> GROUP NAME</span>
-                    <i class="material-icons md-16 gray" th:id="${group.url}" onclick="moveToGroupManagingPage(this.id)">settings</i>
+                    <i class="material-icons md-16 gray" th:if="${group.role == 'ROLE_MANAGER'}" th:id="${group.url}" onclick="moveToGroupManagingPage(this.id)">settings</i>
                 </div>
             </div>
         </div>
         <div id="category" class="sidebar-section">
             <div class="sidebar-header">
                 <span>카테고리</span>
-                <div>
+                <div th:if="${role == 'ROLE_MANAGER'}">
                     <i class="material-icons md-18 gray" onclick="moveToCreateCategoryPage()">add</i>
                     <i class="material-icons md-16 gray" onclick="moveToManageCategoryPage()">settings</i>
                 </div>

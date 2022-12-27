@@ -33,7 +33,7 @@ public class refreshAccessTokenAop {
         args[1] = generateNewAccessToken(refreshToken);
 
         if (args[1] == null) {
-            return "redirect:/";
+            return "redirect:http://localhost:8000/";
         }
 
         return joinPoint.proceed(args);

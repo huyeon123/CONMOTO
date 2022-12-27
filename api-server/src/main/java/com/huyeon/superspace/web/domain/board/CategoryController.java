@@ -10,6 +10,7 @@ import com.huyeon.superspace.domain.board.service.ContentBlockService;
 import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.group.service.GroupService;
 import com.huyeon.superspace.web.annotation.GroupPage;
+import com.huyeon.superspace.web.annotation.ManagerPage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
@@ -30,6 +31,7 @@ public class CategoryController {
     private final ContentBlockService blockService;
 
     @GroupPage
+    @ManagerPage
     @GetMapping("/new-category")
     public Map<String, Object> createCategoryPage(
             @RequestHeader("X-Authorization-Id") String userEmail,
@@ -46,6 +48,7 @@ public class CategoryController {
     }
 
     @GroupPage
+    @ManagerPage
     @GetMapping("/category")
     public Map<String, Object> manageCategoryPage(
             @RequestHeader("X-Authorization-Id") String userEmail,

@@ -4,6 +4,7 @@ import com.huyeon.superspace.web.common.service.SideBarAndHeaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 
@@ -29,8 +30,12 @@ public class SideBarAndHeaderAop {
     private void cutGroupPage() {
     }
 
+    @Pointcut("@annotation(com.huyeon.superspace.web.annotation.ManagerPage)")
+    private void cutManagerPage() {
+    }
+
     @AfterReturning(value = "cutNoGroupPage()", returning = "returnValue")
-    private void extractNoGroupPageArgs(JoinPoint joinPoint, Map<String, Object> returnValue) {
+    private void attachInNotGroupPage(JoinPoint joinPoint, Map<String, Object> returnValue) {
         Object[] args = joinPoint.getArgs();
         String userEmail = (String) args[USER_EMAIL];
 
@@ -40,7 +45,7 @@ public class SideBarAndHeaderAop {
     }
 
     @AfterReturning(value = "cutGroupPage()", returning = "returnValue")
-    private void extract(JoinPoint joinPoint, Map<String, Object> returnValue) {
+    private void attachInGroupPage(JoinPoint joinPoint, Map<String, Object> returnValue) {
         Object[] args = joinPoint.getArgs();
         String userEmail = (String) args[USER_EMAIL];
         String groupUrl = (String) args[GROUP_URL];
@@ -48,5 +53,16 @@ public class SideBarAndHeaderAop {
         Map<String, Object> headerAndSideBar = sideBarAndHeaderService.getHeaderAndSideBar(userEmail, groupUrl);
 
         returnValue.putAll(headerAndSideBar);
+    }
+
+    @Around(value = "cutManagerPage()")
+    private Object attachInManagerPage(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object[] args = joinPoint.getArgs();
+        String userEmail = (String) args[USER_EMAIL];
+        String groupUrl = (String) args[GROUP_URL];
+
+        String role = sideBarAndHeaderService.getRole(userEmail, groupUrl);
+        if (role.equals("ROLE_MANAGER")) return joinPoint.proceed();
+        else return Map.of("status", "fail: 접근 권한이 없습니다.");
     }
 }

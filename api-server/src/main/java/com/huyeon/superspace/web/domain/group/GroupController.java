@@ -6,15 +6,16 @@ import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.group.service.GroupService;
 import com.huyeon.superspace.domain.user.entity.User;
 import com.huyeon.superspace.web.annotation.GroupPage;
+import com.huyeon.superspace.web.annotation.ManagerPage;
 import com.huyeon.superspace.web.annotation.NotGroupPage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -72,20 +73,26 @@ public class GroupController {
     }
 
     @GroupPage
+    @ManagerPage
     @GetMapping("/{groupUrl}/manage")
     public Map<String, Object> groupManagingPage(
             @RequestHeader("X-Authorization-Id") String userEmail,
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
 
-        WorkGroup group = groupService.getGroupByUrl(groupUrl);
-
-        response.put("groupInfo", new GroupDto(group));
+        try {
+            WorkGroup group = groupService.getGroupByUrl(groupUrl);
+            response.put("groupInfo", new GroupDto(group));
+            response.put("status", "success");
+        } catch (NoSuchElementException e) {
+            response.put("status", "fail: 해당 Url은 존재하지 않습니다.");
+        }
 
         return response;
     }
 
     @GroupPage
+    @ManagerPage
     @GetMapping("/{groupUrl}/members")
     public Map<String, Object> memberManagingPage(
             @RequestHeader("X-Authorization-Id") String userEmail,
@@ -99,6 +106,7 @@ public class GroupController {
         response.put("members", members);
 
         response.put("availableAuth", getAvailableAuthority());
+        response.put("status", "success");
         return response;
     }
 
@@ -118,6 +126,7 @@ public class GroupController {
     }
 
     @GroupPage
+    @ManagerPage
     @GetMapping("/{groupUrl}/delete")
     public Map<String, Object> groupDeletePage(
             @RequestHeader("X-Authorization-Id") String userEmail,
@@ -127,6 +136,7 @@ public class GroupController {
         String groupName = groupService.getGroupNameByUrl(groupUrl);
 
         response.put("groupName", groupName);
+        response.put("status", "success");
 
         return response;
     }
