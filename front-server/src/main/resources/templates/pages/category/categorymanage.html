@@ -22,21 +22,23 @@
                 <li class="list-group-item list-group-item-action ui-state-default level1">
                     <div class="flex-horizon-center">
                         <input th:id="${category.categoryId}" th:value="${category.name}" placeholder="L1">
-                        <span class="edit material-icons md-18 gray material-symbols-outlined">edit</span>
+                        <span class="pointer edit material-icons md-18 gray material-symbols-outlined">edit</span>
+                        <span class="pointer delete material-icons md-18 gray material-symbols-outlined">delete</span>
                     </div>
                 </li>
                 <div th:each="category2: ${category.subCategories}">
                     <li class="list-group-item list-group-item-action ui-state-default level2">
                         <div class="flex-horizon-center">
                             <input th:id="${category2.categoryId}" th:value="${category2.name}" placeholder="L2">
-                            <span class="edit material-icons md-18 gray material-symbols-outlined">edit</span>
+                            <span class="pointer edit material-icons md-18 gray material-symbols-outlined">edit</span>
+                            <span class="pointer delete material-icons md-18 gray material-symbols-outlined">delete</span>
                         </div>
                     </li>
                     <div th:each="category3: ${category2.subCategories}">
                         <li class="list-group-item list-group-item-action ui-state-default level3">
                             <div class="flex-horizon-center">
                                 <input th:id="${category3.categoryId}" th:value="${category3.name}" placeholder="L3">
-                                <span class="edit material-icons md-18 gray material-symbols-outlined">edit</span>
+                                <span class="pointer delete material-icons md-18 gray material-symbols-outlined">edit</span>
                             </div>
                         </li>
                     </div>
