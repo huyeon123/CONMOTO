@@ -15,8 +15,7 @@
     <div class="content__body">
         <ul id="sortable">
             <li class="list-group-item ui-state-default" id="root">
-                <input th:id="${rootCategory.categoryId}" name="root" th:value="${rootCategory.name}"
-                       placeholder="TEST">
+                <div style="font-size: 17px"><b>전체 카테고리</b></div>
             </li>
             <div th:each="category, index : ${rootCategory.subCategories}">
                 <li class="list-group-item list-group-item-action ui-state-default level1">
