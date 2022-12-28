@@ -1,14 +1,16 @@
 package com.huyeon.superspace.web.common.service;
 
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
-import com.huyeon.superspace.domain.board.repository.CategoryRepository;
+import com.huyeon.superspace.domain.board.service.CategoryService;
 import com.huyeon.superspace.domain.group.dto.GroupDto;
 import com.huyeon.superspace.domain.group.entity.UserGroup;
 import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.group.repository.GroupManagerRepository;
 import com.huyeon.superspace.domain.group.repository.GroupRepository;
 import com.huyeon.superspace.domain.group.repository.UserGroupRepository;
+import com.huyeon.superspace.domain.group.service.GroupService;
 import com.huyeon.superspace.domain.user.repository.UserRepository;
+import com.huyeon.superspace.domain.user.service.UserService;
 import com.huyeon.superspace.global.support.CacheUtils;
 import com.huyeon.superspace.web.common.dto.AppHeaderDto;
 import com.huyeon.superspace.web.common.dto.SideBarDto;
@@ -22,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 @Slf4j
@@ -37,7 +38,7 @@ public class SideBarAndHeaderService {
     private final UserGroupRepository userGroupRepository;
     private final GroupRepository groupRepository;
     private final GroupManagerRepository managerRepository;
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
     private final CacheUtils cacheUtils;
 
     public Map<String, Object> getHeaderAndSideBar(String email, String groupUrl) {
@@ -101,65 +102,21 @@ public class SideBarAndHeaderService {
                 .collect(toList());
     }
 
+    private List<CategoryDto> getHierarchicalCategories(String groupUrl) {
+        WorkGroup currentGroup = getGroupByUrl(groupUrl);
+        return categoryService.getCategoryTree(currentGroup);
+    }
+
     private void addUserRole(List<GroupDto> groups, String userEmail) {
         for (GroupDto group : groups) {
             String groupUrl = group.getUrl();
             String role = getRole(userEmail, groupUrl);
             group.setRole(role);
         }
-
-    }
-
-    private List<CategoryDto> getHierarchicalCategories(String groupUrl) {
-        WorkGroup currentGroup = getGroupByUrl(groupUrl);
-        CategoryDto rootCategory = getRootOfCategoryTree(currentGroup);
-        return extractRealCategory(rootCategory);
     }
 
     private WorkGroup getGroupByUrl(String urlPath) {
         return groupRepository.findByUrlPath(urlPath).orElseThrow();
-    }
-
-    private CategoryDto getRootOfCategoryTree(WorkGroup group) {
-        List<CategoryDto> categories = getCategoryList(group);
-
-        CategoryDto rootCategoryDto = getRoot(categories);
-
-        Map<Long, List<CategoryDto>> groupingByParent =
-                groupingByParent(categories);
-
-        addSubCategories(rootCategoryDto, groupingByParent);
-
-        return rootCategoryDto;
-    }
-
-    private List<CategoryDto> getCategoryList(WorkGroup group) {
-        return categoryRepository.findAllByGroup(group).stream()
-                .map(CategoryDto::new)
-                .collect(toList());
-    }
-
-    private CategoryDto getRoot(List<CategoryDto> categories) {
-        return categories.get(0);
-    }
-
-    private Map<Long, List<CategoryDto>> groupingByParent(List<CategoryDto> categories) {
-        return categories.stream()
-                .collect(groupingBy(CategoryDto::getParentId));
-    }
-
-    private void addSubCategories(CategoryDto parent, Map<Long, List<CategoryDto>> groupingByParent) {
-        List<CategoryDto> subCategories = groupingByParent.get(parent.getCategoryId());
-
-        if (subCategories == null) return;
-
-        parent.setSubCategories(subCategories);
-
-        subCategories.forEach(sc -> addSubCategories(sc, groupingByParent));
-    }
-
-    private List<CategoryDto> extractRealCategory(CategoryDto rootCategory) {
-        return rootCategory.getSubCategories();
     }
 
     public Map<String, Object> getBlankHeaderAndSideBar(String email) {

@@ -39,7 +39,7 @@ public class CategoryServiceTest {
     @BeforeAll
     public void initTest() {
         String email = "test@test.com";
-        GroupDto request = new GroupDto("테스트그룹", "test-group", "test");
+        GroupDto request = new GroupDto("테스트그룹", "test-group", "test", null);
         groupService.createGroup(email, request);
     }
 
@@ -47,7 +47,7 @@ public class CategoryServiceTest {
     @DisplayName("카테고리 생성")
     void createCategory(){
         //given
-        CategoryDto request = new CategoryDto(1L, "Level 1-1", -1);
+        CategoryDto request = new CategoryDto(0L, "Level 1-1", -1);
         String groupUrl = "test-group";
 
         //when
@@ -80,11 +80,10 @@ public class CategoryServiceTest {
         WorkGroup workGroup = createTestCategory();
 
         //when
-        CategoryDto rootCategory = categoryService.getRootOfCategoryTree(workGroup);
+        List<CategoryDto> topCategories = categoryService.getCategoryTree(workGroup);
 
         //then
-        assertEquals("==최상위 카테고리==", rootCategory.getName());
-        assertEquals("Level 1-1", rootCategory.getSubCategories().get(0).getName());
+        assertEquals("Level 1-1", topCategories.get(0).getName());
     }
 
     private WorkGroup createTestCategory() {
@@ -126,13 +125,12 @@ public class CategoryServiceTest {
         categoryService.editCategory(newList, workGroup.getUrlPath());
 
         //then
-        CategoryDto root = categoryService.getRootOfCategoryTree(workGroup);
-        List<CategoryDto> subCategories = root.getSubCategories();
-        assertEquals("Level 2-1", subCategories.get(0).getName());
-        assertEquals(1L, subCategories.get(0).getParentId());
+        List<CategoryDto> topCategories = categoryService.getCategoryTree(workGroup);
+        assertEquals("Level 2-1", topCategories.get(0).getName());
+        assertEquals(1L, topCategories.get(0).getParentId());
         assertEquals("Level 1-1",
-                subCategories.get(0).getSubCategories().get(0).getName());
+                topCategories.get(0).getSubCategories().get(0).getName());
         assertEquals(2L,
-                subCategories.get(0).getSubCategories().get(0).getParentId());
+                topCategories.get(0).getSubCategories().get(0).getParentId());
     }
 }

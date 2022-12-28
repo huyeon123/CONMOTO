@@ -1,6 +1,7 @@
 $(function () {
     $("input").attr("readonly", true);
 
+    //각 카테고리 별 input 박스 width 조절
     $("input").each((idx, element) => {
         const value = element.value;
         const parent = element.parentElement;
@@ -23,6 +24,7 @@ $(function () {
         .disableSelection();
 });
 
+//각 카테고리 별 Level Up/Down 버튼 추가
 $(function () {
     $('.ui-state-default').not('#root').append(
         `<div class="flex-space-between">
@@ -106,10 +108,8 @@ async function save() {
 function getCategoryInfo() {
     const root = $("input[name='root']").get(0);
     let family = {
-        root: 0,
         level1: null,
         level2: null,
-        level3: null,
     };
     let upperCategoryLevel = 0;
     const request = [];
@@ -157,22 +157,24 @@ function checkThirdLevelCategoryValidate(upperCategoryLevel) {
 
 function extractAndPush(idx, category, family, request) {
     const name = category.value;
-    //root를 제외했기 때문에 +1을 해줌
-    const parentOrder = extractParentOrder(idx + 1, category, family);
+    //parentIdx는 부모 Id를 바로 알 수가 없기때문에(해당 카테고리 위에 랜덤 개수의 카테고리가 있으므로)
+    //리스트에서 Idx로 먼저 조회한 후 Id를 가져오는 방식
+    const level = getCategoryLevel(category);
+    const parentIdx = extractParentIdx(idx, level, family);
 
     const categoryDto = {
         name: name,
-        parentOrder: parentOrder,
+        parentIdx: parentIdx,
+        level: level
     }
 
     request.push(categoryDto);
 }
 
-function extractParentOrder(categoryIdx, category, family) {
-    const categoryLevel = getCategoryLevel(category);
+function extractParentIdx(categoryIdx, categoryLevel, family) {
     if (categoryLevel === 1) {
         family.level1 = categoryIdx;
-        return family.root;
+        return null;
     } else if (categoryLevel === 2) {
         family.level2 = categoryIdx;
         return family.level1;
