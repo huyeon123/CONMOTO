@@ -19,4 +19,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             @Param("email") String email,
             @Param("now") LocalDateTime now,
             Pageable pageable);
+
+    void deleteAllByBoardId(Long boardId);
 }

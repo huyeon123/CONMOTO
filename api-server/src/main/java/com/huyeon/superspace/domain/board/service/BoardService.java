@@ -8,9 +8,7 @@ import com.huyeon.superspace.domain.board.entity.Board;
 import com.huyeon.superspace.domain.board.entity.BoardStatus;
 import com.huyeon.superspace.domain.board.entity.Category;
 import com.huyeon.superspace.domain.board.entity.ContentBlock;
-import com.huyeon.superspace.domain.board.repository.BoardRepository;
-import com.huyeon.superspace.domain.board.repository.CategoryRepository;
-import com.huyeon.superspace.domain.board.repository.ContentBlockRepository;
+import com.huyeon.superspace.domain.board.repository.*;
 import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.group.repository.GroupRepository;
 import com.huyeon.superspace.domain.board.entity.history.BoardHistory;
@@ -36,6 +34,8 @@ public class BoardService {
     private final CategoryRepository categoryRepository;
     private final BoardRepository boardRepository;
     private final ContentBlockRepository contentRepository;
+    private final CommentRepository commentRepository;
+    private final TagRepository tagRepository;
     private final BoardHistoryRepo boardHistoryRepo;
 
     //게시글 가져오기
@@ -152,8 +152,12 @@ public class BoardService {
 
     //게시글 삭제
     public void removeBoard(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow();
-        boardRepository.delete(board);
+        if (boardRepository.existsById(id)) {
+            tagRepository.deleteAllByBoardId(id);
+            commentRepository.deleteAllByBoardId(id);
+            contentRepository.deleteAllByBoardId(id);
+            boardRepository.deleteById(id);
+        }
     }
 
     //게시글 수정이력
