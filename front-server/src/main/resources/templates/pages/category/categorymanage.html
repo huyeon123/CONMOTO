@@ -17,7 +17,7 @@
             <li class="list-group-item ui-state-default" id="root">
                 <div style="font-size: 17px"><b>전체 카테고리</b></div>
             </li>
-            <div th:each="category, index : ${rootCategory.subCategories}">
+            <div th:each="category, index : ${topCategories}">
                 <li class="list-group-item list-group-item-action ui-state-default level1">
                     <div class="flex-horizon-center">
                         <input th:id="${category.categoryId}" th:value="${category.name}" placeholder="L1">

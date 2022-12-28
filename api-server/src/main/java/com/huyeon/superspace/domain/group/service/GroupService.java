@@ -1,6 +1,5 @@
 package com.huyeon.superspace.domain.group.service;
 
-import com.huyeon.superspace.domain.board.entity.Category;
 import com.huyeon.superspace.domain.board.repository.CategoryRepository;
 import com.huyeon.superspace.domain.group.dto.GroupDto;
 import com.huyeon.superspace.domain.group.entity.GroupManager;
@@ -44,8 +43,6 @@ public class GroupService {
 
         registerUserAsManager(user, group);
 
-        createRootCategory(group);
-
         return mapToDto(group);
     }
 
@@ -79,16 +76,6 @@ public class GroupService {
     private void registerUserAsManager(User user, WorkGroup group) {
         GroupManager groupManager = new GroupManager(user, group);
         managerRepository.save(groupManager);
-    }
-
-    private void createRootCategory(WorkGroup group) {
-        Category root = Category.builder()
-                .name("==최상위 카테고리==")
-                .parent(null)
-                .group(group)
-                .build();
-
-        categoryRepository.save(root);
     }
 
     private GroupDto mapToDto(WorkGroup group) {

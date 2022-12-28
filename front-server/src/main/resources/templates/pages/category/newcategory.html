@@ -25,6 +25,7 @@
                 <span class="label">상위 카테고리</span>
                 <div>
                     <select id="parent-category">
+                        <option value="">카테고리 없음</option>
                         <option th:each="category: ${categoryOptions}"
                                 th:value="${category.categoryId}"
                                 th:text="${category.name}">

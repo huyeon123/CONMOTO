@@ -2,8 +2,8 @@ package com.huyeon.superspace.domain.board.service;
 
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
 import com.huyeon.superspace.domain.board.entity.Category;
-import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.board.repository.CategoryRepository;
+import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.group.repository.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,13 +27,18 @@ public class CategoryService {
     public void createCategory(CategoryDto request, String groupUrl) {
         WorkGroup group = findGroupByUrl(groupUrl);
 
-        Category parentCategory = findCategoryById(request.getCategoryId()).orElseThrow();
-
         Category newCategory = Category.builder()
                 .name(request.getName())
-                .parent(parentCategory)
                 .group(group)
                 .build();
+
+        if (request.getParentId() != null) {
+            Category parentCategory = findCategoryById(request.getParentId()).orElseThrow();
+            newCategory.setParent(parentCategory);
+            newCategory.setLevel(parentCategory.getLevel() + 1);
+        } else {
+            newCategory.setLevel(1);
+        }
 
         save(newCategory);
     }
@@ -50,17 +55,19 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
-    public CategoryDto getRootOfCategoryTree(WorkGroup group) {
+    public List<CategoryDto> getCategoryTree(WorkGroup group) {
         List<CategoryDto> categories = getCategoryList(group);
 
-        CategoryDto rootCategoryDto = getRoot(categories);
+        if (categories.isEmpty()) return categories;
+
+        List<CategoryDto> topCategories = getRoot(categories);
 
         Map<Long, List<CategoryDto>> groupingByParent =
                 groupingByParent(categories);
 
-        addSubCategories(rootCategoryDto, groupingByParent);
+        addSubCategories(topCategories, groupingByParent);
 
-        return rootCategoryDto;
+        return topCategories;
     }
 
     public List<CategoryDto> getCategoryList(WorkGroup group) {
@@ -69,8 +76,12 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    private CategoryDto getRoot(List<CategoryDto> categories) {
-        return categories.get(0);
+    private List<CategoryDto> getRoot(List<CategoryDto> categories) {
+        final int TOP_LEVEL = 1;
+
+        return categories.stream()
+                .filter(categoryDto -> categoryDto.getLevel() == TOP_LEVEL)
+                .collect(Collectors.toList());
     }
 
     private Map<Long, List<CategoryDto>> groupingByParent(List<CategoryDto> categories) {
@@ -78,14 +89,16 @@ public class CategoryService {
                 .collect(groupingBy(CategoryDto::getParentId));
     }
 
-    private void addSubCategories(CategoryDto parent, Map<Long, List<CategoryDto>> groupingByParent) {
-        List<CategoryDto> subCategories = groupingByParent.get(parent.getCategoryId());
+    private void addSubCategories(List<CategoryDto> parents, Map<Long, List<CategoryDto>> groupingByParent) {
+        parents.forEach(parent -> {
+            List<CategoryDto> subCategories = groupingByParent.get(parent.getCategoryId());
 
-        if (subCategories == null) return;
+            if (subCategories == null) return;
 
-        parent.setSubCategories(subCategories);
+            parent.setSubCategories(subCategories);
 
-        subCategories.forEach(sc -> addSubCategories(sc, groupingByParent));
+            addSubCategories(subCategories, groupingByParent);
+        });
     }
 
     public void editCategory(List<CategoryDto> request, String groupUrl) {
@@ -94,7 +107,7 @@ public class CategoryService {
 
         IntStream.range(0, request.size())
                 .forEach(i -> {
-                    CategoryDto origin = originalList.get(i + 1);
+                    CategoryDto origin = originalList.get(i);
                     CategoryDto change = request.get(i);
 
                     changeInfoIfDifferent(originalList, origin, change);
@@ -136,7 +149,8 @@ public class CategoryService {
     }
 
     private Long getParentId(List<CategoryDto> originalList, CategoryDto change) {
-        return originalList.get(change.getParentOrder()).getCategoryId();
+        if (change.getParentIdx() == null) return 0L;
+        return originalList.get(change.getParentIdx()).getCategoryId();
     }
 
     private void changeName(Category origin, CategoryDto change) {
@@ -146,8 +160,16 @@ public class CategoryService {
 
     private void changeParent(List<CategoryDto> originalList, Category origin, CategoryDto change) {
         Long parentId = getParentId(originalList, change);
+
+        if (parentId == 0L) {
+            origin.setParent(null);
+            origin.setLevel(1);
+            return;
+        }
+
         Category parent = categoryRepository.findById(parentId).orElseThrow();
         origin.setParent(parent);
+        origin.setLevel(change.getLevel());
         categoryRepository.save(origin);
     }
 

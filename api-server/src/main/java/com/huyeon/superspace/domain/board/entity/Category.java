@@ -22,8 +22,10 @@ public class Category extends AuditEntity implements Auditable {
 
     private String name;
 
+    private int level;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "parent_id")
     private Category parent;
 
     @ManyToOne(fetch = FetchType.LAZY)

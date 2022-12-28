@@ -13,7 +13,6 @@ import com.huyeon.superspace.web.annotation.GroupPage;
 import com.huyeon.superspace.web.annotation.ManagerPage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -54,14 +53,14 @@ public class CategoryController {
             @RequestHeader("X-Authorization-Id") String userEmail,
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
-        response.put("rootCategory", categoryTree(groupUrl));
+        response.put("topCategories", getCategoryTree(groupUrl));
 
         return response;
     }
 
-    private CategoryDto categoryTree(String groupUrl) {
+    private List<CategoryDto> getCategoryTree(String groupUrl) {
         WorkGroup group = groupService.getGroupByUrl(groupUrl);
-        return categoryService.getRootOfCategoryTree(group);
+        return categoryService.getCategoryTree(group);
     }
 
     @GroupPage

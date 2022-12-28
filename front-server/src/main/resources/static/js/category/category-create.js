@@ -7,19 +7,19 @@ async function createCategory() {
 
     const request = {
         name: categoryName,
-        categoryId: parentCategoryId
+        parentId: parentCategoryId,
     };
 
-    const res = post(url, request);
-    res.then((data) => {
-        if (data) {
+    post(url, request)
+        .then((res) => {
+        if (res.ok) {
             location.href = "/workspace/" + groupUrl;
         }
     }).catch(error => console.error(error));
 }
 
 function hasInvalidWord(categoryName) {
-    const regex = "[\\w\\s!@#$%^&*()-.,;:\'\"\[\]{}]+";
+    const regex = /[ㄱ-ㅎ가-힣\w\s!@#$%^&*()-.,;:'"\[\]{}]+/;
     if (!regex.test(categoryName)) {
         alert("해당 이름은 사용할 수 없습니다.");
         return true;

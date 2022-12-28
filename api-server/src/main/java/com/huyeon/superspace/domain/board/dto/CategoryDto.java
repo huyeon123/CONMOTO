@@ -14,13 +14,15 @@ public class CategoryDto {
     private Long categoryId;
     private String name;
     private Long parentId;
-    private int parentOrder;
+    private Integer parentIdx;
+
+    private int level;
     private List<CategoryDto> subCategories;
 
-    public CategoryDto(Long categoryId, String name, int parentOrder) {
+    public CategoryDto(Long categoryId, String name, int parentIdx) {
         this.categoryId = categoryId;
         this.name = name;
-        this.parentOrder = parentOrder;
+        this.parentIdx = parentIdx;
     }
 
     @Builder
@@ -28,6 +30,7 @@ public class CategoryDto {
         this.categoryId = category.getId();
         this.name = category.getName();
         this.parentId = category.getParent() == null ? 0L : category.getParentId();
+        this.level = category.getLevel();
     }
 
     public List<CategoryDto> getSubCategories() {

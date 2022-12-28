@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findAllByGroup(WorkGroup group);
 
+    List<Category> findCategoryByLevel(int level);
+
     Optional<Category> findByName(String categoryName);
 
     void deleteAllByGroup(WorkGroup group);
