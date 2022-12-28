@@ -11,4 +11,6 @@ public interface ContentBlockRepository extends JpaRepository<ContentBlock, Long
     List<ContentBlock> findAllByBoardId(Long boardId);
 
     List<ContentBlock> findTop3ByBoardId(Long boardId);
+
+    void deleteAllByBoardId(Long boardId);
 }
