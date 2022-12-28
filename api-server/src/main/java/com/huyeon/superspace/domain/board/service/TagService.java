@@ -32,7 +32,7 @@ public class TagService {
 
     private List<TagDto> mapToTagDto(List<Tag> tags) {
         return tags.stream()
-                .map(tag -> new TagDto(tag.getTag()))
+                .map(TagDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -68,5 +68,9 @@ public class TagService {
     private void overWriteTag(Tag origin, TagDto change) {
         origin.setTag(change.getTag());
         tagRepository.save(origin);
+    }
+
+    public void deleteTag(TagDto request) {
+        tagRepository.deleteById(request.getId());
     }
 }

@@ -60,9 +60,12 @@
                 </label>
             </div>
             <div class="header-elements">
-                <label id="tags">
+                <label id="tags" class="flex-horizon-center">
                     <span>태그</span>
-                    <input class="tag" th:each="tag : ${board.tags}" th:value="|${tag.tag}|">
+                    <span class="flex-horizon-center" th:each="tag : ${board.tags}">
+                        <input class="tag" th:id="|tag_${tag.id}|" th:value="|${tag.tag}|">
+                        <i class="pointer material-icons delete md-16 gray">delete</i>
+                    </span>
                     <input class="tag" placeholder="#태그 추가">
                 </label>
             </div>
