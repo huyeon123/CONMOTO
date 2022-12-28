@@ -1,4 +1,16 @@
-const boardId = pathname.substr(pathname.lastIndexOf("/") + 1);
+const boardId = pathname.substring(pathname.lastIndexOf("/") + 1);
+
+$(function () {
+    $("input.tag").each((idx, element) => {
+        const value = element.value;
+        $("#tags").append("<div id='virtual_dom'>" + value + "</div>");
+
+        const calWidth = $('#virtual_dom').width() + 15;
+        $('#virtual_dom').remove();
+
+        $("#" + element.id).css("width", calWidth);
+    })
+})
 
 /*header*/
 $(document).on('keyup', '#title', (e) => {
@@ -70,6 +82,30 @@ function deleteBoard() {
             } else alert("삭제에 실패했습니다.");
         });
 }
+
+$(document).on('keydown', '.tag', (e) => {
+    const value = e.target.value;
+    $("#tags").append("<div id='virtual_dom'>" + value + "</div>");
+
+    const calWidth = $('#virtual_dom').width() + 15;
+    $('#virtual_dom').remove();
+
+    $("#" + e.target.id).css("width", calWidth);
+})
+
+$(document).on('click', '#tags .delete', (e) => {
+    const tagLocation = e.target.parentElement;
+    const id = tagLocation.firstElementChild.id.split("tag_")[1];
+    tagLocation.remove();
+
+    const url = "/api/tag?boardId=" + boardId;
+    const request = {id: id};
+    del(url, request)
+        .catch(error => {
+            alert("태그 삭제에 실패했습니다.")
+            console.error(error);
+        })
+})
 
 $(document).on('keyup', '.tag', (e) => {
     if (e.keyCode === 13) {
