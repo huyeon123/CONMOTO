@@ -35,3 +35,19 @@ async function resignReq() {
 function shouldBeChecked() {
     return !this.agree.value;
 }
+
+function cancelResign() {
+    const url = "/api/user/resign";
+    const request = [];
+    put(url, request)
+        .then(res => {
+            if (res.ok) {
+                alert("회원 탈퇴가 취소되었습니다! 환영합니다!");
+                location.href = "/workspace";
+            }
+        })
+        .catch(error => {
+            alert("회원 탈퇴 취소에 문제가 생겼습니다.");
+            console.error(error);
+        })
+}

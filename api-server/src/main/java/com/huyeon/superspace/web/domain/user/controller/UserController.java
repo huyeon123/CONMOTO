@@ -45,7 +45,10 @@ public class UserController {
     @NotGroupPage
     @GetMapping("/resign")
     public Map<String, Object> resign(@RequestHeader("X-Authorization-Id") String userEmail) {
-        return new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
+        UserDto user = userService.getUser(userEmail);
+        response.put("user", user);
+        return response;
     }
 
     @NotGroupPage
