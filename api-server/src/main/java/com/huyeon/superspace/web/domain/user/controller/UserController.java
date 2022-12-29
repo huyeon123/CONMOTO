@@ -29,4 +29,28 @@ public class UserController {
         response.put("user", user);
         return response;
     }
+
+    @NotGroupPage
+    @GetMapping("/board")
+    public Map<String, Object> myPost(@RequestHeader("X-Authorization-Id") String userEmail) {
+        return new HashMap<>();
+    }
+
+    @NotGroupPage
+    @GetMapping("/comment")
+    public Map<String, Object> myComment(@RequestHeader("X-Authorization-Id") String userEmail) {
+        return new HashMap<>();
+    }
+
+    @NotGroupPage
+    @GetMapping("/resign")
+    public Map<String, Object> resign(@RequestHeader("X-Authorization-Id") String userEmail) {
+        return new HashMap<>();
+    }
+
+    @NotGroupPage
+    @GetMapping("/noty")
+    public Map<String, Object> myNoty(@RequestHeader("X-Authorization-Id") String userEmail) {
+        return new HashMap<>();
+    }
 }
