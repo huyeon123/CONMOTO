@@ -5,11 +5,11 @@ $(window).on('load', () => {
     get(url)
         .then(res => {
             if (canGetData(res)) {
-                const data = getJson(res);
-                data.forEach(noty => {
-                    drawNotyList(noty);
-                });
-                page++;
+                res.json().then(data => {
+                    data.forEach(noty => drawNotyList(noty));
+                    page++;
+                })
+
             }
         });
 });
