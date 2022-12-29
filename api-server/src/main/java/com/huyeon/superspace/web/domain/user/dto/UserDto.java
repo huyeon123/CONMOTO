@@ -11,9 +11,12 @@ public class UserDto {
     private String name;
     private LocalDate birthday;
 
+    private String expireIn;
+
     public UserDto(User user) {
         email = user.getEmail();
         name = user.getName();
         birthday = user.getBirthday();
+        expireIn = user.getExpireDate() == null ? null : user.getExpireDate().toString();
     }
 }
