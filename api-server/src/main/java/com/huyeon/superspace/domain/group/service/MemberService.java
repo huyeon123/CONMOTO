@@ -36,7 +36,7 @@ public class MemberService {
 
         Noty inviteNoty = Noty.builder()
                 .senderName(group.getName())
-                .message("그룹에 초대합니다!\n" + group.getDescription())
+                .message("그룹에 초대합니다!\n그룹 설명: " + group.getDescription())
                 .type(NotyType.GROUP_INVITE)
                 .redirectUrl(group.getUrlPath())
                 .build();
