@@ -1,15 +1,9 @@
 const boardId = pathname.substring(pathname.lastIndexOf("/") + 1);
 
 $(function () {
-    $("input.tag").each((idx, element) => {
-        const value = element.value;
-        $("#tags").append("<div id='virtual_dom'>" + value + "</div>");
-
-        const calWidth = $('#virtual_dom').width() + 15;
-        $('#virtual_dom').remove();
-
-        $("#" + element.id).css("width", calWidth);
-    })
+    autoScalingWidth("input.tag", "#tags", 15);
+    autoScalingHeight(".comments-elements", " textarea.comment-body", -10);
+    autoScalingHeightDefault(".contentContainer", " textarea.content");
 })
 
 /*header*/
@@ -119,7 +113,7 @@ $(document).on('keyup', '.tag', (e) => {
         put(url, request)
             .then((res) => {
                 if (res.ok) {
-                    $('#tags').append(`<input class="tag" placeholder="#태그 추가">`);
+                    $('#tags').append(`<input class="empty tag" placeholder="#태그 추가">`);
                 }
             })
             .catch((error) => {
@@ -139,7 +133,7 @@ $(document).on('keyup', '#addCommentInput', (e) => {
     if (e.keyCode === 13) {
         const request = {comment: e.target.value}
         e.target.readOnly = true;
-        setComment(request);
+        createComment(request);
     }
 })
 
@@ -149,13 +143,23 @@ $(document).on('click', '.editCommentBtn', (e) => {
     commentBox.focus();
 })
 
-$(document).on('keyup', '.comment-body', (e) => {
+$(document).on('keydown', '.comment-body', (e) => {
     if (e.keyCode === 13) {
-        const request = {
-            comment: e.target.value,
-            id: e.target.parentElement.parentElement.id
+        const value = e.target.value;
+        if (!e.shiftKey) {
+            const commentId = $(e.target)
+                .closest(".comments-elements")
+                .attr('id').split("comment_")[1];
+
+            const request = {
+                comment: value,
+                id: commentId
+            };
+
+            e.target.blur();
+
+            editComment(request);
         }
-        setComment(request);
     }
 })
 
@@ -167,20 +171,30 @@ $(document).on('click', '.delCommentBtn', (e) => {
     }
 })
 
-function setComment(request) {
+function createComment(request) {
     const url = "/api/comment?boardId=" + boardId;
 
     post(url, request)
         .then(res => {
             if (!res.ok) {
                 alert("댓글 저장에 실패했습니다.");
-            }
+            } else location.reload();
         });
+}
 
-    location.reload();
+function editComment(request) {
+    const url = "/api/comment?boardId=" + boardId;
+
+    put(url, request)
+        .then(res => {
+            if (!res.ok) {
+                alert("댓글 저장에 실패했습니다.");
+            } else location.reload();
+        });
 }
 
 function deleteComment(commentId) {
+    commentId = commentId.split("comment_")[1];
     const url = "/api/comment?commentId=" + commentId;
     delWithoutBody(url)
         .catch((error) => console.error(error));
@@ -190,7 +204,7 @@ function deleteComment(commentId) {
 $(document).on('click', '.addContentsBtn', (e) => {
     makeContentId()
         .then(contentId => {
-            const newContent = `<div class="contentContainer" id="${contentId}">
+            const newContent = `<div class="contentContainer" id="content_${contentId}">
                             <textarea class="content" placeholder="내용을 입력하세요."></textarea>
                             <div class="content__buttons">
                                 <button type="button" class="delContentsBtn">-</button>
@@ -206,31 +220,40 @@ $(document).on('click', '.addContentsBtn', (e) => {
 })
 
 $(document).on('click', '.delContentsBtn', (e) => {
-    const target = e.target.parentElement.parentElement;
-    deleteContent("/api/contents/", target);
+    const $contentContainer = $(e.target).closest(".contentContainer");
+    const contentId = $contentContainer.attr('id').split('content_')[1];
+
+    deleteContent("/api/contents/", contentId, $contentContainer[0]);
 })
 
-$(document).on('keyup', '.content', (e) => {
+$(document).on('keydown', '.content', (e) => {
     if (e.keyCode === 13) {
+        const value = e.target.value;
         if (!e.shiftKey) {
-            const contentId = e.target.parentElement.id;
+            const contentId = e.target.parentElement.id.split("content_")[1];
             const url = "/api/contents/" + contentId;
-            const request = {content: e.target.value};
+            const request = {content: value};
             e.target.blur();
             saveContents(url, request);
         }
     }
 })
 
-$(document).on('keyup keydown', '.content', () => {
-    const content = $('.content');
+$(document).on('keyup keydown', '.content', (e) => {
+    const contentContainer = e.target.parentElement;
+    const contentId = contentContainer.id;
+    const content = $('#' + contentId + ' .content');
+
     content.height(1)
         .height(content.prop('scrollHeight') + 10);
 })
 
 async function makeContentId() {
+    let contentId;
     const url = "/api/contents/" + boardId;
-    return get(url);
+    return get(url)
+        .then(res => res.json())
+        .then(id => contentId = id);
 }
 
 function saveContents(url, request) {
@@ -238,8 +261,8 @@ function saveContents(url, request) {
         .catch(error => console.error(error));
 }
 
-function deleteContent(url, target) {
-    delWithoutBody(url + target.id)
+function deleteContent(url, contentId, target) {
+    delWithoutBody(url + contentId)
         .then(res => {
             if (res.ok) {
                 target.remove();
@@ -250,4 +273,35 @@ function deleteContent(url, target) {
 
 function moveToPreviousPage() {
     history.go(-1);
+}
+
+function autoScalingWidthDefault(containerSelector, elementSelector) {
+    autoScalingWidth(containerSelector, elementSelector, 10);
+}
+
+function autoScalingWidth(elementSelector, containerSelector, extraSize) {
+    $(elementSelector).not('.empty').each((idx, element) => {
+        const value = element.value;
+        $(containerSelector).append("<div id='virtual_dom'>" + value + "</div>");
+
+        const calWidth = $('#virtual_dom').width() + extraSize;
+        $('#virtual_dom').remove();
+
+        $("#" + element.id).css("width", calWidth);
+    })
+}
+
+function autoScalingHeightDefault(containerSelector, elementSelector,) {
+    autoScalingHeight(containerSelector, elementSelector, 10);
+}
+
+function autoScalingHeight(containerSelector, elementSelector, extraSize) {
+    $(containerSelector).not('.empty').each((idx, element) => {
+        const contentId = element.id;
+        const $content = $('#' + contentId + elementSelector);
+
+        $content.height(5);
+
+        $content.height($content.prop('scrollHeight') + extraSize);
+    })
 }

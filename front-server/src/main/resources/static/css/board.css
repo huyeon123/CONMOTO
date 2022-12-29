@@ -116,10 +116,6 @@ label > span {
     color: #6c757d;
 }
 
-.comment-body {
-    margin: 15px auto 5px;
-}
-
 .comment-body:focus {
     outline: none;
 }
