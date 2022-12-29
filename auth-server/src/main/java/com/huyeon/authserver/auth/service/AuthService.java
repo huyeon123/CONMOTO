@@ -81,4 +81,9 @@ public class AuthService {
     private boolean isDiffToken(String serverToken, String requestToken) {
         return serverToken == null || !serverToken.equals(requestToken);
     }
+
+    public void logout(String refreshToken) {
+        String userEmail = tokenProvider.getSubject(refreshToken);
+        redisTemplate.opsForValue().getAndDelete(userEmail);
+    }
 }
