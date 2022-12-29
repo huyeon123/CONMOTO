@@ -49,6 +49,12 @@
                 <input class="form-control" id="birthday" type="date" th:value="${user.birthday}">
             </label>
         </div>
+        <div class="content__body__block" th:if="${user.expireIn != null}">
+            <label class="input-group flex-nowrap">
+                <span class="input-group-text" style="color: red"><b>계정 만료기간</b></span>
+                <input class="form-control" id="expire" readonly th:value="${user.expireIn}">
+            </label>
+        </div>
         <div>
             <button type="button" class="default margin-top-10" style="float: right" onclick="save()">저장</button>
         </div>
