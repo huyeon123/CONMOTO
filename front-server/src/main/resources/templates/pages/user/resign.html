@@ -17,7 +17,7 @@
             <button type="button" class="default" onclick="moveToMyComment()">내 댓글</button>
         </div>
     </div>
-    <div class="content__body">
+    <div class="content__body" th:if="${user.expireIn == null}">
         <h3>정말로 회원을 탈퇴하시겠습니까?</h3>
         <p><b><span style="color: red">15일</span>간의 유예기간이 주어집니다.</b></p>
         <p id="today"></p>
@@ -31,6 +31,15 @@
         <div class="content__body__block space-between">
             <button type="button" class="default" onclick="location.href='/workspace'">취소</button>
             <button type="button" class="warn" onclick="resignReq()">탈퇴</button>
+        </div>
+    </div>
+    <div class="content__body" th:if="${user.expireIn != null}">
+        <h3>현재 회원탈퇴 유예기간입니다.</h3>
+        <p><b>언제든지 회원탈퇴를 취소할 수 있습니다!</b></p>
+        <p th:text="|만료 기간: ${user.expireIn}|"></p>
+        <div class="content__body__block space-between">
+            <button type="button" class="warn" onclick="location.href='/workspace'">돌아가기</button>
+            <button type="button" class="default" onclick="cancelResign()">탈퇴취소</button>
         </div>
     </div>
 </div>
