@@ -18,8 +18,15 @@ function moveToManageCategoryPage() {
     window.location.href = "/workspace/" + groupUrl + "/category";
 }
 
-function moveToLogoutPage() {
-    window.location.href = "/logout";
+function logout() {
+    get("/auth/logout")
+        .then(res => {
+            if (res.ok) location.href = "/";
+        })
+        .catch(error => {
+            alert("로그아웃 실패");
+            console.error(error);
+        })
 }
 
 $(document).on('mouseover', '#super-space-app__sidebar', () => {

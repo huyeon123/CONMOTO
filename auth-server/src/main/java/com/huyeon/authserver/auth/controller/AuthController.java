@@ -69,10 +69,26 @@ public class AuthController {
         return request.getHeader(REFRESH_KEY_NAME);
     }
 
+    @GetMapping("/logout")
+    public void logout(
+            @CookieValue(REFRESH_KEY_NAME) String refreshToken,
+            HttpServletResponse response) {
+        authService.logout(refreshToken);
+        response.addCookie(resetCookie());
+    }
+
+    private Cookie resetCookie() {
+        Cookie cookie = new Cookie(REFRESH_KEY_NAME, "");
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+
+        return cookie;
+    }
+
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    static class SingleBody{
+    static class SingleBody {
         String body;
     }
 }
