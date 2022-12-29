@@ -66,7 +66,7 @@
                         <input class="tag" th:id="|tag_${tag.id}|" th:value="|${tag.tag}|">
                         <i class="pointer material-icons delete md-16 gray">delete</i>
                     </span>
-                    <input class="tag" placeholder="#태그 추가">
+                    <input class="empty tag" placeholder="#태그 추가">
                 </label>
             </div>
         </div>
@@ -75,21 +75,21 @@
                 <span><b>댓글</b></span>
                 <button type="button" id="addCommentBtn">댓글작성</button>
             </div>
-            <div class="comments-elements" th:each="comment : ${board.comments}" th:id="*{comment.id}">
+            <div class="comments-elements" th:each="comment : ${board.comments}" th:id="|comment_*{comment.id}|">
                 <span class="comment-author" th:text="|작성자 : ${comment.author}|">작성자 : XXX</span>
                 <span class="comment-date" th:text="(${comment.uploadTime})">(X초 전)</span>
                 <button type="button" class="delCommentBtn">삭제</button>
                 <button type="button" class="editCommentBtn">수정</button>
-                <label>
+                <label style="margin: 0">
                     <textarea class="comment-body" readonly th:text="${comment.comment}"></textarea>
                 </label>
             </div>
-            <div class="comments-elements" th:if="${#lists.size(board.comments) < 1}">
+            <div class="empty comments-elements" th:if="${#lists.size(board.comments) < 1}">
                 <span>작성된 댓글이 없습니다.</span>
             </div>
         </div>
         <div class="contents">
-            <div class="contentContainer" th:each="content : ${board.contents}" th:id="*{content.contentId}">
+            <div class="contentContainer" th:each="content : ${board.contents}" th:id="|content_${content.contentId}|">
                 <textarea class="content"
                           placeholder="내용을 입력하세요."
                           th:text="${content.content}">
