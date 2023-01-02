@@ -59,9 +59,12 @@ public class GroupController {
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
 
-        String groupName = groupService.getGroupNameByUrl(groupUrl);
-
-        response.put("title", groupName);
+        try {
+            String groupName = groupService.getGroupNameByUrl(groupUrl);
+            response.put("title", groupName);
+        } catch (NoSuchElementException e) {
+            response.put("status", "fail: 해당 Url은 존재하지 않습니다.");
+        }
 
         return response;
     }

@@ -46,6 +46,8 @@ public class SideBarAndHeaderAop {
 
     @AfterReturning(value = "cutGroupPage()", returning = "returnValue")
     private void attachInGroupPage(JoinPoint joinPoint, Map<String, Object> returnValue) {
+        if (isFailed(returnValue)) return;
+
         Object[] args = joinPoint.getArgs();
         String userEmail = (String) args[USER_EMAIL];
         String groupUrl = (String) args[GROUP_URL];
@@ -53,6 +55,11 @@ public class SideBarAndHeaderAop {
         Map<String, Object> headerAndSideBar = sideBarAndHeaderService.getHeaderAndSideBar(userEmail, groupUrl);
 
         returnValue.putAll(headerAndSideBar);
+    }
+
+    private boolean isFailed(Map<String, Object> returnValue) {
+        String status = (String) returnValue.get("status");
+        return status != null && status.startsWith("fail:");
     }
 
     @Around(value = "cutManagerPage()")
