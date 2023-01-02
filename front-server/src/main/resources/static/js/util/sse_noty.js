@@ -1,9 +1,10 @@
 $(window).on('load', () => {
-    connectNotyService();
+    connectNotyService()
+        .then(() => console.log("[NOTY] : EventStream Successfully Created."));
 })
 
-function connectNotyService() {
-    get("/api/noty/unread")
+async function connectNotyService() {
+    await get("/api/noty/unread")
         .then(res => {
             if (canGetData(res)) {
                 getJson(res).then(data => {
@@ -15,15 +16,13 @@ function connectNotyService() {
             }
         })
 
-    const eventSource = new EventSourcePolyfill("http://localhost:8300/api/noty/subscribe", {
+    const eventSource = new EventSourcePolyfill("/api/noty/subscribe", {
         headers: {
-            'X-Authorization-Id': accessToken
-        }
+            'Authorization': accessToken
+        },
+        heartbeatTimeout: 30 * 60 * 1000,
+        withCredentials: true
     });
-
-    if (eventSource.OPEN) {
-        console.log("[NOTY] : EventStream Successfully Created.");
-    }
 
     eventSource.addEventListener("message", function (event) {
         try {

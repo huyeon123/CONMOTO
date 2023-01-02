@@ -49,6 +49,7 @@ public class AuthService {
 
         UserTokenInfo tokenSet = tokenProvider.createToken(authentication);
 
+        //Todo: Redis ConnectionFailureException handling
         ValueOperations<String, String> ops = redisTemplate.opsForValue();
         ops.set(request.getEmail(), tokenSet.getRefreshToken(), 7, TimeUnit.DAYS);
         
