@@ -1,15 +1,16 @@
 package com.huyeon.frontend.util;
 
+import com.huyeon.frontend.controller.error.ErrorHandler;
+import com.huyeon.frontend.exception.NotFoundException;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
+import java.util.Objects;
+
 @Component
 public class Fetch {
     private static final String API_SERVER_ADDR = "http://localhost:8000/api";
@@ -26,14 +27,24 @@ public class Fetch {
     private Map<String, Object> fetch(String url, HttpMethod method, String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
 
-        return restTemplate.exchange(
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 routeApiServer(url),
                 method,
                 getRequestHeader(accessToken),
                 new ParameterizedTypeReference<Map<String, Object>>() {
                 }
-        ).getBody();
+        );
+
+        ErrorHandler.checkError(response.getStatusCode());
+        checkFail(Objects.requireNonNull(response.getBody()));
+        return response.getBody();
     }
+
+    private void checkFail(Map<String, Object> body) {
+        String status = (String) body.get("status");
+        if (status != null && status.startsWith("fail:")) throw new NotFoundException("STATUS CODE: " + HttpStatus.NOT_FOUND.value());
+    }
+
 
     private String routeApiServer(String path) {
         return API_SERVER_ADDR + path;
@@ -46,12 +57,6 @@ public class Fetch {
         httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
 
         return new HttpEntity<>(httpHeaders);
-    }
-
-    private void addAllAttributes(Model model, Map<String, Object> body) {
-        if (body != null) {
-            model.addAllAttributes(body);
-        }
     }
 
     public boolean hasNoPermission(Map<String, Object> response) {
