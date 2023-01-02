@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:title="${title}">Title</title>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/css/error.css}">
+</head>
+<body class="server-error">
+<div class="error-page">
+    <div class="outer">
+        <div class="middle">
+            <div class="inner">
+                <div class="inner-circle"><i class="fa fa-cogs"></i><span th:text="${statusCode}">StatusCode</span></div>
+                <span class="inner-status">앗! 문제가 발생했어요!</span>
+                <div class="inner-detail">
+                    <pre class="message" th:text="${message}"></pre>
+                    <a href="javascript:history.back();" class="btn btn-info mtl"><i class="fa fa-home"></i>&nbsp;
+                    이전 페이지
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
