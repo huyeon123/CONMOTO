@@ -8,8 +8,10 @@ import com.huyeon.authserver.auth.repository.AuthRepository;
 import com.huyeon.authserver.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -45,15 +47,22 @@ public class AuthService {
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
 
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(token);
+        try {
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(token);
 
-        UserTokenInfo tokenSet = tokenProvider.createToken(authentication);
+            UserTokenInfo tokenSet = tokenProvider.createToken(authentication);
 
-        //Todo: Redis ConnectionFailureException handling
-        ValueOperations<String, String> ops = redisTemplate.opsForValue();
-        ops.set(request.getEmail(), tokenSet.getRefreshToken(), 7, TimeUnit.DAYS);
-        
-        return tokenSet;
+            ValueOperations<String, String> ops = redisTemplate.opsForValue();
+            ops.set(request.getEmail(), tokenSet.getRefreshToken(), 7, TimeUnit.DAYS);
+            return tokenSet;
+        } catch (BadCredentialsException e) {
+            String message = "아이디/비밀번호가 일치하지 않습니다.";
+            throw new BadCredentialsException(message);
+        } catch (RedisConnectionFailureException e) {
+            String message = "Redis가 shutdown 상태입니다!! 토큰을 저장하기 위해 Redis를 활성화하십시오.";
+            throw new RedisConnectionFailureException(message);
+        }
+
     }
 
     public boolean isDuplicateEmail(String email) {

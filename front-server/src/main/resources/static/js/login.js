@@ -13,10 +13,12 @@ function formSubmit(url = "/auth/login") {
 
     post(url, request)
         .then((res) => {
-            if (res.ok) {
+            if (res.status === 200) {
                 window.location.href = "/workspace";
+            } else if (res.status === 202) {
+                res.text().then(data => alert(data));
             } else {
-                alert("잘못된 이메일/비밀번호 입니다!");
+                alert("서버에 문제가 있습니다! 관리자에게 문의주세요.");
             }
         });
 }

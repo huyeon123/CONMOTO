@@ -9,7 +9,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -32,13 +35,21 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String logIn(@RequestBody UserSignInReq request, HttpServletResponse response) {
-        UserTokenInfo userTokenInfo = authService.logIn(request);
+    public ResponseEntity<?> logIn(@RequestBody UserSignInReq request, HttpServletResponse response) {
+        try {
+            UserTokenInfo userTokenInfo = authService.logIn(request);
 
-        Cookie refresh = setCookie(userTokenInfo);
-        response.addCookie(refresh);
+            Cookie refresh = setCookie(userTokenInfo);
+            response.addCookie(refresh);
 
-        return userTokenInfo.getAccessToken();
+            return new ResponseEntity<>(userTokenInfo.getAccessToken(), HttpStatus.OK);
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.ACCEPTED);
+        } catch (RedisConnectionFailureException e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     private Cookie setCookie(UserTokenInfo token) {
