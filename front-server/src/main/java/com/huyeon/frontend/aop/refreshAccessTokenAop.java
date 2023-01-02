@@ -22,7 +22,7 @@ public class refreshAccessTokenAop {
 
     private final TokenExtractor tokenExtractor;
 
-    @Pointcut("within(com.huyeon.frontend.controller..*) && !@annotation(PurePage)")
+    @Pointcut("within(com.huyeon.frontend.controller.*) && !@annotation(PurePage)")
     public void needSideBarAndHeader() {
     }
 
