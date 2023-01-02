@@ -23,9 +23,9 @@ https://youtu.be/w_ezWG1yKQQ?t=357
 ![ERD](https://user-images.githubusercontent.com/66458794/195228795-909f7733-0d1d-4475-ae56-e24dcdc9a8b2.jpg)
 
 ## 아키텍처
-### (2022.12.14 기준 - 진행중)
-Redis 추가 시 현재 단계 완료
-![Second Step](https://user-images.githubusercontent.com/66458794/207535701-4876d0a6-269f-4dd0-ab60-34cf201e801c.png)
+### (2023.01.02 기준 - 진행중)
+API 서버 다중화 vs 서비스 별 분리(MSA) 고민중..
+![Third Step](https://user-images.githubusercontent.com/66458794/210211746-76242c5b-74d3-44bb-b89d-312b6286a2bf.png)
 
 ## TOOL
 Skill Name | Version
