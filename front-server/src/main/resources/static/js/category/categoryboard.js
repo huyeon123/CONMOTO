@@ -1,10 +1,10 @@
 const categoryNameStartIdx = pathname.lastIndexOf("/") + 1;
 const categoryName = pathname.substring(categoryNameStartIdx);
 
-$(window).on('load', () => {
+function pageRender() {
     drawBoardsOfCategory();
     content_scroll_plugin(drawBoardsOfCategory);
-});
+}
 
 function drawBoardsOfCategory() {
     const request = {

@@ -8,20 +8,32 @@ let accessToken = null;
 $(function () {
     if (isMainPage()) return;
 
-    fetch("/auth/refresh", {
-        method: 'GET',
-        mode: 'cors'
-    }).then(res => {
-        if (res.ok) {
-            res.text().then(data => accessToken = "Bearer " + data);
-            $('#tokenFlag').val("ture");
-        }
-    });
+    init()
+        .then(() => console.log("[Page Initiation Success]"));
 });
 
 function isMainPage() {
     const currentPath = window.location.pathname;
     return !!currentPath.match("^\/[\w]*$");
+}
+
+async function init() {
+    try {
+        accessToken = "Bearer " + await getAccessToken();
+        connectNotyService();
+    } catch(error) {
+        console.error(error);
+    }
+
+    pageRender().catch();
+}
+
+function getAccessToken() {
+    const response = fetch("/auth/refresh", {
+            method: 'GET',
+            mode: 'cors'
+    });
+    return response.then(res => res.text());
 }
 
 async function get(url) {

@@ -1,7 +1,7 @@
-$(window).on('load', () => {
+function pageRender() {
     drawMyComments();
     content_scroll_plugin(drawMyComments);
-});
+}
 
 function drawMyComments() {
     const request = {

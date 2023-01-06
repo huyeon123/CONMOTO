@@ -1,7 +1,7 @@
-$(window).on('load', () => {
+function pageRender() {
     drawMyBoards();
     content_scroll_plugin(drawMyBoards);
-});
+}
 
 function drawMyBoards() {
     const request = {
