@@ -1,7 +1,7 @@
-$(window).on('load', () => {
+function pageRender() {
     drawBoardsOfGroup();
     content_scroll_plugin(drawBoardsOfGroup);
-});
+}
 
 function drawBoardsOfGroup() {
     const request = {

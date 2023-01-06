@@ -1,18 +1,20 @@
 let page = 0;
 
-$(window).on('load', () => {
-    const url = "/api/noty/" + page;
-    get(url)
-        .then(res => {
-            if (canGetData(res)) {
-                res.json().then(data => {
-                    data.forEach(noty => drawNotyList(noty));
-                    page++;
-                })
+function pageRender() {
+    getNoty()
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(noty => drawNotyList(noty));
+            page++;
+        })
+        .catch(error => console.error(error));
+}
 
-            }
-        });
-});
+function getNoty() {
+    isFetching = true;
+    const url = "/api/noty/" + page;
+    return get(url);
+}
 
 function drawNotyList(data) {
     $(".content__body").append(

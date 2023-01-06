@@ -1,10 +1,5 @@
-$(window).on('load', () => {
-    connectNotyService()
-        .then(() => console.log("[NOTY] : EventStream Successfully Created."));
-})
-
-async function connectNotyService() {
-    await get("/api/noty/unread")
+function connectNotyService() {
+    get("/api/noty/unread")
         .then(res => {
             if (canGetData(res)) {
                 getJson(res).then(data => {
@@ -14,7 +9,7 @@ async function connectNotyService() {
                     });
                 });
             }
-        })
+        });
 
     const eventSource = new EventSourcePolyfill("/api/noty/subscribe", {
         headers: {
@@ -135,7 +130,7 @@ $(function () {
     $(".ui-dialog-buttonpane").css("padding", 0);
     $(".ui-dialog-buttonset button").attr("class", "btn-primary");
 
-    $("#noty-button").click((e) => {
+    $("#noty-button").click(() => {
         $("#noty").dialog("open");
     })
 });
