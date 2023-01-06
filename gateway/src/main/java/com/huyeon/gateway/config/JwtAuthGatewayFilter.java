@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
+
 @Slf4j
 @Component
 public class JwtAuthGatewayFilter extends AbstractGatewayFilterFactory<JwtAuthGatewayFilter.Config> {
@@ -44,8 +46,11 @@ public class JwtAuthGatewayFilter extends AbstractGatewayFilterFactory<JwtAuthGa
 
     private String resolveAccessToken(ServerWebExchange exchange) {
         try {
-            return exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION)
-                    .get(0).substring(7);
+            String accessToken = Objects.requireNonNull(
+                    exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION)
+            ).get(0);
+            log.info("[ACCESS TOKEN] = {}", accessToken);
+            return accessToken.substring(7);
         } catch (NullPointerException e) {
             log.info("JWT를 획득할 수 없습니다.");
             return null;
