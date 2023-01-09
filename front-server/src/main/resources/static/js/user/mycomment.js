@@ -24,30 +24,15 @@ const getComments = (request) => {
 
 function drawComments(data) {
     data.forEach((item, index) => {
-        const commentElement = drawComment(item);
-        $(".content-body").append(commentElement);
+        drawComment(item);
+
         setNextPageIfEnd(index, data);
-    })
+    });
+    isFetching = false;
 }
 
 function drawComment(item) {
-    let commentBlock = "";
-    commentBlock += boardBlockStart('#', item.url);
-    commentBlock += addTitle(item.title);
-    commentBlock += addDescription(item.location);
-    commentBlock += addUpdateTime(item.date);
-    commentBlock += addHorizonLine();
-    commentBlock += addComment(item.comment);
-    commentBlock += boardBlockEnd();
-    return commentBlock;
+    const elementId = drawVDOM(item);
+    drawPreview(elementId, item);
+    draw
 }
-
-function addUpdateTime(date) {
-    return `<p class="board__updatedAt">${date}</p>`
-}
-
-function addComment(comment) {
-    return `<p>${comment}</p>`
-}
-
-

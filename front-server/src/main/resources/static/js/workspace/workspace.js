@@ -43,10 +43,10 @@ $(document).on('mouseleave', '#super-space-app__sidebar', () => {
 
 $(document).on('click', '#sidebar__fold', () => {
     $("#super-space-app__sidebar").toggle('fast', 'linear');
-    $("#sidebar__expand").toggle('fast', 'linear');
+    $("#js-sidebar-expand-btn").toggle('fast', 'linear');
 })
 
-$(document).on('click', '#sidebar__expand', () => {
-    $("#sidebar__expand").toggle();
+$(document).on('click', '#js-sidebar-expand-btn', () => {
+    $("#js-sidebar-expand-btn").toggle();
     $("#super-space-app__sidebar").toggle('fast', 'linear');
 });

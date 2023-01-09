@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<div style="width: 100%" th:fragment="headerFragment">
-    <div class="header">
-        <div class="header__left">
-            <i class="material-icons" id="sidebar__expand">menu</i>
-            <div id="group-name" th:text="${appHeader.groupName}">GROUP NAME</div>
+<div class="app-header" th:fragment="headerFragment">
+    <div class="header-box">
+        <div class="header-left">
+            <i class="material-icons sidebar-expand" id="js-sidebar-expand-btn">menu</i>
+            <div class="group-name" th:text="${appHeader.groupName}">GROUP NAME</div>
         </div>
-        <div style="display: flex; flex-direction: row">
-            <div style="margin-right: 10px">
-                <span id="noty-button">알림</span>
-                <span id="noty-count">0</span>
+        <div class="header-right">
+            <div class="header-noty">
+                <span id="js-noty-button">알림</span>
+                <span class="noty-count" id="js-noty-count">0</span>
             </div>
-            <div id="user-name" th:text="${appHeader.userName}">USER NAME</div>
+            <div class="user-name" th:text="${appHeader.userName}">USER NAME</div>
         </div>
     </div>
 </div>

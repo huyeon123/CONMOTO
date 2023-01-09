@@ -4,7 +4,7 @@
       layout:decorate="~{layouts/workspace_layout}">
 <head>
     <title th:text="${board.title}"></title>
-    <link rel="stylesheet" th:href="@{/css/board.css}">
+    <link rel="stylesheet" th:href="@{/css/board/board.css}">
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"/>
     <link rel="stylesheet"
@@ -15,33 +15,33 @@
 </head>
 <div class="wrapper" layout:fragment="content">
     <div class="scroll_footer_frame">
-        <div class="scroll-section" style="width: 100%">
+        <div class="scroll-section">
             <div class="container">
                 <div class="board__header">
                     <div class="flex-end">
                         <div>
-                            <button type="button" class="simple-button">변경이력</button>
-                            <button type="button" class="simple-button" onclick="deleteBoard()">삭제</button>
+                            <button type="button" class="simple-button board-history">변경이력</button>
+                            <button type="button" class="simple-button board-delete" onclick="deleteBoard()">삭제</button>
                         </div>
                     </div>
                     <div class="header-elements">
                         <label>
-                            <input type="text" id="title"
+                            <input type="text" class="board-title" id="js-title"
                                    placeholder="제목을 입력하세요."
                                    th:value="${board.title}">
                         </label>
                     </div>
                     <div class="header-elements">
                         <label>
-                            <input type="text" id="description"
+                            <input type="text" id="js-description"
                                    placeholder="설명을 입력하세요."
                                    th:value="${board.description}">
                         </label>
                     </div>
                     <div class="header-elements">
                         <label>
-                            <span style="width: 100px">카테고리</span>
-                            <select class="select" id="categoryOption">
+                            <span class="name">카테고리</span>
+                            <select class="select" id="js-categoryOption">
                                 <option th:selected="${board.categoryName == null}">카테고리 미선택</option>
                                 <option th:each="category : ${sideBar.categories}"
                                         th:value="${category.categoryId}"
@@ -53,7 +53,7 @@
                     </div>
                     <div class="header-elements">
                         <label>
-                            <span>상태</span>
+                            <span class="name">상태</span>
                             <select class="select" id="status">
                                 <option th:selected="${board.status == 'READY'}"
                                         value="READY">READY
@@ -69,7 +69,7 @@
                     </div>
                     <div class="header-elements">
                         <label id="tags" class="flex-horizon-center">
-                            <span>태그</span>
+                            <span class="name mr-4">태그</span>
                             <span class="flex-horizon-center" th:each="tag : ${board.tags}">
                         <input class="tag" th:id="|tag_${tag.id}|" th:value="|${tag.tag}|">
                         <i class="pointer material-icons delete md-16 gray">delete</i>
@@ -83,12 +83,14 @@
         </div>
         <div class="app-footer flex-space-between flex-horizon-center">
             <div class="btn-wrapper-left">
-                <button type="button" class="closeBtn" onclick="moveToPreviousPage()">돌아가기</button>
+                <button type="button" class="option-btn" onclick="moveToPreviousPage()">돌아가기</button>
             </div>
             <div class="btn-wrapper-right">
-                <button type="button" class="bg-white js-content-temp-register" onclick="saveTemporarily()">임시저장
+                <button type="button" class="option-btn js-content-temp-register" onclick="saveTemporarily()">
+                    <span>임시저장 |</span>
+                    <span>0</span>
                 </button>
-                <button type="button" class="save js-content-register" onclick="registerContent()">발행</button>
+                <button type="button" class="highlight-btn js-content-register" onclick="registerContent()">발행</button>
             </div>
         </div>
     </div>
