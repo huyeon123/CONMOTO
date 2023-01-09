@@ -41,143 +41,119 @@ function content_scroll_plugin(getListCallback) {
     });
 }
 
-function drawBoards(data, type) {
+function drawBoards(data) {
     data.forEach((item, index) => {
-        const boardElement = drawBoard(item, type);
-
-        $(".content-body").append(boardElement);
+        drawBoard(item);
 
         setNextPageIfEnd(index, data);
     });
     isFetching = false;
 }
 
-function drawBoard(item, type) {
-    let boardBlock = "";
-    boardBlock = drawBoardHeader(item, boardBlock);
-    boardBlock = drawBoardBody(item, type, boardBlock);
-    boardBlock = drawBoardFooter(item, boardBlock);
-    return boardBlock;
+function drawBoard(item) {
+    const elementId = drawVDOM(item);
+    drawPreview(elementId, item);
+    drawBoardInfo(elementId, item);
 }
 
-function drawBoardHeader(item, boardBlock) {
-    boardBlock += boardBlockStart(item.id, item.url);
-    boardBlock += addAuthorAndUpdateTime(item.author, item.updatedAt);
-    boardBlock += addTitle(item.title);
-    boardBlock += addDescription(item.description);
-    boardBlock += addHorizonLine();
-    return boardBlock;
+function drawVDOM(item) {
+    const virtualDom = `<div id="board_${item.id}" class="board-area">
+        <a href="${item.url}" class="board-anchor">
+            <div class="board-card">
+                <div class="board-preview"></div>
+                <div class="board-title"></div>
+                <div class="board-description"></div>
+                <div style="padding: 0 10px 0;">
+                    <div class="board-status"></div>
+                </div>
+                <div class="board-signature">
+                    <div class="board-updatedAt"></div>
+                    <div class="board-author"></div>
+                </div>
+            </div>
+        </a>
+    </div>`;
+
+    $('.content-body').append(virtualDom);
+    return '#board_' + item.id;
 }
 
-function drawBoardBody(item, type, boardBlock) {
-    if (type === "USER") {
-        boardBlock += addGroupName(item.groupName);
-    }
-
-    if (type !== "CATEGORY") {
-        boardBlock += addCategoryName(item.categoryName);
-    }
-
-    boardBlock += addContents(item.contents);
-    return boardBlock;
+function drawPreview(elementId, item) {
+    const viewer = new Editor.factory(viewerConfig(elementId));
+    //TODO: Mongo DB 연결되면 item.markdown으로 바꾸기
+    let markdown = "";
+    item.contents.forEach(element => {
+        markdown += element.content + "\n";
+    })
+    viewer.setMarkdown(markdown);
 }
 
-function drawBoardFooter(item, boardBlock) {
-    boardBlock += addStatus(item.status);
-    boardBlock += addTags(item.tags);
-    boardBlock += boardBlockEnd();
-    return boardBlock;
-}
+const {Editor} = toastui;
 
-function boardBlockStart(id, url) {
-    return `<div class="board" id="${id}" onclick="moveToBoard('${url}')">`;
-}
+function viewerConfig(elementId) {
+    const {codeSyntaxHighlight} = Editor.plugin;
 
-function addAuthorAndUpdateTime(author, updatedAt) {
-    return `<div class="board__header">
-                <span>작성자 : ${author}</span>
-                <span class="board__updatedAt">${updatedAt}</span>
-            </div>`;
-}
-
-function addTitle(title) {
-    return `<h2>${title}</h2>`;
-}
-
-function addHorizonLine() {
-    return `<hr>`;
-}
-
-function addDescription(description) {
-    if (description !== null) {
-        return `<p>${description}</p>`;
-    }
-    return "";
-}
-
-function addGroupName(groupName) {
-    if (groupName !== null) {
-        return `<p>${groupName}</p>`;
-    }
-    return "";
-}
-
-function addCategoryName(categoryName) {
-    if (categoryName !== null) {
-        return `<p>${categoryName}</p>`;
-    }
-    return "";
-}
-
-function addContents(contents) {
-    if (contents !== null) {
-        let contentsHTML = "";
-        contents.forEach((content) => {
-            if (content.content != null) {
-                contentsHTML += `<pre>${content.content}</pre>`;
+    return {
+        el: document.querySelector(elementId + ' .board-preview'),
+        viewer: true,
+        language: 'ko-KR',
+        placeholder: '작성된 내용이 없습니다.',
+        plugins: [[codeSyntaxHighlight, {highlighter: Prism}]],
+        customHTMLRenderer: {
+            htmlBlock: {
+                iframe(node) { //Youtube를 위한 iframe 허용 설정
+                    return [
+                        {
+                            type: 'openTag',
+                            tagName: 'iframe',
+                            outerNewLine: true,
+                            attributes: node.attrs
+                        },
+                        {type: 'html', content: node.childrenHTML},
+                        {type: 'closeTag', tagName: 'iframe', outerNewLine: true}
+                    ];
+                }
             }
-        })
-        return contentsHTML;
+        }
+    };
+}
+
+function drawBoardInfo(elementId, item) {
+    addTitle(elementId, item.title);
+    addDescription(elementId, item.description);
+    addStatus(elementId, item.status);
+    addAuthor(elementId, item.author);
+    addUpdateTime(elementId, item.updatedAt);
+}
+
+function addTitle(elementId, title) {
+    $(elementId + ' .board-title').text(title);
+}
+
+function addDescription(elementId, description) {
+    if (description !== null) {
+        $(elementId + ' .board-description').text(description);
     }
-    return "";
 }
 
-function addStatus(status) {
-    const statusElement = document.createElement("p");
-    statusElement.setAttribute("class", "board__status");
-    statusElement.innerText = status;
-    addStatusClass(statusElement, status);
-    return statusElement.outerHTML;
+function addStatus(elementId, status) {
+    const $boardStatus = $(elementId + ' .board-status')
+    $boardStatus.text(status);
+    $boardStatus.addClass(status.toLowerCase());
 }
 
-function addStatusClass(statusElement, status) {
-    statusElement.className += (" status__" + status.toLowerCase());
+function addAuthor(elementId, author) {
+    $(elementId + ' .board-author').text(author);
 }
 
-function addTags(tags) {
-    if (tags !== null) {
-        let div = `<div>`;
-        tags.forEach((tag) => {
-            div += `<span class="board__tags">%#35;${tag.tag}</span>`;
-        });
-        div += `</div>`;
-        return div;
-    }
-    return "";
-}
-
-function boardBlockEnd() {
-    return `</div>`;
+function addUpdateTime(elementId, updatedAt) {
+    $(elementId + ' .board-updatedAt').text(updatedAt);
 }
 
 function setNextPageIfEnd(index, data) {
     if (index === data.length - 1) {
         nextPage++;
     }
-}
-
-function moveToBoard(url) {
-    location.href = url;
 }
 
 function moveToMyPage() {

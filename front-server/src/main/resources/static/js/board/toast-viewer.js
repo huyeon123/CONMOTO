@@ -1,6 +1,5 @@
 const {Editor} = toastui;
 const {codeSyntaxHighlight} = Editor.plugin;
-const initialHeight = window.outerHeight * 0.5;
 
 const editor = new toastui.Editor.factory({
     el: document.querySelector('#editor'),

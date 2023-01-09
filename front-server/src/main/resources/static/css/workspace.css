@@ -38,7 +38,6 @@ p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
 
     height: 100%;
 }
@@ -46,9 +45,6 @@ p {
 .content-header {
     display: flex;
     flex-direction: column;
-    width: 80%;
-    min-width: 700px;
-    min-height: 100px;
     padding: 0 12px 10px;
     border-bottom: 1px solid #b9bbbe;
 }
@@ -70,65 +66,4 @@ p {
 .scroll-section {
     max-height: 87vh;
     overflow: auto;
-}
-
-.content-body {
-    margin-top: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.board {
-    border: 1px solid #b9bbbe;
-    border-radius: 5px;
-    margin: 10px 3px;
-    padding: 10px;
-    width: 70%;
-    min-width: 600px;
-    cursor: pointer;
-    box-shadow: 3px 3px 5px grey;
-}
-
-.board:hover {
-    box-shadow: 5px 5px 5px grey;
-}
-
-.board__header {
-    display: flex;
-    justify-content: space-between;
-}
-
-.board__updatedAt {
-    font-size: 14px;
-    color: gray;
-}
-
-.board__tags {
-    font-size: 15px;
-    border: 1px gray;
-    border-radius: 10px;
-}
-
-.board__status {
-    width: fit-content;
-    border-radius: 5px;
-    font-size: 15px;
-    padding: 0 5px;
-}
-
-.status__ready {
-    background-color: rgb(255 250 190);
-}
-
-.status__proceed {
-    background-color: rgb(245 220 255);
-}
-
-.status__complete {
-    background-color: rgb(210 250 225);
-}
-
-#mCSB_1_scrollbar_vertical .mCSB_dragger {
-    height: 150px !important;
 }
