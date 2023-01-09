@@ -26,6 +26,19 @@ public class BoardController {
                 "/workspace/" + groupUrl + "/board/" + id,
                 newAccessToken, model
         );
-        return "pages/board";
+        return "pages/board/board-viewer";
+    }
+
+    @GetMapping("/{groupUrl}/board/editor/{id}")
+    public String boardEditPage(
+            @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
+            String newAccessToken,
+            @PathVariable String groupUrl,
+            @PathVariable Long id, Model model) {
+        fetch.bindResponse(
+                "/workspace/" + groupUrl + "/board/" + id,
+                newAccessToken, model
+        );
+        return "pages/board/board-editor";
     }
 }
