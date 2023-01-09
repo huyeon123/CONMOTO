@@ -4,7 +4,7 @@ spring:
   application:
     name: front
   profiles:
-    active: dev
+    active: ${CONMOTO_ENV}
 
 encrypt:
   key: ${ENCRYPT_KEY}
