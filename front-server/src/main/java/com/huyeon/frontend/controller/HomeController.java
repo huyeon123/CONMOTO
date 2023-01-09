@@ -13,16 +13,16 @@ public class HomeController {
     @PurePage
     @GetMapping("/")
     public String mainPage() {
-        return "pages/login";
+        return "pages/home/login";
     }
     @PurePage
     @GetMapping("/signup")
     public String signUpPage() {
-        return "pages/signup";
+        return "pages/home/signup";
     }
     @PurePage
     @GetMapping("/reset")
     public String resetPasswordPage() {
-        return "pages/resetpassword";
+        return "pages/home/resetpassword";
     }
 }
