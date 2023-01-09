@@ -8,16 +8,13 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.css"
           integrity="sha512-fxF1t7b0mpb/ytjBeSu/OpgXxCVcX5/O8AJGYvHaWmNfi/lYLtttitFK17K4iKBva4iU9dcZ+BIV7dyD/nDdSw=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"
-            integrity="sha512-Yk47FuYNtuINE1w+t/KT4BQ7JaycTCcrvlSvdK/jry6Kcxqg5vN7/svVWCxZykVzzJHaxXk5T9jnFemZHSYgnw=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script th:src="@{/js/board/board-util.js}"></script>
-    <script th:src="@{/js/group/groupboard.js}"></script>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/timeline.css}">
 </head>
 
 <div class="wrapper" layout:fragment="content">
-    <div class="content-header">
+    <div class="container content-header">
         <h1>최근 게시물</h1>
         <div class="space-between">
             <span>최근 그룹에서 수정된 게시글입니다.</span>
@@ -26,8 +23,17 @@
     </div>
     <div class="super-space-contents content">
         <div class="scroll-section">
-            <div class="content-body"></div>
+            <div class="container content-body"></div>
         </div>
     </div>
+</div>
+<div class="page-script" layout:fragment="script">
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"
+            integrity="sha512-Yk47FuYNtuINE1w+t/KT4BQ7JaycTCcrvlSvdK/jry6Kcxqg5vN7/svVWCxZykVzzJHaxXk5T9jnFemZHSYgnw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script th:src="@{/js/board/board-util.js}"></script>
+    <script th:src="@{/js/group/groupboard.js}"></script>
 </div>
 </html>
