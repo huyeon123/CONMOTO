@@ -3,7 +3,7 @@ function connectNotyService() {
         .then(res => {
             if (canGetData(res)) {
                 getJson(res).then(data => {
-                    $("#noty-count").text(data.length);
+                    $("#js-noty-count").text(data.length);
                     data.forEach(item => {
                         addNoty(item);
                     });
@@ -23,7 +23,7 @@ function connectNotyService() {
         try {
             const data = JSON.parse(event.data)
 
-            const $noty = $('#noty-count');
+            const $noty = $('#js-noty-count');
             const current = parseInt($noty.text());
             $noty.text(current + 1);
 
@@ -51,20 +51,21 @@ function addNoty(data) {
         </div>`
     );
 
-    let notyOption;
+    let notyOption = createNotyOption(data);
+
+    $("#noty__option").append(notyOption);
+}
+
+function createNotyOption(data) {
     if (data.type === "GROUP_INVITE") {
-        notyOption =
-            `<div class="flex-end mb-1">
+        return `<div class="flex-end mb-1">
                 <a onclick="setRead(${data.id})">거절</a>
                 <a onclick="acceptInvite('${data.id}', '${data.url}')">수락</a>
             </div>`;
     } else {
         $("#" + data.id).attr("onclick", `location.href='${data.url}'`);
-        notyOption =
-            `<div class="flex-end"><a onclick="setRead(${data.id})">확인</a></div>`
+        return `<div class="flex-end"><a onclick="setRead(${data.id})">확인</a></div>`;
     }
-
-    $("#noty__option").append(notyOption);
 }
 
 function acceptInvite(id, groupUrl) {
@@ -87,7 +88,7 @@ function setRead(id) {
     requestSetRead(request);
     $("#noty_" + id).remove();
 
-    const $noty = $('#noty-count');
+    const $noty = $('#js-noty-count');
     const current = parseInt($noty.text());
     $noty.text(current - 1);
 }
@@ -119,7 +120,7 @@ $(function () {
                 click: function () {
                     setReadAll();
                     $(".noty").remove();
-                    $("#noty-count").text(0);
+                    $("#js-noty-count").text(0);
                     $(this).dialog("close");
                 }
             }
@@ -130,7 +131,7 @@ $(function () {
     $(".ui-dialog-buttonpane").css("padding", 0);
     $(".ui-dialog-buttonset button").attr("class", "btn-primary");
 
-    $("#noty-button").click(() => {
+    $("#js-noty-button").click(() => {
         $("#noty").dialog("open");
     })
 });

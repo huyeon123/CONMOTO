@@ -2,14 +2,14 @@
     font-size: 14px;
 }
 
-.content-body {
+.noty-content-body {
     margin-top: 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.content-body a:hover {
+.noty-content-body a:hover {
     text-decoration: none;
     outline: none;
     color: inherit;

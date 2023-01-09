@@ -4,7 +4,7 @@
       layout:decorate="~{layouts/workspace_layout}">
 <head>
     <title th:text="${board.title}"></title>
-    <link rel="stylesheet" th:href="@{/css/board.css}">
+    <link rel="stylesheet" th:href="@{/css/board/board.css}">
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"/>
     <link rel="stylesheet"
@@ -19,22 +19,22 @@
                 <div class="board__header">
                     <div class="flex-end">
                         <div>
-                            <button type="button" class="simple-button" onclick="deleteBoard()">삭제</button>
+                            <button type="button" class="simple-button board-delete" onclick="deleteBoard()">삭제</button>
                         </div>
                     </div>
                     <div class="header-elements">
                         <label>
-                            <input type="text" id="title" placeholder="제목을 입력하세요." th:value="${board.title}">
+                            <input type="text" class="board-title" id="title" placeholder="제목을 입력하세요." th:value="${board.title}">
                         </label>
                     </div>
                     <div class="header-elements">
                         <label>
-                            <input type="text" id="description" placeholder="설명을 입력하세요." th:value="${board.description}">
+                            <input type="text" class="board-description" id="description" placeholder="설명을 입력하세요." th:value="${board.description}">
                         </label>
                     </div>
                     <div class="header-elements">
                         <label>
-                            <span style="width: 100px">카테고리</span>
+                            <span class="name">카테고리</span>
                             <select class="select" id="categoryOption">
                                 <option th:selected="${board.categoryName == null}">카테고리 미선택</option>
                                 <option th:each="category : ${sideBar.categories}"
@@ -47,7 +47,7 @@
                     </div>
                     <div class="header-elements">
                         <label>
-                            <span>상태</span>
+                            <span class="name">상태</span>
                             <select class="select" id="status">
                                 <option th:selected="${board.status == 'READY'}"
                                         value="READY">READY
@@ -63,7 +63,7 @@
                     </div>
                     <div class="header-elements">
                         <label id="tags" class="flex-horizon-center">
-                            <span>태그</span>
+                            <span class="name mr-4">태그</span>
                             <span class="flex-horizon-center" th:each="tag : ${board.tags}">
                         <input class="tag" th:id="|tag_${tag.id}|" th:value="|${tag.tag}|">
                         <i class="pointer material-icons delete md-16 gray">delete</i>
@@ -75,8 +75,8 @@
                 <div class="comments">
                     <div class="comments-header">
                         <b class="comment">댓글</b>
-                        <span id="comment-num">0</span>
-                        <button type="button" class="simple-button" id="comment-toggle-btn">댓글 펼치기</button>
+                        <span id="js-comment-num">0</span>
+                        <button type="button" class="simple-button toggle-comment-btn" id="comment-toggle-btn">댓글 펼치기</button>
                     </div>
                     <div id="comment-hide-area" class="comment-list" hidden>
                         <li id="comment_id" class="comment-item">
@@ -106,11 +106,11 @@
         </div>
         <div class="app-footer flex-space-between flex-horizon-center">
             <div class="btn-wrapper-left">
-                <button type="button" class="closeBtn" onclick="moveToPreviousPage()">돌아가기</button>
+                <button type="button" class="option-btn" onclick="moveToPreviousPage()">돌아가기</button>
             </div>
             <div class="btn-wrapper-right">
-                <button type="button" class="bg-white">변경이력</button>
-                <button type="button" class="bg-primary" onclick="moveToEditPage()">편집</button>
+                <button type="button" class="option-btn">변경이력</button>
+                <button type="button" class="highlight-btn" onclick="moveToEditPage()">편집</button>
             </div>
         </div>
     </div>
