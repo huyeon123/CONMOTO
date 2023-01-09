@@ -74,7 +74,7 @@ function drawVDOM(item) {
         </a>
     </div>`;
 
-    $('.content-body').append(virtualDom);
+    $('.noty-content-body').append(virtualDom);
     return '#board_' + item.id;
 }
 

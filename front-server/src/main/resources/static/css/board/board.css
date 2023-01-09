@@ -1,42 +1,13 @@
-.wrapper input {
-    width: 90%;
-    height: 30px;
-    border-radius: 3px;
-    border: thin #85858d;
-    font-size: 15px;
-}
-
-input:focus {
-    outline: none;
-}
-
-.wrapper label {
-    width: 90%;
-}
-
-label > span {
-    width: 100px;
-    display: inline-block;
-    vertical-align: center;
-    padding: 5px 0;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.wrapper button {
-    color: #ffffff;
-    border: none;
-    border-radius: 3px;
-    padding: 10px 15px;
-    cursor: Pointer;
-}
-
 .scroll_footer_frame {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+.wrapper label {
+    width: 90%;
 }
 
 /*header*/
@@ -47,13 +18,56 @@ label > span {
     flex-direction: column;
 }
 
+.board__header button {
+    border-radius: 3px;
+}
+
+.board-history {
+    transition: all 100ms ease-in 0s;
+}
+
+.board-history:hover {
+    background-color: #86ceea;
+    color: white;
+}
+
+.board-delete {
+    transition: all 100ms ease-in 0s;
+}
+
+.board-delete:hover {
+    background-color: #FF4A45;
+    color: white;
+}
+
 .header-elements {
     display: flex;
     align-items: center;
     margin-left: 5px;
+    border-radius: 5px;
 }
 
-#title {
+.header-elements * {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.header-elements label{
+    transition: background-color 20ms ease-in 0s;
+}
+
+.header-elements label:hover {
+    background: rgba(55, 53, 47, 0.03);
+}
+
+.header-elements .name {
+    width: 100px;
+    display: inline-block;
+    padding: 5px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.board-title {
     width: 100%;
     height: 50px;
     font-size: 40px;
@@ -61,7 +75,7 @@ label > span {
     line-height: 70px;
 }
 
-.select {
+.header-elements .select {
     border: none;
     font-size: 18px;
     padding-top: 2px;
@@ -76,33 +90,17 @@ label > span {
     padding-bottom: 5px;
 }
 
-.comments button {
-    float: right;
-    padding: 3px 5px;
-    margin: 0 0 5px;
-    background-color: white;
-    color: black !important;
-}
-
 .comments-header {
     align-content: center;
     margin: 5px 5px 10px;
 }
 
-#addCommentInput {
-    margin-left: 45px;
-    margin-bottom: 5px;
+.toggle-comment-btn {
+    float: right;
 }
 
-.comments-elements {
-    margin: auto 5px 5px;
-    padding: 5px;
-    border: 1px solid #95999c;
-    border-radius: 5px;
-}
-
-.comments-elements > span {
-    margin-right: 15px;
+.toggle-comment-btn:focus {
+    outline: none;
 }
 
 .comment-date {
@@ -190,27 +188,13 @@ label > span {
     float: right;
 }
 
-/*contents*/
-.delContentsBtn {
-    background-color: red;
-}
-
-.addContentsBtn {
-    background-color: green;
-}
-
 /*etc*/
-.closeBtn {
-    display: flex;
-    background-color: red;
-}
-
 .simple-button {
-    padding: 3px 5px; !important;
+    padding: 3px 5px;
     margin: 0;
     opacity: 0.5;
-    background-color: white;
-    color: black !important;
+    background-color: rgba(255, 255, 255, 0);
+    color: black;
 }
 
 .app-footer {
@@ -218,6 +202,24 @@ label > span {
     width: 100%;
     height: 60px;
     background-color: rgb(251, 251, 250);
+}
+
+.option-btn {
+    background-color: rgba(0,0,0,0);
+    border-radius: 30px;
+    border: 1px solid #d0d0d0;
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.highlight-btn {
+    color: white;
+    background-color: cornflowerblue;
+    border-radius: 30px;
+    padding: 10px 30px;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .app-footer .btn-wrapper-right {

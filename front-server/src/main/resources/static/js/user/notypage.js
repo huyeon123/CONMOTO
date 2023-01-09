@@ -17,7 +17,7 @@ function getNoty() {
 }
 
 function drawNotyList(data) {
-    $(".content__body").append(
+    $(".noty-content-body").append(
         `<div class="noty full-size" id="${data.id}">
                 <div class="noty__profile">프로필</div>
                     <div class="noty__content">
