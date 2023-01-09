@@ -21,17 +21,21 @@ async function init() {
     try {
         accessToken = "Bearer " + await getAccessToken();
         connectNotyService();
-    } catch(error) {
+    } catch (error) {
         console.error(error);
     }
 
-    pageRender().catch();
+    try {
+        pageRender()
+    } catch (e) {
+        console.info("추가로 렌더링이 필요한 페이지가 없습니다. :)");
+    }
 }
 
 function getAccessToken() {
     const response = fetch("/auth/refresh", {
-            method: 'GET',
-            mode: 'cors'
+        method: 'GET',
+        mode: 'cors'
     });
     return response.then(res => res.text());
 }
