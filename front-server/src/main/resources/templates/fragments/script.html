@@ -3,13 +3,15 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <th:block th:fragment="scriptFragment">
-    <script th:src="@{/js/util/jquery-3.4.1.min.js}"></script>
-    <script th:src="@{/js/util/jquery-ui.min.js}"></script>
+    <div class="common-script">
+        <script th:src="@{/js/util/jquery-3.4.1.min.js}"></script>
+        <script th:src="@{/js/util/jquery-ui.min.js}"></script>
 
-    <script src="https://unpkg.com/event-source-polyfill@1.0.25/src/eventsource.js"></script>
-    <script th:src="@{/js/util/fetch.js}"></script>
-    <script th:src="@{/js/util/sse_noty.js}"></script>
-    <script th:src="@{/js/workspace.js}"></script>
-    <script th:src="@{/js/util/bootstrap.js}"></script>
+        <script src="https://unpkg.com/event-source-polyfill@1.0.25/src/eventsource.js"></script>
+        <script th:src="@{/js/util/fetch.js}"></script>
+        <script th:src="@{/js/util/sse_noty.js}"></script>
+        <script th:src="@{/js/workspace.js}"></script>
+        <script th:src="@{/js/util/bootstrap.js}"></script>
+    </div>
 </th:block>
 </html>
