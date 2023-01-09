@@ -7,7 +7,7 @@ spring:
   application:
     name: api
   profiles:
-    active: op
+    active: ${CONMOTO_ENV}
 
 encrypt:
   key: ${ENCRYPT_KEY}
