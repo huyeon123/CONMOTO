@@ -1,6 +1,7 @@
 package com.huyeon.frontend.controller.error;
 
 import com.huyeon.frontend.exception.BadRequestException;
+import com.huyeon.frontend.exception.ForbiddenException;
 import com.huyeon.frontend.exception.NotFoundException;
 import com.huyeon.frontend.exception.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,15 @@ public class ErrorAdvice {
         model.addAttribute("title", "401 Unauthorized");
         model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.value());
         model.addAttribute("message", "로그인이 필요한 페이지입니다.");
+        return "error/ClientError";
+    }
+    
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public String handle403Error(Model model) {
+        model.addAttribute("title", "403 Forbidden");
+        model.addAttribute("statusCode", HttpStatus.FORBIDDEN.value());
+        model.addAttribute("message", "접근할 수 없는 페이지입니다.");
         return "error/ClientError";
     }
 

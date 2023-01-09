@@ -1,6 +1,7 @@
 package com.huyeon.frontend.controller;
 
 import com.huyeon.frontend.aop.refreshAccessTokenAop;
+import com.huyeon.frontend.exception.ForbiddenException;
 import com.huyeon.frontend.util.Fetch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ public class GroupController {
             String newAccessToken,
             Model model) {
         fetch.bindResponse("/workspace", newAccessToken, model);
-        return "pages/workspace";
+        return "pages/group/workspace";
     }
 
     @GetMapping("/{groupUrl}")
@@ -54,7 +55,7 @@ public class GroupController {
             String newAccessToken,
             @PathVariable String groupUrl, Model model) {
         Map<String, Object> response = fetch.get("/workspace/" + groupUrl + "/manage", newAccessToken);
-        if (fetch.hasNoPermission(response)) return "pages/AccessDenied";
+        if (fetch.hasNoPermission(response)) throw new ForbiddenException();
         model.addAllAttributes(response);
         return "pages/group/groupmanage";
     }
@@ -65,7 +66,7 @@ public class GroupController {
             String newAccessToken,
             @PathVariable String groupUrl, Model model) {
         Map<String, Object> response = fetch.get("/workspace/" + groupUrl + "/members", newAccessToken);
-        if (fetch.hasNoPermission(response)) return "pages/AccessDenied";
+        if (fetch.hasNoPermission(response)) throw new ForbiddenException();
         model.addAllAttributes(response);
         return "pages/group/membermanage";
     }
@@ -76,7 +77,7 @@ public class GroupController {
             String newAccessToken,
             @PathVariable String groupUrl, Model model) {
         Map<String, Object> response = fetch.get("/workspace/" + groupUrl + "/delete", newAccessToken);
-        if (fetch.hasNoPermission(response)) return "pages/AccessDenied";
+        if (fetch.hasNoPermission(response)) throw new ForbiddenException();
         model.addAllAttributes(response);
         return "pages/group/deletegroup";
     }

@@ -1,6 +1,7 @@
 package com.huyeon.frontend.controller;
 
 import com.huyeon.frontend.aop.refreshAccessTokenAop;
+import com.huyeon.frontend.exception.ForbiddenException;
 import com.huyeon.frontend.util.Fetch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ public class CategoryController {
             @PathVariable String groupUrl,
             Model model) {
         Map<String, Object> response = fetch.get("/workspace/" + groupUrl + "/new-category", newAccessToken);
-        if (fetch.hasNoPermission(response)) return "pages/AccessDenied";
+        if (fetch.hasNoPermission(response)) throw new ForbiddenException();
         model.addAllAttributes(response);
         return "pages/category/newcategory";
     }
@@ -40,7 +41,7 @@ public class CategoryController {
             @PathVariable String groupUrl,
             Model model) {
         Map<String, Object> response = fetch.get("/workspace/" + groupUrl + "/category", newAccessToken);
-        if (fetch.hasNoPermission(response)) return "pages/AccessDenied";
+        if (fetch.hasNoPermission(response)) throw new ForbiddenException();
         model.addAllAttributes(response);
         return "pages/category/categorymanage";
     }
