@@ -38,8 +38,9 @@ p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-left: calc(90px + env(safe-area-inset-left));
-    padding-right: calc(90px + env(safe-area-inset-right));
+    justify-content: space-between;
+
+    height: 100%;
 }
 
 .content-header {
@@ -67,7 +68,7 @@ p {
 }
 
 .scroll-section {
-    max-height: 80vh;
+    max-height: 87vh;
     overflow: auto;
 }
 

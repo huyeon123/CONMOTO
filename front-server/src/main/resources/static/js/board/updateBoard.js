@@ -2,8 +2,6 @@ const boardId = pathname.substring(pathname.lastIndexOf("/") + 1);
 
 $(function () {
     autoScalingWidth("input.tag", "#tags", 15);
-    autoScalingHeight(".comments-elements", " textarea.comment-body", -10);
-    autoScalingHeightDefault(".contentContainer", " textarea.content");
 })
 
 /*header*/
@@ -124,63 +122,61 @@ $(document).on('keyup', '.tag', (e) => {
 });
 
 /*comment*/
-$(document).on('click', '#addCommentBtn', (e) => {
-    const input = `<textarea id="addCommentInput" placeholder="댓글을 작성해주세요. (엔터 시 저장됩니다.)"></textarea>`;
-    $(".comments-header").append(input);
-})
+$(document).on('click', '#comment-toggle-btn', () => {
+    const area = $('#comment-hide-area').get(0);
 
-$(document).on('keyup', '#addCommentInput', (e) => {
-    if (e.keyCode === 13) {
-        const request = {comment: e.target.value}
-        e.target.readOnly = true;
-        createComment(request);
+    if (area.hidden) {
+        $('#comment-toggle-btn').text("댓글 접기");
+        area.hidden = false;
+    } else {
+        $('#comment-toggle-btn').text("댓글 펼치기");
+        area.hidden = true;
     }
 })
 
-$(document).on('click', '.editCommentBtn', (e) => {
-    const commentBox = e.target.nextElementSibling.lastElementChild;
-    commentBox.readOnly = false;
-    commentBox.focus();
+$(document).on('click', '.js-comment-add-btn', () => {
+    const request = {
+        author: $('.comment-inbox-name').text(),
+        body: $('.comment-inbox-text').val()
+    };
+
+    registerComment(request);
 })
 
-$(document).on('keydown', '.comment-body', (e) => {
-    if (e.keyCode === 13) {
-        const value = e.target.value;
-        if (!e.shiftKey) {
-            const commentId = $(e.target)
-                .closest(".comments-elements")
-                .attr('id').split("comment_")[1];
-
-            const request = {
-                comment: value,
-                id: commentId
-            };
-
-            e.target.blur();
-
-            editComment(request);
-        }
-    }
-})
-
-$(document).on('click', '.delCommentBtn', (e) => {
-    if (confirm("정말로 삭제하시겠습니까?")) {
-        const commentId = e.target.parentElement.id;
-        e.target.parentElement.remove();
-        deleteComment(commentId);
-    }
-})
-
-function createComment(request) {
+function registerComment(request) {
     const url = "/api/comment?boardId=" + boardId;
 
     post(url, request)
         .then(res => {
-            if (!res.ok) {
-                alert("댓글 저장에 실패했습니다.");
-            } else location.reload();
+            if (res.ok) renderNewComment(request);
+        })
+        .catch(error => {
+            alert("댓글을 저장하지 못했습니다!\n잠시후 다시 시도해주세요.");
+            console.error(error);
         });
 }
+
+function renderNewComment(request) {
+    $('.comment-inbox-text').val('');
+
+    const currentTime = new Date().toLocaleString();
+    const newComment =
+        `<li id="comment_id" class="comment-item">` +
+        `<div class="comment-area">` +
+        `<div class="comment-nick-box">${request.author}</div>` +
+        `<div class="comment-text-box">${request.body}</div>` +
+        `<div class="comment-info-box">` +
+        `<span class="comment-info-date">${currentTime}</span>` +
+        `</div></div></li>`;
+
+    $('#comment-hide-area').append(newComment);
+}
+
+$(document).on('keyup keydown', '.comment-inbox-text', (e) => {
+    const $comment = $(e.target);
+    $comment.height(1);
+    $comment.height($comment.prop('scrollHeight') + 12);
+})
 
 function editComment(request) {
     const url = "/api/comment?boardId=" + boardId;
@@ -193,6 +189,14 @@ function editComment(request) {
         });
 }
 
+$(document).on('click', '.delCommentBtn', (e) => {
+    if (confirm("정말로 삭제하시겠습니까?")) {
+        const commentId = e.target.parentElement.id;
+        e.target.parentElement.remove();
+        deleteComment(commentId);
+    }
+})
+
 function deleteComment(commentId) {
     commentId = commentId.split("comment_")[1];
     const url = "/api/comment?commentId=" + commentId;
@@ -201,78 +205,32 @@ function deleteComment(commentId) {
 }
 
 /*contents*/
-$(document).on('click', '.addContentsBtn', (e) => {
-    makeContentId()
-        .then(contentId => {
-            const newContent = `<div class="contentContainer" id="content_${contentId}">
-                            <textarea class="content" placeholder="내용을 입력하세요."></textarea>
-                            <div class="content__buttons">
-                                <button type="button" class="delContentsBtn">-</button>
-                                <button type="button" class="addContentsBtn">+</button>
-                            </div>
-                        </div>`;
-            const template = document.createElement("template");
-            template.innerHTML = newContent;
-
-            const targetLocation = e.target.parentElement.parentElement;
-            targetLocation.after(template.content.firstChild);
-        })
-})
-
-$(document).on('click', '.delContentsBtn', (e) => {
-    const $contentContainer = $(e.target).closest(".contentContainer");
-    const contentId = $contentContainer.attr('id').split('content_')[1];
-
-    deleteContent("/api/contents/", contentId, $contentContainer[0]);
-})
-
-$(document).on('keydown', '.content', (e) => {
-    if (e.keyCode === 13) {
-        const value = e.target.value;
-        if (!e.shiftKey) {
-            const contentId = e.target.parentElement.id.split("content_")[1];
-            const url = "/api/contents/" + contentId;
-            const request = {content: value};
-            e.target.blur();
-            saveContents(url, request);
-        }
-    }
-})
-
-$(document).on('keyup keydown', '.content', (e) => {
-    const contentContainer = e.target.parentElement;
-    const contentId = contentContainer.id;
-    const content = $('#' + contentId + ' .content');
-
-    content.height(1)
-        .height(content.prop('scrollHeight') + 10);
-})
-
-async function makeContentId() {
-    let contentId;
-    const url = "/api/contents/" + boardId;
-    return get(url)
-        .then(res => res.json())
-        .then(id => contentId = id);
-}
-
-function saveContents(url, request) {
-    put(url, request)
-        .catch(error => console.error(error));
-}
-
-function deleteContent(url, contentId, target) {
-    delWithoutBody(url + contentId)
-        .then(res => {
-            if (res.ok) {
-                target.remove();
-            }
-        })
-        .catch((error) => console.error(error));
-}
-
 function moveToPreviousPage() {
     history.go(-1);
+}
+
+function moveToEditPage() {
+    const editorIdx = pathname.lastIndexOf("/");
+    location.href = pathname.slice(0, editorIdx) + "/editor" + pathname.slice(editorIdx);
+}
+
+function registerContent() {
+    save("/api/content");
+}
+
+function saveTemporarily() {
+    save("/api/content/temp");
+}
+
+function save(url) {
+    const request = {
+        contentId: $('.js-toast-editor').attr("id"),
+        markdown: editor.getMarkdown()
+    }
+
+    post(url, request)
+        .then(res => res.json())
+        .catch(error => console.error(error));
 }
 
 function autoScalingWidthDefault(containerSelector, elementSelector) {
