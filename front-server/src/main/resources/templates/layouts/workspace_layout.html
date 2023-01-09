@@ -4,8 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <title layout:title-pattern="$CONTENT_TITLE"></title>
-    <th:block th:replace="fragments/head :: headFragment"></th:block>
-    <th:block th:replace="fragments/script :: scriptFragment"></th:block>
+    <th:block th:replace="fragments/style :: styleFragment"></th:block>
 </head>
 
 <body>
@@ -19,6 +18,7 @@
     </div>
 </div>
 <th:block th:replace="fragments/noty :: notyFragment"></th:block>
-<!--<th:block th:replace="fragments/account :: accountFragment"></th:block>-->
+<th:block th:replace="fragments/script :: scriptFragment"></th:block>
+<th:block layout:fragment="script"></th:block>
 </body>
 </html>
