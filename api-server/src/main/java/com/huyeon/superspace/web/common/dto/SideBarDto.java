@@ -1,9 +1,11 @@
 package com.huyeon.superspace.web.common.dto;
 
-import com.huyeon.superspace.domain.board.dto.CategoryDto;
 import com.huyeon.superspace.domain.group.dto.GroupDto;
-import com.huyeon.superspace.domain.group.entity.WorkGroup;
-import lombok.*;
+import com.huyeon.superspace.domain.newboard.dto.CategoryDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
