@@ -1,16 +1,13 @@
 package com.huyeon.superspace.web.common.service;
 
-import com.huyeon.superspace.domain.board.dto.CategoryDto;
-import com.huyeon.superspace.domain.board.service.CategoryService;
 import com.huyeon.superspace.domain.group.dto.GroupDto;
 import com.huyeon.superspace.domain.group.entity.UserGroup;
-import com.huyeon.superspace.domain.group.entity.WorkGroup;
 import com.huyeon.superspace.domain.group.repository.GroupManagerRepository;
 import com.huyeon.superspace.domain.group.repository.GroupRepository;
 import com.huyeon.superspace.domain.group.repository.UserGroupRepository;
-import com.huyeon.superspace.domain.group.service.GroupService;
+import com.huyeon.superspace.domain.newboard.dto.CategoryDto;
+import com.huyeon.superspace.domain.newboard.service.NewCategoryService;
 import com.huyeon.superspace.domain.user.repository.UserRepository;
-import com.huyeon.superspace.domain.user.service.UserService;
 import com.huyeon.superspace.global.support.CacheUtils;
 import com.huyeon.superspace.web.common.dto.AppHeaderDto;
 import com.huyeon.superspace.web.common.dto.SideBarDto;
@@ -38,7 +35,7 @@ public class SideBarAndHeaderService {
     private final UserGroupRepository userGroupRepository;
     private final GroupRepository groupRepository;
     private final GroupManagerRepository managerRepository;
-    private final CategoryService categoryService;
+    private final NewCategoryService categoryService;
     private final CacheUtils cacheUtils;
 
     public Map<String, Object> getHeaderAndSideBar(String email, String groupUrl) {
@@ -102,9 +99,8 @@ public class SideBarAndHeaderService {
                 .collect(toList());
     }
 
-    private List<CategoryDto> getHierarchicalCategories(String groupUrl) {
-        WorkGroup currentGroup = getGroupByUrl(groupUrl);
-        return categoryService.getCategoryTree(currentGroup);
+    private List<com.huyeon.superspace.domain.newboard.dto.CategoryDto> getHierarchicalCategories(String groupUrl) {
+        return categoryService.getCategoryTree(groupUrl);
     }
 
     private void addUserRole(List<GroupDto> groups, String userEmail) {
@@ -113,10 +109,6 @@ public class SideBarAndHeaderService {
             String role = getRole(userEmail, groupUrl);
             group.setRole(role);
         }
-    }
-
-    private WorkGroup getGroupByUrl(String urlPath) {
-        return groupRepository.findByUrlPath(urlPath).orElseThrow();
     }
 
     public Map<String, Object> getBlankHeaderAndSideBar(String email) {
