@@ -1,9 +1,11 @@
 package com.huyeon.superspace.web.common.dto;
 
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
-import com.huyeon.superspace.domain.group.dto.GroupDto;
-import com.huyeon.superspace.domain.group.entity.WorkGroup;
-import lombok.*;
+import com.huyeon.superspace.domain.group.dto.GroupViewDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -12,6 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SideBarDto {
-    private List<GroupDto> groups;
+    private List<GroupViewDto> groups;
     private List<CategoryDto> categories;
 }

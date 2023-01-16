@@ -51,4 +51,8 @@ public class ReceivedNoty extends AuditEntity implements Auditable {
     public NotyType getType() {
         return noty.getType();
     }
+
+    public String getPayload() {
+        return noty.getPayload();
+    }
 }

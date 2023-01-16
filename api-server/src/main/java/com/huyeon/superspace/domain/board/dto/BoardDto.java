@@ -1,18 +1,19 @@
 package com.huyeon.superspace.domain.board.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.huyeon.superspace.domain.board.entity.Board;
-import com.huyeon.superspace.domain.board.entity.BoardStatus;
-import lombok.*;
+import com.huyeon.superspace.domain.board.document.Board;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class BoardDto {
-    private Long id;
+    private String id;
 
     private String author;
 
@@ -20,36 +21,35 @@ public class BoardDto {
 
     private String description;
 
-    private String groupName;
+    private String groupUrl;
 
     private String categoryName;
 
-    private BoardStatus status;
+    private String status;
 
-    private List<TagDto> tags;
+    private String[] tags;
 
-    private List<CommentDto> comments;
+    private ContentDto content;
 
-    private List<ContentDto> contents;
+    @JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
+    private LocalDateTime lastUpdate;
 
     private String url;
 
-    @JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-    private LocalDateTime updatedAt;
-
-    @Builder
     public BoardDto(Board board) {
         id = board.getId();
-        author = board.getUserEmail();
+        author = board.getAuthor();
         title = board.getTitle();
         description = board.getDescription();
-        groupName = board.getGroupName();
+        groupUrl = board.getGroupUrl();
+        categoryName = board.getCategoryName();
         status = board.getStatus();
-        updatedAt = board.getUpdatedAt();
-        url = "/workspace/" + board.getGroupUrl() + "/board/" + id;
+        tags = board.getTags();
+        lastUpdate = board.getUpdatedAt();
+        url = "/workspace/" + groupUrl + "/board/" + id;
 
-        if (board.getCategory() != null) {
-            categoryName = board.getCategoryName();
+        if (Objects.nonNull(board.getContent())) {
+            content = new ContentDto(board.getContent());
         }
     }
 }
