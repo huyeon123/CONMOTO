@@ -1,35 +1,32 @@
 package com.huyeon.superspace.domain.board.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.huyeon.superspace.domain.board.document.Board;
 import com.huyeon.superspace.domain.board.document.Comment;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @NoArgsConstructor
-public class CommentDto {
-    private String id;
-    private String boardId;
-    private String author;
+public class CommentPreviewDto {
+    private String boardTitle;
+
     private String body;
+
     private String tag;
 
-    private boolean mine;
+    private String url;
 
     @JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime lastUpdate;
 
-    public CommentDto(Comment comment, String nickname, boolean mine) {
-        id = comment.getId();
-        boardId = comment.getBoardId();
-        author = nickname;
+    public CommentPreviewDto(Comment comment, Board board) {
+        boardTitle = board.getTitle();
         body = comment.getBody();
         tag = comment.getTag();
+        url = "/workspace/" + board.getGroupUrl() + "/board/" + board.getId();
         lastUpdate = comment.getUpdatedAt();
-        this.mine = mine;
     }
 }
