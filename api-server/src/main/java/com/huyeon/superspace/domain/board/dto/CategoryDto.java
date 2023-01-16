@@ -1,40 +1,34 @@
 package com.huyeon.superspace.domain.board.dto;
 
-import com.huyeon.superspace.domain.board.entity.Category;
-import lombok.*;
+import com.huyeon.superspace.domain.board.document.Category;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class CategoryDto {
-    private Long categoryId;
+    private String id;
+
+    private String groupUrl;
+
     private String name;
-    private Long parentId;
-    private Integer parentIdx;
 
-    private int level;
-    private List<CategoryDto> subCategories;
+    private CategoryDto parent;
 
-    public CategoryDto(Long categoryId, String name, int parentIdx) {
-        this.categoryId = categoryId;
-        this.name = name;
-        this.parentIdx = parentIdx;
-    }
+    private List<CategoryDto> children; //읽기용
 
-    @Builder
     public CategoryDto(Category category) {
-        this.categoryId = category.getId();
-        this.name = category.getName();
-        this.parentId = category.getParent() == null ? 0L : category.getParentId();
-        this.level = category.getLevel();
-    }
+        id = category.getId();
+        groupUrl = category.getGroupUrl();
+        name = category.getName();
 
-    public List<CategoryDto> getSubCategories() {
-        if(subCategories == null) subCategories = Collections.emptyList();
-        return subCategories;
+        if (Objects.nonNull(category.getParentCategory())) {
+            parent = new CategoryDto(category.getParentCategory());
+        }
     }
 }

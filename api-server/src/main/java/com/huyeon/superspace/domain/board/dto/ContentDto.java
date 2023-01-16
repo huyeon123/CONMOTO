@@ -1,21 +1,25 @@
 package com.huyeon.superspace.domain.board.dto;
 
-import com.huyeon.superspace.domain.board.entity.ContentBlock;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.huyeon.superspace.domain.board.document.Content;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
 public class ContentDto {
-    private Long contentId;
-    private String content;
+    private String id;
 
-    public ContentDto(String content) {
-        this.content = content;
-    }
+    private String markdown;
 
-    @Builder
-    public ContentDto(ContentBlock content) {
-        this.contentId = content.getId();
-        this.content = content.getContent();
+    @JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
+    private LocalDateTime lastUpdate;
+
+    public ContentDto(Content content) {
+        id = content.getId();
+        markdown = content.getMarkdown();
+        lastUpdate = content.getUpdatedAt();
     }
 }
