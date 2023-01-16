@@ -4,13 +4,10 @@ function pageRender() {
 }
 
 function drawMyBoards() {
-    const request = {
-        now: KR_now,
-        nextPage: nextPage
-    }
+    const url = "/api/board/latest/mine?page=" + nextPage;
 
-    getList("user", request)
+    getList(url)
         .then(res => res.json())
-        .then(data => drawBoards(data, request.type))
+        .then(data => drawBoards(data))
         .catch(error => console.error(error));
 }

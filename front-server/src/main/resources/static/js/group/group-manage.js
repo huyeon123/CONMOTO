@@ -22,7 +22,7 @@ $(function () {
 
     $(".ui-dialog-content").css("padding", "0.5em");
     $(".ui-dialog-buttonpane").css("padding", 0);
-    $(".ui-dialog-buttonset button").attr("class", "btn-primary");
+    $(".ui-dialog-buttonset button").attr("class", "default-style-btn default");
 });
 
 function openInviteModal() {

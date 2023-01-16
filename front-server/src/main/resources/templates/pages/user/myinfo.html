@@ -4,7 +4,6 @@
       layout:decorate="~{layouts/workspace_layout}">
 <head>
     <title>마이페이지</title>
-    <link rel="stylesheet" th:href="@{/css/user/myinfo.css}">
 </head>
 <div class="flex-column-center wrapper" layout:fragment="content">
     <div class="container content-header">
@@ -21,7 +20,7 @@
             <div class="element-area">
                 <label class="input-group flex-nowrap">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="addon-wrapping">이메일</span>
+                        <span class="input-group-text">이메일</span>
                     </div>
                     <input class="form-control" id="email" th:value="${user.email}" readonly>
                 </label>
