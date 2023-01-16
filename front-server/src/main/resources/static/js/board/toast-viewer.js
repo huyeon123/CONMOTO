@@ -5,6 +5,7 @@ const editor = new toastui.Editor.factory({
     el: document.querySelector('#editor'),
     viewer: true,
     language: 'ko-KR',
+    initialValue: markdown,
     plugins: [[codeSyntaxHighlight, {highlighter: Prism}]],
     customHTMLRenderer: {
         htmlBlock: {
