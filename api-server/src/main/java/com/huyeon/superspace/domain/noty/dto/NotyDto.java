@@ -3,7 +3,6 @@ package com.huyeon.superspace.domain.noty.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.huyeon.superspace.domain.noty.entity.NotyType;
 import com.huyeon.superspace.domain.noty.entity.ReceivedNoty;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +20,8 @@ public class NotyDto {
     private LocalDateTime sendTime;
     private String message;
 
+    private Object payload;
+
     @Builder
     public NotyDto(ReceivedNoty receiver) {
         this.id = receiver.getId();
@@ -29,5 +30,6 @@ public class NotyDto {
         this.senderName = receiver.getSenderName();
         this.sendTime = receiver.getCreatedAt();
         this.message = receiver.getMessage();
+        this.payload = receiver.getPayload();
     }
 }
