@@ -33,6 +33,7 @@ input:focus {
 }
 
 button.default {
+    color: white;
     background-color: cornflowerblue;
 }
 

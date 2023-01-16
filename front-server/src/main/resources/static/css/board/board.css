@@ -1,9 +1,36 @@
-.scroll_footer_frame {
+.toastui-editor-contents h1 {
+    font-size: 32px !important;
+}
+
+.toastui-editor-contents h2 {
+    font-size: 24px !important;
+}
+
+.toastui-editor-contents h3 {
+    font-size: 20px !important;
+}
+
+.toastui-editor-contents h4 {
+    font-size: 1em !important;
+}
+
+.toastui-editor-contents p {
+    font-size: 16px !important;
+}
+
+.toastui-editor-contents a {
+    text-decoration: none !important;
+    color: black !important;
+}
+
+.toastui-editor-contents {
+    padding-bottom: 50px !important;
+}
+
+.scroll-frame {
     width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    height: calc(100% - 60px);
+    position: relative;
 }
 
 .wrapper label {
@@ -73,6 +100,10 @@
     font-size: 40px;
     font-weight: 700;
     line-height: 70px;
+}
+
+.board-description {
+    width: 100%;
 }
 
 .header-elements .select {
@@ -146,6 +177,13 @@
     color: #979797;
 }
 
+.comment-tool {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 13px;
+}
+
 .comment-writer {
     padding: 8px 10px 5px 18px;
     border: 2px solid rgba(0, 0, 0, 0.1);
@@ -199,6 +237,8 @@
 
 .app-footer {
     display: flex;
+    position: absolute;
+    bottom: 0;
     width: 100%;
     height: 60px;
     background-color: rgb(251, 251, 250);

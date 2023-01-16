@@ -37,6 +37,7 @@ button:focus {
 
 .super-space-app {
     width: 100vw;
+    height: 100vh;
     display: inline-flex;
 }
 
@@ -44,6 +45,7 @@ button:focus {
     display: flex;
     flex-flow: column;
     width: 100%;
+    height: 100%;
     margin: 0;
     overflow: hidden;
 }
@@ -52,20 +54,8 @@ button:focus {
     display: flex;
     flex-direction: column;
     align-items: center;
-
+    position: relative;
     height: 100%;
-}
-
-.content__body {
-    display: flex;
-    flex-flow: column;
-    margin-top: 15px;
-    width: 70%;
-    min-width: 600px;
-}
-
-.content__body__block {
-    margin: 5px 0;
 }
 
 .content-header {
@@ -73,6 +63,20 @@ button:focus {
     flex-direction: column;
     padding: 0 12px 10px;
     border-bottom: 1px solid #b9bbbe;
+}
+
+.content-body {
+    margin-top: 10px;
+}
+
+.element-area {
+    margin-bottom: 20px;
+}
+
+.narrow-content-body {
+    margin-top: 10px;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
 .default-style-btn {
@@ -105,8 +109,12 @@ button:focus {
 
 .scroll-section {
     width: 100%;
-    max-height: 87vh;
+    max-height: 100%;
     overflow: auto;
+}
+
+.material-icons {
+    cursor: pointer !important;
 }
 
 /* sidebar */
@@ -243,4 +251,5 @@ button:focus {
 .sidebar__expand {
     display: none;
     margin-right: 5px;
+    cursor: pointer;
 }

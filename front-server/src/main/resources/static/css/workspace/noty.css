@@ -3,6 +3,10 @@
     border: none;
 }
 
+.ui-dialog-titlebar-close {
+    display: none;
+}
+
 .noty {
     display: flex;
     justify-content: center;
