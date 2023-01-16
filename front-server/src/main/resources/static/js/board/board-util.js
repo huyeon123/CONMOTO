@@ -5,19 +5,17 @@ const KR_now = new Date(utc + (2 * KR_TIME_DIFF)); //서버에서 다시 KR_TIME
 let nextPage = 0;
 let isFetching = false;
 
-const getList = (where, request) => {
+const getList = (url) => {
     isFetching = true;
-    const url = "/api/board/latest/" + where;
-    return post(url, request);
+    return get(url);
 };
 
 function createBoard() {
-    const url = "/api/board/" + groupUrl + "/create";
-    get(url)
+    const url = "/api/board/" + groupUrl + "/new";
+    post(url)
         .then(res => {
-            if (canGetData(res)) {
-                getJson(res)
-                    .then(id => {
+            if (res.ok) {
+                res.text().then(id => {
                         alert("게시글을 생성했습니다.");
                         window.location.href = "/workspace/" + groupUrl + "/board/" + id;
                     })
@@ -74,18 +72,13 @@ function drawVDOM(item) {
         </a>
     </div>`;
 
-    $('.noty-content-body').append(virtualDom);
+    $('.content-body').append(virtualDom);
     return '#board_' + item.id;
 }
 
 function drawPreview(elementId, item) {
     const viewer = new Editor.factory(viewerConfig(elementId));
-    //TODO: Mongo DB 연결되면 item.markdown으로 바꾸기
-    let markdown = "";
-    item.contents.forEach(element => {
-        markdown += element.content + "\n";
-    })
-    viewer.setMarkdown(markdown);
+    viewer.setMarkdown(item.content.markdown);
 }
 
 const {Editor} = toastui;
