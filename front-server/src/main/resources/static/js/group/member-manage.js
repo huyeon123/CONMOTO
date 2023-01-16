@@ -1,12 +1,14 @@
 async function save() {
-    const url = "/api/group/" + groupUrl + "/member";
+    const url = "/api/group/" + groupUrl + "/member-role";
     const request = [];
+
     $(".member-info").each((idx) => {
         const email = $('.member-email').get(idx).outerText;
         const authority = $('.member-authority').get(idx).value;
+
         request.push({
             email: email,
-            groupRole: authority
+            role: authority === "일반 멤버" ? "ROLE_MEMBER" : "ROLE_MANAGER"
         });
     })
 
@@ -25,33 +27,31 @@ function expelMember(id) {
     const request = {email: email};
 
     del(url, request)
-        .then(res => {
-            if (res.ok) {
-                const name = memberInfo.children(".member-name").text();
-                memberInfo.remove();
-                alert(name + " 사용자가 그룹에서 추방되었습니다.")
-            }
+        .then(() => memberInfo.remove())
+        .catch(error => {
+            alert("그룹 추방에 실패했습니다!");
+            console.error(error);
         });
 }
 
 function activateExpelMemberBtn() {
-    $(".expel-btn")
+    $(".js-expel-btn")
         .attr("disabled", false)
         .css("opacity", 1);
 
     $('#activate-expel')
         .html("멤버 강퇴 취소")
-        .attr("class", "default")
+        .attr("class", "default-style-btn default")
         .attr("onclick", "cancelExpelMemberBtn()");
 }
 
 function cancelExpelMemberBtn() {
-    $(".expel-btn")
+    $(".js-expel-btn")
         .attr("disabled", true)
         .css("opacity", 0.5);
 
     $('#activate-expel')
         .html("멤버 강퇴 활성화")
-        .attr("class", "warn")
+        .attr("class", "default-style-btn warn")
         .attr("onclick", "activateExpelMemberBtn()");
 }
