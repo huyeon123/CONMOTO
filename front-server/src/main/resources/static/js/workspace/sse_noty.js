@@ -1,4 +1,15 @@
+$(function () {
+    initNotyDialog();
+    initWriteNicknameModal();
+});
+
 function connectNotyService() {
+    getUnreadNoty();
+    const eventSource = createEventSource();
+    addNotyListener(eventSource);
+}
+
+function getUnreadNoty() {
     get("/api/noty/unread")
         .then(res => {
             if (canGetData(res)) {
@@ -10,15 +21,19 @@ function connectNotyService() {
                 });
             }
         });
+}
 
-    const eventSource = new EventSourcePolyfill("/api/noty/subscribe", {
+function createEventSource() {
+    return new EventSourcePolyfill("/api/noty/subscribe", {
         headers: {
             'Authorization': accessToken
         },
         heartbeatTimeout: 30 * 60 * 1000,
         withCredentials: true
     });
+}
 
+function addNotyListener(eventSource) {
     eventSource.addEventListener("message", function (event) {
         try {
             const data = JSON.parse(event.data)
@@ -54,13 +69,14 @@ function addNoty(data) {
     let notyOption = createNotyOption(data);
 
     $("#noty__option").append(notyOption);
+    $(".js-noty-empty").attr('hidden', true);
 }
 
 function createNotyOption(data) {
     if (data.type === "GROUP_INVITE") {
         return `<div class="flex-end mb-1">
                 <a onclick="setRead(${data.id})">거절</a>
-                <a onclick="acceptInvite('${data.id}', '${data.url}')">수락</a>
+                <a onclick="openJoinModal('${data.payload}')">수락</a>
             </div>`;
     } else {
         $("#" + data.id).attr("onclick", `location.href='${data.url}'`);
@@ -68,19 +84,9 @@ function createNotyOption(data) {
     }
 }
 
-function acceptInvite(id, groupUrl) {
-    const url = "/api/group/" + groupUrl + "/join";
-    get(url)
-        .then(res => {
-            if (res.ok) {
-                alert("그룹에 가입되었습니다.");
-                location.href = "/workspace/" + groupUrl;
-            } else {
-                getJson(res).then(error => alert(error));
-            }
-        })
-        .catch(error => console.error(error));
-    setRead(id);
+function openJoinModal(groupId) {
+    $(".js-join-group").attr('id', groupId);
+    $("#join-modal").dialog("open");
 }
 
 function setRead(id) {
@@ -89,12 +95,31 @@ function setRead(id) {
     $("#noty_" + id).remove();
 
     const $noty = $('#js-noty-count');
-    const current = parseInt($noty.text());
-    $noty.text(current - 1);
+    const now = parseInt($noty.text()) - 1;
+    $noty.text(now);
+
+    if (now === 0) $(".js-noty-empty").attr('hidden', false);
 }
 
-//알림 다이얼로그
-$(function () {
+function setReadAll() {
+    const request = [];
+
+    $(".noty").each((idx, item) => {
+        request.push(parseInt(item.id.replace(/[^0-9]/g, "")));
+    })
+
+    if (request.length !== 0) {
+        requestSetRead(request);
+        $(".js-noty-empty").attr('hidden', false);
+    }
+}
+
+function requestSetRead(request) {
+    const url = "/api/noty";
+    put(url, request).catch(error => console.error(error));
+}
+
+function initNotyDialog() {
     $("#noty").dialog({
         title: "미확인 알림",
         minWidth: 430,
@@ -102,7 +127,7 @@ $(function () {
         position: {
             my: "right top",
             at: "right-110 bottom",
-            of: ".header"
+            of: ".app-header"
         },
         autoOpen: false,
         resizable: false,
@@ -129,24 +154,65 @@ $(function () {
 
     $(".ui-dialog-content").css("padding", "0.5em");
     $(".ui-dialog-buttonpane").css("padding", 0);
-    $(".ui-dialog-buttonset button").attr("class", "btn-primary");
+    $(".ui-dialog-buttonset button").attr("class", "default-style-btn default");
 
-    $("#js-noty-button").click(() => {
-        $("#noty").dialog("open");
-    })
-});
-
-function setReadAll() {
-    const request = [];
-
-    $(".noty").each((idx, item) => {
-        request.push(parseInt(item.id.replace(/[^0-9]/g, "")));
-    })
-
-    requestSetRead(request);
+    initNotyDialogEvent();
 }
 
-function requestSetRead(request) {
-    const url = "/api/noty";
-    put(url, request).catch(error => console.error(error));
+function initNotyDialogEvent() {
+    $(".header-noty").click((e) => {
+        e.stopPropagation();
+        $("#noty").dialog("open");
+    })
+
+    $(".super-space-app").click(() => {
+        $("#noty").dialog("close");
+    })
+}
+
+function initWriteNicknameModal() {
+    const width = innerWidth * 0.7;
+    $("#join-modal").dialog({
+        title: "그룹 닉네임",
+        Width: width,
+        minWidth: 430,
+        maxHeight: 320,
+        autoOpen: false,
+        resizable: false,
+        draggable: true,
+        modal: true,
+        buttons: [
+            {
+                text: "가입",
+                click: function () {
+                    joinGroup();
+                    $("#invite-modal").dialog("close");
+                }
+            }
+        ]
+    });
+
+    $(".ui-dialog-content").css("padding", "0.5em");
+    $(".ui-dialog-buttonpane").css("padding", 0);
+    $(".ui-dialog-buttonset button").attr("class", "default-style-btn default");
+}
+
+function joinGroup() {
+    const url = "/api/group/join";
+    const request = {
+        groupId: $(".js-join-group").attr('id'),
+        nickname: $(".js-join-input-text").val()
+    }
+
+    post(url, request)
+        .then(() => {
+            alert("그룹에 가입되었습니다.");
+            location.href = "/workspace/" + groupUrl;
+        })
+        .catch(error => {
+            alert("그룹 가입에 실패했습니다!");
+            console.error(error)
+        });
+
+    setRead(data.id);
 }
