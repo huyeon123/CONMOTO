@@ -21,7 +21,7 @@ public class BoardController {
             @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
             @PathVariable String groupUrl,
-            @PathVariable Long id, Model model) {
+            @PathVariable String id, Model model) {
         fetch.bindResponse(
                 "/workspace/" + groupUrl + "/board/" + id,
                 newAccessToken, model
@@ -34,7 +34,7 @@ public class BoardController {
             @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
             @PathVariable String groupUrl,
-            @PathVariable Long id, Model model) {
+            @PathVariable String id, Model model) {
         fetch.bindResponse(
                 "/workspace/" + groupUrl + "/board/" + id,
                 newAccessToken, model
