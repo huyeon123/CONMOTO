@@ -91,18 +91,16 @@ function display(button) {
 }
 
 async function save() {
-    const url = "/api/category?groupUrl=" + groupUrl;
+    const url = "/api/category?url=" + groupUrl;
 
     const request = getCategoryInfo();
 
     put(url, request)
-        .then(res => {
-            if (res.ok) {
-                alert("정상 반영되었습니다.");
-                window.location.href = "/workspace/" + groupUrl;
-            }
-        })
-        .catch(error => console.error(error));
+        .then(() => window.location.href = "/workspace/" + groupUrl)
+        .catch(error => {
+            alert("저장에 실패했습니다!");
+            console.error(error)
+        });
 }
 
 function getCategoryInfo() {
@@ -161,11 +159,12 @@ function extractAndPush(idx, category, family, request) {
     //리스트에서 Idx로 먼저 조회한 후 Id를 가져오는 방식
     const level = getCategoryLevel(category);
     const parentIdx = extractParentIdx(idx, level, family);
+    const parent = parentIdx == null ? null : request.at(parentIdx);
 
     const categoryDto = {
+        id: category.id,
         name: name,
-        parentIdx: parentIdx,
-        level: level
+        parent: parent
     }
 
     request.push(categoryDto);
@@ -226,3 +225,7 @@ $(document).on('keydown', 'input', (e) => {
 
     $eventLocation.css("width", newWidth);
 });
+
+function moveToGroupPage() {
+    location.href = "/workspace/" + groupUrl;
+}

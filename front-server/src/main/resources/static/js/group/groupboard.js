@@ -4,18 +4,9 @@ function pageRender() {
 }
 
 function drawBoardsOfGroup() {
-    const request = {
-        query: groupUrl,
-        now: KR_now,
-        nextPage: nextPage
-    };
-
-    getList("group", request)
+    const url = "/api/board/latest/group?url=" + groupUrl + "&page=" + nextPage;
+    getList(url)
         .then(res => res.json())
         .then(data => drawBoards(data))
         .catch(error => console.error(error));
-}
-
-function moveToBoard(url) {
-    location.href = url;
 }

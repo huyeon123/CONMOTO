@@ -7,17 +7,10 @@ function pageRender() {
 }
 
 function drawBoardsOfCategory() {
-    const request = {
-        query: categoryName,
-        now: KR_now,
-        nextPage: nextPage
-    }
+    const url = "/api/board/latest/category?name=" + categoryName + "&page=" + nextPage;
 
-    getList("category", request)
-        .then(res => getJson(res))
-        .then(data => drawBoards(data, request.type))
-}
-
-function moveToBoard(url) {
-    location.href = url;
+    getList(url)
+        .then(res => res.json())
+        .then(data => drawBoards(data))
+        .catch(error => console.error(error));
 }

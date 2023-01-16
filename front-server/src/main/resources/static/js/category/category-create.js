@@ -1,13 +1,16 @@
 async function createCategory() {
-    const url = "/api/category?groupUrl=" + groupUrl;
+    const url = "/api/category";
     const categoryName = $('#target-category-name').val();
     const parentCategoryId = $('#parent-category option:selected').val();
 
     if (hasInvalidWord(categoryName)) return;
 
     const request = {
+        groupUrl: groupUrl,
         name: categoryName,
-        parentId: parentCategoryId,
+        parent: {
+            id: parentCategoryId
+        }
     };
 
     post(url, request)
