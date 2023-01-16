@@ -5,43 +5,53 @@
 
 <head>
     <title>그룹 생성</title>
-    <script th:src="@{/js/group/group-create.js}"></script>
 </head>
 
 <div class="flex-column-center wrapper" layout:fragment="content">
-    <div class="content-header">
-        <h1>새 그룹 생성</h1>
-        <span>새로운 그룹을 생성합니다.</span>
+    <div class="container">
+        <div class="content-header">
+            <h1>새 그룹 생성</h1>
+            <span>새로운 그룹을 생성합니다.</span>
+        </div>
+        <div class="narrow-content-body">
+            <div class="element-area">
+                <label class="input-group flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">그룹명</span>
+                    </div>
+                    <input class="form-control"
+                           id="js-group-name"
+                           placeholder="생성할 그룹명을 입력하세요.">
+                </label>
+            </div>
+            <div class="element-area">
+                <label class="input-group flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">그룹 소개</span>
+                    </div>
+                    <input class="form-control"
+                           id="js-group-description"
+                           placeholder="그룹 소개를 작성하세요.">
+                </label>
+            </div>
+            <div class="element-area">
+                <label class="input-group flex-nowrap">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">URL</span>
+                    </div>
+                    <input class="form-control"
+                           id="js-group-url"
+                           placeholder="사용할 URL 경로명을 입력하세요.">
+                </label>
+            </div>
+            <div class="flex-space-between">
+                <button class="default-style-btn warn" type="button" onclick="location.href='/workspace'">취소</button>
+                <button class="wide-style-btn default" type="button" onclick="createGroup()">생성</button>
+            </div>
+        </div>
     </div>
-    <div class="content__body">
-        <div class="content__body__block">
-            <label>
-                <span class="label">그룹명</span>
-                <input type="text"
-                       id="new-group-name"
-                       placeholder="생성할 그룹명을 입력하세요.">
-            </label>
-        </div>
-        <div class="content__body__block">
-            <label>
-                <span class="label">그룹 소개</span>
-                <input type="text"
-                       id="group-description"
-                       placeholder="그룹 소개를 작성하세요.">
-            </label>
-        </div>
-        <div class="content__body__block">
-            <label>
-                <span class="label">URL</span>
-                <input type="text"
-                       id="url-path"
-                       placeholder="사용할 URL 경로명을 입력하세요.">
-            </label>
-        </div>
-        <div class="flex-space-between">
-            <button class="warn margin-top-10" type="button" onclick="location.href='/workspace'">취소</button>
-            <button class="default margin-top-10" type="button" onclick="createGroup()">생성</button>
-        </div>
-    </div>
+</div>
+<div class="page-script" layout:fragment="script">
+    <script th:src="@{/js/group/group-create.js}"></script>
 </div>
 </html>

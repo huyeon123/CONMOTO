@@ -14,7 +14,7 @@
     />
 </head>
 <div class="wrapper" layout:fragment="content">
-    <div class="scroll_footer_frame">
+    <div class="scroll-frame">
         <div class="scroll-section">
             <div class="container">
                 <div class="board__header">
@@ -44,7 +44,7 @@
                             <select class="select" id="js-categoryOption">
                                 <option th:selected="${board.categoryName == null}">카테고리 미선택</option>
                                 <option th:each="category : ${sideBar.categories}"
-                                        th:value="${category.categoryId}"
+                                        th:value="${category.name}"
                                         th:text="${category.name}"
                                         th:selected="${category.name == board.categoryName}">카테고리
                                 </option>
@@ -54,7 +54,7 @@
                     <div class="header-elements">
                         <label>
                             <span class="name">상태</span>
-                            <select class="select" id="status">
+                            <select class="select" id="js-status">
                                 <option th:selected="${board.status == 'READY'}"
                                         value="READY">READY
                                 </option>
@@ -69,29 +69,29 @@
                     </div>
                     <div class="header-elements">
                         <label id="tags" class="flex-horizon-center">
-                            <span class="name mr-4">태그</span>
-                            <span class="flex-horizon-center" th:each="tag : ${board.tags}">
-                        <input class="tag" th:id="|tag_${tag.id}|" th:value="|${tag.tag}|">
-                        <i class="pointer material-icons delete md-16 gray">delete</i>
-                    </span>
+                            <span class="name mr-2">태그</span>
+                            <div class="flex-horizon-center" th:each="tag : ${board.tags}">
+                                <input class="tag" th:id="|tag_${tag.id}|" th:value="|${tag.tag}|">
+                                <i class="pointer material-icons delete md-16 gray">delete</i>
+                            </div>
                             <input class="empty tag" placeholder="#태그 추가">
                         </label>
                     </div>
                 </div>
-                <div id="editor" class="js-toast-editor contents"></div>
+                <div th:id="${board.content.id}" class="js-toast-editor contents"></div>
             </div>
         </div>
-        <div class="app-footer flex-space-between flex-horizon-center">
-            <div class="btn-wrapper-left">
-                <button type="button" class="option-btn" onclick="moveToPreviousPage()">돌아가기</button>
-            </div>
-            <div class="btn-wrapper-right">
-                <button type="button" class="option-btn js-content-temp-register" onclick="saveTemporarily()">
-                    <span>임시저장 |</span>
-                    <span>0</span>
-                </button>
-                <button type="button" class="highlight-btn js-content-register" onclick="registerContent()">발행</button>
-            </div>
+    </div>
+    <div class="app-footer flex-space-between flex-horizon-center">
+        <div class="btn-wrapper-left">
+            <button type="button" class="option-btn" onclick="moveToPreviousPage()">돌아가기</button>
+        </div>
+        <div class="btn-wrapper-right">
+            <button type="button" class="option-btn js-content-temp-register" onclick="saveTemporarily()">
+                <span>임시저장 |</span>
+                <span>0</span>
+            </button>
+            <button type="button" class="highlight-btn js-content-register" onclick="registerContent()">발행</button>
         </div>
     </div>
 </div>
