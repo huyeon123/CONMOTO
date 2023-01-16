@@ -2,9 +2,7 @@ package com.huyeon.superspace.web.domain.group;
 
 import com.huyeon.superspace.domain.group.dto.GroupDto;
 import com.huyeon.superspace.domain.group.dto.MemberDto;
-import com.huyeon.superspace.domain.group.entity.WorkGroup;
-import com.huyeon.superspace.domain.group.service.GroupService;
-import com.huyeon.superspace.domain.user.entity.User;
+import com.huyeon.superspace.domain.group.service.NewGroupService;
 import com.huyeon.superspace.web.annotation.GroupPage;
 import com.huyeon.superspace.web.annotation.ManagerPage;
 import com.huyeon.superspace.web.annotation.NotGroupPage;
@@ -15,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -24,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GroupController {
 
-    private final GroupService groupService;
+    private final NewGroupService groupService;
 
     @GetMapping("/find")
     public String getGroupPage(@RequestHeader("X-Authorization-Id") String userEmail) {
@@ -35,7 +31,7 @@ public class GroupController {
     }
 
     private boolean hasAnyGroupPage(String userEmail) {
-        return !groupService.getGroups(userEmail).isEmpty();
+        return !groupService.getMyGroups(userEmail).isEmpty();
     }
 
     private String redirectFirstGroup(String userEmail) {
@@ -43,7 +39,7 @@ public class GroupController {
     }
 
     private String firstGroupUrl(String userEmail) {
-        return groupService.getGroups(userEmail).get(0).getUrlPath();
+        return groupService.getMyGroups(userEmail).get(0).getUrl();
     }
 
     @NotGroupPage
@@ -59,12 +55,8 @@ public class GroupController {
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
 
-        try {
-            String groupName = groupService.getGroupNameByUrl(groupUrl);
-            response.put("title", groupName);
-        } catch (NoSuchElementException e) {
-            response.put("status", "fail: 해당 Url은 존재하지 않습니다.");
-        }
+        String groupName = groupService.findGroupByUrl(groupUrl).getName();
+        response.put("title", groupName);
 
         return response;
     }
@@ -83,13 +75,8 @@ public class GroupController {
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
 
-        try {
-            WorkGroup group = groupService.getGroupByUrl(groupUrl);
-            response.put("groupInfo", new GroupDto(group));
-            response.put("status", "success");
-        } catch (NoSuchElementException e) {
-            response.put("status", "fail: 해당 Url은 존재하지 않습니다.");
-        }
+        GroupDto group = groupService.findGroupByUrl(groupUrl);
+        response.put("groupInfo", group);
 
         return response;
     }
@@ -102,26 +89,18 @@ public class GroupController {
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
 
-        WorkGroup group = groupService.getGroupByUrl(groupUrl);
+        GroupDto group = groupService.findGroupByUrl(groupUrl);
         response.put("groupName", group.getName());
 
         List<MemberDto> members = getMembers(group);
         response.put("members", members);
 
         response.put("availableAuth", getAvailableAuthority());
-        response.put("status", "success");
         return response;
     }
 
-    private List<MemberDto> getMembers(WorkGroup group) {
-        List<User> users = groupService.getUsers(group);
-        return users.stream()
-                .map(user -> new MemberDto(user, getGroupRole(group, user)))
-                .collect(Collectors.toList());
-    }
-
-    private String getGroupRole(WorkGroup group, User user) {
-        return groupService.checkRole(group, user);
+    private List<MemberDto> getMembers(GroupDto group) {
+        return groupService.findMembersById(group.getId());
     }
 
     private List<String> getAvailableAuthority() {
@@ -136,7 +115,7 @@ public class GroupController {
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
 
-        String groupName = groupService.getGroupNameByUrl(groupUrl);
+        String groupName = groupService.findGroupByUrl(groupUrl).getName();
 
         response.put("groupName", groupName);
         response.put("status", "success");

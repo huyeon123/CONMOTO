@@ -1,12 +1,11 @@
 package com.huyeon.superspace.web.common.service;
 
+import com.huyeon.superspace.domain.board.dto.CategoryDto;
+import com.huyeon.superspace.domain.board.service.NewCategoryService;
+import com.huyeon.superspace.domain.group.document.Member;
 import com.huyeon.superspace.domain.group.dto.GroupDto;
-import com.huyeon.superspace.domain.group.entity.UserGroup;
-import com.huyeon.superspace.domain.group.repository.GroupManagerRepository;
-import com.huyeon.superspace.domain.group.repository.GroupRepository;
-import com.huyeon.superspace.domain.group.repository.UserGroupRepository;
-import com.huyeon.superspace.domain.newboard.dto.CategoryDto;
-import com.huyeon.superspace.domain.newboard.service.NewCategoryService;
+import com.huyeon.superspace.domain.group.dto.GroupViewDto;
+import com.huyeon.superspace.domain.group.service.NewGroupService;
 import com.huyeon.superspace.domain.user.repository.UserRepository;
 import com.huyeon.superspace.global.support.CacheUtils;
 import com.huyeon.superspace.web.common.dto.AppHeaderDto;
@@ -16,12 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -33,9 +29,7 @@ public class SideBarAndHeaderService {
     private static final String CACHE_KEY_TYPE = "HSB"; //Header and SideBar
 
     private final UserRepository userRepository;
-    private final UserGroupRepository userGroupRepository;
-    private final GroupRepository groupRepository;
-    private final GroupManagerRepository managerRepository;
+    private final NewGroupService groupService;
     private final NewCategoryService categoryService;
     private final CacheUtils cacheUtils;
 
@@ -72,7 +66,7 @@ public class SideBarAndHeaderService {
     }
 
     private String findGroupNameByUrl(String urlPath) {
-        return groupRepository.findNameByUrl(urlPath).orElseThrow();
+        return groupService.findGroupByUrl(urlPath).getName();
     }
 
     private String findUserNameByEmail(String email) {
@@ -80,9 +74,8 @@ public class SideBarAndHeaderService {
     }
 
     private SideBarDto getSideBar(String userEmail, String groupUrl) {
-        List<GroupDto> groups = getGroups(userEmail);
+        List<GroupViewDto> groups = getGroups(userEmail);
         List<CategoryDto> categories = getHierarchicalCategories(groupUrl);
-        addUserRole(groups, userEmail);
 
         if (categories == null) categories = Collections.emptyList();
 
@@ -92,24 +85,16 @@ public class SideBarAndHeaderService {
                 .build();
     }
 
-    private List<GroupDto> getGroups(String email) {
-        List<UserGroup> userGroups = userGroupRepository.findGroupsByEmail(email);
-        return userGroups.stream()
-                .map(UserGroup::getGroup)
-                .map(GroupDto::new)
-                .collect(toList());
+    private List<GroupViewDto> getGroups(String email) {
+        List<Member> groups = groupService.findAllByUserEmail(email);
+
+        return groups.stream()
+                .map(GroupViewDto::new)
+                .collect(Collectors.toList());
     }
 
-    private List<com.huyeon.superspace.domain.newboard.dto.CategoryDto> getHierarchicalCategories(String groupUrl) {
+    private List<CategoryDto> getHierarchicalCategories(String groupUrl) {
         return categoryService.getCategoryTree(groupUrl);
-    }
-
-    private void addUserRole(List<GroupDto> groups, String userEmail) {
-        for (GroupDto group : groups) {
-            String groupUrl = group.getUrl();
-            String role = getRole(userEmail, groupUrl);
-            group.setRole(role);
-        }
     }
 
     public Map<String, Object> getBlankHeaderAndSideBar(String email) {
@@ -120,9 +105,7 @@ public class SideBarAndHeaderService {
     }
 
     public SideBarDto getBlankSideBar(String email) {
-        List<GroupDto> groups = getGroups(email);
-        addUserRole(groups, email);
-
+        List<GroupViewDto> groups = getGroups(email);
         return SideBarDto.builder()
                 .groups(groups)
                 .categories(List.of())
@@ -139,7 +122,8 @@ public class SideBarAndHeaderService {
     }
 
     public String getRole(String email, String groupUrl) {
-        boolean isManager = managerRepository.existsByEmailAndUrl(email, groupUrl);
+        GroupDto group = groupService.findGroupByUrl(groupUrl);
+        boolean isManager = group.getManagers().contains(email);
 
         if (isManager) return "ROLE_MANAGER";
         else return "ROLE_MEMBER";
