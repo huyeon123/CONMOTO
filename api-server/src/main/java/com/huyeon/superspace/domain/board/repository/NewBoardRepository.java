@@ -1,6 +1,6 @@
-package com.huyeon.superspace.domain.newboard.repository;
+package com.huyeon.superspace.domain.board.repository;
 
-import com.huyeon.superspace.domain.newboard.document.Board;
+import com.huyeon.superspace.domain.board.document.Board;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -31,4 +31,6 @@ public interface NewBoardRepository extends MongoRepository<Board, String> {
             LocalDateTime now,
             Pageable pageable
     );
+
+    void deleteAllByGroupUrl(String groupurl);
 }

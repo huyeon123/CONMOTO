@@ -1,6 +1,7 @@
-package com.huyeon.superspace.domain.newboard.advice;
+package com.huyeon.superspace.global.advice;
 
-import com.huyeon.superspace.domain.newboard.dto.ErrorDto;
+import com.huyeon.superspace.global.dto.ErrorDto;
+import com.huyeon.superspace.domain.group.exception.AlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,5 +26,11 @@ public class ErrorAdvice {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ErrorDto handle204Error() {
         return new ErrorDto(204, "해당 컨텐츠가 없습니다.");
+    }
+
+    @ExceptionHandler(AlreadyExistException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorDto handle403Error() {
+        return new ErrorDto(403, "해당 페이지에 접근할 수 없습니다.");
     }
 }

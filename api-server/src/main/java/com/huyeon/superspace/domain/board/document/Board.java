@@ -1,6 +1,7 @@
-package com.huyeon.superspace.domain.newboard.document;
+package com.huyeon.superspace.domain.board.document;
 
-import com.huyeon.superspace.domain.newboard.dto.BoardDto;
+import com.huyeon.superspace.domain.board.dto.BoardDto;
+import com.huyeon.superspace.global.model.DocumentAudit;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;

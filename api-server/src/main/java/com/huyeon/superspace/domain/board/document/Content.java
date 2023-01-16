@@ -1,6 +1,7 @@
-package com.huyeon.superspace.domain.newboard.document;
+package com.huyeon.superspace.domain.board.document;
 
-import com.huyeon.superspace.domain.newboard.dto.ContentDto;
+import com.huyeon.superspace.domain.board.dto.ContentDto;
+import com.huyeon.superspace.global.model.DocumentAudit;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import javax.persistence.Id;
 @Setter
 @NoArgsConstructor
 @Document(collection = "contents")
-public class Content extends DocumentAudit{
+public class Content extends DocumentAudit {
     @Id
     private String id;
     private String markdown;
