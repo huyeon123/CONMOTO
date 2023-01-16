@@ -1,11 +1,12 @@
-package com.huyeon.superspace.domain.newboard.service;
+package com.huyeon.superspace.domain.board.service;
 
-import com.huyeon.superspace.domain.newboard.document.Board;
-import com.huyeon.superspace.domain.newboard.document.Content;
-import com.huyeon.superspace.domain.newboard.dto.BoardDto;
-import com.huyeon.superspace.domain.newboard.dto.ContentDto;
-import com.huyeon.superspace.domain.newboard.repository.NewBoardRepository;
-import com.huyeon.superspace.domain.newboard.repository.NewContentRepository;
+import com.huyeon.superspace.domain.board.document.Board;
+import com.huyeon.superspace.domain.board.document.Content;
+import com.huyeon.superspace.domain.board.dto.BoardDto;
+import com.huyeon.superspace.domain.board.dto.ContentDto;
+import com.huyeon.superspace.domain.board.repository.NewBoardRepository;
+import com.huyeon.superspace.domain.board.repository.NewCommentRepository;
+import com.huyeon.superspace.domain.board.repository.NewContentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class NewBoardService {
     private final NewBoardRepository boardRepository;
     private final NewContentRepository contentRepository;
+    private final NewCommentRepository commentRepository;
 
     public BoardDto getBoard(String id) {
         Optional<Board> optional = boardRepository.findById(id);
@@ -35,6 +37,7 @@ public class NewBoardService {
         Board board = Board.builder()
                 .author(userEmail)
                 .groupUrl(groupUrl)
+                .status("READY")
                 .content(content)
                 .build();
 
@@ -70,11 +73,12 @@ public class NewBoardService {
     public void deleteBoard(String id) {
         Board board = boardRepository.findById(id).orElseThrow();
         contentRepository.delete(board.getContent());
+        commentRepository.deleteAllByBoardId(board.getId());
         boardRepository.deleteById(id);
     }
 
-    public ContentDto getContent(String key) {
-        Optional<Content> optional = contentRepository.findById(key);
+    public ContentDto getContentById(String contentId) {
+        Optional<Content> optional = contentRepository.findById(contentId);
         return optional.map(ContentDto::new).orElseThrow();
     }
 
@@ -116,5 +120,9 @@ public class NewBoardService {
         );
 
         return mapToDtoList(next);
+    }
+
+    public void deleteAllByGroupUrl(String groupUrl) {
+        boardRepository.deleteAllByGroupUrl(groupUrl);
     }
 }

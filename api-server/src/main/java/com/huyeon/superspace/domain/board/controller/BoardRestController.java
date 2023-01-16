@@ -1,10 +1,11 @@
-package com.huyeon.superspace.domain.newboard.controller;
+package com.huyeon.superspace.domain.board.controller;
 
-import com.huyeon.superspace.domain.newboard.dto.BoardDto;
-import com.huyeon.superspace.domain.newboard.dto.ContentDto;
-import com.huyeon.superspace.domain.newboard.service.NewBoardService;
+import com.huyeon.superspace.domain.board.dto.BoardDto;
+import com.huyeon.superspace.domain.board.dto.ContentDto;
+import com.huyeon.superspace.domain.board.service.NewBoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,20 +24,20 @@ public class BoardRestController {
         return boardService.getBoard(id);
     }
 
-    @GetMapping("/latest/{groupUrl}")
+    @GetMapping("/latest/group")
     public List<BoardDto> getLatestBoardInGroup(
-            @PathVariable String groupUrl,
+            @RequestParam String url,
             @RequestParam int page
     ) {
-        return boardService.getNext10LatestInGroup(groupUrl, page);
+        return boardService.getNext10LatestInGroup(url, page);
     }
 
-    @GetMapping("/latest/{categoryName}")
+    @GetMapping("/latest/category")
     public List<BoardDto> getLatestBoardInCategory(
-            @PathVariable String categoryName,
+            @RequestParam String name,
             @RequestParam int page
     ) {
-        return boardService.getNext10LatestInCategory(categoryName, page);
+        return boardService.getNext10LatestInCategory(name, page);
     }
 
     @GetMapping("/latest/mine")
@@ -47,7 +48,8 @@ public class BoardRestController {
         return boardService.getNext10LatestInUser(userEmail, page);
     }
 
-    @PostMapping("/board/{groupUrl}/new")
+    @PostMapping("/{groupUrl}/new")
+    @ResponseStatus(HttpStatus.CREATED)
     public String createBoard(
             @PathVariable String groupUrl,
             @RequestHeader("X-Authorization-Id") String userEmail
@@ -85,7 +87,7 @@ public class BoardRestController {
         return boardService.saveBoard(request, "TAGS");
     }
 
-    @PutMapping("/edit/content")
+    @PutMapping("/edit/content") //ContentId가 아닌 BoardId로 받아서 처리할지 고민
     public String saveContent(@RequestBody ContentDto request) {
         Objects.requireNonNull(request.getId());
         return boardService.saveContent(request);
@@ -98,6 +100,6 @@ public class BoardRestController {
 
     @GetMapping("/content/{id}")
     public ContentDto getContent(@PathVariable String id) {
-        return boardService.getContent(id);
+        return boardService.getContentById(id);
     }
 }

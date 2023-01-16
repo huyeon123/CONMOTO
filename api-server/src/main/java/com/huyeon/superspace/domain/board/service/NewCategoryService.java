@@ -1,8 +1,8 @@
-package com.huyeon.superspace.domain.newboard.service;
+package com.huyeon.superspace.domain.board.service;
 
-import com.huyeon.superspace.domain.newboard.document.Category;
-import com.huyeon.superspace.domain.newboard.dto.CategoryDto;
-import com.huyeon.superspace.domain.newboard.repository.NewCategoryRepository;
+import com.huyeon.superspace.domain.board.document.Category;
+import com.huyeon.superspace.domain.board.dto.CategoryDto;
+import com.huyeon.superspace.domain.board.repository.NewCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -117,5 +117,9 @@ public class NewCategoryService {
 
     public void deleteCategory(String id) {
         categoryRepository.deleteById(id);
+    }
+
+    public void deleteAllByGroupUrl(String groupUrl) {
+        categoryRepository.deleteAllByGroupUrl(groupUrl);
     }
 }

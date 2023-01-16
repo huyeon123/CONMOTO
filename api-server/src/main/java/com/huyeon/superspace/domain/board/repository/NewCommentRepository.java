@@ -1,6 +1,6 @@
-package com.huyeon.superspace.domain.newboard.repository;
+package com.huyeon.superspace.domain.board.repository;
 
-import com.huyeon.superspace.domain.newboard.document.Comment;
+import com.huyeon.superspace.domain.board.document.Comment;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -11,8 +11,10 @@ import java.util.List;
 
 @Repository
 public interface NewCommentRepository extends MongoRepository<Comment, String> {
-    List<Comment> findAllByBoardId(String boardId);
+    List<Comment> findAllByBoardIdOrderByCreatedAt(String boardId, Pageable pageable);
 
-    @Query("{author: ?0, updatedAt: {$lt: ?1}}")
+    @Query(value = "{author: ?0, updatedAt: {$lt: ?1}}", sort = "{updatedAt: -1}")
     List<Comment> findNextByUserEmail(String userEmail, LocalDateTime now, Pageable pageable);
+
+    void deleteAllByBoardId(String boardId);
 }

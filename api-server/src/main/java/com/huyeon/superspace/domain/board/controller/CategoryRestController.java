@@ -1,7 +1,7 @@
-package com.huyeon.superspace.domain.newboard.controller;
+package com.huyeon.superspace.domain.board.controller;
 
-import com.huyeon.superspace.domain.newboard.dto.CategoryDto;
-import com.huyeon.superspace.domain.newboard.service.NewCategoryService;
+import com.huyeon.superspace.domain.board.dto.CategoryDto;
+import com.huyeon.superspace.domain.board.service.NewCategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,8 +17,8 @@ public class CategoryRestController {
     private final NewCategoryService categoryService;
 
     @GetMapping
-    public List<CategoryDto> getCategories(@RequestParam String groupUrl) {
-        return categoryService.getCategoryTree(groupUrl);
+    public List<CategoryDto> getCategories(@RequestParam String url) {
+        return categoryService.getCategoryTree(url);
     }
 
     @PostMapping
@@ -30,8 +30,8 @@ public class CategoryRestController {
     @PutMapping
     public void editCategory(
             @RequestBody List<CategoryDto> request,
-            @RequestParam String groupUrl) {
-        categoryService.editCategory(request, groupUrl);
+            @RequestParam String url) {
+        categoryService.editCategory(request, url);
     }
 
     @DeleteMapping("/{id}")

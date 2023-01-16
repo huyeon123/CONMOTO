@@ -1,4 +1,4 @@
-package com.huyeon.superspace.domain.newboard.document;
+package com.huyeon.superspace.global.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;

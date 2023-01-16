@@ -1,7 +1,8 @@
-package com.huyeon.superspace.domain.newboard.controller;
+package com.huyeon.superspace.domain.board.controller;
 
-import com.huyeon.superspace.domain.newboard.dto.CommentDto;
-import com.huyeon.superspace.domain.newboard.service.NewCommentService;
+import com.huyeon.superspace.domain.board.dto.CommentDto;
+import com.huyeon.superspace.domain.board.dto.CommentPreviewDto;
+import com.huyeon.superspace.domain.board.service.NewCommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class CommentRestController {
     private final NewCommentService commentService;
 
     @GetMapping("/latest")
-    public List<CommentDto> getComments(
+    public List<CommentPreviewDto> getComments(
             @RequestHeader("X-Authorization-Id") String userEmail,
             @RequestParam int page
     ) {
@@ -46,8 +47,8 @@ public class CommentRestController {
         return commentService.editComment(userEmail, request);
     }
 
-    @DeleteMapping
-    public void removeComment(@RequestParam String id) {
+    @DeleteMapping("/{id}")
+    public void removeComment(@PathVariable String id) {
         commentService.removeComment(id);
     }
 }

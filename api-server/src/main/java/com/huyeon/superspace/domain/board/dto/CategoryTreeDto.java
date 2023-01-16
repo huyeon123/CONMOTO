@@ -1,4 +1,4 @@
-package com.huyeon.superspace.domain.newboard.dto;
+package com.huyeon.superspace.domain.board.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
