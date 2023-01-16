@@ -1,6 +1,5 @@
 const {Editor} = toastui;
 const {codeSyntaxHighlight} = Editor.plugin;
-const initialHeight = window.outerHeight * 0.5;
 
 const editor = new toastui.Editor({
     el: document.querySelector('.js-toast-editor'),
@@ -28,10 +27,30 @@ const editor = new toastui.Editor({
     }
 });
 
-$(function content_scroll_plugin() {
+async function pageRender() {
+    content_scroll_plugin();
+    getMarkdown();
+}
+
+function content_scroll_plugin() {
     $(".scroll-section").mCustomScrollbar({
         theme: "minimal-dark",
-        mouseWheelPixels: 150,
-        scrollInertia: 500, // 부드러운 스크롤 효과 적용
+        mouseWheelPixels: 300,
+        scrollInertia: 300, // 부드러운 스크롤 효과 적용
     });
-});
+}
+
+function getMarkdown() {
+    const commentId = $('.js-toast-editor').attr('id');
+    const url = "/api/board/content/" + commentId;
+
+    get(url)
+        .then(res => res.json())
+        .then(contentDto => {
+            editor.setMarkdown(contentDto.markdown);
+        })
+        .catch(error => {
+            alert("컨텐츠를 불러오는데 실패했습니다!");
+            console.error(error);
+        })
+}
