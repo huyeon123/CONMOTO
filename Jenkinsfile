@@ -1,12 +1,17 @@
 pipeline {
-    agent any tools {
+    agent any
+    tools {
         gradle 'gradle-7.4.1'
     }
     environment {
         BUILD_TARGET_HOME = '${BUILD_HOME}'
         PROJECT = 'multi'
-        APP_AUTH = 'auth-server' APP_API = 'api-server' APP_FE = 'front-server'
-        IMG_AUTH = 'CONMOTO-AUTH' IMG_API = 'CONMOTO-API' IMG_FE = 'CONMOTO-FE'
+        APP_AUTH = 'auth-server'
+        APP_API = 'api-server'
+        APP_FE = 'front-server'
+        IMG_AUTH = 'CONMOTO-AUTH'
+        IMG_API = 'CONMOTO-API'
+        IMG_FE = 'CONMOTO-FE'
     }
     stages {
         stage('Build') {
@@ -16,7 +21,9 @@ pipeline {
                         changeset "auth-server/**/*"
                     }
                     steps {
-                        echo 'Build Start "${APP_AUTH}"' sh './gradlew ${APP_AUTH}:bootJar' echo 'Build End "${APP_AUTH}"'
+                        echo 'Build Start "${APP_AUTH}"'
+                        sh './gradlew ${APP_AUTH}:bootJar'
+                        echo 'Build End "${APP_AUTH}"'
                     }
                 }
                 stage('build-api-server') {
@@ -24,7 +31,9 @@ pipeline {
                         changeset "api-server/**/*"
                     }
                     steps {
-                        echo 'Build Start "${APP_API}"' sh './gradlew ${APP_API}:bootJar' echo 'Build End "${APP_API}"'
+                        echo 'Build Start "${APP_API}"'
+                        sh './gradlew ${APP_API}:bootJar'
+                        echo 'Build End "${APP_API}"'
                     }
                 }
                 stage('build-front-server') {
@@ -32,7 +41,9 @@ pipeline {
                         changeset "front-server/**/*"
                     }
                     steps {
-                        echo 'Build Start "${APP_FE}"' sh './gradlew ${APP_FE}:bootJar' echo 'Build End "${APP_FE}"'
+                        echo 'Build Start "${APP_FE}"'
+                        sh './gradlew ${APP_FE}:bootJar'
+                        echo 'Build End "${APP_FE}"'
                     }
                 }
             }
