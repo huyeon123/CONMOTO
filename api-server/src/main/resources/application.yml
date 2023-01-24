@@ -3,7 +3,7 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   config:
-    import: optional:configserver:http://localhost:8888
+    import: optional:configserver:http://${CONFIG_SERVER}
   application:
     name: api
   profiles:
