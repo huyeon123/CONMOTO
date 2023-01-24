@@ -24,13 +24,7 @@ $(document).on('click', '.delCommentBtn', async (e) => {
 });
 
 async function createBoard(url = "/api/board") {
-    await fetch(url, {
-        method: "GET",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        mode: "cors",
-    })
+    get(url)
         .then((response) => response.json())
         .then((data) => {
             alert(data.message);
@@ -43,13 +37,7 @@ async function createBoard(url = "/api/board") {
 
 const delBoardReq = async (url) => {
     let success = undefined;
-    await fetch(url, {
-        method: "DELETE",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        mode: "cors",
-    })
+    delWithoutBody(url)
         .then((response) => {
             success = response
         })
@@ -60,13 +48,7 @@ const delBoardReq = async (url) => {
 
 const delCommentReq = async (url) => {
     let success = undefined;
-    await fetch(url, {
-        method: "DELETE",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        mode: "cors",
-    })
+    delWithoutBody(url)
         .then((response) => {
             success = response
         })
@@ -75,15 +57,15 @@ const delCommentReq = async (url) => {
     return success;
 }
 
-async function save(){
+async function save() {
     if (hasInvalidArgs()) return;
 
     const url = "/api/user/edit";
     const request = {
-        email : this.email.value,
-        name : this.username.value,
-        password : this.password.value,
-        birthday : this.birthday.value
+        email: this.email.value,
+        name: this.username.value,
+        password: this.password.value,
+        birthday: this.birthday.value
     };
 
     const res = put(url, request);
