@@ -2,10 +2,12 @@ async function createGroup(url = "/api/group") {
     const groupName = $('#js-group-name').val();
     const description = $('#js-group-description').val();
     const urlPath = $('#js-group-url').val();
+    const nickname = $('#js-group-nickname').val();
     const request = {
-        name: groupName,
-        url: urlPath,
-        description: description
+        groupName: groupName,
+        groupUrl: urlPath,
+        description: description,
+        nickname: nickname
     };
 
     post(url, request)

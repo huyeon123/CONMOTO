@@ -86,6 +86,7 @@ function createNotyOption(data) {
 
 function openJoinModal(groupId) {
     $(".js-join-group").attr('id', groupId);
+    $("#join-modal").show();
     $("#join-modal").dialog("open");
 }
 
@@ -162,6 +163,7 @@ function initNotyDialog() {
 function initNotyDialogEvent() {
     $(".header-noty").click((e) => {
         e.stopPropagation();
+        $("#noty").show();
         $("#noty").dialog("open");
     })
 

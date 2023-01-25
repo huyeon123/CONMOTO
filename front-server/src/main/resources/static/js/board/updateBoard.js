@@ -5,10 +5,10 @@ $(function () {
 })
 
 /*header*/
-$(document).on('keyup', '#title', (e) => {
+$(document).on('keyup', '#js-title', (e) => {
     if (e.keyCode === 13) {
         const request = {
-            title: $("#title").val(),
+            title: $(e.target).val(),
             target: "title"
         };
         e.target.blur();
@@ -16,10 +16,10 @@ $(document).on('keyup', '#title', (e) => {
     }
 })
 
-$(document).on('keyup', '#description', (e) => {
+$(document).on('keyup', '#js-description', (e) => {
     if (e.keyCode === 13) {
         const request = {
-            description: $("#description").val(),
+            description: $(e.target).val(),
             target: "description"
         };
         e.target.blur();
@@ -27,16 +27,16 @@ $(document).on('keyup', '#description', (e) => {
     }
 })
 
-$(document).on('change', '#status', () => {
+$(document).on('change', '#js-status', () => {
     const request = {
-        status: $("#status option:selected").val(),
+        status: $("#js-status option:selected").val(),
         target: "status"
     };
     saveBoard(request);
 })
 
-$(document).on('change', '#categoryOption', () => {
-    const categoryId = $("#categoryOption option:selected").val();
+$(document).on('change', '#js-categoryOption', () => {
+    const categoryId = $("#js-categoryOption option:selected").val();
 
     if (categoryId === '' || categoryId === undefined) {
         alert("카테고리를 선택하세요");
