@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @Component
 public class Fetch {
-    private static final String API_SERVER_ADDR = "http://conmoto.site/api";
+    private static final String API_SERVER_ADDR = "https://conmoto.site/api";
 
     public void bindResponse(String url, String accessToken, Model model) {
         Map<String, Object> response = get(url, accessToken);
