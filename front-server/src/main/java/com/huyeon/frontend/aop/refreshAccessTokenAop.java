@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @RequiredArgsConstructor
 public class refreshAccessTokenAop {
-    private static final String AUTH_SERVER_ADDR = "http://localhost:8100/auth";
+    private static final String AUTH_SERVER_ADDR = "http://conmoto.site/auth";
     public static final String REFRESH_KEY = "Super-Space-Refresh";
 
     private final TokenExtractor tokenExtractor;
