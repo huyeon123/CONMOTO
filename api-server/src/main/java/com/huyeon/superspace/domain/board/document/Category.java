@@ -1,10 +1,12 @@
 package com.huyeon.superspace.domain.board.document;
 
+import com.huyeon.superspace.domain.board.dto.CategoryCreateDto;
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
 import com.huyeon.superspace.global.model.DocumentAudit;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import javax.persistence.Id;
 import java.util.Objects;
 
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,5 +41,10 @@ public class Category extends DocumentAudit {
         if (Objects.nonNull(dto.getParent())) {
             parentCategory = new Category(dto.getParent());
         }
+    }
+
+    public Category(CategoryCreateDto request) {
+        groupUrl = request.getGroupUrl();
+        name = request.getName();
     }
 }
