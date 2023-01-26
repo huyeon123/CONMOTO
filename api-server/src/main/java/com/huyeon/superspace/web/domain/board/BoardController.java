@@ -4,7 +4,7 @@ import com.huyeon.superspace.domain.board.dto.BoardDto;
 import com.huyeon.superspace.domain.board.dto.CommentDto;
 import com.huyeon.superspace.domain.board.service.NewBoardService;
 import com.huyeon.superspace.domain.board.service.NewCommentService;
-import com.huyeon.superspace.domain.group.exception.AlreadyExistException;
+import com.huyeon.superspace.global.exception.AlreadyExistException;
 import com.huyeon.superspace.domain.group.service.NewGroupService;
 import com.huyeon.superspace.web.annotation.GroupPage;
 import lombok.RequiredArgsConstructor;
