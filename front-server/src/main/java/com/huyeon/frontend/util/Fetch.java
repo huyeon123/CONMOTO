@@ -2,6 +2,7 @@ package com.huyeon.frontend.util;
 
 import com.huyeon.frontend.controller.error.ErrorHandler;
 import com.huyeon.frontend.exception.NotFoundException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,8 @@ import java.util.Objects;
 
 @Component
 public class Fetch {
-    private static final String API_SERVER_ADDR = "https://conmoto.site/api";
+    @Value("${conmoto.server.api}")
+    private String API_SERVER_ADDR;
 
     public void bindResponse(String url, String accessToken, Model model) {
         Map<String, Object> response = get(url, accessToken);
