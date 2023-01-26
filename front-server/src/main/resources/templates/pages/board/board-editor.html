@@ -33,7 +33,7 @@
                     </div>
                     <div class="header-elements">
                         <label>
-                            <input type="text" id="js-description"
+                            <input type="text" class="board-description" id="js-description"
                                    placeholder="설명을 입력하세요."
                                    th:value="${board.description}">
                         </label>
@@ -71,7 +71,7 @@
                         <label id="tags" class="flex-horizon-center">
                             <span class="name mr-2">태그</span>
                             <div class="flex-horizon-center" th:each="tag : ${board.tags}">
-                                <input class="tag" th:id="|tag_${tag.id}|" th:value="|${tag.tag}|">
+                                <input class="tag" th:value="|${tag}|">
                                 <i class="pointer material-icons delete md-16 gray">delete</i>
                             </div>
                             <input class="empty tag" placeholder="#태그 추가">

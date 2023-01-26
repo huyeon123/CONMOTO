@@ -41,13 +41,13 @@ function content_scroll_plugin() {
 }
 
 function getMarkdown() {
-    const commentId = $('.js-toast-editor').attr('id');
-    const url = "/api/board/content/" + commentId;
+    const contentId = $('.js-toast-editor').attr('id');
+    const url = "/api/board/content/" + contentId;
 
     get(url)
         .then(res => res.json())
         .then(contentDto => {
-            editor.setMarkdown(contentDto.markdown);
+            if (contentDto.markdown != null) editor.setMarkdown(contentDto.markdown);
         })
         .catch(error => {
             alert("컨텐츠를 불러오는데 실패했습니다!");
