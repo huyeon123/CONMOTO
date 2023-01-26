@@ -5,53 +5,49 @@ $(function () {
 })
 
 /*header*/
-$(document).on('keyup', '#title', (e) => {
+$(document).on('keyup', '#js-title', (e) => {
     if (e.keyCode === 13) {
+        const url = "/api/board/edit/title";
         const request = {
-            title: $("#title").val(),
-            target: "title"
+            title: $(e.target).val(),
         };
         e.target.blur();
-        saveBoard(request);
+        saveBoard(url, request);
     }
 })
 
-$(document).on('keyup', '#description', (e) => {
+$(document).on('keyup', '#js-description', (e) => {
     if (e.keyCode === 13) {
+        const url = "/api/board/edit/description";
         const request = {
-            description: $("#description").val(),
-            target: "description"
+            description: $(e.target).val(),
         };
         e.target.blur();
-        saveBoard(request);
+        saveBoard(url, request);
     }
 })
 
-$(document).on('change', '#status', () => {
+$(document).on('change', '#js-status', () => {
+    const url = "/api/board/edit/status";
     const request = {
-        status: $("#status option:selected").val(),
-        target: "status"
+        status: $("#js-status option:selected").val(),
     };
-    saveBoard(request);
+    saveBoard(url, request);
 })
 
-$(document).on('change', '#categoryOption', () => {
-    const categoryId = $("#categoryOption option:selected").val();
+$(document).on('change', '#js-categoryOption', () => {
+    const url = "/api/board/edit/category";
+    const categoryName = $("#js-categoryOption option:selected").val();
 
-    if (categoryId === '' || categoryId === undefined) {
-        alert("카테고리를 선택하세요");
-        return;
-    }
+    if (categoryName === "카테고리 미선택") return;
 
     const request = {
-        categoryId: categoryId,
-        target: "category"
+        categoryName: categoryName,
     };
-    saveBoard(request);
+    saveBoard(url, request);
 })
 
-function saveBoard(request) {
-    const url = "/api/board/" + boardId;
+function saveBoard(url, request) {
     request.id = boardId;
 
     put(url, request)
@@ -67,59 +63,61 @@ function deleteBoard() {
     }
 
     delWithoutBody("/api/board/" + boardId)
-        .then(res => {
-            if (res.ok) {
-                alert("삭제되었습니다.");
-                location.href = "/workspace/" + groupUrl;
-            } else alert("삭제에 실패했습니다.");
+        .then(() => {
+            location.href = "/workspace/" + groupUrl;
+        })
+        .catch(error => {
+            alert("삭제에 실패했습니다!");
+            console.error(error);
         });
 }
 
 $(document).on('keydown', '.tag', (e) => {
-    const value = e.target.value;
+    const $target = $(e.target);
+    const value = $target.val();
     $("#tags").append("<div id='virtual_dom'>" + value + "</div>");
 
     const calWidth = $('#virtual_dom').width() + 15;
     $('#virtual_dom').remove();
 
-    $("#" + e.target.id).css("width", calWidth);
+    $target.css("width", calWidth);
 })
 
-$(document).on('click', '#tags .delete', (e) => {
-    const tagLocation = e.target.parentElement;
-    const id = tagLocation.firstElementChild.id.split("tag_")[1];
-    tagLocation.remove();
+$(document).on('click', '#tags i.delete', (e) => {
+    if (!confirm("태그를 삭제하시겠습니까?")) return;
 
-    const url = "/api/tag?boardId=" + boardId;
-    const request = {id: id};
-    del(url, request)
-        .catch(error => {
-            alert("태그 삭제에 실패했습니다.")
-            console.error(error);
-        })
+    $(e.target).parent().remove();
+    saveTags();
 })
 
 $(document).on('keyup', '.tag', (e) => {
     if (e.keyCode === 13) {
-        const url = "/api/tag?boardId=" + boardId;
-        const request = [];
-
-        $('.tag').each((idx, tag) => {
-            request.push({tag: tag.value});
-        })
-
-        put(url, request)
-            .then((res) => {
-                if (res.ok) {
-                    $('#tags').append(`<input class="empty tag" placeholder="#태그 추가">`);
-                }
-            })
-            .catch((error) => {
-                alert("태그 저장에 실패했습니다!");
-                console.error(error);
-            });
+        saveTags();
     }
 });
+
+function saveTags() {
+    const url = "/api/board/edit/tags";
+    const request = {
+        id: boardId,
+        tags: []
+    };
+
+    $('.tag').each((idx, tag) => {
+        if (tag.value !== '') request.tags.push(tag.value);
+    })
+
+    put(url, request)
+        .then((res) => {
+            if (res.ok) {
+                location.reload();
+            }
+        })
+        .catch((error) => {
+            alert("태그 저장에 실패했습니다!");
+            console.error(error);
+        });
+}
 
 /*comment*/
 $(document).on('click', '#comment-toggle-btn', () => {
@@ -144,11 +142,17 @@ $(document).on('click', '.js-comment-add-btn', () => {
 })
 
 function registerComment(request) {
-    const url = "/api/comment?boardId=" + boardId;
+    const url = "/api/comment";
+    request.boardId = boardId;
 
     post(url, request)
-        .then(res => {
-            if (res.ok) renderNewComment(request);
+        .then(() => {
+            $('.comment-inbox-text').val('');
+            const newComment = createNewComment(request);
+            $('#comment-hide-area').append(newComment);
+
+            const commentNum = getCommentNum();
+            setCommentNum(commentNum + 1);
         })
         .catch(error => {
             alert("댓글을 저장하지 못했습니다!\n잠시후 다시 시도해주세요.");
@@ -156,20 +160,15 @@ function registerComment(request) {
         });
 }
 
-function renderNewComment(request) {
-    $('.comment-inbox-text').val('');
-
+function createNewComment(request) {
     const currentTime = new Date().toLocaleString();
-    const newComment =
-        `<li id="comment_id" class="comment-item">` +
+    return `<li id="comment_id" class="comment-item">` +
         `<div class="comment-area">` +
         `<div class="comment-nick-box">${request.author}</div>` +
         `<div class="comment-text-box">${request.body}</div>` +
         `<div class="comment-info-box">` +
         `<span class="comment-info-date">${currentTime}</span>` +
         `</div></div></li>`;
-
-    $('#comment-hide-area').append(newComment);
 }
 
 $(document).on('keyup keydown', '.comment-inbox-text', (e) => {
@@ -178,30 +177,89 @@ $(document).on('keyup keydown', '.comment-inbox-text', (e) => {
     $comment.height($comment.prop('scrollHeight') + 12);
 })
 
-function editComment(request) {
-    const url = "/api/comment?boardId=" + boardId;
+$(document).on('click', '.js-comment-edit', (e) => {
+    const $commentBtn = $(e.target);
+    const $commentArea = $($commentBtn.parents('div.comment-area'));
+    const $commentItem = $($commentBtn.parents('li.comment-item'));
+
+    $commentArea.hide(); //기존 commentArea 숨김
+
+    //commentWriter 적용
+    const nickname = $commentArea.find('.comment-nick-box').text();
+    const body = $commentArea.find('.comment-text-box').text();
+
+    $commentItem.append(`
+        <div class="comment-writer">
+            <div class="comment-inbox">
+                <div class="comment-inbox-name">${nickname}</div>
+                <textarea class="comment-inbox-text" placeholder="댓글을 남겨보세요.">${body}</textarea>
+            </div>
+            <div class="comment-attach">
+                <div class="comment-register">
+                    <button type="button" class="js-comment-edit-cancel simple-button">취소</button>
+                    <button type="button" class="js-comment-edit-save simple-button">완료</button>
+                </div>
+            </div>
+        </div>
+    `);
+})
+
+$(document).on('click', '.js-comment-edit-cancel', (e) => {
+    $($(e.target).parents('.comment-item')).find('.comment-area').show();
+    $(e.target).parents('.comment-writer').remove();
+})
+
+$(document).on('click', '.js-comment-edit-save', (e) => {
+    const $commentItem = $($(e.target).parents('.comment-item'));
+
+    const url = "/api/comment";
+    const request = {
+        id: $commentItem.attr('id').slice("comment_".length),
+        author: $commentItem.find('.comment-inbox-name').text(),
+        body: $commentItem.find('.comment-inbox-text').val()
+    }
 
     put(url, request)
-        .then(res => {
-            if (!res.ok) {
-                alert("댓글 저장에 실패했습니다.");
-            } else location.reload();
+        .then(() => {
+            const newComment = createNewComment(request);
+            const $commentArea = $commentItem.find('.comment-area');
+            $commentArea.replaceWith(newComment);
+            $commentArea.show();
+            $commentItem.find('.comment-writer').remove();
+        })
+        .catch(error => {
+            alert("댓글 수정에 실패했습니다!");
+            console.error(error);
         });
-}
+})
 
-$(document).on('click', '.delCommentBtn', (e) => {
+$(document).on('click', '.js-comment-del', (e) => {
     if (confirm("정말로 삭제하시겠습니까?")) {
-        const commentId = e.target.parentElement.id;
-        e.target.parentElement.remove();
-        deleteComment(commentId);
+        const $commentBtn = $(e.target);
+        const $commentItem = $commentBtn.parents('li.comment-item');
+        const commentId = $commentItem.attr('id').slice("comment_".length);
+        $commentItem.remove();
+
+        const commentNum = getCommentNum();
+        setCommentNum(commentNum - 1);
+
+        const url = "/api/comment/" + commentId;
+        delWithoutBody(url)
+            .catch(error => {
+                alert("댓글 삭제에 실패했습니다!");
+                console.error(error);
+            });
     }
 })
 
-function deleteComment(commentId) {
-    commentId = commentId.split("comment_")[1];
-    const url = "/api/comment?commentId=" + commentId;
-    delWithoutBody(url)
-        .catch((error) => console.error(error));
+function getCommentNum() {
+    const commentNumBox = $('#js-comment-num');
+    return parseInt(commentNumBox.text());
+}
+
+function setCommentNum(num) {
+    const commentNumBox = $('#js-comment-num');
+    commentNumBox.text(num);
 }
 
 /*contents*/
@@ -210,27 +268,31 @@ function moveToPreviousPage() {
 }
 
 function moveToEditPage() {
-    const editorIdx = pathname.lastIndexOf("/");
-    location.href = pathname.slice(0, editorIdx) + "/editor" + pathname.slice(editorIdx);
+    location.href = "./editor/" + boardId;
 }
 
 function registerContent() {
-    save("/api/content");
+    save("/api/board/edit/content");
 }
 
 function saveTemporarily() {
-    save("/api/content/temp");
+    save("/api/board/content/temp");
 }
 
 function save(url) {
     const request = {
-        contentId: $('.js-toast-editor').attr("id"),
+        id: $('.js-toast-editor').attr("id"),
         markdown: editor.getMarkdown()
     }
 
-    post(url, request)
-        .then(res => res.json())
-        .catch(error => console.error(error));
+    put(url, request)
+        .then(() => {
+            location.href = "../" + boardId;
+        })
+        .catch(error => {
+            alert("컨텐츠 저장에 실패했습니다!");
+            console.error(error);
+        });
 }
 
 function autoScalingWidthDefault(containerSelector, elementSelector) {
@@ -245,21 +307,6 @@ function autoScalingWidth(elementSelector, containerSelector, extraSize) {
         const calWidth = $('#virtual_dom').width() + extraSize;
         $('#virtual_dom').remove();
 
-        $("#" + element.id).css("width", calWidth);
-    })
-}
-
-function autoScalingHeightDefault(containerSelector, elementSelector,) {
-    autoScalingHeight(containerSelector, elementSelector, 10);
-}
-
-function autoScalingHeight(containerSelector, elementSelector, extraSize) {
-    $(containerSelector).not('.empty').each((idx, element) => {
-        const contentId = element.id;
-        const $content = $('#' + contentId + elementSelector);
-
-        $content.height(5);
-
-        $content.height($content.prop('scrollHeight') + extraSize);
+        $(element).css("width", calWidth);
     })
 }

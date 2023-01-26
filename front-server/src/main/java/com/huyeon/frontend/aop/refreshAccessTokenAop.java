@@ -6,6 +6,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,7 +18,8 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @RequiredArgsConstructor
 public class refreshAccessTokenAop {
-    private static final String AUTH_SERVER_ADDR = "http://localhost:8100/auth";
+    @Value("${conmoto.server.auth}")
+    private String AUTH_SERVER_ADDR;
     public static final String REFRESH_KEY = "Super-Space-Refresh";
 
     private final TokenExtractor tokenExtractor;
@@ -33,7 +35,7 @@ public class refreshAccessTokenAop {
         args[1] = generateNewAccessToken(refreshToken);
 
         if (args[1] == null) {
-            return "redirect:http://localhost:8000/";
+            return "redirect:https://conmoto.site";
         }
 
         return joinPoint.proceed(args);
