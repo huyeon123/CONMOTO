@@ -6,9 +6,10 @@ import com.huyeon.superspace.domain.group.dto.CreateDto;
 import com.huyeon.superspace.domain.group.dto.GroupDto;
 import com.huyeon.superspace.domain.group.dto.JoinDto;
 import com.huyeon.superspace.domain.group.dto.MemberDto;
-import com.huyeon.superspace.domain.group.exception.AlreadyExistException;
-import com.huyeon.superspace.domain.group.exception.NotAdminException;
-import com.huyeon.superspace.domain.group.exception.NotOnlyMemberException;
+import com.huyeon.superspace.global.exception.AlreadyExistException;
+import com.huyeon.superspace.global.exception.BadRequestException;
+import com.huyeon.superspace.global.exception.NotAdminException;
+import com.huyeon.superspace.global.exception.NotOnlyMemberException;
 import com.huyeon.superspace.domain.group.repository.NewGroupRepository;
 import com.huyeon.superspace.domain.board.service.NewBoardService;
 import com.huyeon.superspace.domain.board.service.NewCategoryService;
@@ -21,9 +22,7 @@ import com.huyeon.superspace.global.model.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -237,7 +236,7 @@ public class NewGroupService {
         String role = findRoleByEmail(group, userEmail);
 
         if (role.equals("ROLE_MANAGER")) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("그룹 관리자 멤버는 강퇴할 수 없습니다.");
         }
     }
 
@@ -288,5 +287,20 @@ public class NewGroupService {
         return memberRepository.findAllByGroupId(groupId).stream()
                 .map(MemberDto::new)
                 .collect(Collectors.toList());
+    }
+
+    public boolean isNotManager(String groupUrl, String userEmail) {
+        Set<String> managers = findGroupByUrl(groupUrl).getManagers();
+        return !managers.contains(userEmail);
+    }
+
+    public void resignGroup(String url, String userEmail) {
+        GroupDto group = findGroupByUrl(url);
+        //탈퇴 가능한 그룹인지 확인
+        if (!isMember(group.getId(), userEmail)) {
+            throw new BadRequestException("해당 그룹 멤버가 아닙니다!");
+        }
+        //강퇴
+        deleteMemberInGroup(group.getId(), userEmail);
     }
 }

@@ -84,6 +84,15 @@ public class GroupRestController {
         groupService.joinMember(userEmail, request);
     }
 
+    @DeleteMapping("/{url}/resign")
+    @ResponseStatus(HttpStatus.OK)
+    public void resignGroup(
+            @PathVariable String url,
+            @RequestHeader("X-Authorization-Id") String userEmail
+    ) {
+        groupService.resignGroup(url, userEmail);
+    }
+
 
     @Getter
     @Setter
