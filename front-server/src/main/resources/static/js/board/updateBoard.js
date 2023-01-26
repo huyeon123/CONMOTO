@@ -73,17 +73,20 @@ function deleteBoard() {
 }
 
 $(document).on('keydown', '.tag', (e) => {
-    const value = e.target.value;
+    const $target = $(e.target);
+    const value = $target.val();
     $("#tags").append("<div id='virtual_dom'>" + value + "</div>");
 
     const calWidth = $('#virtual_dom').width() + 15;
     $('#virtual_dom').remove();
 
-    $("#" + e.target.id).css("width", calWidth);
+    $target.css("width", calWidth);
 })
 
 $(document).on('click', '#tags i.delete', (e) => {
-    e.target.parentElement.remove();
+    if (!confirm("태그를 삭제하시겠습니까?")) return;
+
+    $(e.target).parent().remove();
     saveTags();
 })
 
@@ -94,20 +97,20 @@ $(document).on('keyup', '.tag', (e) => {
 });
 
 function saveTags() {
-    const url = "/api/tags";
+    const url = "/api/board/edit/tags";
     const request = {
         id: boardId,
         tags: []
     };
 
     $('.tag').each((idx, tag) => {
-        request.tags.push(tag.value);
+        if (tag.value !== '') request.tags.push(tag.value);
     })
 
     put(url, request)
         .then((res) => {
             if (res.ok) {
-                $('#tags').append(`<input class="empty tag" placeholder="#태그 추가">`);
+                location.reload();
             }
         })
         .catch((error) => {
@@ -147,6 +150,9 @@ function registerComment(request) {
             $('.comment-inbox-text').val('');
             const newComment = createNewComment(request);
             $('#comment-hide-area').append(newComment);
+
+            const commentNum = getCommentNum();
+            setCommentNum(commentNum + 1);
         })
         .catch(error => {
             alert("댓글을 저장하지 못했습니다!\n잠시후 다시 시도해주세요.");
@@ -173,8 +179,8 @@ $(document).on('keyup keydown', '.comment-inbox-text', (e) => {
 
 $(document).on('click', '.js-comment-edit', (e) => {
     const $commentBtn = $(e.target);
-    const $commentArea = $commentBtn.parent('div.comment-area');
-    const $commentItem = $commentBtn.parent('li.comment-item');
+    const $commentArea = $($commentBtn.parents('div.comment-area'));
+    const $commentItem = $($commentBtn.parents('li.comment-item'));
 
     $commentArea.hide(); //기존 commentArea 숨김
 
@@ -199,16 +205,16 @@ $(document).on('click', '.js-comment-edit', (e) => {
 })
 
 $(document).on('click', '.js-comment-edit-cancel', (e) => {
-    $(e.target).parent('.comment-item').find('.comment-area').show();
-    $(e.target).parent('.comment-writer').remove();
+    $($(e.target).parents('.comment-item')).find('.comment-area').show();
+    $(e.target).parents('.comment-writer').remove();
 })
 
 $(document).on('click', '.js-comment-edit-save', (e) => {
-    const $commentItem = $(e.target).parent('.comment-item');
+    const $commentItem = $($(e.target).parents('.comment-item'));
 
     const url = "/api/comment";
     const request = {
-        id: $commentItem.attr('id'),
+        id: $commentItem.attr('id').slice("comment_".length),
         author: $commentItem.find('.comment-inbox-name').text(),
         body: $commentItem.find('.comment-inbox-text').val()
     }
@@ -230,9 +236,12 @@ $(document).on('click', '.js-comment-edit-save', (e) => {
 $(document).on('click', '.js-comment-del', (e) => {
     if (confirm("정말로 삭제하시겠습니까?")) {
         const $commentBtn = $(e.target);
-        const $commentItem = $commentBtn.parent('li.comment-item');
-        const commentId = $commentItem.attr('id');
+        const $commentItem = $commentBtn.parents('li.comment-item');
+        const commentId = $commentItem.attr('id').slice("comment_".length);
         $commentItem.remove();
+
+        const commentNum = getCommentNum();
+        setCommentNum(commentNum - 1);
 
         const url = "/api/comment/" + commentId;
         delWithoutBody(url)
@@ -242,6 +251,16 @@ $(document).on('click', '.js-comment-del', (e) => {
             });
     }
 })
+
+function getCommentNum() {
+    const commentNumBox = $('#js-comment-num');
+    return parseInt(commentNumBox.text());
+}
+
+function setCommentNum(num) {
+    const commentNumBox = $('#js-comment-num');
+    commentNumBox.text(num);
+}
 
 /*contents*/
 function moveToPreviousPage() {
@@ -253,20 +272,23 @@ function moveToEditPage() {
 }
 
 function registerContent() {
-    save("/api/content");
+    save("/api/board/edit/content");
 }
 
 function saveTemporarily() {
-    save("/api/content/temp");
+    save("/api/board/content/temp");
 }
 
 function save(url) {
     const request = {
-        contentId: $('.js-toast-editor').attr("id"),
+        id: $('.js-toast-editor').attr("id"),
         markdown: editor.getMarkdown()
     }
 
-    post(url, request)
+    put(url, request)
+        .then(() => {
+            location.href = "../" + boardId;
+        })
         .catch(error => {
             alert("컨텐츠 저장에 실패했습니다!");
             console.error(error);
@@ -285,21 +307,6 @@ function autoScalingWidth(elementSelector, containerSelector, extraSize) {
         const calWidth = $('#virtual_dom').width() + extraSize;
         $('#virtual_dom').remove();
 
-        $("#" + element.id).css("width", calWidth);
-    })
-}
-
-function autoScalingHeightDefault(containerSelector, elementSelector) {
-    autoScalingHeight(containerSelector, elementSelector, 10);
-}
-
-function autoScalingHeight(containerSelector, elementSelector, extraSize) {
-    $(containerSelector).not('.empty').each((idx, element) => {
-        const contentId = element.id;
-        const $content = $('#' + contentId + elementSelector);
-
-        $content.height(5);
-
-        $content.height($content.prop('scrollHeight') + extraSize);
+        $(element).css("width", calWidth);
     })
 }
