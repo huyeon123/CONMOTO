@@ -4,6 +4,7 @@ import com.huyeon.authserver.auth.dto.UserSignInReq;
 import com.huyeon.authserver.auth.dto.UserSignUpReq;
 import com.huyeon.authserver.auth.dto.UserTokenInfo;
 import com.huyeon.authserver.auth.entity.User;
+import com.huyeon.authserver.auth.exception.DuplicateEmailException;
 import com.huyeon.authserver.auth.repository.AuthRepository;
 import com.huyeon.authserver.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,8 @@ public class AuthService {
 
     @Transactional
     public void signUp(UserSignUpReq request) {
+        if (isDuplicateEmail(request.getEmail())) throw new DuplicateEmailException();
+
         User user = new User(request);
         user.encryptPassword(passwordEncoder);
         authRepository.save(user);

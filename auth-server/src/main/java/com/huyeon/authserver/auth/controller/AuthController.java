@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 
 @Slf4j
@@ -44,7 +43,7 @@ public class AuthController {
             Cookie refresh = setCookie(userTokenInfo);
             response.addCookie(refresh);
 
-            return new ResponseEntity<>(userTokenInfo.getAccessToken(), HttpStatus.OK);
+            return new ResponseEntity<>(userTokenInfo, HttpStatus.OK);
         } catch (BadCredentialsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.ACCEPTED);
         } catch (RedisConnectionFailureException e) {
@@ -64,8 +63,8 @@ public class AuthController {
     }
 
     @PostMapping("/check")
-    public boolean checkDuplicateEmail(@RequestBody SingleBody email) {
-        return authService.isDuplicateEmail(email.getBody());
+    public boolean checkDuplicateEmail(@RequestBody Email request) {
+        return authService.isDuplicateEmail(request.getEmail());
     }
 
     @GetMapping("/refresh")
@@ -99,7 +98,7 @@ public class AuthController {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    static class SingleBody {
-        String body;
+    static class Email {
+        String email;
     }
 }
