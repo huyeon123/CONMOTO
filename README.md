@@ -1,4 +1,5 @@
-# Super Space
+# CONMOTO
+https://conmoto.site
 ## 배경
 구글 I/O 2022를 구경하던 중 Flutter 업데이트 뉴스에서
 Notion같은 워크스페이스를 제공하는 'Superlist' 제품을 알게됐습니다.
@@ -19,13 +20,19 @@ https://youtu.be/w_ezWG1yKQQ?t=357
 2. TDD 원칙을 따르려 노력한다.
 3. 대용량 트래픽 처리까지 고려한 기능을 구현한다.
 
+## API DOCS
+https://documenter.getpostman.com/view/11771159/2s8ZDcyKfd
+
 ## ERD
-![ERD](https://user-images.githubusercontent.com/66458794/195228795-909f7733-0d1d-4475-ae56-e24dcdc9a8b2.jpg)
+### RDBMS (MySQL)
+![RDBMS-ERD](https://user-images.githubusercontent.com/66458794/215076866-d0afdfcf-c74a-4518-a5a8-9922f6ec9952.png)
+### NoSQL (MongoDB)
+![NoSQL-ERD](https://user-images.githubusercontent.com/66458794/215081538-428d9c66-16e0-4ba6-969e-987f4737282a.png)
+
 
 ## 아키텍처
-### (2023.01.02 기준 - 진행중)
-API 서버 다중화 vs 서비스 별 분리(MSA) 고민중..
-![Third Step](https://user-images.githubusercontent.com/66458794/210211746-76242c5b-74d3-44bb-b89d-312b6286a2bf.png)
+### (2023.01.27 기준)
+![conmoto-2023-01-27](https://user-images.githubusercontent.com/66458794/215075626-6d5b21ca-e537-44d0-8ade-fd19248aa7bd.png)
 
 ## TOOL
 Skill Name | Version
@@ -38,3 +45,5 @@ jQuery-UI | 1.13.2
 Gradle | 7.4.1
 h2 | 1.4.200
 mysql | 8.0.29
+MongoDB | 6.0.3
+ToastUI | 3.2.1
