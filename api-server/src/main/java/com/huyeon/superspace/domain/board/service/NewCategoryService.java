@@ -1,18 +1,19 @@
 package com.huyeon.superspace.domain.board.service;
 
 import com.huyeon.superspace.domain.board.document.Category;
+import com.huyeon.superspace.domain.board.dto.CategoryCreateDto;
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
 import com.huyeon.superspace.domain.board.repository.NewCategoryRepository;
+import com.huyeon.superspace.global.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -25,8 +26,29 @@ import static java.util.stream.Collectors.toList;
 public class NewCategoryService {
     private final NewCategoryRepository categoryRepository;
 
-    public String createCategory(CategoryDto request) {
-        return categoryRepository.save(new Category(request)).getId();
+    public CategoryDto getCategory(String id) {
+        return findCategory(id).map(CategoryDto::new).orElseThrow();
+    }
+
+    private Optional<Category> findCategory(String id) {
+        return categoryRepository.findById(id);
+    }
+
+    public String createCategory(CategoryCreateDto request) {
+        Category category = new Category(request);
+
+        if (Objects.nonNull(request.getParentId())) {
+            Category parent = findCategory(request.getParentId()).orElseThrow();
+            checkSameGroup(category, parent);
+            category.setParentCategory(parent);
+        }
+
+        return categoryRepository.save(category).getId();
+    }
+
+    private void checkSameGroup(Category category, Category parent) {
+        if (category.getGroupUrl().equals(parent.getGroupUrl())) return;
+        throw new BadRequestException("잘못된 부모 카테고리 요청입니다!");
     }
 
     public List<CategoryDto> getCategoryTree(String groupUrl) {
@@ -82,7 +104,7 @@ public class NewCategoryService {
 
         //수정과 생성을 동시에 할 수 없기 때문에, request가 original보다 클 수 없음.
         if (originalList.size() < request.size()) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("기존 카테고리보다 더 많은 요청은 불가합니다");
         }
 
         IntStream.range(0, request.size())

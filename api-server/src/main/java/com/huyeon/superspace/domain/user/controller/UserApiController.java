@@ -1,6 +1,6 @@
 package com.huyeon.superspace.domain.user.controller;
 
-import com.huyeon.superspace.domain.user.entity.User;
+import com.huyeon.superspace.domain.user.dto.UserUpdateDto;
 import com.huyeon.superspace.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ public class UserApiController {
     @PutMapping("/edit")
     public ResponseEntity<?> editInfo(
             @RequestHeader("X-Authorization-Id") String userEmail,
-            @RequestBody User editUser) {
+            @RequestBody UserUpdateDto editUser) {
         userService.editInfo(userEmail, editUser);
         return new ResponseEntity<>(HttpStatus.OK);
     }

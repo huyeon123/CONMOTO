@@ -4,6 +4,7 @@ import com.huyeon.superspace.domain.board.document.Board;
 import com.huyeon.superspace.domain.board.document.Content;
 import com.huyeon.superspace.domain.board.dto.BoardDto;
 import com.huyeon.superspace.domain.board.dto.ContentDto;
+import com.huyeon.superspace.domain.board.dto.ContentUpdateDto;
 import com.huyeon.superspace.domain.board.repository.NewBoardRepository;
 import com.huyeon.superspace.domain.board.repository.NewCommentRepository;
 import com.huyeon.superspace.domain.board.repository.NewContentRepository;
@@ -82,8 +83,10 @@ public class NewBoardService {
         return optional.map(ContentDto::new).orElseThrow();
     }
 
-    public String saveContent(ContentDto request) {
-        return contentRepository.save(new Content(request)).getId();
+    public String saveContent(ContentUpdateDto request) {
+        ContentDto origin = getBoard(request.getBoardId()).getContent();
+        origin.setMarkdown(request.getMarkdown());
+        return contentRepository.save(new Content(origin)).getId();
     }
 
     public List<BoardDto> getNext10LatestInGroup(String groupUrl, int page) {

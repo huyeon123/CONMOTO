@@ -36,10 +36,10 @@ public class NotyApiController {
         return notyService.subscribe(emitterAdaptor);
     }
 
-    @GetMapping("/{page}")
+    @GetMapping("/mine")
     public ResponseEntity<?> userLatestNoty(
             @RequestHeader("X-Authorization-Id") String userEmail,
-            @PathVariable int page
+            @RequestParam int page
     ) {
         List<NotyDto> latestNoty = notyService.findAllByUser(userEmail, page);
         return new ResponseEntity<>(latestNoty, HttpStatus.OK);
@@ -52,8 +52,11 @@ public class NotyApiController {
     }
 
     @PutMapping
-    public ResponseEntity<?> setReadNoty(@RequestBody List<Long> idList) {
-        notyService.setReadNoty(idList);
+    public ResponseEntity<?> setReadNoty(
+            @RequestBody List<Long> idList,
+            @RequestHeader("X-Authorization-Id") String userEmail
+    ) {
+        notyService.setReadNoty(idList, userEmail);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

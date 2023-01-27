@@ -1,4 +1,4 @@
-package com.huyeon.superspace.domain.group.exception;
+package com.huyeon.superspace.global.exception;
 
 public class NotOnlyMemberException extends RuntimeException {
     public NotOnlyMemberException(String message) {

@@ -8,6 +8,7 @@ import com.huyeon.superspace.domain.noty.entity.ReceivedNoty;
 import com.huyeon.superspace.domain.noty.repository.EmitterRepository;
 import com.huyeon.superspace.domain.noty.repository.NotyReceiverRepository;
 import com.huyeon.superspace.domain.noty.repository.NotyRepository;
+import com.huyeon.superspace.global.exception.PermissionDeniedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -140,11 +141,13 @@ public class NotyService {
                 .collect(Collectors.toList());
     }
 
-    public void setReadNoty(List<Long> idList) {
+    public void setReadNoty(List<Long> idList, String userEmail) {
         idList.forEach(id -> {
             ReceivedNoty receiver = receiverRepository.findById(id).orElseThrow();
-            receiver.setRead(true);
-            receiverRepository.save(receiver);
+            if (receiver.getUserEmail().equals(userEmail)) {
+                receiver.setRead(true);
+                receiverRepository.save(receiver);
+            } else throw new PermissionDeniedException("잘못된 알림에 대한 접근입니다!");
         });
     }
 }

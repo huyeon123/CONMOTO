@@ -5,9 +5,7 @@ import com.huyeon.superspace.domain.board.dto.CommentPreviewDto;
 import com.huyeon.superspace.domain.board.service.NewCommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,9 +30,7 @@ public class CommentRestController {
             @RequestHeader("X-Authorization-Id") String userEmail,
             @RequestBody CommentDto request
     ) {
-        if (Objects.isNull(request.getBoardId())) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
-        }
+        Objects.requireNonNull(request.getBoardId());
 
         return commentService.createComment(userEmail, request);
     }

@@ -1,5 +1,6 @@
 package com.huyeon.superspace.domain.user.service;
 
+import com.huyeon.superspace.domain.user.dto.UserUpdateDto;
 import com.huyeon.superspace.domain.user.entity.User;
 import com.huyeon.superspace.domain.user.entity.UserHistory;
 import com.huyeon.superspace.domain.user.repository.UserHistoryRepo;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -28,16 +30,16 @@ public class UserService {
         return new UserDto(user);
     }
 
-    public void editInfo(String email, User editUser) {
-        if (editUser.getEmail().equals(email)) {
-            userRepository.findByEmail(email).ifPresent(user -> {
-                user.setName(editUser.getName());
+    public void editInfo(String email, UserUpdateDto editUser) {
+        userRepository.findByEmail(email).ifPresent(user -> {
+            if (Objects.nonNull(editUser.getName())) user.setName(editUser.getName());
+            if (Objects.nonNull(editUser.getPassword())) {
                 user.setPassword(editUser.getPassword());
-                user.setBirthday(editUser.getBirthday());
                 user.encryptPassword(passwordEncoder);
-                userRepository.save(user);
-            });
-        }
+            }
+            if (Objects.nonNull(editUser.getBirthday())) user.setBirthday(editUser.getBirthday());
+            userRepository.save(user);
+        });
     }
 
     public void resign(String email) {
