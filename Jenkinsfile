@@ -1,10 +1,8 @@
 pipeline {
     agent any
-
     tools {
         gradle 'gradle-7.4.1'
     }
-
     environment {
         BUILD_TARGET_HOME = '${BUILD_HOME}'
         APP_AUTH = 'auth-server'
@@ -14,7 +12,6 @@ pipeline {
         IMG_API = 'huyeon123/conmoto-api'
         IMG_FE = 'huyeon123/conmoto-front'
     }
-
     stages {
         stage('Grant Gradle Permission') {
             steps {
@@ -137,4 +134,4 @@ pipeline {
             }
         }
     }
-}sudo
+}
