@@ -1,59 +1,58 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta content="width=device-width" charset="UTF-8">
-    <title>회원가입 페이지</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConMoto - 회원가입</title>
     <link rel="stylesheet" th:href="@{/css/home/sign-style.css}"/>
-    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-    <script th:src="@{/js/util/fetch.js}"></script>
-    <script th:src="@{/js/home/signup.js}"></script>
 </head>
-<body>
-<form id="sign_up">
-    <div class="container">
-        <label class="form__element">
-            <b>이름</b>
-            <input type="text"
-                   placeholder="주민등록상 이름을 입력해주세요."
-                   id="username"
-                   name="username"
-                   required>
-        </label>
-
-        <label class="form__element">
-            <b>이메일</b>
-            <button class="duplicate-check"
-                    type="button"
-                    onclick=duplicateCheck()>
-                중복체크
-            </button>
-            <input type="text"
-                   placeholder="사용하고 있는 이메일을 입력해주세요."
-                   id="email"
-                   name="email"
-                   required>
-        </label>
-
-        <label class="form__element">
-            <b>비밀번호</b>
-            <input type="password"
-                   placeholder="사용할 패스워드를 입력해주세요."
-                   id="password"
-                   name="password"
-                   required>
-        </label>
-
-        <label>
-            <b>생년월일(선택)</b>
-            <input type="date" id="birthday" name="birthday">
-        </label>
-
-        <button class="submit" type="button" onclick=formSubmit()>회원가입</button>
+<body class="container">
+<header class="header-box">
+    <div class="header flex-space-between">
+        <div class="logo">
+            <a href="/"><img class="logo" th:src="@{/img/logo.png}" alt="conmoto-logo"></a>
+        </div>
     </div>
-
-    <div class="support">
-        <button type="button" class="cancel-btn" onclick="location.href='/'">취소</button>
+</header>
+<main>
+    <div style="width: 100%">
+        <section style="padding: 0 40px; margin: 0 auto;">
+            <div style="width: 100%; max-width: 960px; margin: 0 auto">
+                <div class="login-box">
+                    <div class="login-text">회원가입</div>
+                    <div class="conmoto-login">
+                        <div class="flex-column" style="width: 100%">
+                            <div>
+                                <form >
+                                    <label for="email" class="input-label">이메일</label>
+                                    <div class="input-box">
+                                        <input type="text"
+                                               placeholder="이메일을 입력해주세요."
+                                               id="email"
+                                               name="username"
+                                               required
+                                               autofocus>
+                                    </div>
+                                    <div class="js-sign-up-description"></div>
+                                    <div class="submit-box" type="button" onclick="formSubmit()">회원가입</div>
+                                </form>
+                            </div>
+                            <div class="separate-area">
+                                <div role="separator" class="horizon-bar"></div>
+                            </div>
+                            <div>
+                                <div class="sso-login">Google로 계속하기</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-</form>
+</main>
+<div class="script">
+    <script th:src="@{/js/util/jquery-3.4.1.min.js}"></script>
+    <script th:src="@{/js/home/signup.js}"></script>
+</div>
 </body>
 </html>
