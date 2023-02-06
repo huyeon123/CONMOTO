@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONMOTO</title>
+    <link rel="stylesheet" th:href="@{/css/home/main.css}">
+</head>
+<body class="container">
+<header class="header-box">
+    <div class="header flex-space-between">
+        <div class="logo">
+            <img class="logo" th:src="@{/img/logo.png}" alt="conmoto-logo">
+        </div>
+        <div class="user-button">
+            <a href="/login" class="sign-in">로그인</a>
+            <a href="/signup" class="sign-up">회원가입</a>
+        </div>
+    </div>
+</header>
+<div class="top-background">
+    <div class="header-area"></div>
+    <div class="summary">
+        <img class="main-people-img" th:src="@{/img/people.jpg}" alt="people">
+        <div class="slogan">
+            <h1 class="title">Note Everything<br>Share Everybody</h1>
+            <div class="script">
+                관심있는 그룹에 가입해서 원하는 정보를 얻어보세요!<br>
+                직접 그룹을 만들어 나와 뜻이 맞는<br>
+                사람들과 함께 할 수도 있습니다.<br>
+                혼자가 좋다면 개인 블로그로도 좋아요.
+            </div>
+            <div class="try-conmoto">
+                <a href="/signup" class="sign-up">Let's Note</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="introduce-container">
+    <h1 class="conmoto-question">What is CONMOTO?</h1>
+    <div class="conmoto-description">
+        'Conmoto'는 클래식 음악에서 '생생하게', '생동감을 가지고 약간 빠르게'라는 뜻을 가지고 있습니다.<br>
+        여러분이 원하는 다양한 정보를 CONMOTO를 통해 빠르게 수집하고 더 나은 삶을 만들어보세요.
+    </div>
+    <div class="scroll-down-box">
+        <button class="scroll-down" onclick="moveToIntroduce()">
+            <img class="func-img" th:src="@{/img/down-arrow.png}" alt="down">
+        </button>
+    </div>
+    <div class="introduce-functional">
+        <h2>대표 기능소개</h2>
+        <div class="functional">
+            <div class="functional-box">
+                <div class="functional-element">
+                    <img class="func-img" th:src="@{/img/coding.png}" alt="editor">
+                    <span>마크다운 & 위지윅 에디터 동시사용</span>
+                </div>
+                <div class="functional-element">
+                    <img class="func-img" th:src="@{/img/picture.png}" alt="picture">
+                    <span>이미지 / 동영상 / 소스코드 첨부</span>
+                </div>
+            </div>
+            <div class="functional-box">
+                <div class="functional-element">
+                    <img class="func-img" th:src="@{/img/youtube.png}" alt="youtube">
+                    <span>유튜브 / 트위치 동영상 즉시 재생</span>
+                </div>
+                <div class="functional-element">
+                    <img class="func-img" th:src="@{/img/chat.png}" alt="chat">
+                    <span>그룹 채팅 / DM 지원 (예정)</span>
+                </div>
+            </div>
+        </div>
+        <div class="functional-preview">
+            <div class="preview-box">
+                <h3>TOAST UI Editor 도입</h3>
+                <p>
+                    TOAST UI Editor의 강력한 기본 기능과 더불어<br>
+                    다양한 커스텀 플러그인을 추가해<br>
+                    태그, 유튜브 / 트위치 동영상 임베딩, 코드 하이라이트, 컬러 피커 등<br>
+                    보다 손쉽게 정보 공유를 할 수 있습니다.
+                </p>
+                <img class="preview-img" th:src="@{/img/toast-ui-editor.png}" alt="toast-ui-editor">
+            </div>
+            <div class="preview-box">
+                <h3>실시간 알림 및 채팅</h3>
+                <p>
+                    그룹 초대, 가입, 태그 등 다양한 이벤트에 대해 실시간 알림을 전송합니다.<br>
+                    그룹 멤버 혹은 다른 사용자와 직접적인 소통을 할 수 있도록 채팅 기능을 준비중입니다.
+                </p>
+                <img class="preview-img" th:src="@{/img/texting.jpg}" alt="texting">
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+    <div class="footer-inner">
+        <ul class="footer-inner-block">
+            <li><img class="logo" th:src="@{/img/logo.png}" alt="conmoto-logo"></li>
+            <li class="author"><a>제작자 : spam_work@naver.com</a></li>
+
+        </ul>
+        <ul class="footer-inner-block">
+            <li><p>링크</p></li>
+            <li><a href="https://github.com/huyeon123/CONMOTO" target="_blank">Github</a></li>
+            <li><a href="https://www.markdowntutorial.com/" target="_blank" class="small">마크다운 가이드</a>
+            <li><a href="https://ui.toast.com/" target="_blank" class="small">TOAST UI</a></li>
+        </ul>
+        <ul class="footer-inner-block last-block">
+            <li><p>이미지 출처</p></li>
+            <li><a href="https://www.flaticon.com/free-icons/coding" title="coding icons">Coding icons created by
+                Freepik - Flaticon</a></li>
+            <li><a href="https://www.flaticon.com/free-icons/picture" title="picture icons">Picture icons created by
+                Freepik - Flaticon</a></li>
+            <li><a href="https://www.flaticon.com/free-icons/youtube" title="youtube icons">Youtube icons created by
+                Freepik - Flaticon</a></li>
+            <li><a href="https://www.flaticon.com/free-icons/message" title="message icons">Message icons created by
+                Freepik - Flaticon</a></li>
+            <li><a href="https://kr.freepik.com/free-photo/woman-texting-on-a-couch_13301057.htm#query=messenger&position=10&from_view=search&track=sph">작가
+                rawpixel.com / 출처 Freepik</a></li>
+        </ul>
+    </div>
+</footer>
+</body>
+<script>
+    function moveToIntroduce() {
+        const height = document.querySelector('.top-background').scrollHeight + 200;
+        window.scrollTo({left: 0, top: height, behavior: "smooth"});
+    }
+</script>
+</html>

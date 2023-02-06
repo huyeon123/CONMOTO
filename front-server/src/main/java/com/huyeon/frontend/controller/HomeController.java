@@ -13,6 +13,12 @@ public class HomeController {
     @PurePage
     @GetMapping("/")
     public String mainPage() {
+        return "pages/home/main";
+    }
+
+    @PurePage
+    @GetMapping("/login")
+    public String loginPage() {
         return "pages/home/login";
     }
     @PurePage
