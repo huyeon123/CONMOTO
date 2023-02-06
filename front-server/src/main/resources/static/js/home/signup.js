@@ -1,25 +1,13 @@
-let check = false;
-
-$(document).on('keyup', '#password', (e) => {
+$(document).on('keyup', '#email', (e) => {
     if (e.keyCode === 13) {
-        formSubmit();
+        $('.submit-box').click();
     }
 })
 
-function formSubmit(url = "/auth/login-code") {
-    const request = {email: this.email.value};
-    if (isNotEmailFormat(request.email)) return;
-
-    fetch(url, {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        mode: 'cors',
-        body: JSON.stringify(request)
-    })
+function formSubmit() {
+    generateLoginCode()
         .then(res => {
-            if (res.ok){
+            if (res.ok) {
                 appendSignUpDescription();
                 changeSubmit();
             }
@@ -51,10 +39,10 @@ function appendSignUpDescription() {
 function changeSubmit() {
     const $form = $('form .submit-box');
     $form.text('계정 생성');
-    $form.attr('onclick', 'generateAccount()')
+    $form.attr('onclick', 'submit("/auth/signup")');
 }
 
-function generateAccount(url = "/auth/signup") {
+function submit(url) {
     const request = {
         email: $('#email').val(),
         loginCode: $('#login-code').val()
@@ -72,7 +60,7 @@ function generateAccount(url = "/auth/signup") {
             location.href = "/workspace";
         }
     }).catch(error => {
-        alert("계정 생성에 실패했습니다!");
+        alert("전송에 문제가 발생했습니다!");
         console.error(error);
     })
 }
@@ -85,4 +73,38 @@ function isNotEmailFormat(email) {
         return true;
     }
     return false;
+}
+
+function initializePassword() {
+    generateLoginCode()
+        .then(res => {
+            if (res.ok) {
+                appendSignUpDescription();
+                changeSubmitInit();
+            }
+        })
+        .catch(error => {
+            alert("회원가입에 실패했습니다!");
+            console.error(error)
+        });
+}
+
+function changeSubmitInit() {
+    const $form = $('form .submit-box');
+    $form.text('로그인');
+    $form.attr('onclick', 'submit("/auth/login")');
+}
+
+async function generateLoginCode(url = "/auth/login-code") {
+    const request = {email: this.email.value};
+    if (isNotEmailFormat(request.email)) return;
+
+    return await fetch(url, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: 'cors',
+        body: JSON.stringify(request)
+    });
 }
