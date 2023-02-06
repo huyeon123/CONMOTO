@@ -39,7 +39,7 @@ function appendSignUpDescription() {
         <label for="login-code" class="input-label">로그인 코드</label>
         <div class="input-box">
             <input type="text"
-                   placeholder="이메일을 입력해주세요."
+                   placeholder="로그인 코드를 입력해주세요."
                    id="login-code"
                    name="login-code"
                    required
