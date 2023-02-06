@@ -1,52 +1,72 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta content="width=device-width" charset="UTF-8">
-    <title>SUPER SPACE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConMoto - 로그인</title>
     <link rel="stylesheet" th:href="@{/css/home/sign-style.css}">
-    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-    <script th:src="@{/js/util/fetch.js}"></script>
-    <script th:src="@{/js/home/login.js}"></script>
 </head>
-<body>
-<div class="display">
-    <img th:src="@{/img/logo.jpg}" alt="SUPER SPACE" id="logo">
-    <form id="sign_in">
-        <div class="container">
-            <label class="form__element">
-                <b>이메일</b>
-                <input type="text"
-                       placeholder="이메일을 입력해주세요."
-                       id="email"
-                       name="username"
-                       required
-                       autofocus>
-            </label>
-
-            <label class="form__element">
-                <b>비밀번호</b>
-                <input type="password"
-                       placeholder="패스워드를 입력해주세요."
-                       id="password"
-                       name="password"
-                       required>
-            </label>
-
-            <button type="button" onclick="formSubmit()">로그인</button>
-            <label>
-                <input type="checkbox"
-                       checked="checked"
-                       id="rememberMe"
-                       name="remember-me">
-                자동 로그인
-            </label>
+<body class="container">
+<header class="header-box">
+    <div class="header flex-space-between">
+        <div class="logo">
+            <a href="/"><img class="logo" th:src="@{/img/logo.png}" alt="conmoto-logo"></a>
         </div>
-
-        <div class="support">
-            <div><a th:href="@{/signup}">회원가입</a></div>
-            <div><a th:href="@{/reset}">비밀번호를 잊어버리셨나요?</a></div>
-        </div>
-    </form>
+    </div>
+</header>
+<main>
+    <div style="width: 100%">
+        <section style="padding: 0 40px; margin: 0 auto;">
+            <div style="width: 100%; max-width: 960px; margin: 0 auto">
+                <div class="login-box">
+                    <div class="login-text">로그인</div>
+                    <div class="conmoto-login">
+                        <div class="flex-column" style="width: 100%">
+                            <div>
+                                <div class="sso-login">Google로 계속하기</div>
+                            </div>
+                            <div class="separate-area">
+                                <div role="separator" class="horizon-bar"></div>
+                            </div>
+                            <div>
+                                <form>
+                                    <label for="email" class="input-label">이메일</label>
+                                    <div class="input-box">
+                                        <input type="text"
+                                               placeholder="이메일을 입력해주세요."
+                                               id="email"
+                                               name="username"
+                                               required
+                                               autofocus>
+                                    </div>
+                                    <label for="password" class="input-label">비밀번호</label>
+                                    <div class="input-box">
+                                        <input type="password"
+                                               placeholder="패스워드를 입력해주세요."
+                                               id="password"
+                                               name="password"
+                                               required>
+                                    </div>
+                                    <div class="submit-box" onclick="formSubmit()">로그인</div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="separate-area">
+                            <div role="separator" class="horizon-bar"></div>
+                        </div>
+                        <div style="width: 100%">
+                            <a href="/reset"><div class="sso-login">비밀번호 찾기</div></a>
+                            <a href="/signup"><div class="sso-login">회원가입</div></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+<div class="script">
+    <script th:src="@{/js/util/jquery-3.4.1.min.js}"></script>
+    <script th:src="@{/js/home/login.js}"></script>
 </div>
 </body>
 </html>

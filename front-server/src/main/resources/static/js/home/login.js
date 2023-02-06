@@ -8,11 +8,16 @@ function formSubmit(url = "/auth/login") {
     const request = {
         email: this.email.value,
         password: this.password.value,
-        rememberMe: this.rememberMe.value === "on"
     };
 
-    post(url, request)
-        .then((res) => {
+    fetch(url, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: 'cors',
+        body: JSON.stringify(request)
+    }).then((res) => {
             if (res.status === 200) {
                 window.location.href = "/workspace";
             } else if (res.status === 202) {
