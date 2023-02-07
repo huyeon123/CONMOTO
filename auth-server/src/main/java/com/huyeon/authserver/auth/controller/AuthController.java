@@ -4,6 +4,7 @@ import com.huyeon.authserver.auth.dto.UserSignInReq;
 import com.huyeon.authserver.auth.dto.UserSignUpReq;
 import com.huyeon.authserver.auth.dto.UserTokenInfo;
 import com.huyeon.authserver.auth.service.AuthService;
+import com.huyeon.authserver.auth.service.EmailService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,7 @@ public class AuthController {
 
     private static final String REFRESH_KEY_NAME = "Super-Space-Refresh";
     private final AuthService authService;
+    private final EmailService loginCodeEmailService;
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
@@ -60,6 +62,11 @@ public class AuthController {
         cookie.setHttpOnly(true);
 
         return cookie;
+    }
+
+    @PostMapping("/login-code")
+    public void generateTempLoginCode(@RequestBody Email request) {
+        loginCodeEmailService.send(request.getEmail());
     }
 
     @PostMapping("/check")
