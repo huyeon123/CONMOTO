@@ -1,60 +1,68 @@
-let check = false;
-
-$(document).on('keyup', '#password', (e) => {
+$(document).on('keyup', '#email', (e) => {
     if (e.keyCode === 13) {
-        formSubmit();
+        $('.submit-box').click();
     }
 })
 
-function formSubmit(url = "/auth/signup") {
-    const request = {};
-
-    request.name = this.username.value;
-    if (request.name.length < 1) {
-        alert("이름을 입력해주세요");
-        return;
-    }
-
-    request.email = this.email.value;
-    if (!check) {
-        alert("이메일 중복체크를 확인해주세요.");
-        return
-    }
-
-    request.password = this.password.value;
-    if (request.password.length < 5) {
-        alert("비밀번호는 최소 5자리입니다.");
-        return
-    }
-    request.birthday = this.birthday.value;
-
-    post(url, request)
-        .then((res) => {
+function formSubmit() {
+    generateLoginCode()
+        .then(res => {
             if (res.ok) {
-                window.location.href = "/";
-            } else {
-                alert("회원가입에 실패했습니다!");
+                appendSignUpDescription();
+                changeSubmit();
             }
-        }).catch(error => console.error(error));
+        })
+        .catch(error => {
+            alert("회원가입에 실패했습니다!");
+            console.error(error)
+        });
 }
 
-function duplicateCheck(url = "/auth/check") {
-    const request = {"body": this.email.value};
+function appendSignUpDescription() {
+    $('.js-sign-up-description').append(
+        `<div class="sign-up-description-text" style="text-align:center; font-size: 11pt; color: gray; margin-bottom: 10px">
+            해당 이메일로 임시 로그인 코드를 전송했습니다.<br>
+            받은 메일함을 확인하시고 아래에 로그인 코드를 붙여 넣어 주세요.
+        </div>
+        <label for="login-code" class="input-label">로그인 코드</label>
+        <div class="input-box">
+            <input type="text"
+                   placeholder="로그인 코드를 입력해주세요."
+                   id="login-code"
+                   name="login-code"
+                   required
+                   autofocus>
+        </div>`
+    );
+}
 
-    if (isNotEmailFormat(request.body)) return;
+function changeSubmit() {
+    const $form = $('form .submit-box');
+    $form.text('계정 생성');
+    $form.attr('onclick', 'submit("/auth/signup")');
+}
 
-    post(url, request)
-        .then(res => {
-            if (canGetData(res)) return getJson(res);
-        })
-        .then((isDuplicate) => {
-            if (isDuplicate) {
-                alert("중복된 이메일입니다.");
-            } else {
-                alert("사용 가능한 이메일입니다.");
-                check = true;
-            }
-        })
+function submit(url) {
+    const request = {
+        email: $('#email').val(),
+        loginCode: $('#login-code').val()
+    };
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: 'cors',
+        body: JSON.stringify(request)
+    }).then(res => {
+        if (res.ok) {
+            location.href = "/workspace";
+        }
+    }).catch(error => {
+        alert("전송에 문제가 발생했습니다!");
+        console.error(error);
+    })
 }
 
 function isNotEmailFormat(email) {
@@ -65,4 +73,38 @@ function isNotEmailFormat(email) {
         return true;
     }
     return false;
+}
+
+function initializePassword() {
+    generateLoginCode()
+        .then(res => {
+            if (res.ok) {
+                appendSignUpDescription();
+                changeSubmitInit();
+            }
+        })
+        .catch(error => {
+            alert("회원가입에 실패했습니다!");
+            console.error(error)
+        });
+}
+
+function changeSubmitInit() {
+    const $form = $('form .submit-box');
+    $form.text('로그인');
+    $form.attr('onclick', 'submit("/auth/login")');
+}
+
+async function generateLoginCode(url = "/auth/login-code") {
+    const request = {email: this.email.value};
+    if (isNotEmailFormat(request.email)) return;
+
+    return await fetch(url, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: 'cors',
+        body: JSON.stringify(request)
+    });
 }
