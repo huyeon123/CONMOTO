@@ -4,7 +4,8 @@ import com.huyeon.authserver.auth.dto.UserSignInReq;
 import com.huyeon.authserver.auth.dto.UserSignUpReq;
 import com.huyeon.authserver.auth.dto.UserTokenInfo;
 import com.huyeon.authserver.auth.service.AuthService;
-import com.huyeon.authserver.auth.service.EmailService;
+import com.huyeon.authserver.email.EmailService;
+import com.huyeon.authserver.utils.CookieUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpServerErrorException;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 
 @Slf4j
@@ -42,8 +45,7 @@ public class AuthController {
         try {
             UserTokenInfo userTokenInfo = authService.logIn(request);
 
-            Cookie refresh = setCookie(userTokenInfo);
-            response.addCookie(refresh);
+            setCookie(response, userTokenInfo);
 
             return new ResponseEntity<>(userTokenInfo, HttpStatus.OK);
         } catch (BadCredentialsException e) {
@@ -55,13 +57,13 @@ public class AuthController {
 
     }
 
-    private Cookie setCookie(UserTokenInfo token) {
-        Cookie cookie = new Cookie(REFRESH_KEY_NAME, token.getRefreshToken());
-        cookie.setPath("/");
-        cookie.setMaxAge((int) (token.getRefreshTokenExpireTime() / 1000));
-        cookie.setHttpOnly(true);
-
-        return cookie;
+    private void setCookie(HttpServletResponse response, UserTokenInfo token) {
+        CookieUtils.addCookie(
+                response,
+                REFRESH_KEY_NAME,
+                token.getRefreshToken(),
+                (int) (token.getRefreshTokenExpireTime() / 1000)
+        );
     }
 
     @PostMapping("/login-code")
@@ -100,6 +102,28 @@ public class AuthController {
         cookie.setMaxAge(0);
 
         return cookie;
+    }
+
+    @GetMapping("/oauth2/success")
+    public UserTokenInfo loginSuccess(
+            @RequestParam("accessToken") String accessToken,
+            @RequestParam("accessTokenExpireTime") long accessTokenExpireTime,
+            @RequestParam("refreshToken") String refreshToken,
+            @RequestParam("refreshTokenExpireTime") long refreshTokenExpireTime,
+            HttpServletResponse response
+    ) {
+        UserTokenInfo userTokenInfo
+                = new UserTokenInfo(accessToken, accessTokenExpireTime, refreshToken, refreshTokenExpireTime);
+
+        try {
+            response.sendRedirect("http://localhost:8200/workspace");
+        } catch (IOException e) {
+            log.error("FE 서버로 리다이렉트 실패");
+            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        setCookie(response, userTokenInfo);
+        return userTokenInfo;
     }
 
     @Getter
