@@ -1,7 +1,11 @@
 package com.huyeon.authserver.config;
 
-import com.huyeon.authserver.jwt.JwtAccessDeniedHandler;
-import com.huyeon.authserver.jwt.JwtAuthenticationEntryPoint;
+import com.huyeon.authserver.oauth.service.GoogleOAuth2DetailsService;
+import com.huyeon.authserver.utils.jwt.JwtAccessDeniedHandler;
+import com.huyeon.authserver.utils.jwt.JwtAuthenticationEntryPoint;
+import com.huyeon.authserver.oauth.repository.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.huyeon.authserver.oauth.handler.OAuth2AuthenticationFailureHandler;
+import com.huyeon.authserver.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +26,10 @@ public class SecurityConfig {
     private final CorsFilter corsFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final GoogleOAuth2DetailsService googleOAuth2DetailsService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,6 +57,19 @@ public class SecurityConfig {
                 .accessDeniedHandler(jwtAccessDeniedHandler)
                 .accessDeniedPage("/access-denied")
 
+                //OAuth2 Config
+                .and()
+                .oauth2Login()
+                .authorizationEndpoint()
+                .baseUri("/oauth2/authorize")
+                .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+                .and()
+                .userInfoEndpoint()
+                .userService(googleOAuth2DetailsService)
+                .and()
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler)
+
                 //Authorize Request
                 .and()
                 .authorizeHttpRequests()
@@ -68,5 +89,10 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+        return new HttpCookieOAuth2AuthorizationRequestRepository();
     }
 }
