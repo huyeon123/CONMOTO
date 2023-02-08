@@ -16,6 +16,7 @@ import java.util.Objects;
 public class Authority implements GrantedAuthority {
     public static final String ROLE_USER = "ROLE_USER";
     public static final String ROLE_SUBSCRIBER = "ROLE_SUBSCRIBER";
+    public static final String ROLE_SOCIAL = "ROLE_SOCIAL";
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
 
     @Id
