@@ -6,7 +6,7 @@ import com.huyeon.authserver.auth.dto.UserTokenInfo;
 import com.huyeon.authserver.auth.entity.User;
 import com.huyeon.authserver.auth.exception.DuplicateEmailException;
 import com.huyeon.authserver.auth.repository.AuthRepository;
-import com.huyeon.authserver.jwt.TokenProvider;
+import com.huyeon.authserver.utils.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.RedisConnectionFailureException;
