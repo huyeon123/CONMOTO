@@ -1,7 +1,7 @@
 package com.huyeon.authserver.config;
 
-import com.huyeon.authserver.jwt.JwtFilter;
-import com.huyeon.authserver.jwt.TokenProvider;
+import com.huyeon.authserver.utils.jwt.JwtFilter;
+import com.huyeon.authserver.utils.jwt.TokenProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

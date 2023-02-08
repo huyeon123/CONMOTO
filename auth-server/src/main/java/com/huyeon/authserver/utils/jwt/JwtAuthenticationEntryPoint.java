@@ -1,4 +1,4 @@
-package com.huyeon.authserver.jwt;
+package com.huyeon.authserver.utils.jwt;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

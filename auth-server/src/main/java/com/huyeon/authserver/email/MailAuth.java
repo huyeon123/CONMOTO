@@ -1,4 +1,4 @@
-package com.huyeon.authserver.auth.service;
+package com.huyeon.authserver.email;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

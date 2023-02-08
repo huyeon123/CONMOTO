@@ -1,4 +1,4 @@
-package com.huyeon.authserver.auth.service;
+package com.huyeon.authserver.email;
 
 import com.huyeon.authserver.auth.dto.EmailDTO;
 import lombok.RequiredArgsConstructor;

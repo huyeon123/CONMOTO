@@ -1,5 +1,6 @@
 package com.huyeon.authserver.auth.service;
 
+import com.huyeon.authserver.email.LoginCodeEmailService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.huyeon.authserver.jwt;
+package com.huyeon.authserver.utils.jwt;
 
 import com.huyeon.authserver.auth.dto.UserTokenInfo;
 import io.jsonwebtoken.*;
