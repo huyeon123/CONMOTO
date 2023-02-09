@@ -58,6 +58,8 @@ function submit(url) {
     }).then(res => {
         if (res.ok) {
             location.href = "/workspace";
+        } else {
+            res.text().then(text => alert(text));
         }
     }).catch(error => {
         alert("전송에 문제가 발생했습니다!");
@@ -91,8 +93,8 @@ function initializePassword() {
 
 function changeSubmitInit() {
     const $form = $('form .submit-box');
-    $form.text('로그인');
-    $form.attr('onclick', 'submit("/auth/login")');
+    $form.text('임시 로그인');
+    $form.attr('onclick', 'submit("/auth/login/temp")');
 }
 
 async function generateLoginCode(url = "/auth/login-code") {
