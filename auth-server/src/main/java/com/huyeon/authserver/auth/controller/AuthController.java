@@ -1,8 +1,10 @@
 package com.huyeon.authserver.auth.controller;
 
+import com.huyeon.authserver.auth.dto.TempLoginReqDTO;
 import com.huyeon.authserver.auth.dto.UserSignInReq;
 import com.huyeon.authserver.auth.dto.UserSignUpReq;
 import com.huyeon.authserver.auth.dto.UserTokenInfo;
+import com.huyeon.authserver.auth.exception.NonMembersException;
 import com.huyeon.authserver.auth.service.AuthService;
 import com.huyeon.authserver.email.EmailService;
 import com.huyeon.authserver.utils.CookieUtils;
@@ -43,18 +45,21 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> logIn(@RequestBody UserSignInReq request, HttpServletResponse response) {
         try {
+            if (authService.isSocialAccount(request.getEmail())) {
+                throw new BadCredentialsException("소셜 아이디입니다. 소셜 로그인으로 진행해주세요.");
+            }
+
             UserTokenInfo userTokenInfo = authService.logIn(request);
 
             setCookie(response, userTokenInfo);
 
             return new ResponseEntity<>(userTokenInfo, HttpStatus.OK);
-        } catch (BadCredentialsException e) {
+        } catch (NonMembersException | BadCredentialsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.ACCEPTED);
         } catch (RedisConnectionFailureException e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     private void setCookie(HttpServletResponse response, UserTokenInfo token) {
@@ -69,6 +74,16 @@ public class AuthController {
     @PostMapping("/login-code")
     public void generateTempLoginCode(@RequestBody Email request) {
         loginCodeEmailService.send(request.getEmail());
+    }
+
+    @PostMapping("/login/temp")
+    public UserTokenInfo logInTemporally(
+            @RequestBody TempLoginReqDTO request,
+            HttpServletResponse response
+    ) {
+        UserTokenInfo userTokenInfo = authService.logInTemporally(request);
+        setCookie(response, userTokenInfo);
+        return userTokenInfo;
     }
 
     @PostMapping("/check")
@@ -115,14 +130,15 @@ public class AuthController {
         UserTokenInfo userTokenInfo
                 = new UserTokenInfo(accessToken, accessTokenExpireTime, refreshToken, refreshTokenExpireTime);
 
+        setCookie(response, userTokenInfo);
+
         try {
-            response.sendRedirect("http://localhost:8200/workspace");
+            response.sendRedirect("http://localhost:8000/workspace");
         } catch (IOException e) {
             log.error("FE 서버로 리다이렉트 실패");
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        setCookie(response, userTokenInfo);
         return userTokenInfo;
     }
 
