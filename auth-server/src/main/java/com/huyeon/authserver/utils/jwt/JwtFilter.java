@@ -1,4 +1,4 @@
-package com.huyeon.authserver.jwt;
+package com.huyeon.authserver.utils.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

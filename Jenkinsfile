@@ -27,7 +27,6 @@ pipeline {
                     }
                     steps {
                         echo 'Build Start "${APP_AUTH}"'
-                        sh 'cd auth-server'
                         sh './gradlew ${APP_AUTH}:bootJar'
                         echo 'Build End "${APP_AUTH}"'
                     }
@@ -38,7 +37,6 @@ pipeline {
                     }
                     steps {
                         echo 'Build Start "${APP_API}"'
-                        sh 'cd api-server'
                         sh './gradlew ${APP_API}:bootJar'
                         echo 'Build End "${APP_API}"'
                     }
@@ -49,7 +47,6 @@ pipeline {
                     }
                     steps {
                         echo 'Build Start "${APP_FE}"'
-                        sh 'cd front-server'
                         sh './gradlew ${APP_FE}:bootJar'
                         echo 'Build End "${APP_FE}"'
                     }

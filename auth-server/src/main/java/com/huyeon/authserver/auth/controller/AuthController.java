@@ -1,9 +1,13 @@
 package com.huyeon.authserver.auth.controller;
 
+import com.huyeon.authserver.auth.dto.TempLoginReqDTO;
 import com.huyeon.authserver.auth.dto.UserSignInReq;
 import com.huyeon.authserver.auth.dto.UserSignUpReq;
 import com.huyeon.authserver.auth.dto.UserTokenInfo;
+import com.huyeon.authserver.auth.exception.NonMembersException;
 import com.huyeon.authserver.auth.service.AuthService;
+import com.huyeon.authserver.email.EmailService;
+import com.huyeon.authserver.utils.CookieUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,10 +18,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpServerErrorException;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 
 @Slf4j
@@ -28,6 +34,7 @@ public class AuthController {
 
     private static final String REFRESH_KEY_NAME = "Super-Space-Refresh";
     private final AuthService authService;
+    private final EmailService loginCodeEmailService;
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
@@ -38,28 +45,45 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> logIn(@RequestBody UserSignInReq request, HttpServletResponse response) {
         try {
+            if (authService.isSocialAccount(request.getEmail())) {
+                throw new BadCredentialsException("소셜 아이디입니다. 소셜 로그인으로 진행해주세요.");
+            }
+
             UserTokenInfo userTokenInfo = authService.logIn(request);
 
-            Cookie refresh = setCookie(userTokenInfo);
-            response.addCookie(refresh);
+            setCookie(response, userTokenInfo);
 
             return new ResponseEntity<>(userTokenInfo, HttpStatus.OK);
-        } catch (BadCredentialsException e) {
+        } catch (NonMembersException | BadCredentialsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.ACCEPTED);
         } catch (RedisConnectionFailureException e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
-    private Cookie setCookie(UserTokenInfo token) {
-        Cookie cookie = new Cookie(REFRESH_KEY_NAME, token.getRefreshToken());
-        cookie.setPath("/");
-        cookie.setMaxAge((int) (token.getRefreshTokenExpireTime() / 1000));
-        cookie.setHttpOnly(true);
+    private void setCookie(HttpServletResponse response, UserTokenInfo token) {
+        CookieUtils.addCookie(
+                response,
+                REFRESH_KEY_NAME,
+                token.getRefreshToken(),
+                (int) (token.getRefreshTokenExpireTime() / 1000)
+        );
+    }
 
-        return cookie;
+    @PostMapping("/login-code")
+    public void generateTempLoginCode(@RequestBody Email request) {
+        loginCodeEmailService.send(request.getEmail());
+    }
+
+    @PostMapping("/login/temp")
+    public UserTokenInfo logInTemporally(
+            @RequestBody TempLoginReqDTO request,
+            HttpServletResponse response
+    ) {
+        UserTokenInfo userTokenInfo = authService.logInTemporally(request);
+        setCookie(response, userTokenInfo);
+        return userTokenInfo;
     }
 
     @PostMapping("/check")
@@ -93,6 +117,29 @@ public class AuthController {
         cookie.setMaxAge(0);
 
         return cookie;
+    }
+
+    @GetMapping("/oauth2/success")
+    public UserTokenInfo loginSuccess(
+            @RequestParam("accessToken") String accessToken,
+            @RequestParam("accessTokenExpireTime") long accessTokenExpireTime,
+            @RequestParam("refreshToken") String refreshToken,
+            @RequestParam("refreshTokenExpireTime") long refreshTokenExpireTime,
+            HttpServletResponse response
+    ) {
+        UserTokenInfo userTokenInfo
+                = new UserTokenInfo(accessToken, accessTokenExpireTime, refreshToken, refreshTokenExpireTime);
+
+        setCookie(response, userTokenInfo);
+
+        try {
+            response.sendRedirect("http://localhost:8000/workspace");
+        } catch (IOException e) {
+            log.error("FE 서버로 리다이렉트 실패");
+            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return userTokenInfo;
     }
 
     @Getter
