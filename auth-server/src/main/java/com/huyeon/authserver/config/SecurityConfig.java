@@ -1,11 +1,11 @@
 package com.huyeon.authserver.config;
 
+import com.huyeon.authserver.oauth.handler.OAuth2AuthenticationFailureHandler;
+import com.huyeon.authserver.oauth.handler.OAuth2AuthenticationSuccessHandler;
+import com.huyeon.authserver.oauth.repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.huyeon.authserver.oauth.service.GoogleOAuth2DetailsService;
 import com.huyeon.authserver.utils.jwt.JwtAccessDeniedHandler;
 import com.huyeon.authserver.utils.jwt.JwtAuthenticationEntryPoint;
-import com.huyeon.authserver.oauth.repository.HttpCookieOAuth2AuthorizationRequestRepository;
-import com.huyeon.authserver.oauth.handler.OAuth2AuthenticationFailureHandler;
-import com.huyeon.authserver.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
@@ -79,11 +78,6 @@ public class SecurityConfig {
                 //JWT Config
                 .and()
                 .build();
-    }
-
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
