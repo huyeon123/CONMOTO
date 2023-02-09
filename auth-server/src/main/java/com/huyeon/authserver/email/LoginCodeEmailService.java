@@ -41,8 +41,10 @@ public class LoginCodeEmailService implements EmailService {
         ops.set("loginCode:" + email, loginCode, 30, TimeUnit.MINUTES);
     }
 
-    public EmailDTO generateDTO(String to, String body) {
+    private EmailDTO generateDTO(String to, String body) {
         final String title = "[CONMOTO] 임시 로그인 코드는 " + body + " 입니다.";
+        body = "30분 내에 해당 로그인 코드를 입력해주세요!" + body + "\n\n" +
+                "만약, 본인이 요청하지 않았다면 conmoto.community@gmail.com 으로 연락바랍니다.";
         return new EmailDTO(to, title, body);
     }
 }
