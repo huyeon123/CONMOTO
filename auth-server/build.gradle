@@ -14,6 +14,9 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     // https://mvnrepository.com/artifact/javax.mail/mail
     implementation 'javax.mail:mail:1.4.7'
+    // https://mvnrepository.com/artifact/org.kohsuke/wordnet-random-name
+    implementation 'org.kohsuke:wordnet-random-name:1.5'
+
 
     runtimeOnly 'com.h2database:h2:1.4.200'
     runtimeOnly 'mysql:mysql-connector-java'
