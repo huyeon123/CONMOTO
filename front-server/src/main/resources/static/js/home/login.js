@@ -10,6 +10,11 @@ function formSubmit(url = "/auth/login") {
         password: this.password.value,
     };
 
+    if (request.password.length < 5) {
+        alert("비밀번호는 5자 이상입니다.");
+        return;
+    }
+
     fetch(url, {
         method: "POST",
         headers: {
