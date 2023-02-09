@@ -10,7 +10,10 @@ import com.huyeon.authserver.auth.repository.AuthRepository;
 import com.huyeon.authserver.oauth.model.AuthProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -26,6 +29,12 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class GoogleOAuth2DetailsService extends DefaultOAuth2UserService {
     private final AuthRepository authRepository;
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     @Transactional
@@ -85,8 +94,12 @@ public class GoogleOAuth2DetailsService extends DefaultOAuth2UserService {
                 .providerId(oAuth2UserInfo.getId())
                 .email(oAuth2UserInfo.getEmail())
                 .name(oAuth2UserInfo.getName())
+                .password(RandomStringUtils.random(20))
                 .authorities(Set.of(new Authority(Authority.ROLE_SOCIAL)))
+                .enabled(true)
                 .build();
+
+        user.encryptPassword(passwordEncoder);
 
         return authRepository.save(user);
     }
