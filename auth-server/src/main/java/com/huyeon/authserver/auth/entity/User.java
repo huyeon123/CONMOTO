@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.huyeon.authserver.auth.dto.UserSignUpReq;
 import com.huyeon.authserver.oauth.model.AuthProvider;
 import lombok.*;
+import org.kohsuke.randname.RandomNameGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,12 +54,15 @@ public class User {
     private LocalDateTime updatedAt;
 
     public User(UserSignUpReq request) {
-        name = request.getName();
+        name = generateRandomName();
         email = request.getEmail();
-        password = request.getPassword();
+        password = request.getLoginCode();
         enabled = true;
         authorities.add(new Authority(Authority.ROLE_USER));
-        if(request.getBirthday() != null) birthday = request.getBirthday();
+    }
+
+    private String generateRandomName() {
+        return new RandomNameGenerator().next();
     }
 
     public void encryptPassword(PasswordEncoder passwordEncoder) {
