@@ -96,7 +96,9 @@ public class AuthController {
             HttpServletRequest request,
             @CookieValue(name = REFRESH_KEY_NAME, required = false) String refreshToken) {
         if (refreshToken == null) refreshToken = getRefreshToken(request);
-        return authService.generateNewAccessToken(refreshToken);
+        String newAccessToken = authService.generateNewAccessToken(refreshToken);
+        log.debug("AccessToken 생성완료");
+        return newAccessToken;
     }
 
     private String getRefreshToken(HttpServletRequest request) {
@@ -133,7 +135,7 @@ public class AuthController {
         setCookie(response, userTokenInfo);
 
         try {
-            response.sendRedirect("http://localhost:8000/workspace");
+            response.sendRedirect("https://conmoto.site/workspace");
         } catch (IOException e) {
             log.error("FE 서버로 리다이렉트 실패");
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);

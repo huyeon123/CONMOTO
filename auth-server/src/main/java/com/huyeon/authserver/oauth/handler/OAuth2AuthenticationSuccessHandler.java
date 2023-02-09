@@ -41,7 +41,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         saveRedis(authentication.getName(), tokenInfo.getRefreshToken());
 
-        return UriComponentsBuilder.fromUriString("http://localhost:8000/auth/oauth2/success")
+        return UriComponentsBuilder.fromUriString("https://conmoto.site/auth/oauth2/success")
                 .queryParam("accessToken", tokenInfo.getAccessToken())
                 .queryParam("accessTokenExpireTime", tokenInfo.getAccessTokenExpireTime())
                 .queryParam("refreshToken", tokenInfo.getRefreshToken())

@@ -39,6 +39,7 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
     }
 
     @Override
+    @Deprecated
     public OAuth2AuthorizationRequest removeAuthorizationRequest(HttpServletRequest request) {
         return this.loadAuthorizationRequest(request);
     }
