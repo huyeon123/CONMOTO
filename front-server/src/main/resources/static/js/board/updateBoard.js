@@ -128,7 +128,7 @@ $(document).on('click', '#comment-toggle-btn', () => {
 
 $(document).on('click', '.js-comment-add-btn', () => {
     const request = {
-        author: $('.comment-inbox-name').text(),
+        author: $('.comment-inbox-name').attr('id'),
         body: $('.comment-inbox-text').val()
     };
 
@@ -140,9 +140,10 @@ function registerComment(request) {
     request.boardId = boardId;
 
     post(url, request)
-        .then(() => {
+        .then(res => res.text())
+        .then((commentId) => {
             $('.comment-inbox-text').val('');
-            const newComment = createNewComment(request);
+            const newComment = createNewComment(request, commentId);
             $('#comment-hide-area').append(newComment);
 
             const commentNum = getCommentNum();
@@ -154,22 +155,33 @@ function registerComment(request) {
         });
 }
 
-function createNewComment(request) {
+function createNewComment(request, commentId) {
     const currentTime = new Date().toLocaleString();
-    return `<li id="comment_id" class="comment-item">` +
+    const nickname = $('.comment-inbox-name').text();
+    return `<li id="comment_${commentId}" class="comment-item">` +
         `<div class="comment-area">` +
-        `<div class="comment-nick-box">${request.author}</div>` +
-        `<div class="comment-text-box">${request.body}</div>` +
+        `<div class="comment-nick-box">${nickname}</div>` +
+        `<span class="comment-text-box">${request.body}</span>` +
         `<div class="comment-info-box">` +
-        `<span class="comment-info-date">${currentTime}</span>` +
-        `</div></div></li>`;
+            `<span class="comment-info-date">${currentTime}</span>` +
+        `</div>
+        <div class="comment-tool">
+            <button type="button" class="js-comment-edit simple-button">수정</button>
+            <button type="button" class="js-comment-del simple-button">삭제</button>
+        </div>
+        </div></li>`;
 }
 
-$(document).on('keyup keydown', '.comment-inbox-text', (e) => {
+$(document).on('input', '.comment-inbox-text', (e) => {
     const $comment = $(e.target);
-    $comment.height(1);
-    $comment.height($comment.prop('scrollHeight') + 12);
+    autoScalingHeight($comment);
 })
+
+function autoScalingHeight(textarea) {
+    textarea.height(0);
+    const autoHeight = textarea.prop('scrollHeight');
+    textarea.css('height', autoHeight);
+}
 
 $(document).on('click', '.js-comment-edit', (e) => {
     const $commentBtn = $(e.target);
@@ -180,9 +192,9 @@ $(document).on('click', '.js-comment-edit', (e) => {
 
     //commentWriter 적용
     const nickname = $commentArea.find('.comment-nick-box').text();
-    const body = $commentArea.find('.comment-text-box').text();
+    const body = $commentArea.find('.comment-text-box').html().replaceAll('<br>', '\n');
 
-    $commentItem.append(`
+    const writer = $(`
         <div class="comment-writer">
             <div class="comment-inbox">
                 <div class="comment-inbox-name">${nickname}</div>
@@ -196,6 +208,11 @@ $(document).on('click', '.js-comment-edit', (e) => {
             </div>
         </div>
     `);
+
+    $commentItem.append(writer);
+
+    const textarea = writer.find('.comment-inbox-text');
+    autoScalingHeight(textarea);
 })
 
 $(document).on('click', '.js-comment-edit-cancel', (e) => {

@@ -151,12 +151,11 @@
 .comment-item {
     position: relative;
     border-top: 1px solid #f2f2f2;
-    padding-left: 20px;
 }
 
 .comment-area {
     position: relative;
-    padding: 12px 23px 10px 0;
+    padding: 12px 23px 10px 20px;
 }
 
 .comment-nick-box {
@@ -167,8 +166,7 @@
 .comment-text-box {
     position: relative;
     font-size: 13px;
-    word-break: break-all;
-    word-wrap: break-word;
+    box-sizing: border-box;
 }
 
 .comment-info-box {
@@ -186,6 +184,7 @@
 
 .comment-writer {
     padding: 8px 10px 5px 18px;
+    margin: 5px 0;
     border: 2px solid rgba(0, 0, 0, 0.1);
     border-radius: 6px;
     box-sizing: border-box;
@@ -202,13 +201,13 @@
 }
 
 .comment-inbox-text {
-    overflow: hidden;
+    overflow: hidden scroll;
     overflow-wrap: break-word;
     line-height: normal;
-    height: 17px;
+    height: 21px;
     max-height: 500px;
     width: 100%;
-    min-height: 17px;
+    min-height: 21px;
     padding-right: 1px;
     border: 0;
     font-size: 13px;

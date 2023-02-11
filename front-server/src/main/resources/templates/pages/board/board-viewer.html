@@ -55,7 +55,7 @@
                         <li th:each="comment : ${comments}" th:id="|comment_${comment.id}|" class="comment-item">
                             <div class="comment-area">
                                 <div class="comment-nick-box" th:text="${comment.author}">nickname</div>
-                                <div class="comment-text-box" th:text="${comment.body}">댓글</div>
+                                <div class="comment-text-box" th:utext="${comment.body.replaceAll('\n', '<br>')}">댓글</div>
                                 <div class="comment-info-box">
                                     <span class="comment-info-date"
                                           th:text="${comment.lastUpdate}">2023.01.08 16:45</span>
@@ -69,7 +69,7 @@
                     </div>
                     <div class="comment-writer">
                         <div class="comment-inbox">
-                            <div class="comment-inbox-name" th:text="${appHeader.userName}">사용자명</div>
+                            <div class="comment-inbox-name" th:id="${sideBar.member.email}" th:text="${sideBar.member.nickname}">사용자명</div>
                             <textarea class="comment-inbox-text" placeholder="댓글을 남겨보세요."></textarea>
                         </div>
                         <div class="comment-attach">
@@ -103,5 +103,6 @@
         const markdown = [[${board.content.markdown}]];
     </script>
     <script th:src="@{/js/board/toast-viewer.js}"></script>
+    <script th:src="@{/js/board/updateBoard.js}"></script>
 </div>
 </html>
