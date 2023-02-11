@@ -5,26 +5,20 @@ $(function () {
 })
 
 /*header*/
-$(document).on('keyup', '#js-title', (e) => {
-    if (e.keyCode === 13) {
-        const url = "/api/board/edit/title";
-        const request = {
-            title: $(e.target).val(),
-        };
-        e.target.blur();
-        saveBoard(url, request);
-    }
+$(document).on('blur', '#js-title', (e) => {
+    const url = "/api/board/edit/title";
+    const request = {
+        title: $(e.target).val(),
+    };
+    saveBoard(url, request);
 })
 
-$(document).on('keyup', '#js-description', (e) => {
-    if (e.keyCode === 13) {
-        const url = "/api/board/edit/description";
-        const request = {
-            description: $(e.target).val(),
-        };
-        e.target.blur();
-        saveBoard(url, request);
-    }
+$(document).on('blur', '#js-description', (e) => {
+    const url = "/api/board/edit/description";
+    const request = {
+        description: $(e.target).val(),
+    };
+    saveBoard(url, request);
 })
 
 $(document).on('change', '#js-status', () => {
