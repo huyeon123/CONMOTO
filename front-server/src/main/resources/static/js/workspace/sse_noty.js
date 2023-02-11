@@ -74,9 +74,9 @@ function addNoty(data) {
 
 function createNotyOption(data) {
     if (data.type === "GROUP_INVITE") {
-        return `<div class="flex-end mb-1">
+        return `<div class="flex-end mb-1" id="noty_join_${data.payload}">
                 <a onclick="setRead(${data.id})">거절</a>
-                <a onclick="openJoinModal('${data.payload}')">수락</a>
+                <a class="js-open-join-modal" onclick="openJoinModal('${data.payload}')">수락</a>
             </div>`;
     } else {
         $("#" + data.id).attr("onclick", `location.href='${data.url}'`);
@@ -84,10 +84,21 @@ function createNotyOption(data) {
     }
 }
 
-function openJoinModal(groupId) {
-    $(".js-join-group").attr('id', groupId);
-    $("#join-modal").show();
-    $("#join-modal").dialog("open");
+$(document).on('click', '.js-open-join-modal', (e) => {
+    const groupId = $(e.target).parent().attr('id');
+    $('.js-join-group').attr('id', groupId);
+
+
+    const notyId = $(e.target).parents('.noty').attr('id');
+    $('.js-join-noty').attr('id', notyId);
+
+    openJoinModal();
+})
+
+function openJoinModal() {
+    const $join = $('#join-modal');
+    $join.show();
+    $join.dialog("open");
 }
 
 function setRead(id) {
@@ -189,7 +200,8 @@ function initWriteNicknameModal() {
                 click: function () {
                     joinGroup();
                     $("#invite-modal").dialog("close");
-                }
+                },
+                class: "js-join-request"
             }
         ]
     });
@@ -202,7 +214,7 @@ function initWriteNicknameModal() {
 function joinGroup() {
     const url = "/api/group/join";
     const request = {
-        groupId: $(".js-join-group").attr('id'),
+        groupId: $(".js-join-group").attr('id').slice("noty_join_".length),
         nickname: $(".js-join-input-text").val()
     }
 
@@ -216,5 +228,5 @@ function joinGroup() {
             console.error(error)
         });
 
-    setRead(data.id);
+    setRead($('.js-join-noty').attr('id').slice("noty_".length));
 }
