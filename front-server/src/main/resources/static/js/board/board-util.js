@@ -17,7 +17,7 @@ function createBoard() {
             if (res.ok) {
                 res.text().then(id => {
                         alert("게시글을 생성했습니다.");
-                        window.location.href = "/workspace/" + groupUrl + "/board/" + id;
+                        window.location.href = "/workspace/" + groupUrl + "/board/editor/" + id;
                     })
             }
         });
