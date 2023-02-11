@@ -133,9 +133,8 @@ button:focus {
     flex-direction: column;
 }
 
-#super-space__title {
-    font-family: Azonix, sans-serif;
-    color: rgb(190 145 231);
+.conmoto-logo {
+    height: 35px;
 }
 
 .sidebar-header {
