@@ -281,13 +281,13 @@ function saveTemporarily() {
 
 function save(url) {
     const request = {
-        id: $('.js-toast-editor').attr("id"),
+        boardId: boardId,
         markdown: editor.getMarkdown()
     }
 
     put(url, request)
-        .then(() => {
-            location.href = "../" + boardId;
+        .then((res) => {
+            if (res.ok) location.href = "../" + boardId;
         })
         .catch(error => {
             alert("컨텐츠 저장에 실패했습니다!");
