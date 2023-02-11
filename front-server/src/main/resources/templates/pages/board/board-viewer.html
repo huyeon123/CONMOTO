@@ -17,8 +17,8 @@
         <div class="scroll-section">
             <div class="container">
                 <div class="board__header">
-                    <div class="flex-end">
-                        <div>
+                    <div class="flex-end" th:if="${editable == true}">
+                        <div class="">
                             <button type="button" class="simple-button board-delete" onclick="deleteBoard()">삭제</button>
                         </div>
                     </div>
@@ -113,7 +113,7 @@
             </div>
         </div>
     </div>
-    <div class="app-footer flex-space-between flex-horizon-center">
+    <div class="app-footer flex-space-between flex-horizon-center" th:if="${editable == true}">
         <div class="btn-wrapper-left">
             <button type="button" class="option-btn" onclick="moveToPreviousPage()">돌아가기</button>
         </div>
