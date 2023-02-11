@@ -70,7 +70,7 @@
 .header-elements {
     display: flex;
     align-items: center;
-    margin-left: 5px;
+    margin: 5px 0 10px 5px;
     border-radius: 5px;
 }
 

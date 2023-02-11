@@ -267,10 +267,6 @@ function moveToPreviousPage() {
     history.go(-1);
 }
 
-function moveToEditPage() {
-    location.href = "./editor/" + boardId;
-}
-
 function registerContent() {
     save("/api/board/edit/content");
 }

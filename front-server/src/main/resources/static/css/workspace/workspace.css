@@ -32,6 +32,19 @@ button {
 
 button:focus {
     border: none;
+}
+
+a {
+    text-decoration: none !important;
+    color: black !important;
+}
+
+* {
+    word-break: keep-all;
+    box-sizing: border-box;
+}
+
+*, *:focus {
     outline: none !important;
 }
 
