@@ -17,61 +17,31 @@
         <div class="scroll-section">
             <div class="container">
                 <div class="board__header">
-                    <div class="flex-end">
-                        <div>
+                    <div class="flex-end" th:if="${editable == true}">
+                        <div class="">
                             <button type="button" class="simple-button board-delete" onclick="deleteBoard()">삭제</button>
                         </div>
                     </div>
                     <div class="header-elements">
-                        <label>
-                            <input type="text" class="board-title" id="js-title" placeholder="제목을 입력하세요."
-                                   th:value="${board.title}">
-                        </label>
+                        <span class="board-title" th:text="${board.title}"></span>
                     </div>
                     <div class="header-elements">
-                        <label>
-                            <input type="text" class="board-description" id="js-description" placeholder="설명을 입력하세요."
-                                   th:value="${board.description}">
-                        </label>
+                        <span class="board-description" th:text="${board.description}"></span>
                     </div>
                     <div class="header-elements">
-                        <label>
-                            <span class="name">카테고리</span>
-                            <select class="select" id="js-categoryOption">
-                                <option th:selected="${board.categoryName == null}">카테고리 미선택</option>
-                                <option th:each="category : ${sideBar.categories}"
-                                        th:value="${category.name}"
-                                        th:text="${category.name}"
-                                        th:selected="${category.name == board.categoryName}">카테고리
-                                </option>
-                            </select>
-                        </label>
+                        <span class="name">카테고리</span>
+                        <span th:text="${board.categoryName}"></span>
                     </div>
                     <div class="header-elements">
-                        <label>
-                            <span class="name">상태</span>
-                            <select class="select" id="js-status">
-                                <option th:selected="${board.status == 'READY'}"
-                                        value="READY">READY
-                                </option>
-                                <option th:selected="${board.status == 'PROCEED'}"
-                                        value="PROCEED">PROCEED
-                                </option>
-                                <option th:selected="${board.status =='COMPLETE'}"
-                                        value="COMPLETE">COMPLETE
-                                </option>
-                            </select>
-                        </label>
+                        <span class="name">상태</span>
+                        <span th:text="${board.status}"></span>
                     </div>
                     <div class="header-elements">
-                        <label id="tags" class="flex-horizon-center">
-                            <span class="name mr-2">태그</span>
-                            <div class="flex-horizon-center" th:each="tag : ${board.tags}">
-                                <input class="tag" th:value="|${tag}|">
-                                <i class="pointer material-icons delete md-16 gray">delete</i>
-                            </div>
-                            <input class="empty tag" placeholder="#태그 추가">
-                        </label>
+                        <span class="name mr-2">태그</span>
+                        <div class="flex-horizon-center" th:each="tag : ${board.tags}">
+                            <span class="tag" th:text="${tag}"></span>
+                            <i class="pointer material-icons delete md-16 gray">delete</i>
+                        </div>
                     </div>
                 </div>
                 <div class="comments">
@@ -85,7 +55,7 @@
                         <li th:each="comment : ${comments}" th:id="|comment_${comment.id}|" class="comment-item">
                             <div class="comment-area">
                                 <div class="comment-nick-box" th:text="${comment.author}">nickname</div>
-                                <div class="comment-text-box" th:text="${comment.body}">댓글</div>
+                                <div class="comment-text-box" th:utext="${comment.body.replaceAll('\n', '<br>')}">댓글</div>
                                 <div class="comment-info-box">
                                     <span class="comment-info-date"
                                           th:text="${comment.lastUpdate}">2023.01.08 16:45</span>
@@ -99,7 +69,7 @@
                     </div>
                     <div class="comment-writer">
                         <div class="comment-inbox">
-                            <div class="comment-inbox-name" th:text="${appHeader.userName}">사용자명</div>
+                            <div class="comment-inbox-name" th:id="${sideBar.member.email}" th:text="${sideBar.member.nickname}">사용자명</div>
                             <textarea class="comment-inbox-text" placeholder="댓글을 남겨보세요."></textarea>
                         </div>
                         <div class="comment-attach">
@@ -113,9 +83,9 @@
             </div>
         </div>
     </div>
-    <div class="app-footer flex-space-between flex-horizon-center">
+    <div class="app-footer flex-space-between flex-horizon-center" th:if="${editable == true}">
         <div class="btn-wrapper-left">
-            <button type="button" class="option-btn" onclick="moveToPreviousPage()">돌아가기</button>
+            <a type="button" class="option-btn" href="..">돌아가기</a>
         </div>
         <div class="btn-wrapper-right">
             <button type="button" class="option-btn">변경이력</button>
@@ -132,7 +102,7 @@
     <script th:inline="javascript">
         const markdown = [[${board.content.markdown}]];
     </script>
-    <script th:src="@{/js/board/updateBoard.js}"></script>
     <script th:src="@{/js/board/toast-viewer.js}"></script>
+    <script th:src="@{/js/board/updateBoard.js}"></script>
 </div>
 </html>

@@ -32,3 +32,9 @@ $(function content_scroll_plugin() {
         // scrollInertia: 300, // 부드러운 스크롤 효과 적용
     });
 });
+
+function moveToEditPage() {
+    const pathname = location.pathname;
+    const boardId = pathname.slice(pathname.lastIndexOf("/"));
+    location.href = "./editor" + boardId;
+}
