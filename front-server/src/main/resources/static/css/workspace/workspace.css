@@ -39,7 +39,17 @@ a {
     color: black !important;
 }
 
+ul {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+li {
+    list-style: none;
+}
+
 * {
+    text-decoration: none;
     word-break: keep-all;
     box-sizing: border-box;
 }
@@ -139,15 +149,19 @@ a {
 
 .sidebar-inner {
     position: relative;
-    width: 240px;
+    width: 260px;
     max-height: calc(100%);
     padding: 10px 15px;
-    overflow: hidden scroll;
 }
 
 .sidebar {
     display: flex;
     flex-direction: column;
+}
+
+.sidebar-menu-scroll {
+    overflow: hidden scroll;
+    margin-top: 15px;
 }
 
 .conmoto-logo {
@@ -158,7 +172,6 @@ a {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 5px;
     font-weight: bold;
 }
 
@@ -187,19 +200,87 @@ a {
     font-size: 22px;
 }
 
-#info {
-    min-height: 150px;
+.profile {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
 }
 
-#group-list {
-    min-height: 200px;
+.profile-thumbnail {
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 100%;
+}
+
+.profile-thumbnail-img {
+    border-radius: 100%;
+    width: 64px;
+    height: 64px;
+}
+
+.profile-detail {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-detail a {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.profile-detail span {
+    font-size: 0.8rem;
+    color: gray;
+}
+
+.info {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.info-menu {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.group-manage {
+    display: flex;
+    padding-top: 10px;
+    justify-content: center;
+}
+
+.group-manage a {
+    display: block;
+    width: 90%;
+    text-align: center;
+}
+
+.group-list {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.group-menu {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.group-menu-button {
+    padding: 2px 5px;
+    margin: 0 5px;
+    border-radius: 3px;
+    background-color: white;
+    box-shadow: rgb(15 15 15 / 5%) 0 1px 2px;
 }
 
 .sidebar-elements {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 3px 10px;
+    padding: 3px 0;
     cursor: pointer;
 }
 
@@ -225,6 +306,27 @@ a {
     height: 100%;
 }
 
+.favorite-category {
+    margin-top: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.category {
+    margin-top: 15px;
+}
+
+.sidebar-go-top {
+    display: none;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.sidebar-go-top .group-menu-button {
+    width: 90%;
+    text-align: center;
+}
+
 /*모바일*/
 @media (max-width: 768px) {
     .sidebar-mobile-dimmed {
@@ -233,13 +335,12 @@ a {
 
     .super-space-app__sidebar {
         position: fixed;
-        display: none;
         z-index: 9999;
         background-color: rgb(249, 247, 253);
     }
 
     .sidebar-inner {
-        width: 260px;
+        width: 280px;
     }
 
     .sidebar-expand {
