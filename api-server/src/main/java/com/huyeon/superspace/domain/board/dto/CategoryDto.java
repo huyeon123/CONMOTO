@@ -20,6 +20,8 @@ public class CategoryDto {
 
     private CategoryDto parent;
 
+    private boolean favorite;
+
     private List<CategoryDto> children; //읽기용
 
     public CategoryDto(Category category) {
