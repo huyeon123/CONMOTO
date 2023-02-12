@@ -4,6 +4,7 @@ import com.huyeon.superspace.domain.board.dto.BoardDto;
 import com.huyeon.superspace.domain.board.dto.CommentDto;
 import com.huyeon.superspace.domain.board.service.NewBoardService;
 import com.huyeon.superspace.domain.board.service.NewCommentService;
+import com.huyeon.superspace.domain.board.service.PermissionCheckService;
 import com.huyeon.superspace.global.exception.AlreadyExistException;
 import com.huyeon.superspace.domain.group.service.NewGroupService;
 import com.huyeon.superspace.web.annotation.GroupPage;
@@ -23,6 +24,7 @@ public class BoardController {
     private final NewGroupService groupService;
     private final NewBoardService boardService;
     private final NewCommentService commentService;
+    private final PermissionCheckService permissionCheckService;
 
     @GroupPage
     @GetMapping("/{groupUrl}/board/{id}")
@@ -38,6 +40,12 @@ public class BoardController {
         Map<String, Object> response = new HashMap<>();
 
         BoardDto board = boardService.getBoard(id);
+
+        if (permissionCheckService.isGrantAccess(board, userEmail)) {
+            response.put("editable", true);
+        } else {
+            response.put("editable", false);
+        }
 
         String groupId = groupService.findGroupByUrl(groupUrl).getId();
         List<CommentDto> comments = commentService.getCommentInBoard(groupId, userEmail, board.getId(), 0);

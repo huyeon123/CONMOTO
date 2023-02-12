@@ -2,10 +2,12 @@ package com.huyeon.superspace.domain.group.repository;
 
 import com.huyeon.superspace.domain.group.document.Member;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface NewMemberRepository extends MongoRepository<Member, String> {
     Optional<Member> findByGroupIdAndUserEmail(String groupId, String userEmail);
 

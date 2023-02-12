@@ -4,7 +4,6 @@ import com.huyeon.superspace.domain.board.dto.BoardDto;
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
 import com.huyeon.superspace.domain.board.service.NewBoardService;
 import com.huyeon.superspace.domain.board.service.NewCategoryService;
-import com.huyeon.superspace.domain.group.service.NewGroupService;
 import com.huyeon.superspace.web.annotation.GroupPage;
 import com.huyeon.superspace.web.annotation.ManagerPage;
 import lombok.RequiredArgsConstructor;
@@ -48,13 +47,13 @@ public class CategoryController {
             @PathVariable String groupUrl
     ) {
         Map<String, Object> response = new HashMap<>();
-        response.put("topCategories", getCategoryTree(groupUrl));
+        response.put("topCategories", getCategoryTree(userEmail, groupUrl));
 
         return response;
     }
 
-    private List<CategoryDto> getCategoryTree(String groupUrl) {
-        return categoryService.getCategoryTree(groupUrl);
+    private List<CategoryDto> getCategoryTree(String email, String groupUrl) {
+        return categoryService.getCategoryTree(email, groupUrl);
     }
 
     @GroupPage

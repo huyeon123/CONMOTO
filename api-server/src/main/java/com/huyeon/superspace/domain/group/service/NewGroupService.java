@@ -109,6 +109,16 @@ public class NewGroupService {
         return memberRepository.findAllByUserEmail(userEmail);
     }
 
+    public MemberDto findByUserEmail(String userEmail, String groupUrl) {
+        String groupById = findGroupByUrl(groupUrl).getId();
+        return memberRepository.findByGroupIdAndUserEmail(groupById, userEmail)
+                .map(MemberDto::new)
+                .orElse(MemberDto.builder()
+                        .id("anonymous")
+                        .nickname("그룹 가입이 필요합니다.")
+                        .build());
+    }
+
     private boolean existsByUrl(String url) {
         return groupRepository.existsByUrl(url);
     }

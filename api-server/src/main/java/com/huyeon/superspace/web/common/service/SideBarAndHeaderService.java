@@ -5,6 +5,7 @@ import com.huyeon.superspace.domain.board.service.NewCategoryService;
 import com.huyeon.superspace.domain.group.document.Member;
 import com.huyeon.superspace.domain.group.dto.GroupDto;
 import com.huyeon.superspace.domain.group.dto.GroupViewDto;
+import com.huyeon.superspace.domain.group.dto.MemberDto;
 import com.huyeon.superspace.domain.group.service.NewGroupService;
 import com.huyeon.superspace.domain.user.repository.UserRepository;
 import com.huyeon.superspace.global.support.CacheUtils;
@@ -74,15 +75,21 @@ public class SideBarAndHeaderService {
     }
 
     private SideBarDto getSideBar(String userEmail, String groupUrl) {
+        MemberDto member = getMemberInfo(userEmail, groupUrl);
         List<GroupViewDto> groups = getGroups(userEmail);
-        List<CategoryDto> categories = getHierarchicalCategories(groupUrl);
+        List<CategoryDto> categories = getHierarchicalCategories(userEmail, groupUrl);
 
         if (categories == null) categories = Collections.emptyList();
 
         return SideBarDto.builder()
+                .member(member)
                 .groups(groups)
                 .categories(categories)
                 .build();
+    }
+
+    private MemberDto getMemberInfo(String userEmail, String groupUrl) {
+        return groupService.findByUserEmail(userEmail, groupUrl);
     }
 
     private List<GroupViewDto> getGroups(String email) {
@@ -93,8 +100,8 @@ public class SideBarAndHeaderService {
                 .collect(Collectors.toList());
     }
 
-    private List<CategoryDto> getHierarchicalCategories(String groupUrl) {
-        return categoryService.getCategoryTree(groupUrl);
+    private List<CategoryDto> getHierarchicalCategories(String email, String groupUrl) {
+        return categoryService.getCategoryTree(email, groupUrl);
     }
 
     public Map<String, Object> getBlankHeaderAndSideBar(String email) {
@@ -105,10 +112,19 @@ public class SideBarAndHeaderService {
     }
 
     public SideBarDto getBlankSideBar(String email) {
+        MemberDto member = getNoneSelectGroupProfile();
         List<GroupViewDto> groups = getGroups(email);
         return SideBarDto.builder()
+                .member(member)
                 .groups(groups)
                 .categories(List.of())
+                .build();
+    }
+
+    private MemberDto getNoneSelectGroupProfile() {
+        return MemberDto.builder()
+                .id("anonymous")
+                .nickname("선택한 그룹이 없습니다.")
                 .build();
     }
 

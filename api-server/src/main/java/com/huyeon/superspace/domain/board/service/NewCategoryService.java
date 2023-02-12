@@ -1,8 +1,11 @@
 package com.huyeon.superspace.domain.board.service;
 
 import com.huyeon.superspace.domain.board.document.Category;
+import com.huyeon.superspace.domain.board.document.FavoriteCategory;
 import com.huyeon.superspace.domain.board.dto.CategoryCreateDto;
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
+import com.huyeon.superspace.domain.board.dto.FavoriteCategoryReq;
+import com.huyeon.superspace.domain.board.repository.FavoriteCategoryRepository;
 import com.huyeon.superspace.domain.board.repository.NewCategoryRepository;
 import com.huyeon.superspace.global.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class NewCategoryService {
     private final NewCategoryRepository categoryRepository;
+    private final FavoriteCategoryRepository favoriteRepository;
 
     public CategoryDto getCategory(String id) {
         return findCategory(id).map(CategoryDto::new).orElseThrow();
@@ -51,8 +55,10 @@ public class NewCategoryService {
         throw new BadRequestException("잘못된 부모 카테고리 요청입니다!");
     }
 
-    public List<CategoryDto> getCategoryTree(String groupUrl) {
+    public List<CategoryDto> getCategoryTree(String email, String groupUrl) {
         List<CategoryDto> categories = getCategoryList(groupUrl);
+
+        checkFavorite(email, groupUrl, categories);
 
         if (categories.isEmpty()) return List.of();
 
@@ -63,6 +69,24 @@ public class NewCategoryService {
         addSubCategories(topCategories, groupingByParent);
 
         return topCategories;
+    }
+
+    private void checkFavorite(String email, String groupUrl, List<CategoryDto> categories) {
+        Optional<FavoriteCategory> favorites = findFavoriteByEmailAndUrl(email, groupUrl);
+
+        if (favorites.isPresent()) {
+            List<String> categoryIdList = favorites.get().getCategoryId();
+
+            for (CategoryDto category : categories) {
+                if (categoryIdList.contains(category.getId())) {
+                    category.setFavorite(true);
+                }
+            }
+        }
+    }
+
+    private Optional<FavoriteCategory> findFavoriteByEmailAndUrl(String email, String groupUrl) {
+        return favoriteRepository.findAllByUserEmailAndGroupUrl(email, groupUrl);
     }
 
     private List<CategoryDto> getTopCategories(List<CategoryDto> categories) {
@@ -143,5 +167,40 @@ public class NewCategoryService {
 
     public void deleteAllByGroupUrl(String groupUrl) {
         categoryRepository.deleteAllByGroupUrl(groupUrl);
+    }
+
+    public void setFavorite(String email, FavoriteCategoryReq request) {
+        if (request.isSet()) registerFavoriteCategory(email, request);
+        else liftFavoriteCategory(email, request);
+    }
+
+    private void registerFavoriteCategory(String email, FavoriteCategoryReq request) {
+        Optional<FavoriteCategory> optional = findFavoriteByEmailAndUrl(email, request.getGroupUrl());
+        FavoriteCategory favorite;
+
+        if (optional.isPresent()) {
+            favorite = optional.get();
+            List<String> categoryIdList = favorite.getCategoryId();
+            categoryIdList.add(request.getCategoryId());
+        } else {
+            favorite = FavoriteCategory.builder()
+                    .userEmail(email)
+                    .groupUrl(request.getGroupUrl())
+                    .categoryId(List.of(request.getCategoryId()))
+                    .build();
+        }
+
+        favoriteRepository.save(favorite);
+    }
+
+    private void liftFavoriteCategory(String email, FavoriteCategoryReq request) {
+        Optional<FavoriteCategory> optional = findFavoriteByEmailAndUrl(email, request.getGroupUrl());
+
+        if (optional.isPresent()) {
+            FavoriteCategory favorite = optional.get();
+            List<String> categoryIdList = favorite.getCategoryId();
+            categoryIdList.remove(request.getCategoryId());
+            favoriteRepository.save(favorite);
+        }
     }
 }

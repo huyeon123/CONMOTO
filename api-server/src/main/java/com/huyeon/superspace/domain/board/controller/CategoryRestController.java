@@ -2,6 +2,7 @@ package com.huyeon.superspace.domain.board.controller;
 
 import com.huyeon.superspace.domain.board.dto.CategoryCreateDto;
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
+import com.huyeon.superspace.domain.board.dto.FavoriteCategoryReq;
 import com.huyeon.superspace.domain.board.service.NewCategoryService;
 import com.huyeon.superspace.global.exception.PermissionDeniedException;
 import com.huyeon.superspace.domain.group.service.NewGroupService;
@@ -21,8 +22,10 @@ public class CategoryRestController {
     private final NewGroupService groupService;
 
     @GetMapping
-    public List<CategoryDto> getCategories(@RequestParam String url) {
-        return categoryService.getCategoryTree(url);
+    public List<CategoryDto> getCategories(
+            @RequestHeader("X-Authorization-Id") String email,
+            @RequestParam String url) {
+        return categoryService.getCategoryTree(email, url);
     }
 
     @PostMapping
@@ -59,5 +62,13 @@ public class CategoryRestController {
         if (groupService.isNotManager(groupUrl, userEmail)) {
             throw new PermissionDeniedException(errorMsg);
         }
+    }
+
+    @PutMapping("/favorite")
+    public void setFavoriteCategory(
+            @RequestHeader("X-Authorization-Id") String email,
+            @RequestBody FavoriteCategoryReq request
+    ) {
+        categoryService.setFavorite(email, request);
     }
 }
