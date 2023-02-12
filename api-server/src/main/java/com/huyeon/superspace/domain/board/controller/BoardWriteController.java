@@ -108,7 +108,7 @@ public class BoardWriteController {
     private void checkUpdatePermission(String id, String userEmail, String errorMsg) {
         BoardDto board = boardService.getBoard(id);
         if (isNotAuthor(board.getAuthor(), userEmail)
-                || isNotManager(board.getGroupUrl(), userEmail)) {
+                && isNotManager(board.getGroupUrl(), userEmail)) {
             throw new PermissionDeniedException(errorMsg);
         }
     }
