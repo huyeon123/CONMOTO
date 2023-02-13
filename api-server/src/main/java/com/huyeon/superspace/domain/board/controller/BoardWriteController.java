@@ -32,6 +32,18 @@ public class BoardWriteController {
         return boardService.createBoard(userEmail, request);
     }
 
+    @PostMapping("/{groupUrl}/temp")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String temporallySave(
+            @PathVariable String groupUrl,
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @RequestBody BoardDto request
+    ) {
+        checkCreatePermission(groupUrl, userEmail);
+        assert groupUrl.equals(request.getGroupUrl());
+        return boardService.saveTemporally(userEmail, request);
+    }
+
     private void checkCreatePermission(String groupUrl, String userEmail) {
         if (groupService.isNotMemberByUrl(groupUrl, userEmail)) {
             throw new PermissionDeniedException("게시글 생성 권한이 없습니다.");
