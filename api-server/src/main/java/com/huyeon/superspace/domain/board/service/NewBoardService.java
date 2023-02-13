@@ -33,15 +33,12 @@ public class NewBoardService {
         return optional.map(BoardDto::new).orElseThrow();
     }
 
-    public String createBoard(String groupUrl, String userEmail) {
-        Content content = contentRepository.save(new Content());
-        Board board = Board.builder()
-                .author(userEmail)
-                .groupUrl(groupUrl)
-                .status("READY")
-                .content(content)
-                .build();
+    public String createBoard(String userEmail, BoardDto request) {
+        String contentId = contentRepository.save(new Content(request.getContent())).getId();
+        request.getContent().setId(contentId);
 
+        Board board = new Board(request);
+        board.setAuthor(userEmail);
         return boardRepository.save(board).getId();
     }
 

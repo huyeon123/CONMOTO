@@ -55,4 +55,17 @@ public class BoardController {
 
         return response;
     }
+
+    @GroupPage
+    @GetMapping("/{groupUrl}/board")
+    public Map<String, Object> boardCreatePage(
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @PathVariable String groupUrl
+    ) {
+        if (groupService.isNotMemberByUrl(groupUrl, userEmail)) {
+            throw new AlreadyExistException("멤버가 아닙니다!");
+        }
+
+        return new HashMap<>();
+    }
 }
