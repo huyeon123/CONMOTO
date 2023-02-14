@@ -58,11 +58,9 @@ function saveGroupInfo() {
     const url = "/api/group/" + groupUrl;
 
     const changedName = $('#group-info-name').val();
-    const changedUrl = $('#group-url').val();
     const changedDescription = $('#group-description').val();
     const request = {
         name: changedName,
-        url: changedUrl,
         description: changedDescription
     };
 

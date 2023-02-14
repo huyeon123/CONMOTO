@@ -36,14 +36,6 @@
                     <input class="form-control" id="group-description" th:value="${groupInfo.description}">
                 </label>
             </div>
-            <div class="element-area">
-                <label class="input-group flex-nowrap">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">그룹 URL 수정</span>
-                    </div>
-                    <input class="form-control" id="group-url" th:value="${groupInfo.url}">
-                </label>
-            </div>
             <div class="element-area flex-space-between">
                 <button type="button" class="default-style-btn warn" onclick="location.href='.'">취소</button>
                 <button type="button" class="wide-style-btn default" onclick="saveGroupInfo()">저장</button>
