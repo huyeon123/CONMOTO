@@ -35,7 +35,7 @@
                     </thead>
                     <tbody>
                     <tr class="member-info" th:each="member, index: ${members}" th:id="|member_${index.index}|"
-                        th:if="${member.role != 'ROLE_MANAGER'}">
+                        th:if="${member.role == '일반 멤버'}">
                         <td class="member-name" th:text="${member.nickname}">USER</td>
                         <td class="member-email" th:text="${member.email}">EMAIL</td>
                         <td class="member-auth-box">
