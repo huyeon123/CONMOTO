@@ -30,10 +30,6 @@ button {
     border: none;
 }
 
-button:focus {
-    border: none;
-}
-
 a {
     text-decoration: none !important;
     color: black !important;
@@ -141,6 +137,13 @@ li {
 }
 
 /* sidebar */
+@media (max-width: 768px) {
+    .mobile-sidebar {
+        position: fixed;
+        z-index: 1000;
+    }
+}
+
 .super-space-app__sidebar {
     z-index: 9999;
     height: 100vh;

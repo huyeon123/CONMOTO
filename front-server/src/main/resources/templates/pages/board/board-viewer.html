@@ -88,10 +88,10 @@
             <a type="button" class="option-btn" href="..">돌아가기</a>
         </div>
         <div class="btn-wrapper-right">
-            <button type="button" class="option-btn">변경이력</button>
             <button type="button" class="highlight-btn" onclick="moveToEditPage()">편집</button>
         </div>
     </div>
+
 </div>
 <div class="page-script" layout:fragment="script">
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.js"></script>
@@ -103,6 +103,6 @@
         const markdown = [[${board.content.markdown}]];
     </script>
     <script th:src="@{/js/board/toast-viewer.js}"></script>
-    <script th:src="@{/js/board/updateBoard.js}"></script>
+    <script th:src="@{/js/board/board-view.js}"></script>
 </div>
 </html>

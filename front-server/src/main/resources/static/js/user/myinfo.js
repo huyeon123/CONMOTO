@@ -23,18 +23,6 @@ $(document).on('click', '.delCommentBtn', async (e) => {
     }
 });
 
-async function createBoard(url = "/api/board") {
-    get(url)
-        .then((response) => response.json())
-        .then((data) => {
-            alert(data.message);
-            if (data.success) {
-                window.location.href = "/board/" + data.data;
-            }
-        })
-        .catch((error) => console.log("실패 : ", error));
-}
-
 const delBoardReq = async (url) => {
     let success = undefined;
     delWithoutBody(url)
