@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document
+@Document(collection = "favorite_category")
 public class FavoriteCategory extends DocumentAudit {
     private String userEmail;
 

@@ -2,12 +2,15 @@ package com.huyeon.superspace.domain.board.service;
 
 import com.huyeon.superspace.domain.board.document.Board;
 import com.huyeon.superspace.domain.board.document.Content;
+import com.huyeon.superspace.domain.board.document.TempPost;
 import com.huyeon.superspace.domain.board.dto.BoardDto;
 import com.huyeon.superspace.domain.board.dto.ContentDto;
 import com.huyeon.superspace.domain.board.dto.ContentUpdateDto;
 import com.huyeon.superspace.domain.board.repository.NewBoardRepository;
 import com.huyeon.superspace.domain.board.repository.NewCommentRepository;
 import com.huyeon.superspace.domain.board.repository.NewContentRepository;
+import com.huyeon.superspace.domain.board.repository.TempPostRepository;
+import com.huyeon.superspace.global.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -27,21 +30,19 @@ public class NewBoardService {
     private final NewBoardRepository boardRepository;
     private final NewContentRepository contentRepository;
     private final NewCommentRepository commentRepository;
+    private final TempPostRepository tempPostRepository;
 
     public BoardDto getBoard(String id) {
         Optional<Board> optional = boardRepository.findById(id);
         return optional.map(BoardDto::new).orElseThrow();
     }
 
-    public String createBoard(String groupUrl, String userEmail) {
-        Content content = contentRepository.save(new Content());
-        Board board = Board.builder()
-                .author(userEmail)
-                .groupUrl(groupUrl)
-                .status("READY")
-                .content(content)
-                .build();
+    public String createBoard(String userEmail, BoardDto request) {
+        String contentId = contentRepository.save(new Content(request.getContent())).getId();
+        request.getContent().setId(contentId);
 
+        Board board = new Board(request);
+        board.setAuthor(userEmail);
         return boardRepository.save(board).getId();
     }
 
@@ -127,5 +128,29 @@ public class NewBoardService {
 
     public void deleteAllByGroupUrl(String groupUrl) {
         boardRepository.deleteAllByGroupUrl(groupUrl);
+    }
+
+    public String saveTemporally(String userEmail, BoardDto request) {
+        long count = countTempPostByEmailAndUrl(userEmail, request.getGroupUrl());
+
+        if (count >= 50) {
+            throw new BadRequestException("임시 저장글 50개 초과로 저장할 수 없습니다.");
+        }
+
+        TempPost tempPost = new TempPost(request);
+        tempPost.setAuthor(userEmail);
+        return tempPostRepository.save(tempPost).getId();
+    }
+
+    private long countTempPostByEmailAndUrl(String email, String groupUrl) {
+        return tempPostRepository.countAllByAuthorAndGroupUrl(email, groupUrl);
+    }
+
+    public List<TempPost> findTempPostByEmailAndUrl(String email, String groupUrl) {
+        return tempPostRepository.findAllByAuthorAndGroupUrl(email, groupUrl);
+    }
+
+    public TempPost findTempPostById(String tempPostId) {
+        return tempPostRepository.findById(tempPostId).orElseThrow();
     }
 }

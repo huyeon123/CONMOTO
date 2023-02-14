@@ -61,10 +61,7 @@ pipeline {
                     }
                     steps {
                         echo 'Docker Build Start "${IMG_AUTH}"'
-                        sh '''
-                            cd api-server'
-                            sudo docker build -t "${IMG_AUTH}" .
-                        '''
+                        sh 'sudo docker build -t "${IMG_AUTH}" "${APP_AUTH}"'
                         echo 'Docker Build End "${IMG_AUTH}"'
                     }
                 }
@@ -74,10 +71,7 @@ pipeline {
                     }
                     steps {
                         echo 'Docker Build Start "${IMG_API}"'
-                        sh '''
-                            cd api-server'
-                            sudo docker build -t "${IMG_API}" .
-                        '''
+                        sh 'sudo docker build -t "${IMG_API}" "${APP_API}"'
                         echo 'Docker Build End "${IMG_API}"'
                     }
                 }
@@ -87,10 +81,7 @@ pipeline {
                     }
                     steps {
                         echo 'Docker Build Start "${IMG_FE}"'
-                        sh '''
-                            cd api-server'
-                            sudo docker build -t "${IMG_FE}" .
-                        '''
+                        sh 'sudo docker build -t "${IMG_FE}" "${APP_FE}"'
                         echo 'Docker Build End "${IMG_FE}"'
                     }
                 }

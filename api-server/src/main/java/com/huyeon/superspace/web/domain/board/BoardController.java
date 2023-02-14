@@ -1,5 +1,6 @@
 package com.huyeon.superspace.web.domain.board;
 
+import com.huyeon.superspace.domain.board.document.TempPost;
 import com.huyeon.superspace.domain.board.dto.BoardDto;
 import com.huyeon.superspace.domain.board.dto.CommentDto;
 import com.huyeon.superspace.domain.board.service.NewBoardService;
@@ -50,8 +51,28 @@ public class BoardController {
         String groupId = groupService.findGroupByUrl(groupUrl).getId();
         List<CommentDto> comments = commentService.getCommentInBoard(groupId, userEmail, board.getId(), 0);
 
+        List<TempPost> tempPosts = boardService.findTempPostByEmailAndUrl(userEmail, groupUrl);
+
         response.put("board", board);
         response.put("comments", comments);
+        response.put("tempPosts", tempPosts);
+
+        return response;
+    }
+
+    @GroupPage
+    @GetMapping("/{groupUrl}/board")
+    public Map<String, Object> boardCreatePage(
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @PathVariable String groupUrl
+    ) {
+        if (groupService.isNotMemberByUrl(groupUrl, userEmail)) {
+            throw new AlreadyExistException("멤버가 아닙니다!");
+        }
+
+        HashMap<String, Object> response = new HashMap<>();
+        List<TempPost> tempPosts = boardService.findTempPostByEmailAndUrl(userEmail, groupUrl);
+        response.put("tempPosts", tempPosts);
 
         return response;
     }

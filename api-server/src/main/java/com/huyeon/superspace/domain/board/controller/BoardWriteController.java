@@ -24,10 +24,24 @@ public class BoardWriteController {
     @ResponseStatus(HttpStatus.CREATED)
     public String createBoard(
             @PathVariable String groupUrl,
-            @RequestHeader("X-Authorization-Id") String userEmail
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @RequestBody BoardDto request
     ) {
         checkCreatePermission(groupUrl, userEmail);
-        return boardService.createBoard(groupUrl, userEmail);
+        assert groupUrl.equals(request.getGroupUrl());
+        return boardService.createBoard(userEmail, request);
+    }
+
+    @PostMapping("/{groupUrl}/temp")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String temporallySave(
+            @PathVariable String groupUrl,
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @RequestBody BoardDto request
+    ) {
+        checkCreatePermission(groupUrl, userEmail);
+        assert groupUrl.equals(request.getGroupUrl());
+        return boardService.saveTemporally(userEmail, request);
     }
 
     private void checkCreatePermission(String groupUrl, String userEmail) {
