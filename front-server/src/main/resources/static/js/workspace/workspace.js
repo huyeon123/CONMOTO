@@ -3,7 +3,7 @@ function moveToCategoryPage(obj) {
 }
 
 function moveToGroupManagingPage() {
-    location.href = pathname + "/manage";
+    location.href = "/workspace/" + groupUrl + "/manage";
 }
 
 function logout() {
