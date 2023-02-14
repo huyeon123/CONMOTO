@@ -20,11 +20,14 @@
     </div>
     <div class="container">
         <div class="narrow-content-body">
+            <div>
+                <span th:text="|전체 멤버 ${#lists.size(members)}명|">멤버 수 0명</span>
+            </div>
             <div class="element-area">
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>이름</th>
+                        <th>닉네임</th>
                         <th>이메일</th>
                         <th>권한</th>
                         <th>강퇴</th>
