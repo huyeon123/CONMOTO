@@ -28,7 +28,7 @@
                             </div>
                         </div>
                         <div class="info-menu">
-                            <a class="items">글쓰기</a>
+                            <a class="items" role="button" onclick="goToEditor()" th:unless="${member.id == 'anonymous'}">글쓰기</a>
                             <a class="items" href="/user/info"> 내 활동</a>
                             <a class="items" href="/user/noty">알림</a>
                         </div>
