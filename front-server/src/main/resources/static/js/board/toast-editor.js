@@ -3,7 +3,6 @@ const {codeSyntaxHighlight} = Editor.plugin;
 
 const editor = new toastui.Editor({
     el: document.querySelector('.js-toast-editor'),
-    height: '800px',
     initialEditType: 'markdown',
     previewStyle: 'tab',
     placeholder: "여기에 내용을 입력하세요.",
@@ -27,30 +26,12 @@ const editor = new toastui.Editor({
     }
 });
 
-async function pageRender() {
-    content_scroll_plugin();
-    getMarkdown();
-}
+$(window).resize(() => {
+    scalingEditorHeight();
+})
 
-function content_scroll_plugin() {
-    $(".scroll-section").mCustomScrollbar({
-        theme: "minimal-dark",
-        mouseWheelPixels: 300,
-        scrollInertia: 300, // 부드러운 스크롤 효과 적용
-    });
-}
-
-function getMarkdown() {
-    const contentId = $('.js-toast-editor').attr('id');
-    const url = "/api/board/content/" + contentId;
-
-    get(url)
-        .then(res => res.json())
-        .then(contentDto => {
-            if (contentDto.markdown != null) editor.setMarkdown(contentDto.markdown);
-        })
-        .catch(error => {
-            alert("컨텐츠를 불러오는데 실패했습니다!");
-            console.error(error);
-        })
+function scalingEditorHeight() {
+    const viewHeight = window.innerHeight;
+    const height = (viewHeight - 170) + "px";
+    editor.setHeight(height);
 }

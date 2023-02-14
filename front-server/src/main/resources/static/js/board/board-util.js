@@ -10,17 +10,8 @@ const getList = (url) => {
     return get(url);
 };
 
-function createBoard() {
-    const url = "/api/board/" + groupUrl + "/new";
-    post(url)
-        .then(res => {
-            if (res.ok) {
-                res.text().then(id => {
-                        alert("게시글을 생성했습니다.");
-                        window.location.href = "/workspace/" + groupUrl + "/board/editor/" + id;
-                    })
-            }
-        });
+function goToEditor() {
+    location.href = "/workspace/" + groupUrl + "/board/editor";
 }
 
 function content_scroll_plugin(getListCallback) {

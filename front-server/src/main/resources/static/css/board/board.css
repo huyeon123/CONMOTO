@@ -1,3 +1,7 @@
+label {
+    margin: 0 !important;
+}
+
 .toastui-editor-contents h1 {
     font-size: 32px !important;
 }
@@ -31,10 +35,17 @@
     width: 100%;
     height: calc(100% - 60px);
     position: relative;
+    overflow: hidden;
 }
 
 .wrapper label {
     width: 90%;
+}
+
+main.container {
+    position: relative;
+    height: calc(100% - 130px);
+    overflow: hidden scroll;
 }
 
 /*header*/
@@ -223,6 +234,10 @@
     float: right;
 }
 
+.contents {
+    padding-bottom: 20px;
+}
+
 /*etc*/
 .simple-button {
     padding: 3px 5px;
@@ -234,11 +249,22 @@
 
 .app-footer {
     display: flex;
-    position: absolute;
+    position: fixed;
     bottom: 0;
-    width: 100%;
     height: 60px;
-    background-color: rgb(251, 251, 250);
+    background-color: rgba(245, 242, 255, 0.4);
+}
+
+@media (min-width: 768px) {
+    .app-footer {
+        width: calc(100vw - 260px);
+    }
+}
+
+@media (max-width: 768px) {
+    .app-footer {
+        width: 100%;
+    }
 }
 
 .option-btn {
@@ -251,8 +277,9 @@
 }
 
 .highlight-btn {
-    color: white;
-    background-color: cornflowerblue;
+    color: rgb(119, 87, 235);
+    background-color: rgb(246, 242, 253);
+    box-shadow: rgb(15 15 15 / 10%) 0 1px 2px, rgb(129 87 235 / 30%) 0 0 0 1px inset;
     border-radius: 30px;
     padding: 10px 30px;
     font-size: 14px;
@@ -265,4 +292,88 @@
 
 .app-footer .btn-wrapper-left {
     padding-left: 35px;
+}
+
+@media (max-width: 768px) {
+    .app-footer .btn-wrapper-right {
+        padding-right: 10px;
+    }
+
+    .app-footer .btn-wrapper-left {
+        padding-left: 10px;
+    }
+}
+
+/* modal */
+.modal-dimmed {
+    position: fixed;
+    background-color: rgba(245, 242, 255, 0.4);
+    inset: 0;
+}
+
+.modal-layout {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 110;
+    width: 100%;
+    min-width: 300px;
+    background-color: #fff;
+    box-shadow: 0 -1px 5px 0 rgb(0 0 0 / 3%), 0 -5px 13px 0 rgb(0 0 0 / 4%);
+}
+
+.modal-inner {
+    width: calc(80%);
+    min-width: 300px;
+    margin: 0 auto;
+    padding-top: 25px;
+}
+
+.temp-save-wrapper {
+    overflow: hidden scroll;
+}
+
+@media (max-width: 768px) {
+    .temp-save-wrapper {
+        height: 300px;
+    }
+}
+
+@media (min-width: 768px) {
+    .temp-save-wrapper {
+        height: 400px;
+    }
+}
+
+.temp-save-element {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.temp-save-element:hover {
+    text-decoration: underline;
+}
+
+.temp-save-date {
+    width: 180px;
+    margin-bottom: 5px;
+}
+
+@media (max-width: 768px) {
+    .header-elements {
+        margin: 5px 0 0 5px;
+    }
+
+    .header-elements .name {
+        font-size: 1rem;
+        padding: 0;
+    }
+
+    .header-elements .select {
+        font-size: 1rem;
+    }
+
+    .board-title {
+        font-size: 1.5rem;
+    }
 }

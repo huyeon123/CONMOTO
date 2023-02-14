@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/workspace_layout}">
 <head>
-    <title>글쓰기</title>
+    <title th:text="${board.title}"></title>
     <link rel="stylesheet" th:href="@{/css/board/board.css}">
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"/>
@@ -16,26 +16,35 @@
 <div class="wrapper" layout:fragment="content">
     <main class="container">
         <div class="board__header">
+            <div class="flex-end">
+                <div>
+                    <button type="button" class="simple-button board-history">변경이력</button>
+                    <button type="button" class="simple-button board-delete" onclick="deleteBoard()">삭제</button>
+                </div>
+            </div>
             <div class="header-elements">
                 <label>
                     <input type="text" class="board-title" id="js-title"
-                           placeholder="제목을 입력하세요.">
+                           placeholder="제목을 입력하세요."
+                           th:value="${board.title}">
                 </label>
             </div>
             <div class="header-elements">
                 <label>
                     <input type="text" class="board-description" id="js-description"
-                           placeholder="설명을 입력하세요.">
+                           placeholder="설명을 입력하세요."
+                           th:value="${board.description}">
                 </label>
             </div>
             <div class="header-elements">
                 <label>
                     <span class="name">카테고리</span>
                     <select class="select" id="js-categoryOption">
-                        <option selected>카테고리 미선택</option>
+                        <option th:selected="${board.categoryName == null}">카테고리 미선택</option>
                         <option th:each="category : ${sideBar.categories}"
                                 th:value="${category.name}"
-                                th:text="${category.name}">카테고리
+                                th:text="${category.name}"
+                                th:selected="${category.name == board.categoryName}">카테고리
                         </option>
                     </select>
                 </label>
@@ -44,61 +53,37 @@
                 <label>
                     <span class="name">상태</span>
                     <select class="select" id="js-status">
-                        <option selected value="READY">READY
+                        <option th:selected="${board.status == 'READY'}"
+                                value="READY">READY
                         </option>
-                        <option value="PROCEED">PROCEED
+                        <option th:selected="${board.status == 'PROCEED'}"
+                                value="PROCEED">PROCEED
                         </option>
-                        <option value="COMPLETE">COMPLETE</option>
+                        <option th:selected="${board.status =='COMPLETE'}"
+                                value="COMPLETE">COMPLETE
+                        </option>
                     </select>
                 </label>
             </div>
             <div class="header-elements">
                 <label id="tags" class="flex-horizon-center">
                     <span class="name mr-2">태그</span>
-                    <div class="flex-horizon-center"></div>
+                    <div class="tag-wrapper flex-horizon-center" th:each="tag : ${board.tags}">
+                        <input class="tag" th:value="|${tag}|">
+                        <i class="pointer material-icons delete md-16 gray">delete</i>
+                    </div>
                     <input class="empty tag" placeholder="#태그 추가">
                 </label>
             </div>
         </div>
-        <div class="js-toast-editor contents"></div>
+        <div th:id="${board.content.id}" class="js-toast-editor contents"></div>
     </main>
     <div class="app-footer flex-space-between flex-horizon-center">
         <div class="btn-wrapper-left">
             <button type="button" class="option-btn" onclick="moveToPreviousPage()">돌아가기</button>
         </div>
         <div class="btn-wrapper-right">
-            <button type="button" class="option-btn js-content-temp-register">
-                <a role="button" onclick="saveTemporarily()"><span>임시저장</span></a>
-                <span>|</span>
-                <a role="button" onclick="tempSaveModalToggle()"><span id="temp-save-count" th:text="${#lists.size(tempPosts)}">| 0</span></a>
-            </button>
-            <button type="button" class="highlight-btn js-content-register" onclick="registerPost()">발행</button>
-        </div>
-    </div>
-    <div class="modal-portal" style="display: none">
-        <div class="modal-dimmed">
-            <div class="modal-layout">
-                <div class="modal-inner">
-                    <div class="modal-header">
-                        <h3><b>임시저장</b></h3>
-                    </div>
-                    <div class="modal-body">
-                        <div class="temp-save-wrapper">
-                            <ul>
-                                <li class="temp-save-element" th:each="tempPost: ${tempPosts}" th:id="${tempPost.id}">
-                                    <span class="temp-save-date" th:text="${tempPost.updatedAt}">최근저장일</span>
-                                    <span class="temp-save-title" th:text="${tempPost.title}">제목</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <div class="button-wrapper">
-                            <button class="highlight-btn" onclick="tempSaveModalToggle()">닫기</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <button type="button" class="highlight-btn js-content-register" onclick="registerContent()">발행</button>
         </div>
     </div>
 </div>
@@ -106,6 +91,6 @@
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.js"></script>
     <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
     <script th:src="@{/js/board/toast-editor.js}"></script>
-    <script th:src="@{/js/board/board-create.js}"></script>
+    <script th:src="@{/js/board/board-modify.js}"></script>
 </div>
 </html>
