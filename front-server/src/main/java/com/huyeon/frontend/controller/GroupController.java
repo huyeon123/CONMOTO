@@ -60,7 +60,7 @@ public class GroupController {
         return "pages/group/groupmanage";
     }
 
-    @GetMapping("/{groupUrl}/members")
+    @GetMapping("/{groupUrl}/manage/members")
     public String memberManagingPage(
             @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
@@ -71,7 +71,7 @@ public class GroupController {
         return "pages/group/membermanage";
     }
 
-    @GetMapping("/{groupUrl}/delete")
+    @GetMapping("/{groupUrl}/manage/delete")
     public String groupDeletePage(
             @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,

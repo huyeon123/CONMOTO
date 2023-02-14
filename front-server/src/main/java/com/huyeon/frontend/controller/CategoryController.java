@@ -22,7 +22,7 @@ public class CategoryController {
 
     private final Fetch fetch;
 
-    @GetMapping("/new-category")
+    @GetMapping("/manage/new-category")
     public String createCategoryPage(
             @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,
@@ -34,7 +34,7 @@ public class CategoryController {
         return "pages/category/newcategory";
     }
 
-    @GetMapping("/category")
+    @GetMapping("/manage/category")
     public String manageCategoryPage(
             @CookieValue(refreshAccessTokenAop.REFRESH_KEY) String refreshToken,
             String newAccessToken,

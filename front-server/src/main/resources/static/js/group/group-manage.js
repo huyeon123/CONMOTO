@@ -43,11 +43,15 @@ function inviteMember() {
 }
 
 function moveToDeletePage() {
-    window.location.href = "./delete";
+    window.location.href = "./manage/delete";
 }
 
 function moveToMemberManagePage() {
-    window.location.href = "./members";
+    window.location.href = "./manage/members";
+}
+
+function moveToCategoryManagePage() {
+    window.location.href = "./manage/category";
 }
 
 function saveGroupInfo() {
