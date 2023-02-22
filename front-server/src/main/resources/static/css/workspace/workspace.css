@@ -98,6 +98,13 @@ li {
     margin-right: 50px;
 }
 
+@media (max-width: 768px) {
+    .narrow-content-body {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
 .default-style-btn {
     padding: 5px 10px;
     border-radius: 15px;
