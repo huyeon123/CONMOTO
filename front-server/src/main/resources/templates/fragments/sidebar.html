@@ -10,7 +10,7 @@
                             <img th:src="@{/img/logo.png}" alt="logo" class="conmoto-logo">
                         </a>
                         <div>
-                            <i class="material-icons" id="sidebar__fold">first_page</i>
+                            <i class="material-icons-outlined" id="sidebar__fold">first_page</i>
                         </div>
                     </div>
                     <div class="sidebar-section info">
@@ -41,14 +41,14 @@
                     <div class="sidebar-section group-list">
                         <header class="sidebar-header">
                             <span>가입한 그룹</span>
-                            <i class="material-icons expand md-18 gray">expand_more</i>
+                            <i class="material-icons-outlined expand md-18 gray">expand_more</i>
                         </header>
                         <main>
                             <ul>
                                 <li id="group-container" th:each="group: ${sideBar.groups}">
                                     <div class="sidebar-elements">
                                         <span th:utext="${group.groupName}"
-                                              th:onclick="|location.href='@{/workspace/{groupUrl}(groupUrl=${group.groupUrl})}'|">
+                                              th:onclick="|location.href='@{/workspace/{groupUrl}?tab=popular(groupUrl=${group.groupUrl})}'|">
                                             GROUP NAME
                                         </span>
                                     </div>
@@ -63,7 +63,7 @@
                     <div class="sidebar-section favorite-category" th:unless="${member.id == 'anonymous'}">
                         <header class="sidebar-header">
                             <span>즐겨찾는 카테고리</span>
-                            <i class="material-icons expand md-18 gray">expand_more</i>
+                            <i class="material-icons-outlined expand md-18 gray">expand_more</i>
                         </header>
                         <main>
                             <ul>
@@ -80,7 +80,7 @@
                     <div class="sidebar-section category" th:unless="${member.id == 'anonymous'}">
                         <header class="sidebar-header">
                             <span>카테고리</span>
-                            <i class="material-icons expand md-18 gray">expand_more</i>
+                            <i class="material-icons-outlined expand md-18 gray">expand_more</i>
                         </header>
                         <main>
                             <div id="category-container" th:each="category: ${sideBar.categories}">

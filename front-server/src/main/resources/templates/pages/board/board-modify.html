@@ -42,6 +42,7 @@
                     <select class="select" id="js-categoryOption">
                         <option th:selected="${board.categoryName == null}">카테고리 미선택</option>
                         <option th:each="category : ${sideBar.categories}"
+                                th:id="${category.id}"
                                 th:value="${category.name}"
                                 th:text="${category.name}"
                                 th:selected="${category.name == board.categoryName}">카테고리
@@ -70,7 +71,7 @@
                     <span class="name mr-2">태그</span>
                     <div class="tag-wrapper flex-horizon-center" th:each="tag : ${board.tags}">
                         <input class="tag" th:value="|${tag}|">
-                        <i class="pointer material-icons delete md-16 gray">delete</i>
+                        <i class="pointer material-icons-outlined delete md-16 gray">delete</i>
                     </div>
                     <input class="empty tag" placeholder="#태그 추가">
                 </label>
