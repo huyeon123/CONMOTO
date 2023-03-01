@@ -4,63 +4,45 @@
       layout:decorate="~{layouts/workspace_layout}">
 <head>
     <title th:text="|${groupName} - 멤버 관리|"></title>
-    <link rel="stylesheet" th:href="@{/css/group/member.css}">
+    <link rel="stylesheet" th:href="@{/css/group/groupmanage.css}">
 </head>
 <div class="flex-column-center wrapper" layout:fragment="content">
     <div class="container">
         <div class="content-header">
-            <h1 th:text="|${groupName} - 멤버 관리|"></h1>
-            <span>해당 그룹의 멤버 정보를 변경할 수 있습니다.</span>
-            <div class="margin-top-10">
-                <button type="button" class="default-style-btn warn" id="activate-expel"
-                        onclick="activateExpelMemberBtn()">멤버 강퇴 활성화
-                </button>
+            <h1>멤버 관리</h1>
+            <div class="member-manage-description">
+                <span>해당 그룹의 멤버 정보를 확인할 수 있습니다.</span>
+                <span>멤버 클릭 시 해당 멤버 페이지로 이동됩니다.</span>
+                <span>멤버 페이지에서는 등급 변경 및 강제 퇴장이 가능합니다.</span>
+            </div>
+            <div class="mt-3">
+                <div th:text="|전체 멤버 ${#lists.size(members)}명|">멤버 수</div>
+                <input class="form-control mt-2" type="text" id="member-search" placeholder="닉네임 혹은 이메일을 검색하세요.">
             </div>
         </div>
     </div>
-    <div class="container">
-        <div class="narrow-content-body">
-            <div>
-                <span th:text="|전체 멤버 ${#lists.size(members)}명|">멤버 수 0명</span>
-            </div>
-            <div class="element-area">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>닉네임</th>
-                        <th>이메일</th>
-                        <th>권한</th>
-                        <th>강퇴</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr class="member-info" th:each="member, index: ${members}" th:id="|member_${index.index}|"
-                        th:if="${member.role == '일반 멤버'}">
-                        <td class="member-name" th:text="${member.nickname}">USER</td>
-                        <td class="member-email" th:text="${member.email}">EMAIL</td>
-                        <td class="member-auth-box">
-                            <select class="member-authority">
-                                <option th:each="authority: ${availableAuth}"
-                                        th:value="${authority}"
-                                        th:text="${authority}"
-                                        th:selected="${authority == member.role}">
-                                    권한
-                                </option>
-                            </select>
-                        </td>
-                        <td class="member-expel">
-                            <button type="button" class="js-expel-btn default-style-btn warn" th:onclick="|expelMember('${index.index}')|"
-                                    disabled style="opacity: 0.5">강퇴
-                            </button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div class="element-area flex-space-between">
-                    <button type="button" class="default-style-btn warn" onclick="location.href='/workspace'">취소</button>
-                    <button type="button" class="wide-style-btn default" onclick="save()">저장</button>
-                </div>
-            </div>
+    <div class="container" style="overflow:hidden; height: 100%">
+        <div class="narrow-content-body mt-0">
+            <ul class="scrollable">
+                <li class="member-info" th:each="member: ${members}" th:id="|member_${member.id}|">
+                    <a role="button" onclick="moveToMemberPage(this.parentNode.id)">
+                        <div class="profile">
+                            <div class="profile-thumbnail">
+                                <img th:src="@{/img/user.svg}" alt="thumbnail" class="profile-thumbnail-img">
+                            </div>
+                            <div>
+                                <div class="js-member-nickname-email" th:text="|${member.nickname} (${member.email})|">닉네임
+                                    (이메일)
+                                </div>
+                                <div class="member-info-detail">
+                                    <span class="member-grade" th:text="|등급 ${member.role}|">등급</span>
+                                    <span th:text="|가입일 ${member.joinDate}|">가입일</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
