@@ -98,13 +98,6 @@ li {
     margin-right: 50px;
 }
 
-@media (max-width: 768px) {
-    .narrow-content-body {
-        margin-left: 0;
-        margin-right: 0;
-    }
-}
-
 .default-style-btn {
     padding: 5px 10px;
     border-radius: 15px;
@@ -139,18 +132,11 @@ li {
     overflow: auto;
 }
 
-.material-icons {
+.material-icons-outlined {
     cursor: pointer !important;
 }
 
 /* sidebar */
-@media (max-width: 768px) {
-    .mobile-sidebar {
-        position: fixed;
-        z-index: 1000;
-    }
-}
-
 .super-space-app__sidebar {
     z-index: 9999;
     height: 100vh;
@@ -213,7 +199,7 @@ li {
 .profile {
     display: flex;
     align-items: center;
-    margin: 5px 0;
+    padding: 5px 0;
 }
 
 .profile-thumbnail {
@@ -339,6 +325,11 @@ li {
 
 /*모바일*/
 @media (max-width: 768px) {
+    .mobile-sidebar {
+        position: fixed;
+        z-index: 1000;
+    }
+
     .sidebar-mobile-dimmed {
         background: rgba(0, 0, 0, 0.4);
     }
@@ -355,6 +346,15 @@ li {
 
     .sidebar-expand {
         display: inline-block !important;
+    }
+
+    .header-box {
+        height: 45px;
+    }
+
+    .narrow-content-body {
+        margin-left: 0;
+        margin-right: 0;
     }
 }
 
