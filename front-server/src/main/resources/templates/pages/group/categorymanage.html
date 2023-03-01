@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/workspace_layout}">
+<head>
+    <title th:text="|${groupName} - 카테고리 관리|"></title>
+    <link rel="stylesheet" th:href="@{/css/group/groupmanage.css}">
+    <link rel="stylesheet" th:href="@{/css/group/groupmain.css}">
+</head>
+<div class="category-manage-wrapper" layout:fragment="content">
+    <div class="container">
+        <div class="content-header">
+            <h1>카테고리 관리</h1>
+            <div class="member-manage-description">
+                <span>그룹 내 카테고리를 변경할 수 있습니다.</span>
+                <span>카테고리 선택 시 상세 관리페이지로 이동합니다.</span>
+            </div>
+        </div>
+
+    </div>
+    <div class="container" style="overflow:hidden; height: 100%">
+        <div class="narrow-content-body mt-0" style="height: 100%;">
+            <div class="scrollable">
+                <div class="category-class">
+                    <div>기본 카테고리</div>
+                </div>
+                <ul>
+                    <li class="category-item">🔥한눈에 보기</li>
+                    <li class="category-item">📝전체 게시글</li>
+                    <li class="category-item">⭐공지사항</li>
+                </ul>
+                <div class="category-class">
+                    <div>일반 카테고리</div>
+                </div>
+                <ul id="sortable">
+                    <li class="category-group">
+                        <div>
+                            <span>그룹 제목</span>
+                            <div class="fold-wrapper">
+                                <span>펼침</span>
+                                <input type="checkbox" checked>
+                            </div>
+                        </div>
+                        <i class="material-icons-outlined md-18">menu</i>
+                    </li>
+                    <li class="category-item">
+                        <span>전체글 보기</span>
+                        <i class="material-icons-outlined md-18">menu</i>
+                    </li>
+                    <li class="category-item">
+                        <span>전체글 보기</span>
+                        <i class="material-icons-outlined md-18">menu</i>
+                    </li>
+                    <li class="category-item">
+                        <span>전체글 보기</span>
+                        <i class="material-icons-outlined md-18">menu</i>
+                    </li>
+                    <li class="category-item">
+                        <span>전체글 보기</span>
+                        <i class="material-icons-outlined md-18">menu</i>
+                    </li>
+                    <li class="category-item">
+                        <span>전체글 보기</span>
+                        <i class="material-icons-outlined md-18">menu</i>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="category-menu-wrapper">
+        <button class="category-menu-button">추가</button>
+        <button class="category-menu-button">저장</button>
+    </div>
+</div>
+<div class="page-script" layout:fragment="script">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+    <script th:src="@{/js/category/category-manage.js}"></script>
+    <script th:src="@{/js/group/group-manage.js}"></script>
+</div>
+</html>
