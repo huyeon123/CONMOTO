@@ -1,7 +1,3 @@
-async function pageRender() {
-    scalingEditorHeight();
-}
-
 function registerPost() {
     save("/api/board/" + groupUrl + "/new");
 }

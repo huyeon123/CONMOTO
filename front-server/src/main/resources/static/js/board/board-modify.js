@@ -2,7 +2,6 @@ const boardId = pathname.substring(pathname.lastIndexOf("/") + 1);
 
 async function pageRender() {
     getMarkdown();
-    scalingEditorHeight();
     autoScalingWidth("input.tag", "#tags", 15);
 }
 
