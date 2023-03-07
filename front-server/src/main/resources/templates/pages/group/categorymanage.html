@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/workspace_layout}">
+      layout:decorate="~{layouts/community_layout}">
 <head>
-    <title th:text="|${groupName} - 카테고리 관리|"></title>
+    <title th:text="|${appHeader.groupName} - 카테고리 관리|"></title>
     <link rel="stylesheet" th:href="@{/css/group/groupmanage.css}">
     <link rel="stylesheet" th:href="@{/css/group/groupmain.css}">
 </head>
@@ -33,34 +33,29 @@
                     <div>일반 카테고리</div>
                 </div>
                 <ul id="sortable">
-                    <li class="category-group">
-                        <div>
-                            <span>그룹 제목</span>
+                    <li th:each="category: ${categories}"
+                        th:class="${category.type} == 'CATEGORY_GROUP' ? 'category-group' : 'category-item'"
+                        th:attr="
+                        data-category-type=${category.type},
+                        data-description=${category.description},
+                        data-fold=${category.fold},
+                        data-indent=${category.indent},
+                        data-write-level=${category.availableWriteLevel},
+                        data-comment-level=${category.availableCommentLevel},
+                        data-read-level=${category.availableReadLevel}"
+                    >
+                        <div th:if="${category.type == 'CATEGORY_GROUP'}">
+                            <span class="js-category-title" th:text="${category.name}">그룹 제목</span>
                             <div class="fold-wrapper">
-                                <span>펼침</span>
-                                <input type="checkbox" checked>
+                                <span>접기</span>
+                                <input type="checkbox" th:checked="${category.fold}">
                             </div>
                         </div>
-                        <i class="material-icons-outlined md-18">menu</i>
-                    </li>
-                    <li class="category-item">
-                        <span>전체글 보기</span>
-                        <i class="material-icons-outlined md-18">menu</i>
-                    </li>
-                    <li class="category-item">
-                        <span>전체글 보기</span>
-                        <i class="material-icons-outlined md-18">menu</i>
-                    </li>
-                    <li class="category-item">
-                        <span>전체글 보기</span>
-                        <i class="material-icons-outlined md-18">menu</i>
-                    </li>
-                    <li class="category-item">
-                        <span>전체글 보기</span>
-                        <i class="material-icons-outlined md-18">menu</i>
-                    </li>
-                    <li class="category-item">
-                        <span>전체글 보기</span>
+                        <div th:if="${category.indent}">
+                            <span>└</span>
+                            <span class="js-category-title" th:text="${category.name}">💩똥글</span>
+                        </div>
+                        <span th:if="${!category.indent && category.type != 'CATEGORY_GROUP'}" class="js-category-title" th:text="${category.name}">💩똥글</span>
                         <i class="material-icons-outlined md-18">menu</i>
                     </li>
                 </ul>
@@ -68,13 +63,12 @@
         </div>
     </div>
     <div class="category-menu-wrapper">
-        <button class="category-menu-button">추가</button>
-        <button class="category-menu-button">저장</button>
+        <button class="category-menu-button" onclick="openAddModal()">추가</button>
+        <button class="category-menu-button" onclick="saveCategory()">저장</button>
     </div>
 </div>
 <div class="page-script" layout:fragment="script">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
     <script th:src="@{/js/category/category-manage.js}"></script>
-    <script th:src="@{/js/group/group-manage.js}"></script>
 </div>
 </html>
