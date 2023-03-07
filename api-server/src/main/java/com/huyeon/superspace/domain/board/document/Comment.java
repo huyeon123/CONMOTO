@@ -8,15 +8,19 @@ import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Document(collection = "comments")
 public class Comment extends DocumentAudit {
+    @Transient
+    public static final String SEQUENCE_NAME = "comment_sequence";
+
     @Id
-    private String id;
     private String boardId;
+    private Long id;
     private String author;
     private String body;
     private String tag;

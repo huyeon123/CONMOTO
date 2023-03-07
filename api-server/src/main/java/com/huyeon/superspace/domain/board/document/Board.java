@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.util.Objects;
 
 @Getter
@@ -17,8 +18,11 @@ import java.util.Objects;
 @NoArgsConstructor
 @Document(collection = "boards")
 public class Board extends DocumentAudit {
+    @Transient
+    public static final String SEQUENCE_NAME = "board_sequence";
+
     @Id
-    private String id;
+    private Long id;
 
     private String author;
 
