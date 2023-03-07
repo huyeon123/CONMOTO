@@ -6,7 +6,7 @@
             <div class="sidebar" th:with="member = ${sideBar.member}">
                 <header>
                     <div id="logo" class="sidebar-section">
-                        <a href="/workspace">
+                        <a href="/community">
                             <img th:src="@{/img/logo.png}" alt="logo" class="conmoto-logo">
                         </a>
                         <div>
@@ -15,25 +15,32 @@
                     </div>
                     <div class="sidebar-section info">
                         <div class="profile">
-                            <a href="/user/info" class="profile-thumbnail">
+                            <div class="profile-thumbnail">
                                 <img th:src="@{/img/user.svg}" alt="thumbnail" class="profile-thumbnail-img">
-                            </a>
+                            </div>
                             <div class="profile-detail" th:if="${member.id != 'anonymous'}">
-                                <a href="/user/info" th:text="${member.nickname}">닉네임</a>
-                                <span th:text="${member.role}">권한</span>
+                                <span id="member" th:attr="data-member-id=${member.id}"
+                                      th:text="${member.nickname}">닉네임</span>
+                                <span th:text="${member.grade}">등급</span>
                                 <span th:text="|${member.joinDate} 가입|">가입일</span>
                             </div>
                             <div class="profile-detail" th:if="${member.id == 'anonymous'}">
-                                <a th:text="${member.nickname}">닉네임</a>
+                                <span th:text="${member.nickname}">닉네임</span>
                             </div>
                         </div>
-                        <div class="info-menu">
-                            <a class="items" role="button" onclick="goToEditor()" th:unless="${member.id == 'anonymous'}">글쓰기</a>
-                            <a class="items" href="/user/info"> 내 활동</a>
+                        <div class="info-menu" th:unless="${member.id == 'anonymous'}">
+                            <a class="items" role="button" onclick="goToEditor()">글쓰기</a>
+                            <span th:id="${member.id}" class="items" onclick="moveToMemberPage(this)">내 활동</span>
                             <a class="items" href="/user/noty">알림</a>
                         </div>
-                        <div class="group-manage" th:if="${role == 'ROLE_MANAGER'}">
-                            <a href="#" role="button" class="group-menu-button" onclick="moveToGroupManagingPage()">현재 그룹 관리</a>
+                        <div class="group-manage" th:if="${role == 'ROLE_MANAGER'}"> <!--그룹 관리자일시 관리버튼 활성화-->
+                            <a role="button" class="group-menu-button" onclick="moveToGroupManagingPage()">현재 그룹 관리</a>
+                        </div>
+                        <div class="group-manage" th:unless="${member.id == 'anonymous'}"> <!--그룹 멤버일시 초대버튼 활성화-->
+                            <a role="button" class="group-menu-button" onclick="openInviteModal()">그룹 초대</a>
+                        </div>
+                        <div class="group-manage" th:if="${groupPage && member.id == 'anonymous'}"> <!--그룹 멤버가 아닐 시 가입버튼 활성화-->
+                            <a role="button" class="group-menu-button" onclick="moveToGroupJoinPage()">그룹 가입</a>
                         </div>
                     </div>
                 </header>
@@ -46,55 +53,78 @@
                         <main>
                             <ul>
                                 <li id="group-container" th:each="group: ${sideBar.groups}">
-                                    <div class="sidebar-elements">
-                                        <span th:utext="${group.groupName}"
-                                              th:onclick="|location.href='@{/workspace/{groupUrl}?tab=popular(groupUrl=${group.groupUrl})}'|">
+                                    <div class="sidebar-elements pointer-hover">
+                                        <span onclick="moveToGroup(this)" th:attr="data-url=${group.groupUrl}"
+                                              th:utext="${group.groupName}">
                                             GROUP NAME
                                         </span>
                                     </div>
                                 </li>
                             </ul>
                             <div class="group-menu">
-                                <a href="#" class="group-menu-button">그룹 가입</a>
-                                <a href="/workspace/new" class="group-menu-button">그룹 생성</a>
+                                <a href="/community/new" class="group-menu-button">그룹 생성</a>
                             </div>
                         </main>
                     </div>
-                    <div class="sidebar-section favorite-category" th:unless="${member.id == 'anonymous'}">
+                    <div class="sidebar-section favorite-category" th:if="${groupPage}">
                         <header class="sidebar-header">
                             <span>즐겨찾는 카테고리</span>
                             <i class="material-icons-outlined expand md-18 gray">expand_more</i>
                         </header>
                         <main>
-                            <ul>
+                            <ul id="favorite-category-list">
                                 <li th:each="category: ${sideBar.categories}" th:if="${category.favorite}">
-                                    <div class="sidebar-elements">
+                                    <div class="sidebar-elements pointer-hover">
                                         <span th:text="${category.name}" onclick="moveToCategoryPage(this)">
-                                            GROUP NAME
+                                            즐겨찾는 카테고리 명
                                         </span>
                                     </div>
                                 </li>
                             </ul>
                         </main>
                     </div>
-                    <div class="sidebar-section category" th:unless="${member.id == 'anonymous'}">
+                    <div class="sidebar-section category" th:if="${groupPage}">
                         <header class="sidebar-header">
-                            <span>카테고리</span>
+                            <span>전체 카테고리</span>
                             <i class="material-icons-outlined expand md-18 gray">expand_more</i>
                         </header>
                         <main>
-                            <div id="category-container" th:each="category: ${sideBar.categories}">
-                                <div class="sidebar-elements">
-                                    <span th:utext="${category.name}" onclick="moveToCategoryPage(this)"></span>
+                            <div id="category-container">
+                                <span>기본 카테고리</span>
+                                <div class="default-category">
+                                    <div class="sidebar-elements pointer-hover">
+                                        <span onclick="moveToMainPage(this)">🔥한눈에 보기</span>
+                                    </div>
+                                    <div class="sidebar-elements pointer-hover">
+                                        <span onclick="moveToMainPage(this)">📝전체 게시글</span>
+                                    </div>
+                                    <div class="sidebar-elements pointer-hover">
+                                        <span onclick="moveToMainPage(this)">⭐공지사항</span>
+                                    </div>
                                 </div>
-                                <div class="sidebar-elements level2"
-                                     th:each="category2: ${category.children}">
-                                    <span th:utext="|└ ${category2.name}|"
-                                          onclick="moveToCategoryPage(this)"> > TT </span>
-                                    <div class="sidebar-elements"
-                                         th:each="category3: ${category2.children}">
-                                    <span th:utext="|└ ${category3.name}|"
-                                          onclick="moveToCategoryPage(this)"> > TT </span>
+                                <span>일반 카테고리</span>
+                                <div class="custom-category">
+                                    <div class="sidebar-elements" th:each="category: ${sideBar.categories}"
+                                         th:unless="${category.type} == 'NOTICE'"
+                                         th:classappend="${category.type} == 'CATEGORY_GROUP' ? 'js-category-group' : 'pointer-hover'"
+                                         th:attr="data-fold=${category.fold}">
+                                        <div class="sidebar-category-group"
+                                             th:if="${category.type == 'CATEGORY_GROUP'}">
+                                            <span th:text="${category.name}">카테고리 그룹 명</span>
+                                            <i class="js-category-expand material-icons-outlined md-18 gray">expand_more</i>
+                                        </div>
+                                        <div th:if="${category.indent}">
+                                            <span>└</span>
+                                            <span th:id="${category.id}" th:if="${category.type == 'BASIC'}"
+                                                  th:utext="${category.name}" class="js-category-name"
+                                                  onclick="moveToCategoryPage(this)"></span>
+                                        </div>
+                                        <span th:id="${category.id}" th:unless="${category.indent}"
+                                              th:if="${category.type == 'BASIC'}" th:utext="${category.name}"
+                                              class="js-category-name" onclick="moveToCategoryPage(this)"></span>
+                                        <div th:unless="${category.type == 'CATEGORY_GROUP' || role == 'ROLE_ANONYMOUS'}" class="flex-vertical-center">
+                                            <i class="material-icons-outlined favorite-color" th:text="${category.favorite} ? 'star' : 'star_border'"
+                                               onclick="requestFavoriteCategory(this)">star</i>
                                     </div>
                                 </div>
                             </div>
