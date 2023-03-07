@@ -229,6 +229,25 @@ label {
 }
 
 .contents {
+    margin-top: 10px;
+    padding: 0 10px 10px;
+}
+
+.ck5-editor-wrapper {
+    border-left: 1px solid #ccced1 !important;
+    border-right: 1px solid #ccced1 !important;
+    border-bottom: 1px solid #ccced1 !important;
+}
+
+.ck5-editor {
+    min-height: 400px;
+    max-height: calc(100vh - 180px);
+    position: relative;
+}
+
+.ck.ck-editor__editable.ck-focused:not(.ck-editor__nested-editable) {
+    border: none !important;
+    box-shadow: none !important;
 }
 
 /*etc*/
@@ -369,4 +388,9 @@ label {
     .board-title {
         font-size: 1.5rem;
     }
+}
+
+.ck.ck-dropdown.ck-heading-dropdown .ck-dropdown__button .ck-button__label {
+    width: 3rem !important;
+}
 }
