@@ -1,38 +1,40 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/workspace_layout}">
+      layout:decorate="~{layouts/community_layout}">
 <head>
-    <title th:text="|${title} - 최근 게시물|"></title>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.css"
-          integrity="sha512-fxF1t7b0mpb/ytjBeSu/OpgXxCVcX5/O8AJGYvHaWmNfi/lYLtttitFK17K4iKBva4iU9dcZ+BIV7dyD/nDdSw=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"/>
-    <link rel="stylesheet" th:href="@{/css/board/timeline.css}">
+    <title th:text="|${group.name} - 최근 게시물|"></title>
+    <link rel="stylesheet" th:href="@{/css/group/groupmain.css}">
 </head>
 
-<div class="wrapper" layout:fragment="content">
-    <div class="container content-header">
-        <h1>최근 게시물</h1>
-        <div class="space-between">
-            <span>최근 그룹에서 수정된 게시글입니다.</span>
-            <button class="new-board" onclick="goToEditor()">새 글 만들기</button>
+<div class="group-main-wrapper" layout:fragment="content">
+    <div class="container">
+        <div class="content-header">
+            <h1 th:text="${group.name}">그룹 명</h1>
+            <span th:text="${group.description}">그룹 설명</span>
+            <div class="group-detail">
+                <span th:text="|멤버 수 ${#numbers.formatInteger(group.membersNum, 1, 'COMMA')}명|">멤버 수 1,327명</span>
+                <span th:text="|개설일(Since) ${group.since}|">개설일(Since) 2023.02.27</span>
+            </div>
         </div>
     </div>
-    <div class="super-space-contents content">
-        <div class="scroll-section">
-            <div class="container content-body"></div>
+    <div class="container">
+        <div class="group-category-nav">
+            <div class="group-main-menu">
+                <span id="popular" class="pointer-hover" role="button">🔥한눈에 보기</span>
+                <span id="all" class="pointer-hover" role="button">📝전체 게시글</span>
+                <span id="notice" class="pointer-hover" role="button">⭐공지사항</span>
+            </div>
+            <div class="group-write-menu pointer-hover">
+                <i class="material-icons-outlined gray" onclick="moveToEditorPage()">edit</i>
+            </div>
+        </div>
+        <div class="narrow-content-body mt-0">
+            <ul id="draw-board-container"></ul>
         </div>
     </div>
 </div>
 <div class="page-script" layout:fragment="script">
-    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.js"></script>
-    <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"
-            integrity="sha512-Yk47FuYNtuINE1w+t/KT4BQ7JaycTCcrvlSvdK/jry6Kcxqg5vN7/svVWCxZykVzzJHaxXk5T9jnFemZHSYgnw=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script th:src="@{/js/board/board-util.js}"></script>
     <script th:src="@{/js/group/groupboard.js}"></script>
 </div>

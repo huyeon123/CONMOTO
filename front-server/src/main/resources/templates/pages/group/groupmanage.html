@@ -1,62 +1,81 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/workspace_layout}">
+      layout:decorate="~{layouts/community_layout}">
 <head>
     <title th:text="|${groupInfo.name} - 그룹 관리|"></title>
+    <link rel="stylesheet" th:href="@{/css/group/groupmanage.css}">
 </head>
-<div class="flex-column-center wrapper" layout:fragment="content">
+<div class="group-manage-wrapper" layout:fragment="content">
     <div class="container">
         <div class="content-header">
-            <h1 th:text="|${groupInfo.name} - 그룹 관리|"></h1>
+            <h1>그룹 관리</h1>
             <span>해당 그룹 정보를 변경할 수 있습니다.</span>
-            <div class="margin-top-10">
-                <button type="button" class="default-style-btn default" onclick="openInviteModal()">멤버 초대</button>
-                <button type="button" class="default-style-btn default" onclick="moveToMemberManagePage()">멤버 관리
-                </button>
-                <button type="button" class="default-style-btn warn" onclick="moveToDeletePage()">그룹 삭제</button>
+            <div class="manage-menu-container">
+                <button type="button" class="manage-menu-button default" onclick="moveToMemberManagePage()">멤버 관리</button>
+                <button type="button" class="manage-menu-button default" onclick="moveToCategoryManagePage()">카테고리 관리</button>
+                <button type="button" class="manage-menu-button default" onclick="moveToGradeManagePage()">등급 관리</button>
+                <button type="button" class="manage-menu-button default" onclick="moveToJoinManagePage()">가입 관리</button>
             </div>
         </div>
     </div>
     <div class="container">
         <div class="narrow-content-body">
             <div class="element-area">
-                <label class="input-group flex-nowrap">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">그룹명 수정</span>
-                    </div>
-                    <input class="form-control" id="group-info-name" th:value="${groupInfo.name}">
-                </label>
+                <label for="group-info-name" class="group-info-text">그룹 명</label>
+                <input class="form-control" id="group-info-name" th:value="${groupInfo.name}">
+                <div class="flex-end">
+                    <button class="manage-menu-button default" onclick="saveGroupName()">저장</button>
+                </div>
             </div>
             <div class="element-area">
-                <label class="input-group flex-nowrap">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">그룹 설명 수정</span>
-                    </div>
-                    <input class="form-control" id="group-description" th:value="${groupInfo.description}">
-                </label>
+                <label for="group-description" class="group-info-text">그룹 설명</label>
+                <input class="form-control" id="group-description" th:value="${groupInfo.description}">
+                <div class="flex-end">
+                    <button class="manage-menu-button default" onclick="saveGroupDescription()">저장</button>
+                </div>
             </div>
             <div class="element-area">
-                <label class="input-group flex-nowrap">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">그룹 URL 수정</span>
-                    </div>
-                    <input class="form-control" id="group-url" th:value="${groupInfo.url}">
-                </label>
+                <div class="group-info-text">그룹 공개 여부</div>
+                <div class="group-menu-radio-wrapper">
+                    <label class="group-menu-radio-item underline">
+                        <span>YES</span>
+                        <input type="radio" class="group-menu-radio" name="group-open" value="true" th:checked="${groupInfo.open}">
+                    </label>
+                    <label class="group-menu-radio-item">
+                        <span>NO</span>
+                        <input type="radio" class="group-menu-radio" name="group-open" value="false" th:checked="${!groupInfo.open}">
+                    </label>
+                </div>
             </div>
-            <div class="element-area flex-space-between">
-                <button type="button" class="default-style-btn warn" onclick="location.href='.'">취소</button>
-                <button type="button" class="wide-style-btn default" onclick="saveGroupInfo()">저장</button>
+            <div class="element-area">
+                <div class="group-info-text">자동 가입 여부</div>
+                <div class="group-menu-radio-wrapper">
+                    <label class="group-menu-radio-item underline">
+                        <span>YES</span>
+                        <input type="radio" class="group-menu-radio" name="group-auto-join" value="true" th:checked="${groupInfo.autoJoin}">
+                    </label>
+                    <label class="group-menu-radio-item">
+                        <span>NO</span>
+                        <input type="radio" class="group-menu-radio" name="group-auto-join" value="false" th:checked="${!groupInfo.autoJoin}">
+                    </label>
+                </div>
+            </div>
+            <div class="element-area">
+                <h3>Dangerous Zone</h3>
+                <div>
+                    <span class="group-info-text">그룹 삭제</span>
+                    <div class="alert alert-warning mt-3">
+                        멤버가 본인 외 <span style="color: red"><b>타인이 있을 경우 삭제가 불가능</b></span>합니다.<br>
+                        그룹 삭제 시 카테고리, 게시글 등 <span style="color: red"><b>관련 데이터도 모두 삭제</b></span>됩니다.<br>
+                        삭제 버튼 클릭 시 바로 삭제되며, 복구가 불가능합니다.<br>
+                    </div>
+                    <div class="flex-end">
+                        <button type="button" class="manage-menu-button warn" onclick="resignReq()">그룹 삭제</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div id="invite-modal">
-        <label class="input-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text">계정</span>
-            </div>
-            <input type="text" class="form-control" placeholder="user@example.com" name="invite-email">
-        </label>
     </div>
 </div>
 <div class="page-script" layout:fragment="script">

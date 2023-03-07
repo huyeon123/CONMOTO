@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/community_layout}">
+<head>
+    <title th:text="|${appHeader.groupName} - 등급 관리|"></title>
+    <link rel="stylesheet" th:href="@{/css/group/groupmanage.css}">
+    <link rel="stylesheet" th:href="@{/css/group/groupmain.css}">
+</head>
+<div class="flex-column-center wrapper" layout:fragment="content">
+    <div class="container">
+        <div class="content-header">
+            <h1>등급 관리</h1>
+            <div class="member-manage-description">
+                <span>
+                    그룹의 멤버 등급을 관리할 수 있습니다.<br>
+                    멤버 등급 단계는 최소 4단계에서 최대 100단계까지 지정할 수 있습니다.
+                </span>
+            </div>
+        </div>
+        <div class="applicant-menu">
+            <div style="position:relative;">
+                <div class="group-custom-select" onclick="openOptions()">
+                    <span id="currentLevel">등급 단계</span>
+                    <i class="material-icons-outlined md-16">unfold_more</i>
+                </div>
+                <ul id="grade-level" class="custom-option-wrapper">
+                    <div class="custom-option-inner"></div>
+                </ul>
+            </div>
+            <div>
+                <button class="manage-menu-button default" onclick="saveGradeInfo()">저장</button>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="overflow:hidden; height: 100%;">
+        <div class="narrow-content-body mt-0" style="height: 100%;">
+            <ul class="scrollable"></ul>
+        </div>
+    </div>
+</div>
+<div class="page-script" layout:fragment="script">
+    <script>
+        for (let level = 4; level <= 100; level++) {
+            const element = $(`<li class="custom-option">${level}단계</li>`);
+            $("#grade-level div").append(element);
+        }
+    </script>
+    <script th:src="@{/js/group/grade-manage.js}"></script>
+</div>
+</html>

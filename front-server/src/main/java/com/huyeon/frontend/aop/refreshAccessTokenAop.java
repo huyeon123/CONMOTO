@@ -14,31 +14,77 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
+
 @Aspect
 @Component
 @RequiredArgsConstructor
 public class refreshAccessTokenAop {
     @Value("${conmoto.server.auth}")
     private String AUTH_SERVER_ADDR;
-    public static final String REFRESH_KEY = "Super-Space-Refresh";
+    public static final String REFRESH_KEY = "CONMOTO_JWT";
 
     private final TokenExtractor tokenExtractor;
 
-    @Pointcut("within(com.huyeon.frontend.controller.*) && !@annotation(PurePage)")
+    @Pointcut("@annotation(RequiredLogin)")
     public void needSideBarAndHeader() {
+    }
+
+    @Pointcut("within(com.huyeon.frontend.controller.community.*) && !@annotation(RequiredLogin)")
+    public void notRequiredLogin() {
+    }
+
+    @Around("notRequiredLogin()")
+    private Object getAnonymousToken(ProceedingJoinPoint joinPoint) throws  Throwable {
+        Object[] args = joinPoint.getArgs();
+        String refreshToken = getRefreshToken(args[0]);
+
+        if (refreshToken == null) args[1] = getAnonymousToken();
+        else args[1] = generateNewAccessToken(refreshToken);
+
+        return joinPoint.proceed(args);
+    }
+
+    private String getAnonymousToken() {
+        RestTemplate restTemplate = new RestTemplate();
+
+        return restTemplate.exchange(
+                AUTH_SERVER_ADDR + "/anonymous",
+                HttpMethod.GET,
+                null,
+                String.class
+        ).getBody();
     }
 
     @Around("needSideBarAndHeader()")
     private Object refreshAccessToken(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
-        String refreshToken = (String) args[0];
+        String refreshToken = getRefreshToken(args[0]);
+
         args[1] = generateNewAccessToken(refreshToken);
 
         if (args[1] == null) {
-            return "redirect:https://conmoto.site";
+            return "redirect:https://conmoto.site/login";
         }
 
         return joinPoint.proceed(args);
+    }
+
+    private String getRefreshToken(Object arg) {
+        HttpServletRequest request = (HttpServletRequest) arg;
+        Cookie[] cookies = request.getCookies();
+
+        if (Objects.isNull(cookies)) return null;
+
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(REFRESH_KEY)) {
+                return cookie.getValue();
+            }
+        }
+
+        return null;
     }
 
     private String generateNewAccessToken(String refreshToken) {

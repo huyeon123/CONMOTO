@@ -1,0 +1,122 @@
+.group-main-wrapper {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden scroll;
+}
+
+.group-detail {
+    width: 300px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.group-category-nav {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(0, 0, 0, 10%);
+    align-items: center;
+}
+
+.group-category-nav.fix {
+    position: fixed;
+    top: 60px;
+    z-index: 25;
+    background: white;
+    width: 100%;
+    padding: 0 10px;
+}
+
+@media (max-width: 768px) {
+    .group-category-nav.fix {
+        top: 45px;
+    }
+}
+
+.group-main-menu {
+    display: flex;
+    overflow-x: scroll;
+    white-space: nowrap;
+    align-items: center;
+}
+
+.group-main-menu span {
+    cursor: pointer;
+    padding: 7px 0;
+    margin-right: 5px;
+}
+
+.group-main-menu span:hover {
+    border-radius: 0 !important;
+}
+
+.group-main-menu .selected {
+    border-bottom: 2px solid;
+}
+
+.group-write-menu {
+    display: flex;
+    align-items: center;
+    padding: 4px;
+}
+
+.article {
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0, 0, 0, 10%);
+    padding: 5px 0;
+}
+
+.article-body-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.article-preview-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.article-title {
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 24px;
+}
+
+.article-description {
+    font-size: 0.9rem;
+    padding-top: 3px;
+    height: 100%;
+    max-height: 48px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.article-thumbnail {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+}
+
+.article-thumbnail-img {
+    border-radius: 5px;
+    width: 56px;
+    height: 56px;
+}
+
+.article-detail-wrapper {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: gray;
+}
+
+/*멤버 페이지*/
+.nothing {
+    display: flex;
+    justify-content: center;
+    padding: 15px 0;
+}

@@ -1,57 +1,27 @@
-async function save() {
-    const url = "/api/group/" + groupUrl + "/member-role";
-    const request = [];
+//검색창 입력시 필터링 이벤트 감지
+$("#member-search").keyup(showSearchResults);
 
-    $(".member-info").each((idx) => {
-        const email = $('.member-email').get(idx).outerText;
-        const authority = $('.member-authority').get(idx).value;
+//데이터 필터링
+function showSearchResults() {
+    const searchText = $("#member-search").val();
+    const seeAll = (searchText === "");
 
-        request.push({
-            email: email,
-            role: authority === "일반 멤버" ? "ROLE_MEMBER" : "ROLE_MANAGER"
-        });
-    })
+    const regex = new RegExp(searchText, "gi");
 
-    post(url, request)
-        .then(res => {
-            if (res.ok) {
-                alert("변경 사항이 반영되었습니다.");
-            }
-        })
+    //멤버들 중 닉네임 혹은 이메일이 검색어와 일치하면 해당 멤버 엘리먼트만 display
+    $("ul.scrollable .member-info").each((idx, element) => {
+        const $element = $(element);
+        if (seeAll) {
+            $element.show();
+        } else {
+            const itemText = $element.find(".js-member-nickname-email").text();
+            if (itemText.match(regex)) $element.show();
+            else $element.hide();
+        }
+    });
 }
 
-function expelMember(id) {
-    const url = "/api/group/" + groupUrl + "/member";
-    const memberInfo = $(".member-info#member_" + id);
-    const email = memberInfo.children(".member-email").text();
-    const request = {email: email};
-
-    del(url, request)
-        .then(() => memberInfo.remove())
-        .catch(error => {
-            alert("그룹 추방에 실패했습니다!");
-            console.error(error);
-        });
-}
-
-function activateExpelMemberBtn() {
-    $(".js-expel-btn")
-        .attr("disabled", false)
-        .css("opacity", 1);
-
-    $('#activate-expel')
-        .html("멤버 강퇴 취소")
-        .attr("class", "default-style-btn default")
-        .attr("onclick", "cancelExpelMemberBtn()");
-}
-
-function cancelExpelMemberBtn() {
-    $(".js-expel-btn")
-        .attr("disabled", true)
-        .css("opacity", 0.5);
-
-    $('#activate-expel')
-        .html("멤버 강퇴 활성화")
-        .attr("class", "default-style-btn warn")
-        .attr("onclick", "activateExpelMemberBtn()");
+function moveToMemberPage(elementId) {
+    const id = elementId.slice("member_".length);
+    location.href = "./members/" + id;
 }

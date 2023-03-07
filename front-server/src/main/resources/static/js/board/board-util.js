@@ -1,7 +1,3 @@
-const curr = new Date();
-const utc = curr.getTime() + (curr.getTimezoneOffset() * 60 * 1000);
-const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
-const KR_now = new Date(utc + (2 * KR_TIME_DIFF)); //서버에서 다시 KR_TIME_DIFF만큼 빠짐
 let nextPage = 0;
 let isFetching = false;
 
@@ -10,133 +6,51 @@ const getList = (url) => {
     return get(url);
 };
 
-function goToEditor() {
-    location.href = "/workspace/" + groupUrl + "/board/editor";
-}
-
-function content_scroll_plugin(getListCallback) {
-    $(".scroll-section").mCustomScrollbar({
-        theme: "minimal-dark",
-        mouseWheelPixels: 150,
-        scrollInertia: 300, // 부드러운 스크롤 효과 적용
-        callbacks: {
-            onTotalScroll: function () {
-                console.log("BOTTOM!")
-                getListCallback();
-            },
-            onTotalScrollOffset: 100,
-            alwaysTriggerOffsets: false,
-        }
-    });
-}
-
 function drawBoards(data) {
-    data.forEach((item, index) => {
-        drawBoard(item);
+    if (Array.isArray(data)) {
+        drawEachItem(data)
+    } else {
+        for (let value of Object.values(data)) {
+            drawEachItem(value);
+        }
+    }
 
-        setNextPageIfEnd(index, data);
-    });
     isFetching = false;
 }
 
+function drawEachItem(data) {
+    data.forEach((item, index) => {
+        drawBoard(item);
+
+        setLastIndex(index, data);
+    });
+}
+
 function drawBoard(item) {
-    const elementId = drawVDOM(item);
-    drawPreview(elementId, item);
-    drawBoardInfo(elementId, item);
+    const $element = $(`
+        <li id="${item.id}" class="article pointer-hover" onclick="moveToBoardPage(this.id)">
+                    <div class="article-body-wrapper">
+                        <div class="article-preview-wrapper">
+                            <div class="article-title">${item.title}</div>
+                            <div class="article-description">${item.description}</div>
+                        </div>
+                        <div class="article-thumbnail">
+                            <img src="/img/user.svg" alt="thumbnail" class="article-thumbnail-img">
+                        </div>
+                    </div>
+                    <div class="article-detail-wrapper">
+                        <span>${item.author}</span>
+                        <span>${item.lastUpdate}</span>
+                    </div>
+                </li>
+    `);
+
+    $("#draw-board-container").append($element);
 }
 
-function drawVDOM(item) {
-    const virtualDom = `<div id="board_${item.id}" class="board-area">
-        <a href="${item.url}" class="board-anchor">
-            <div class="board-card">
-                <div class="board-preview"></div>
-                <div class="board-title"></div>
-                <div class="board-description"></div>
-                <div style="padding: 0 10px 0;">
-                    <div class="board-status"></div>
-                </div>
-                <div class="board-signature">
-                    <div class="board-updatedAt"></div>
-                    <div class="board-author"></div>
-                </div>
-            </div>
-        </a>
-    </div>`;
-
-    $('.content-body').append(virtualDom);
-    return '#board_' + item.id;
-}
-
-function drawPreview(elementId, item) {
-    const viewer = new Editor.factory(viewerConfig(elementId));
-    viewer.setMarkdown(item.content.markdown);
-}
-
-const {Editor} = toastui;
-
-function viewerConfig(elementId) {
-    const {codeSyntaxHighlight} = Editor.plugin;
-
-    return {
-        el: document.querySelector(elementId + ' .board-preview'),
-        viewer: true,
-        language: 'ko-KR',
-        placeholder: '작성된 내용이 없습니다.',
-        plugins: [[codeSyntaxHighlight, {highlighter: Prism}]],
-        customHTMLRenderer: {
-            htmlBlock: {
-                iframe(node) { //Youtube를 위한 iframe 허용 설정
-                    return [
-                        {
-                            type: 'openTag',
-                            tagName: 'iframe',
-                            outerNewLine: true,
-                            attributes: node.attrs
-                        },
-                        {type: 'html', content: node.childrenHTML},
-                        {type: 'closeTag', tagName: 'iframe', outerNewLine: true}
-                    ];
-                }
-            }
-        }
-    };
-}
-
-function drawBoardInfo(elementId, item) {
-    addTitle(elementId, item.title);
-    addDescription(elementId, item.description);
-    addStatus(elementId, item.status);
-    addAuthor(elementId, item.author);
-    addUpdateTime(elementId, item.updatedAt);
-}
-
-function addTitle(elementId, title) {
-    $(elementId + ' .board-title').text(title);
-}
-
-function addDescription(elementId, description) {
-    if (description !== null) {
-        $(elementId + ' .board-description').text(description);
-    }
-}
-
-function addStatus(elementId, status) {
-    const $boardStatus = $(elementId + ' .board-status')
-    $boardStatus.text(status);
-    $boardStatus.addClass(status.toLowerCase());
-}
-
-function addAuthor(elementId, author) {
-    $(elementId + ' .board-author').text(author);
-}
-
-function addUpdateTime(elementId, updatedAt) {
-    $(elementId + ' .board-updatedAt').text(updatedAt);
-}
-
-function setNextPageIfEnd(index, data) {
+function setLastIndex(index, data) {
     if (index === data.length - 1) {
-        nextPage++;
+        lastIndex = data[index].id;
     }
 }
 

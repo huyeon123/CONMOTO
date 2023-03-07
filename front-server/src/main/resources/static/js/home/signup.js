@@ -71,7 +71,7 @@ function tempLoginSubmit() {
         .then(res => {
             if (res.ok) {
                 alert("보안을 위해 비밀번호를 변경해주세요!\n사이드 바 > 내 활동 > 비밀번호 변경");
-                location.href = "/workspace";
+                location.href = "/community";
             } else {
                 res.json().then(error => alert(error.message));
             }

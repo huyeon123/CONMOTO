@@ -1,5 +1,5 @@
 const pathname = decodeURI(window.location.pathname);
-const groupUrlStartIdx = String("/workspace").length + 1;
+const groupUrlStartIdx = String("/community").length + 1;
 const groupUrlEndIdx = pathname.indexOf("/", groupUrlStartIdx + 1);
 const groupUrl = groupUrlEndIdx === -1 ?
     pathname.substring(groupUrlStartIdx) : pathname.substring(groupUrlStartIdx, groupUrlEndIdx);
@@ -13,8 +13,9 @@ $(function () {
 });
 
 function isMainPage() {
-    const currentPath = window.location.pathname;
-    return !!currentPath.match("^\/[\w]*$");
+    const currentPath = location.pathname;
+    const regexp = /^\/\w$/gi;
+    return regexp.test(currentPath);
 }
 
 async function init() {

@@ -1,20 +1,15 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/workspace_layout}">
+      layout:decorate="~{layouts/community_layout}">
 <head>
     <title th:text="${board.title}"></title>
     <link rel="stylesheet" th:href="@{/css/board/board.css}">
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"/>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.css"
-          integrity="sha512-fxF1t7b0mpb/ytjBeSu/OpgXxCVcX5/O8AJGYvHaWmNfi/lYLtttitFK17K4iKBva4iU9dcZ+BIV7dyD/nDdSw=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 <div class="wrapper" layout:fragment="content">
     <div class="scroll-frame">
-        <div class="scroll-section">
+        <div class="whole-scroll-section">
             <div class="container">
                 <div class="board__header">
                     <div class="flex-end" th:if="${editable == true}">
@@ -40,7 +35,24 @@
                         <span class="name mr-2">태그</span>
                         <div class="flex-horizon-center" th:each="tag : ${board.tags}">
                             <span class="tag" th:text="${tag}"></span>
-                            <i class="pointer material-icons delete md-16 gray">delete</i>
+                            <i class="pointer material-icons-outlined delete md-16 gray">delete</i>
+                        </div>
+                    </div>
+                </div>
+
+                <!--HTML 내용이 CKEditor5에 의해 렌더링 됨-->
+                <div id="loading" class="loader-container">
+                    <div class="loading-box">
+                        <div class="loader10"></div>
+                    </div>
+                </div>
+                <div id="viewer" class="contents" style="display: none"></div>
+
+                <div class="flex-vertical-center">
+                    <div class="like-wrapper">
+                        <div class="like-inner" onclick="thumbsUp()">
+                            <h4 id="like-post-num" class="like-text">0</h4>
+                            <i id="like-post-heart" class="material-icons-outlined">favorite</i>
                         </div>
                     </div>
                 </div>
@@ -79,7 +91,6 @@
                         </div>
                     </div>
                 </div>
-                <div id='editor' class="contents"></div>
             </div>
         </div>
     </div>
@@ -94,15 +105,11 @@
 
 </div>
 <div class="page-script" layout:fragment="script">
-    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.js"></script>
-    <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"
-            integrity="sha512-Yk47FuYNtuINE1w+t/KT4BQ7JaycTCcrvlSvdK/jry6Kcxqg5vN7/svVWCxZykVzzJHaxXk5T9jnFemZHSYgnw=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script th:inline="javascript">
-        const markdown = [[${board.content.markdown}]];
+        const html = [[${board.content.html}]];
     </script>
-    <script th:src="@{/js/board/toast-viewer.js}"></script>
+    <script th:src="@{/ckeditor5/build/ckeditor.js}"></script>
+    <script th:src="@{/js/board/ck5-viewer.js}"></script>
     <script th:src="@{/js/board/board-view.js}"></script>
 </div>
 </html>

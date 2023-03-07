@@ -43,7 +43,7 @@ function cancelResign() {
         .then(res => {
             if (res.ok) {
                 alert("회원 탈퇴가 취소되었습니다! 환영합니다!");
-                location.href = "/workspace";
+                location.href = "/community";
             }
         })
         .catch(error => {

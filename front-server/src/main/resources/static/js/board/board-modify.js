@@ -1,19 +1,18 @@
 const boardId = pathname.substring(pathname.lastIndexOf("/") + 1);
 
 async function pageRender() {
-    getMarkdown();
-    scalingEditorHeight();
+    getHTML();
     autoScalingWidth("input.tag", "#tags", 15);
 }
 
-function getMarkdown() {
-    const contentId = $('.js-toast-editor').attr('id');
+function getHTML() {
+    const contentId = $('#ck5-editor').data('content-id');
     const url = "/api/board/content/" + contentId;
 
     get(url)
         .then(res => res.json())
         .then(contentDto => {
-            if (contentDto.markdown != null) editor.setMarkdown(contentDto.markdown);
+            if (contentDto.html != null) ckEditor5.setData(contentDto.html);
         })
         .catch(error => {
             alert("컨텐츠를 불러오는데 실패했습니다!");
@@ -61,12 +60,15 @@ $(document).on('change', '#js-status', () => {
 
 $(document).on('change', '#js-categoryOption', () => {
     const url = "/api/board/edit/category";
-    const categoryName = $("#js-categoryOption option:selected").val();
+    const $option = $("#js-categoryOption option:selected");
+    const categoryName = $option.val();
+    const categoryId = $option.attr("id");
 
     if (categoryName === "카테고리 미선택") return;
 
     const request = {
-        categoryName: categoryName,
+        categoryId: categoryId,
+        categoryName: categoryName
     };
     saveBoard(url, request);
 })
@@ -88,7 +90,7 @@ function deleteBoard() {
 
     delWithoutBody("/api/board/" + boardId)
         .then(() => {
-            location.href = "/workspace/" + groupUrl;
+            location.href = "/community/" + groupUrl;
         })
         .catch(error => {
             alert("삭제에 실패했습니다!");
@@ -154,7 +156,7 @@ function registerContent() {
     const url = "/api/board/edit/content";
     const request = {
         boardId: boardId,
-        markdown: editor.getMarkdown()
+        markdown: ckEditor5.getData()
     }
 
     put(url, request)

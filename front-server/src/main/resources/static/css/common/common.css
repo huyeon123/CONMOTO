@@ -1,6 +1,27 @@
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    width: 100vw;
+    margin: 0;
+    -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+::selection {
+    color: black;
+    background: rgb(217 217 217) !important;
+}
+
 .flex-horizon-center {
     display: flex;
     align-items: center;
+}
+
+.flex-vertical-center {
+    display: flex;
+    justify-content: center;
 }
 
 .flex-space-between {
@@ -32,50 +53,108 @@ input:focus {
     outline: none;
 }
 
-button.default {
-    color: white;
-    background-color: cornflowerblue;
-}
-
-button.warn {
-    background-color: #f57d7d;
-}
-
-button.save {
-    background-color: #77d78d;
-}
-
-.m-5 {
-    margin: 5px;
-}
-
-.mt-10 {
-    margin-top: 10px;
-}
-
-.mr-5 {
-    margin-right: 5px;
-}
-
-.padding-side-5 {
-    padding-left: 5px;
-    padding-right: 5px;
-}
-
 .check-box {
     width: auto;
     margin: 5px;
 }
 
-.time {
-    color: gray;
-    font-size: 14px;
-}
-
-.opacity-90 {
-    opacity: 0.9;
-}
-
 .pointer {
     cursor: pointer;
+}
+
+/* loading style */
+.loader-container {
+
+    overflow: hidden;
+}
+
+.loading-box {
+    display: inline-block;
+    height: 400px;
+    width: 100%;
+    float:left;
+    position: relative;
+    transition: all .2s ease;
+}
+
+.loader10:before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -25px;
+    height: 12px;
+    width: 12px;
+    border-radius: 12px;
+    -webkit-animation: loader10g 1s ease-in-out infinite;
+    animation: loader10g 1s ease-in-out infinite;
+}
+
+.loader10{
+    position: relative;
+    width: 12px;
+    height: 12px;
+    top: 46%;
+    left: 46%;
+    border-radius: 12px;
+    -webkit-animation: loader10m 1s ease-in-out infinite;
+    animation: loader10m 1s ease-in-out infinite;
+}
+
+
+.loader10:after{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 25px;
+    height: 10px;
+    width: 10px;
+    border-radius: 10px;
+    -webkit-animation: loader10d 1s ease-in-out infinite;
+    animation: loader10d 1s ease-in-out infinite;
+}
+
+@-webkit-keyframes loader10g{
+
+    0%{background-color: rgba(193, 161, 255, .2);}
+    25%{background-color: rgba(193, 161, 255, 1);}
+    50%{background-color: rgba(193, 161, 255, .2);}
+    75%{background-color: rgba(193, 161, 255, .2);}
+    100%{background-color: rgba(193, 161, 255, .2);}
+}
+@keyframes loader10g{
+    0%{background-color: rgba(193, 161, 255, .2);}
+    25%{background-color: rgba(193, 161, 255, 1);}
+    50%{background-color: rgba(193, 161, 255, .2);}
+    75%{background-color: rgba(193, 161, 255, .2);}
+    100%{background-color: rgba(193, 161, 255, .2);}
+}
+
+@-webkit-keyframes loader10m{
+    0%{background-color: rgba(193, 161, 255, .2);}
+    25%{background-color: rgba(193, 161, 255, .2);}
+    50%{background-color: rgba(193, 161, 255, 1);}
+    75%{background-color: rgba(193, 161, 255, .2);}
+    100%{background-color: rgba(193, 161, 255, .2);}
+}
+@keyframes loader10m{
+    0%{background-color: rgba(193, 161, 255, .2);}
+    25%{background-color: rgba(193, 161, 255, .2);}
+    50%{background-color: rgba(193, 161, 255, 1);}
+    75%{background-color: rgba(193, 161, 255, .2);}
+    100%{background-color: rgba(193, 161, 255, .2);}
+}
+
+@-webkit-keyframes loader10d{
+    0%{background-color: rgba(193, 161, 255, .2);}
+    25%{background-color: rgba(193, 161, 255, .2);}
+    50%{background-color: rgba(193, 161, 255, .2);}
+    75%{background-color: rgba(193, 161, 255, 1);}
+    100%{background-color: rgba(193, 161, 255, .2);}
+}
+@keyframes loader10d{
+    0%{background-color: rgba(193, 161, 255, .2);}
+    25%{background-color: rgba(193, 161, 255, .2);}
+    50%{background-color: rgba(193, 161, 255, .2);}
+    75%{background-color: rgba(193, 161, 255, 1);}
+    100%{background-color: rgba(193, 161, 255, .2);}
 }

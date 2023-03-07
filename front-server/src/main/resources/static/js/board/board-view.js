@@ -1,3 +1,34 @@
+let boardId = pathname.slice(pathname.lastIndexOf("/") + 1);
+
+function pageRender() {
+    appendBoardLike();
+    increaseViews();
+}
+
+function appendBoardLike() {
+    const url = "/api/board/likes?boardId=" + boardId;
+    get(url)
+        .then(res => res.json())
+        .then(data => {
+            $("#like-post-num").text(data.like);
+
+            const $like = $("#like-post-heart");
+            if (data.checked) $like.addClass("like-color");
+            else $like.addClass("material-symbols-outlined");
+
+            $("#viewer").show();
+            $("#loading").remove();
+        })
+}
+
+function increaseViews() {
+    const url = "/api/board/views?boardId=" + boardId;
+    get(url)
+        .then(res => {
+            if (!res.ok) console.warn("조회수에 반영에 실패했습니다.");
+        })
+}
+
 /*comment*/
 $(document).on('click', '#comment-toggle-btn', () => {
     const area = $('#comment-hide-area').get(0);
@@ -14,7 +45,8 @@ $(document).on('click', '#comment-toggle-btn', () => {
 $(document).on('click', '.js-comment-add-btn', () => {
     const request = {
         author: $('.comment-inbox-name').attr('id'),
-        body: $('.comment-inbox-text').val()
+        body: $('.comment-inbox-text').val(),
+        groupUrl: groupUrl
     };
 
     registerComment(request);
@@ -48,7 +80,7 @@ function createNewComment(request, commentId) {
         `<div class="comment-nick-box">${nickname}</div>` +
         `<span class="comment-text-box">${request.body}</span>` +
         `<div class="comment-info-box">` +
-            `<span class="comment-info-date">${currentTime}</span>` +
+        `<span class="comment-info-date">${currentTime}</span>` +
         `</div>
         <div class="comment-tool">
             <button type="button" class="js-comment-edit simple-button">수정</button>
@@ -158,6 +190,41 @@ function setCommentNum(num) {
     commentNumBox.text(num);
 }
 
+function thumbsUp() {
+    const url = new URL(location.origin + "/api/board/like");
+    const params = {
+        memberId: $("#member").data("member-id"),
+        groupUrl: groupUrl,
+        boardId: boardId
+    }
+
+    for (let key in params) {
+        url.searchParams.set(key, params[key]);
+    }
+
+    get(url)
+        .then(res => res.json())
+        .then(data => {
+            $("#like-post-num").text(data.like);
+
+            const $heart = $("#like-post-heart");
+            if (data.checked) {
+                $heart.removeClass("material-symbols-outlined")
+                    .addClass("like-color");
+            }
+            else {
+                $heart.removeClass("like-color")
+                    .addClass("material-symbols-outlined");
+            }
+        });
+}
+
 function moveToPreviousPage() {
     history.go(-1);
+}
+
+function moveToEditPage() {
+    const pathname = location.pathname;
+    const boardId = pathname.slice(pathname.lastIndexOf("/"));
+    location.href = "./editor" + boardId;
 }

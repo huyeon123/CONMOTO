@@ -42,12 +42,6 @@ label {
     width: 90%;
 }
 
-main.container {
-    position: relative;
-    height: calc(100% - 130px);
-    overflow: hidden scroll;
-}
-
 /*header*/
 .board__header {
     border-bottom: 1px solid rgba(55, 53, 47, 0.16);
@@ -89,7 +83,7 @@ main.container {
     background-color: rgba(255, 255, 255, 0);
 }
 
-.header-elements label{
+.header-elements label {
     transition: background-color 20ms ease-in 0s;
 }
 
@@ -125,7 +119,7 @@ main.container {
 
 /*comments*/
 .comments {
-    border-bottom: 1px solid rgba(55, 53, 47, 0.16);
+    border-top: 1px solid rgba(0, 0, 0, 10%);
     padding-top: 5px;
     padding-bottom: 5px;
 }
@@ -235,7 +229,25 @@ main.container {
 }
 
 .contents {
-    padding-bottom: 20px;
+    margin-top: 10px;
+    padding: 0 10px 10px;
+}
+
+.ck5-editor-wrapper {
+    border-left: 1px solid #ccced1 !important;
+    border-right: 1px solid #ccced1 !important;
+    border-bottom: 1px solid #ccced1 !important;
+}
+
+.ck5-editor {
+    min-height: 400px;
+    max-height: calc(100vh - 180px);
+    position: relative;
+}
+
+.ck.ck-editor__editable.ck-focused:not(.ck-editor__nested-editable) {
+    border: none !important;
+    box-shadow: none !important;
 }
 
 /*etc*/
@@ -268,7 +280,7 @@ main.container {
 }
 
 .option-btn {
-    background-color: rgba(0,0,0,0);
+    background-color: rgba(0, 0, 0, 0);
     border-radius: 30px;
     border: 1px solid #d0d0d0;
     padding: 10px 15px;
@@ -307,6 +319,7 @@ main.container {
 /* modal */
 .modal-dimmed {
     position: fixed;
+    z-index: 100;
     background-color: rgba(245, 242, 255, 0.4);
     inset: 0;
 }
@@ -376,4 +389,43 @@ main.container {
     .board-title {
         font-size: 1.5rem;
     }
+}
+
+.ck.ck-dropdown.ck-heading-dropdown .ck-dropdown__button .ck-button__label {
+    width: 3rem !important;
+}
+
+.like-wrapper {
+    padding: 15px;
+}
+
+.like-inner {
+    cursor: pointer;
+    border: 1px solid rgba(0, 0, 0, 20%);
+    border-radius: 5px;
+    width: 120px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 48
+}
+
+
+.like-text {
+    border-bottom: 1px solid rgba(0, 0, 0, 10%);
+    padding-bottom: 5px;
+    width: 100%;
+    text-align: center;
+}
+
+.like-color {
+    color: #ff5656;
 }

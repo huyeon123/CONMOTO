@@ -1,0 +1,173 @@
+.ui-dialog-titlebar {
+    background-color: white;
+    border: none;
+}
+
+.ui-dialog-titlebar-close {
+    display: none;
+}
+
+.noty {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+}
+
+.noty:hover {
+    border-radius: 0 !important;
+}
+
+.noty.read {
+    background: rgba(0, 0, 0, 5%);
+}
+
+.noty:nth-child(n + 2) {
+    border-top: 1px solid rgba(0, 0, 0, 10%);
+}
+
+.noty.full-size {
+    width: 100%;
+}
+
+.noty__header {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px;
+}
+
+.noty__profile {
+    display: flex;
+    justify-content: center;
+    width: 60px;
+    margin: 5px;
+    padding: 15px 0;
+    border: 1px solid;
+    border-radius: 3px;
+}
+
+.noty-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: hidden;
+}
+
+.message {
+    margin: 5px;
+    white-space: pre-line;
+}
+
+#noty {
+    display: flex;
+    justify-content: center;
+}
+
+#noty__option a {
+    margin-right: 3px;
+    cursor: pointer;
+}
+
+.noty-content-header {
+    max-width: 100%;
+    margin-right: 5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.noty-content-main {
+    max-width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-right: 5px;
+}
+
+.noty-content-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 5px;
+}
+
+.noty-content-footer > div {
+    color: gray;
+    font-size: 0.8rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.noty-group-name {
+    max-width: calc(100% - 70px);
+}
+
+.time {
+    max-width: 70px;
+}
+
+.noty-type {
+    position: relative;
+}
+
+.noty-type > div {
+    padding: 1px 5px;
+    width: fit-content;
+    border-radius: 5px;
+    position: absolute;
+    right: 5px;
+}
+
+.noty-type .invite {
+    background: rgb(245 242 255);
+}
+
+.noty-type .notice {
+    background: rgb(255 228 228);
+}
+
+.noty-type .comment {
+    background: rgb(242 248 255);
+}
+
+.noty-type .grade {
+    background: #d0ffe0;
+}
+
+.noty-type .expel {
+    background: #e1e1e1;
+}
+
+.noty-menu-wrapper {
+    padding: 0 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 10%);
+}
+
+.noty-menu-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.noty-menu-button {
+    padding: 5px 10px;
+    border: 1px solid rgba(15, 15, 15, 0.15);
+    border-radius: 5px;
+    margin: 5px 0;
+    box-shadow: rgb(15 15 15 / 5%) 0 2px 2px;
+    background: white;
+}
+
+.noty-menu-button.warn {
+    background-color: #ffabab33;
+    border: 1px solid #ff9b9b;
+    color: #f96a6a;
+}
+
+.noty-menu-check-wrapper {
+    margin-left: 10px;
+}
+
+.noty-menu-check {
+    transform: scale(1.2);
+}

@@ -16,7 +16,7 @@ async function createCategory() {
     post(url, request)
         .then((res) => {
         if (res.ok) {
-            location.href = "/workspace/" + groupUrl;
+            location.href = "/community/" + groupUrl;
         }
     }).catch(error => console.error(error));
 }

@@ -1,67 +1,68 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/workspace_layout}">
+      layout:decorate="~{layouts/community_layout}">
 <head>
     <title>글쓰기</title>
     <link rel="stylesheet" th:href="@{/css/board/board.css}">
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"/>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.css"
-          integrity="sha512-fxF1t7b0mpb/ytjBeSu/OpgXxCVcX5/O8AJGYvHaWmNfi/lYLtttitFK17K4iKBva4iU9dcZ+BIV7dyD/nDdSw=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"
-    />
 </head>
 <div class="wrapper" layout:fragment="content">
-    <main class="container">
-        <div class="board__header">
-            <div class="header-elements">
-                <label>
-                    <input type="text" class="board-title" id="js-title"
-                           placeholder="제목을 입력하세요.">
-                </label>
+    <div class="whole-scroll-section">
+        <main class="container">
+            <div class="board__header">
+                <div class="header-elements">
+                    <label>
+                        <input type="text" class="board-title" id="js-title"
+                               placeholder="제목을 입력하세요.">
+                    </label>
+                </div>
+                <div class="header-elements">
+                    <label>
+                        <input type="text" class="board-description" id="js-description"
+                               placeholder="설명을 입력하세요.">
+                    </label>
+                </div>
+                <div class="header-elements">
+                    <label>
+                        <span class="name">카테고리</span>
+                        <select class="select" id="js-categoryOption">
+                            <option selected>카테고리 미선택</option>
+                            <option th:each="category : ${sideBar.categories}"
+                                    th:value="${category.name}"
+                                    th:attr="data-category-id=${category.id}"
+                                    th:text="${category.name}">카테고리
+                            </option>
+                        </select>
+                    </label>
+                </div>
+                <div class="header-elements">
+                    <label>
+                        <span class="name">상태</span>
+                        <select class="select" id="js-status">
+                            <option selected value="READY">READY
+                            </option>
+                            <option value="PROCEED">PROCEED
+                            </option>
+                            <option value="COMPLETE">COMPLETE</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="header-elements">
+                    <label id="tags" class="flex-horizon-center">
+                        <span class="name mr-2">태그</span>
+                        <div class="flex-horizon-center"></div>
+                        <input class="empty tag" placeholder="#태그 추가">
+                    </label>
+                </div>
             </div>
-            <div class="header-elements">
-                <label>
-                    <input type="text" class="board-description" id="js-description"
-                           placeholder="설명을 입력하세요.">
-                </label>
+            <div class="mt-3">
+                <div id="ck5-editor-toolbar"></div>
+                <div class="ck5-editor-wrapper">
+                    <div id="ck5-editor" class="ck5-editor"></div>
+                </div>
             </div>
-            <div class="header-elements">
-                <label>
-                    <span class="name">카테고리</span>
-                    <select class="select" id="js-categoryOption">
-                        <option selected>카테고리 미선택</option>
-                        <option th:each="category : ${sideBar.categories}"
-                                th:value="${category.name}"
-                                th:text="${category.name}">카테고리
-                        </option>
-                    </select>
-                </label>
-            </div>
-            <div class="header-elements">
-                <label>
-                    <span class="name">상태</span>
-                    <select class="select" id="js-status">
-                        <option selected value="READY">READY
-                        </option>
-                        <option value="PROCEED">PROCEED
-                        </option>
-                        <option value="COMPLETE">COMPLETE</option>
-                    </select>
-                </label>
-            </div>
-            <div class="header-elements">
-                <label id="tags" class="flex-horizon-center">
-                    <span class="name mr-2">태그</span>
-                    <div class="flex-horizon-center"></div>
-                    <input class="empty tag" placeholder="#태그 추가">
-                </label>
-            </div>
-        </div>
-        <div class="js-toast-editor contents"></div>
-    </main>
+        </main>
+    </div>
     <div class="app-footer flex-space-between flex-horizon-center">
         <div class="btn-wrapper-left">
             <button type="button" class="option-btn" onclick="moveToPreviousPage()">돌아가기</button>
@@ -103,9 +104,8 @@
     </div>
 </div>
 <div class="page-script" layout:fragment="script">
-    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.js"></script>
-    <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
-    <script th:src="@{/js/board/toast-editor.js}"></script>
+    <script th:src="@{/ckeditor5/build/ckeditor.js}"></script>
+    <script th:src="@{/js/board/ck-editor5.js}"></script>
     <script th:src="@{/js/board/board-create.js}"></script>
 </div>
 </html>

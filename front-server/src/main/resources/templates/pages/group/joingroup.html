@@ -4,33 +4,25 @@
       layout:decorate="~{layouts/community_layout}">
 
 <head>
-    <title>그룹 생성</title>
+    <title th:title="|${appHeader.groupName} - 그룹가입 신청|"></title>
 </head>
 
 <div class="flex-column-center wrapper" layout:fragment="content">
     <div class="container">
         <div class="content-header">
-            <h1>새 그룹 생성</h1>
-            <span>새로운 그룹을 생성합니다.</span>
+            <h1>그룹 가입</h1>
+            <span th:text="|${group.name}에 가입신청을 보냅니다.|">가입 메세지</span>
         </div>
         <div class="narrow-content-body">
             <div class="element-area">
                 <span class="custom-input-label">그룹명</span>
                 <input class="form-control"
-                       id="js-group-name"
-                       placeholder="생성할 그룹명을 입력하세요.">
+                       th:value="${group.name}" readonly>
             </div>
             <div class="element-area">
                 <span class="custom-input-label">그룹 소개</span>
                 <input class="form-control"
-                       id="js-group-description"
-                       placeholder="그룹 소개를 작성하세요.">
-            </div>
-            <div class="element-area">
-                <span class="custom-input-label">URL</span>
-                <input class="form-control"
-                       id="js-group-url"
-                       placeholder="사용할 URL 경로명을 입력하세요.">
+                       th:value="${group.description}" readonly>
             </div>
             <div class="element-area">
                 <span class="custom-input-label">내 닉네임</span>
@@ -39,14 +31,14 @@
                        placeholder="그룹에서 사용할 닉네임을 입력하세요.">
             </div>
             <div class="flex-space-between">
-                <button class="manage-menu-button warn" type="button" onclick="location.href='/community'">취소</button>
-                <button class="manage-menu-button default" type="button" onclick="createGroup()">생성</button>
+                <button class="manage-menu-button warn" type="button" onclick="moveToGroupMain()">취소</button>
+                <button class="manage-menu-button default" type="button" onclick="applyJoin()">신청</button>
             </div>
         </div>
     </div>
 </div>
 </div>
 <div class="page-script" layout:fragment="script">
-    <script th:src="@{/js/group/group-create.js}"></script>
+    <script th:src="@{/js/group/group-join.js}"></script>
 </div>
 </html>
