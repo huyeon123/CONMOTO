@@ -48,6 +48,10 @@
     margin-right: 5px;
 }
 
+.group-main-menu span:hover {
+    border-radius: 0 !important;
+}
+
 .group-main-menu .selected {
     border-bottom: 2px solid;
 }
@@ -55,6 +59,7 @@
 .group-write-menu {
     display: flex;
     align-items: center;
+    padding: 4px;
 }
 
 .article {
@@ -107,4 +112,11 @@
     justify-content: space-between;
     font-size: 0.9rem;
     color: gray;
+}
+
+/*멤버 페이지*/
+.nothing {
+    display: flex;
+    justify-content: center;
+    padding: 15px 0;
 }
