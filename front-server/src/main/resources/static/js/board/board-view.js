@@ -21,6 +21,14 @@ function appendBoardLike() {
         })
 }
 
+function increaseViews() {
+    const url = "/api/board/views?boardId=" + boardId;
+    get(url)
+        .then(res => {
+            if (!res.ok) console.warn("조회수에 반영에 실패했습니다.");
+        })
+}
+
 /*comment*/
 $(document).on('click', '#comment-toggle-btn', () => {
     const area = $('#comment-hide-area').get(0);
