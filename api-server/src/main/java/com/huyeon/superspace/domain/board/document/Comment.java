@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
 import javax.persistence.Transient;
@@ -19,14 +20,18 @@ public class Comment extends DocumentAudit {
     public static final String SEQUENCE_NAME = "comment_sequence";
 
     @Id
-    private String boardId;
     private Long id;
+
+    @Field("group_url")
+    private String groupUrl;
+    private Long boardId;
     private String author;
     private String body;
     private String tag;
 
     public Comment(CommentDto dto) {
         id = dto.getId();
+        groupUrl = dto.getGroupUrl();
         boardId = dto.getBoardId();
         author = dto.getAuthor();
         body = dto.getBody();

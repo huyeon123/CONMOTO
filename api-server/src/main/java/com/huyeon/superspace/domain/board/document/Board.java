@@ -1,5 +1,6 @@
 package com.huyeon.superspace.domain.board.document;
 
+import com.huyeon.superspace.domain.board.document.Content;
 import com.huyeon.superspace.domain.board.dto.BoardDto;
 import com.huyeon.superspace.global.model.DocumentAudit;
 import lombok.*;
@@ -32,6 +33,10 @@ public class Board extends DocumentAudit {
 
     @Field("group_url")
     private String groupUrl;
+
+    @Field("category_id")
+    private String categoryId;
+
     @Field("category_name")
     private String categoryName;
 
@@ -42,12 +47,15 @@ public class Board extends DocumentAudit {
     @DBRef
     private Content content;
 
+    private int views;
+
     public Board(BoardDto dto) {
         id = dto.getId();
         author = dto.getAuthor();
         title = dto.getTitle();
         description = dto.getDescription();
         groupUrl = dto.getGroupUrl();
+        categoryId = dto.getCategoryId();
         categoryName = dto.getCategoryName();
         status = dto.getStatus();
         tags = dto.getTags();
@@ -55,5 +63,9 @@ public class Board extends DocumentAudit {
         if (Objects.nonNull(dto.getContent())) {
             content = new Content(dto.getContent());
         }
+    }
+
+    public void increaseView() {
+        views++;
     }
 }
