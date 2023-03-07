@@ -60,12 +60,15 @@ $(document).on('change', '#js-status', () => {
 
 $(document).on('change', '#js-categoryOption', () => {
     const url = "/api/board/edit/category";
-    const categoryName = $("#js-categoryOption option:selected").val();
+    const $option = $("#js-categoryOption option:selected");
+    const categoryName = $option.val();
+    const categoryId = $option.attr("id");
 
     if (categoryName === "카테고리 미선택") return;
 
     const request = {
-        categoryName: categoryName,
+        categoryId: categoryId,
+        categoryName: categoryName
     };
     saveBoard(url, request);
 })

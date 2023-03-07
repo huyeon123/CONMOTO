@@ -30,11 +30,13 @@ function tempSaveModalToggle() {
 let isOverwrite;
 
 function save(url, temp) {
+    const $category = $("#js-categoryOption option:selected");
     const request = {
         title: $("#js-title").val(),
         description: $("#js-description").val(),
         groupUrl: groupUrl,
-        categoryName: $("#js-categoryOption option:selected").val(),
+        categoryId: $category.data("category-id"),
+        categoryName: $category.val(),
         status: $("#js-status option:selected").val(),
         tags: [],
         content: {
