@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/community_layout}">
+
+<head>
+    <title th:title="|${appHeader.groupName} - 그룹가입 신청|"></title>
+</head>
+
+<div class="flex-column-center wrapper" layout:fragment="content">
+    <div class="container">
+        <div class="content-header">
+            <h1>그룹 가입</h1>
+            <span th:text="|${group.name}에 가입신청을 보냅니다.|">가입 메세지</span>
+        </div>
+        <div class="narrow-content-body">
+            <div class="element-area">
+                <span class="custom-input-label">그룹명</span>
+                <input class="form-control"
+                       th:value="${group.name}" readonly>
+            </div>
+            <div class="element-area">
+                <span class="custom-input-label">그룹 소개</span>
+                <input class="form-control"
+                       th:value="${group.description}" readonly>
+            </div>
+            <div class="element-area">
+                <span class="custom-input-label">내 닉네임</span>
+                <input class="form-control"
+                       id="js-group-nickname"
+                       placeholder="그룹에서 사용할 닉네임을 입력하세요.">
+            </div>
+            <div class="flex-space-between">
+                <button class="manage-menu-button warn" type="button" onclick="moveToGroupMain()">취소</button>
+                <button class="manage-menu-button default" type="button" onclick="applyJoin()">신청</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="page-script" layout:fragment="script">
+    <script th:src="@{/js/group/group-join.js}"></script>
+</div>
+</html>
