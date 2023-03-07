@@ -24,7 +24,13 @@ function formSubmit(url = "/auth/login") {
         body: JSON.stringify(request)
     }).then((res) => {
             if (res.status === 200) {
+                const prevUrl = sessionStorage.getItem('prevUrl');
+                if (prevUrl) {
+                    sessionStorage.removeItem('prevUrl');
+                    location.href = prevUrl;
+                } else {
                     location.href = "/community";
+                }
             } else if (res.status === 202) {
                 res.text().then(data => alert(data));
             } else {
