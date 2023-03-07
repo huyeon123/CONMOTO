@@ -13,8 +13,9 @@ $(function () {
 });
 
 function isMainPage() {
-    const currentPath = window.location.pathname;
-    return !!currentPath.match("^\/[\w]*$");
+    const currentPath = location.pathname;
+    const regexp = /^\/\w$/gi;
+    return regexp.test(currentPath);
 }
 
 async function init() {
