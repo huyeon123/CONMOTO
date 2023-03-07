@@ -134,7 +134,7 @@ function renderTags(tags) {
     tags.forEach((tag) => {
         const $tagWrapper = $(`<div class="tag-wrapper flex-horizon-center"">
                 <input class="tag" value="${tag}">
-                <i class="pointer material-icons delete md-16 gray">delete</i>
+                <i class="pointer material-icons-outlined delete md-16 gray">delete</i>
             </div>`);
 
         $emptyTagBox.before($tagWrapper);
