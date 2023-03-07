@@ -32,48 +32,9 @@ input:focus {
     outline: none;
 }
 
-button.default {
-    color: white;
-    background-color: cornflowerblue;
-}
-
-button.warn {
-    background-color: #f57d7d;
-}
-
-button.save {
-    background-color: #77d78d;
-}
-
-.m-5 {
-    margin: 5px;
-}
-
-.mt-10 {
-    margin-top: 10px;
-}
-
-.mr-5 {
-    margin-right: 5px;
-}
-
-.padding-side-5 {
-    padding-left: 5px;
-    padding-right: 5px;
-}
-
 .check-box {
     width: auto;
     margin: 5px;
-}
-
-.time {
-    color: gray;
-    font-size: 14px;
-}
-
-.opacity-90 {
-    opacity: 0.9;
 }
 
 .pointer {

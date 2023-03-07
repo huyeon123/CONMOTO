@@ -42,12 +42,6 @@ label {
     width: 90%;
 }
 
-main.container {
-    position: relative;
-    height: calc(100% - 130px);
-    overflow: hidden scroll;
-}
-
 /*header*/
 .board__header {
     border-bottom: 1px solid rgba(55, 53, 47, 0.16);
@@ -89,7 +83,7 @@ main.container {
     background-color: rgba(255, 255, 255, 0);
 }
 
-.header-elements label{
+.header-elements label {
     transition: background-color 20ms ease-in 0s;
 }
 
@@ -125,7 +119,7 @@ main.container {
 
 /*comments*/
 .comments {
-    border-bottom: 1px solid rgba(55, 53, 47, 0.16);
+    border-top: 1px solid rgba(0, 0, 0, 10%);
     padding-top: 5px;
     padding-bottom: 5px;
 }
@@ -235,7 +229,6 @@ main.container {
 }
 
 .contents {
-    padding-bottom: 20px;
 }
 
 /*etc*/
@@ -268,7 +261,7 @@ main.container {
 }
 
 .option-btn {
-    background-color: rgba(0,0,0,0);
+    background-color: rgba(0, 0, 0, 0);
     border-radius: 30px;
     border: 1px solid #d0d0d0;
     padding: 10px 15px;

@@ -24,25 +24,6 @@
     }
 }
 
-.manage-menu-button {
-    padding: 5px 10px;
-    border-radius: 5px;
-    margin: 5px 0;
-    box-shadow: rgb(15 15 15 / 5%) 0 2px 2px;
-}
-
-.manage-menu-button.default {
-    color: black;
-    background: white;
-    border: 1px solid rgba(15, 15, 15, 0.15);
-}
-
-.manage-menu-button.warn {
-    background-color: #ffabab33;
-    border: 1px solid #ff9b9b;
-    color: #f96a6a;
-}
-
 .group-info-text {
     font-weight: bold;
     margin-bottom: 8px;
@@ -92,10 +73,6 @@
     .member-manage-description {
         font-size: 0.9rem;
     }
-
-    .scrollable {
-        max-height: calc(100% - 55px) !important;
-    }
 }
 
 .member-info {
@@ -126,11 +103,11 @@
     margin: 0 20px !important;
 }
 
-.member.profile-detail > span {
+.member.profile-detail span:nth-child(n + 2) {
     font-size: 1rem !important;
 }
 
-.member.profile-detail > a {
+.member.profile-detail span:first-child {
     font-size: 2rem !important;
 }
 
@@ -143,8 +120,12 @@
     display: flex;
     justify-content: space-between;
     border-bottom: 1px solid rgba(0, 0, 0, 10%);
-    padding: 7px 0;
     align-items: center;
+    overflow-x: scroll;
+    padding: 0 10px;
+    white-space: nowrap;
+    background: linear-gradient( to right, rgba(20, 20, 20, 0) 98%, rgba(20, 20, 20, 0.1) 99%, rgba(20, 20, 20, 0.2) 99.5%, rgba(20, 20, 20, 0.3) 100%);
+}
 }
 
 .article {
@@ -285,7 +266,8 @@
 }
 
 /*등급 관리 페이지*/
-.grade-custom-select {
+.group-custom-select {
+    cursor: pointer;
     position: relative;
     display: flex;
     justify-content: space-between;
@@ -297,38 +279,43 @@
     box-shadow: rgb(15 15 15 / 5%) 0 2px 2px;
 }
 
-.grade-custom-select .span {
+.group-custom-select .span {
     margin-right: 5px;
 }
 
-.grade-custom-select:focus {
+.group-custom-select:focus {
     border-color: #80bdff;
     box-shadow: 0 0 0 0.2rem rgb(0 123 255 / 25%);
 }
 
-.grade-custom-option-wrapper {
+.group-custom-select.modal {
+    width: 100%;
+}
+
+.custom-option-wrapper {
     display: none;
     position: absolute;
+    z-index: 10000;
     top: 34px;
-    max-height: 250px;
+    max-height: 200px;
     overflow: hidden;
     border-radius: 10px;
     border: 1px solid rgba(15, 15, 15, 0.15);
 }
 
-.grade-custom-option-inner {
+.custom-option-inner {
     padding: 10px 0;
     overflow: scroll;
     background: white;
     max-height: inherit;
 }
 
-.grade-custom-option {
+.custom-option {
     padding-left: 10px;
     padding-right: 31px;
 }
 
-.grade-custom-option:hover {
+.custom-option:hover {
     cursor: pointer;
     background-color: rgb(243, 238, 253);
 }
