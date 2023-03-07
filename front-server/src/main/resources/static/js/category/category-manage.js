@@ -1,12 +1,15 @@
+$(() => {
     $("#sortable")
         .sortable({
-            revert: true,
-            items: "div:not(#root)",
-            containment: "document",
+            axis: "y",
+            containment: "parent",
+            handle: "i",
             cursor: "move",
+            tolerance: "pointer",
             placeholder: "ui-state-highlight"
         })
         .disableSelection();
+})
 
 }
 
