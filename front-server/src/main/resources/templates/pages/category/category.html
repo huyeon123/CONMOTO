@@ -1,36 +1,28 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/workspace_layout}">
+      layout:decorate="~{layouts/community_layout}">
 <head>
-    <title th:text="|${appHeader.groupName} - ${categoryName}|">Title</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.css"
-          integrity="sha512-fxF1t7b0mpb/ytjBeSu/OpgXxCVcX5/O8AJGYvHaWmNfi/lYLtttitFK17K4iKBva4iU9dcZ+BIV7dyD/nDdSw=="
-          crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"/>
-    <link rel="stylesheet" th:href="@{/css/board/timeline.css}">
+    <title th:text="|${appHeader.groupName} - ${category.name}|">Title</title>
+    <link rel="stylesheet" th:href="@{/css/group/groupmain.css}">
 </head>
 <div class="wrapper" layout:fragment="content">
-    <div class="container content-header">
-        <h1 th:text="${categoryName}">카테고리명</h1>
-        <div class="space-between">
-            <span>간략한 소개글</span>
-            <button class="new-board" onclick="goToEditor()">새 글 만들기</button>
+    <div class="container">
+        <div class="content-header">
+            <h1 th:text="${category.name}">카테고리명</h1>
+            <div class="space-between">
+                <span th:text="${category.description}">소개글</span>
+                <button class="new-board" onclick="goToEditor()">새 글 만들기</button>
+            </div>
         </div>
     </div>
-    <div class="super-space-contents content">
-        <div class="scroll-section">
-            <div class="container content-body"></div>
+    <div class="container">
+        <div class="narrow-content-body mt-0">
+            <ul id="draw-board-container" th:attr="data-category-id=${category.id}"></ul>
         </div>
     </div>
 </div>
 <div class="page-script" layout:fragment="script">
-    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.js"></script>
-    <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"
-            integrity="sha512-Yk47FuYNtuINE1w+t/KT4BQ7JaycTCcrvlSvdK/jry6Kcxqg5vN7/svVWCxZykVzzJHaxXk5T9jnFemZHSYgnw=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script th:src="@{/js/board/board-util.js}"></script>
     <script th:src="@{/js/category/categoryboard.js}"></script>
 </div>
