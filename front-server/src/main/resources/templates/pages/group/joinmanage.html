@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/workspace_layout}">
+      layout:decorate="~{layouts/community_layout}">
 <head>
-    <title th:text="|${groupName} - 가입 관리|"></title>
+    <title th:text="|${appHeader.groupName} - 가입 관리|"></title>
     <link rel="stylesheet" th:href="@{/css/group/groupmanage.css}">
     <link rel="stylesheet" th:href="@{/css/group/groupmain.css}">
 </head>
@@ -24,177 +24,14 @@
                 <span>명</span>
             </div>
             <div>
-                <button class="manage-menu-button default">전체승인</button>
-                <button class="manage-menu-button default">승인</button>
+                <button class="manage-menu-button default" onclick="selectAll()">전체선택</button>
+                <button class="manage-menu-button default" onclick="acceptJoin()">승인</button>
             </div>
         </div>
     </div>
-    <div class="container" style="overflow:hidden;">
+    <div class="container" style="overflow:hidden; height: 100%">
         <div class="narrow-content-body mt-0" style="height: 100%;">
-            <ul class="scrollable">
-                <li class="member-info">
-                    <div class="profile flex-space-between">
-                        <div class="flex-horizon-center">
-                            <div class="profile-thumbnail">
-                                <img th:src="@{/img/user.svg}" alt="thumbnail" class="profile-thumbnail-img">
-                            </div>
-                            <div>
-                                <div class="js-member-nickname-email">닉네임 (이메일)</div>
-                                <div class="member-info-detail">
-                                    <span>신청일 2023.02.27</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="m-3">
-                            <input type="checkbox" class="applicant-check">
-                        </div>
-                    </div>
-                </li>
-                <li class="member-info">
-                    <div class="profile flex-space-between">
-                        <div class="flex-horizon-center">
-                            <div class="profile-thumbnail">
-                                <img th:src="@{/img/user.svg}" alt="thumbnail" class="profile-thumbnail-img">
-                            </div>
-                            <div>
-                                <div class="js-member-nickname-email">닉네임 (이메일)</div>
-                                <div class="member-info-detail">
-                                    <span>신청일 2023.02.27</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="m-3">
-                            <input type="checkbox" class="applicant-check">
-                        </div>
-                    </div>
-                </li>
-                <li class="member-info">
-                    <div class="profile flex-space-between">
-                        <div class="flex-horizon-center">
-                            <div class="profile-thumbnail">
-                                <img th:src="@{/img/user.svg}" alt="thumbnail" class="profile-thumbnail-img">
-                            </div>
-                            <div>
-                                <div class="js-member-nickname-email">닉네임 (이메일)</div>
-                                <div class="member-info-detail">
-                                    <span>신청일 2023.02.27</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="m-3">
-                            <input type="checkbox" class="applicant-check">
-                        </div>
-                    </div>
-                </li>
-                <li class="member-info">
-                    <div class="profile flex-space-between">
-                        <div class="flex-horizon-center">
-                            <div class="profile-thumbnail">
-                                <img th:src="@{/img/user.svg}" alt="thumbnail" class="profile-thumbnail-img">
-                            </div>
-                            <div>
-                                <div class="js-member-nickname-email">닉네임 (이메일)</div>
-                                <div class="member-info-detail">
-                                    <span>신청일 2023.02.27</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="m-3">
-                            <input type="checkbox" class="applicant-check">
-                        </div>
-                    </div>
-                </li>
-                <li class="member-info">
-                    <div class="profile flex-space-between">
-                        <div class="flex-horizon-center">
-                            <div class="profile-thumbnail">
-                                <img th:src="@{/img/user.svg}" alt="thumbnail" class="profile-thumbnail-img">
-                            </div>
-                            <div>
-                                <div class="js-member-nickname-email">닉네임 (이메일)</div>
-                                <div class="member-info-detail">
-                                    <span>신청일 2023.02.27</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="m-3">
-                            <input type="checkbox" class="applicant-check">
-                        </div>
-                    </div>
-                </li>
-                <li class="member-info">
-                    <div class="profile flex-space-between">
-                        <div class="flex-horizon-center">
-                            <div class="profile-thumbnail">
-                                <img th:src="@{/img/user.svg}" alt="thumbnail" class="profile-thumbnail-img">
-                            </div>
-                            <div>
-                                <div class="js-member-nickname-email">닉네임 (이메일)</div>
-                                <div class="member-info-detail">
-                                    <span>신청일 2023.02.27</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="m-3">
-                            <input type="checkbox" class="applicant-check">
-                        </div>
-                    </div>
-                </li>
-                <li class="member-info">
-                    <div class="profile flex-space-between">
-                        <div class="flex-horizon-center">
-                            <div class="profile-thumbnail">
-                                <img th:src="@{/img/user.svg}" alt="thumbnail" class="profile-thumbnail-img">
-                            </div>
-                            <div>
-                                <div class="js-member-nickname-email">닉네임 (이메일)</div>
-                                <div class="member-info-detail">
-                                    <span>신청일 2023.02.27</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="m-3">
-                            <input type="checkbox" class="applicant-check">
-                        </div>
-                    </div>
-                </li>
-                <li class="member-info">
-                    <div class="profile flex-space-between">
-                        <div class="flex-horizon-center">
-                            <div class="profile-thumbnail">
-                                <img th:src="@{/img/user.svg}" alt="thumbnail" class="profile-thumbnail-img">
-                            </div>
-                            <div>
-                                <div class="js-member-nickname-email">닉네임 (이메일)</div>
-                                <div class="member-info-detail">
-                                    <span>신청일 2023.02.27</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="m-3">
-                            <input type="checkbox" class="applicant-check">
-                        </div>
-                    </div>
-                </li>
-                <li class="member-info">
-                    <div class="profile flex-space-between">
-                        <div class="flex-horizon-center">
-                            <div class="profile-thumbnail">
-                                <img th:src="@{/img/user.svg}" alt="thumbnail" class="profile-thumbnail-img">
-                            </div>
-                            <div>
-                                <div class="js-member-nickname-email">닉네임 (이메일)</div>
-                                <div class="member-info-detail">
-                                    <span>신청일 2023.02.27</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="m-3">
-                            <input type="checkbox" class="applicant-check">
-                        </div>
-                    </div>
-                </li>
-            </ul>
+            <ul id="join-request-list" class="scrollable"></ul>
         </div>
     </div>
 </div>

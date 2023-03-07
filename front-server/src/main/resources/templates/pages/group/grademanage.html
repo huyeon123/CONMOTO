@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/workspace_layout}">
+      layout:decorate="~{layouts/community_layout}">
 <head>
-    <title th:text="|${groupName} - 등급 관리|"></title>
+    <title th:text="|${appHeader.groupName} - 등급 관리|"></title>
     <link rel="stylesheet" th:href="@{/css/group/groupmanage.css}">
     <link rel="stylesheet" th:href="@{/css/group/groupmain.css}">
 </head>
@@ -12,23 +12,24 @@
         <div class="content-header">
             <h1>등급 관리</h1>
             <div class="member-manage-description">
-                <span>그룹의 멤버 등급을 관리할 수 있습니다.</span>
-                <span>멤버 등급 단계는 최소 4단계에서 최대 100단계까지 지정할 수 있습니다.</span>
+                <span>
+                    그룹의 멤버 등급을 관리할 수 있습니다.<br>
+                    멤버 등급 단계는 최소 4단계에서 최대 100단계까지 지정할 수 있습니다.
+                </span>
             </div>
-            <input class="form-control mt-2" type="text" id="member-search" placeholder="닉네임 혹은 이메일을 검색하세요.">
         </div>
         <div class="applicant-menu">
             <div style="position:relative;">
-                <div class="grade-custom-select" onclick="openOptions()">
-                    <span>등급 단계</span>
+                <div class="group-custom-select" onclick="openOptions()">
+                    <span id="currentLevel">등급 단계</span>
                     <i class="material-icons-outlined md-16">unfold_more</i>
                 </div>
-                <ul id="grade-level" class="grade-custom-option-wrapper">
-                    <div class="grade-custom-option-inner"></div>
+                <ul id="grade-level" class="custom-option-wrapper">
+                    <div class="custom-option-inner"></div>
                 </ul>
             </div>
             <div>
-                <button class="manage-menu-button default">저장</button>
+                <button class="manage-menu-button default" onclick="saveGradeInfo()">저장</button>
             </div>
         </div>
     </div>
@@ -41,10 +42,10 @@
 <div class="page-script" layout:fragment="script">
     <script>
         for (let level = 4; level <= 100; level++) {
-            const element = $(`<li class="grade-custom-option">${level}단계</li>`);
+            const element = $(`<li class="custom-option">${level}단계</li>`);
             $("#grade-level div").append(element);
         }
     </script>
-    <script th:src="@{/js/group/group-manage.js}"></script>
+    <script th:src="@{/js/group/grade-manage.js}"></script>
 </div>
 </html>

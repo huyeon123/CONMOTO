@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/workspace_layout}">
+      layout:decorate="~{layouts/community_layout}">
 
 <head>
     <title>그룹 생성</title>
@@ -15,51 +15,36 @@
         </div>
         <div class="narrow-content-body">
             <div class="element-area">
-                <label class="input-group flex-nowrap">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">그룹명</span>
-                    </div>
-                    <input class="form-control"
-                           id="js-group-name"
-                           placeholder="생성할 그룹명을 입력하세요.">
-                </label>
+                <span class="custom-input-label">그룹명</span>
+                <input class="form-control"
+                       id="js-group-name"
+                       placeholder="생성할 그룹명을 입력하세요.">
             </div>
             <div class="element-area">
-                <label class="input-group flex-nowrap">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">그룹 소개</span>
-                    </div>
-                    <input class="form-control"
-                           id="js-group-description"
-                           placeholder="그룹 소개를 작성하세요.">
-                </label>
+                <span class="custom-input-label">그룹 소개</span>
+                <input class="form-control"
+                       id="js-group-description"
+                       placeholder="그룹 소개를 작성하세요.">
             </div>
             <div class="element-area">
-                <label class="input-group flex-nowrap">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">URL</span>
-                    </div>
-                    <input class="form-control"
-                           id="js-group-url"
-                           placeholder="사용할 URL 경로명을 입력하세요.">
-                </label>
+                <span class="custom-input-label">URL</span>
+                <input class="form-control"
+                       id="js-group-url"
+                       placeholder="사용할 URL 경로명을 입력하세요.">
             </div>
             <div class="element-area">
-                <label class="input-group flex-nowrap">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">내 닉네임</span>
-                    </div>
-                    <input class="form-control"
-                           id="js-group-nickname"
-                           placeholder="그룹에서 사용할 닉네임을 입력하세요.">
-                </label>
+                <span class="custom-input-label">내 닉네임</span>
+                <input class="form-control"
+                       id="js-group-nickname"
+                       placeholder="그룹에서 사용할 닉네임을 입력하세요.">
             </div>
             <div class="flex-space-between">
-                <button class="default-style-btn warn" type="button" onclick="location.href='/workspace'">취소</button>
-                <button class="wide-style-btn default" type="button" onclick="createGroup()">생성</button>
+                <button class="manage-menu-button warn" type="button" onclick="location.href='/community'">취소</button>
+                <button class="manage-menu-button default" type="button" onclick="createGroup()">생성</button>
             </div>
         </div>
     </div>
+</div>
 </div>
 <div class="page-script" layout:fragment="script">
     <script th:src="@{/js/group/group-create.js}"></script>

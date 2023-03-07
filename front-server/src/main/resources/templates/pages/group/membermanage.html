@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/workspace_layout}">
+      layout:decorate="~{layouts/community_layout}">
 <head>
-    <title th:text="|${groupName} - 멤버 관리|"></title>
+    <title th:text="|${appHeader.groupName} - 멤버 관리|"></title>
     <link rel="stylesheet" th:href="@{/css/group/groupmanage.css}">
 </head>
 <div class="flex-column-center wrapper" layout:fragment="content">
@@ -35,7 +35,7 @@
                                     (이메일)
                                 </div>
                                 <div class="member-info-detail">
-                                    <span class="member-grade" th:text="|등급 ${member.role}|">등급</span>
+                                    <span class="member-grade" th:text="|등급 ${member.grade}|">등급</span>
                                     <span th:text="|가입일 ${member.joinDate}|">가입일</span>
                                 </div>
                             </div>

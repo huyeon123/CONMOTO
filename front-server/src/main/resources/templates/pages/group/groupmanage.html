@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/workspace_layout}">
+      layout:decorate="~{layouts/community_layout}">
 <head>
     <title th:text="|${groupInfo.name} - 그룹 관리|"></title>
     <link rel="stylesheet" th:href="@{/css/group/groupmanage.css}">
@@ -25,14 +25,14 @@
                 <label for="group-info-name" class="group-info-text">그룹 명</label>
                 <input class="form-control" id="group-info-name" th:value="${groupInfo.name}">
                 <div class="flex-end">
-                    <button class="wide-style-btn default">저장</button>
+                    <button class="manage-menu-button default" onclick="saveGroupName()">저장</button>
                 </div>
             </div>
             <div class="element-area">
                 <label for="group-description" class="group-info-text">그룹 설명</label>
                 <input class="form-control" id="group-description" th:value="${groupInfo.description}">
                 <div class="flex-end">
-                    <button class="wide-style-btn default">저장</button>
+                    <button class="manage-menu-button default" onclick="saveGroupDescription()">저장</button>
                 </div>
             </div>
             <div class="element-area">
@@ -40,11 +40,11 @@
                 <div class="group-menu-radio-wrapper">
                     <label class="group-menu-radio-item underline">
                         <span>YES</span>
-                        <input type="radio" class="group-menu-radio" name="group-open" th:value="${groupInfo.description}">
+                        <input type="radio" class="group-menu-radio" name="group-open" value="true" th:checked="${groupInfo.open}">
                     </label>
                     <label class="group-menu-radio-item">
                         <span>NO</span>
-                        <input type="radio" class="group-menu-radio" name="group-open" th:value="${groupInfo.description}">
+                        <input type="radio" class="group-menu-radio" name="group-open" value="false" th:checked="${!groupInfo.open}">
                     </label>
                 </div>
             </div>
@@ -53,11 +53,11 @@
                 <div class="group-menu-radio-wrapper">
                     <label class="group-menu-radio-item underline">
                         <span>YES</span>
-                        <input type="radio" class="group-menu-radio" name="group-auto-join" th:value="${groupInfo.description}">
+                        <input type="radio" class="group-menu-radio" name="group-auto-join" value="true" th:checked="${groupInfo.autoJoin}">
                     </label>
                     <label class="group-menu-radio-item">
                         <span>NO</span>
-                        <input type="radio" class="group-menu-radio" name="group-auto-join" th:value="${groupInfo.description}">
+                        <input type="radio" class="group-menu-radio" name="group-auto-join" value="false" th:checked="${!groupInfo.autoJoin}">
                     </label>
                 </div>
             </div>
@@ -76,14 +76,6 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div id="invite-modal">
-        <label class="input-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text">계정</span>
-            </div>
-            <input type="text" class="form-control" placeholder="user@example.com" name="invite-email">
-        </label>
     </div>
 </div>
 <div class="page-script" layout:fragment="script">
