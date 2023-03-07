@@ -15,7 +15,7 @@ async function createGroup(url = "/api/group") {
             if (res.ok) {
                 res.text().then((url) => {
                     alert("그룹이 생성되었습니다.");
-                    location.href = "/workspace/" + url;
+                    location.href = "/community/" + url;
                 })
             }
         })

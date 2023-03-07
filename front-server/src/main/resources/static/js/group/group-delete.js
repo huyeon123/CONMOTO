@@ -17,7 +17,7 @@ async function resignReq() {
         .then(res => {
             if (res.ok) {
                 alert("그룹이 삭제되었습니다.");
-                location.href = "/workspace";
+                location.href = "/community";
             } else {
                 getJson(res).then(message => alert(message));
             }

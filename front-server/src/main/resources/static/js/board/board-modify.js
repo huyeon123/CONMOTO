@@ -90,7 +90,7 @@ function deleteBoard() {
 
     delWithoutBody("/api/board/" + boardId)
         .then(() => {
-            location.href = "/workspace/" + groupUrl;
+            location.href = "/community/" + groupUrl;
         })
         .catch(error => {
             alert("삭제에 실패했습니다!");

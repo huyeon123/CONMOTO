@@ -24,7 +24,7 @@ function formSubmit(url = "/auth/login") {
         body: JSON.stringify(request)
     }).then((res) => {
             if (res.status === 200) {
-                window.location.href = "/workspace";
+                    location.href = "/community";
             } else if (res.status === 202) {
                 res.text().then(data => alert(data));
             } else {

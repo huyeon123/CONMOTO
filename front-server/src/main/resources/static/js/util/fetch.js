@@ -1,5 +1,5 @@
 const pathname = decodeURI(window.location.pathname);
-const groupUrlStartIdx = String("/workspace").length + 1;
+const groupUrlStartIdx = String("/community").length + 1;
 const groupUrlEndIdx = pathname.indexOf("/", groupUrlStartIdx + 1);
 const groupUrl = groupUrlEndIdx === -1 ?
     pathname.substring(groupUrlStartIdx) : pathname.substring(groupUrlStartIdx, groupUrlEndIdx);
