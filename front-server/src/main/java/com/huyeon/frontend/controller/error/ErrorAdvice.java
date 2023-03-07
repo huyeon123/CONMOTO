@@ -43,7 +43,7 @@ public class ErrorAdvice {
         return "error/ClientError";
     }
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler({NullPointerException.class, NotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handle404Error(Model model) {
         model.addAttribute("title", "404 Not Found");
