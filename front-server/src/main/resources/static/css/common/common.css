@@ -1,6 +1,27 @@
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    width: 100vw;
+    margin: 0;
+    -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+::selection {
+    color: black;
+    background: rgb(217 217 217) !important;
+}
+
 .flex-horizon-center {
     display: flex;
     align-items: center;
+}
+
+.flex-vertical-center {
+    display: flex;
+    justify-content: center;
 }
 
 .flex-space-between {
