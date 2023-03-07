@@ -11,8 +11,17 @@ $(() => {
         .disableSelection();
 })
 
+function pageRender() {
+    fetchGrade();
 }
 
+//그룹 등급 정보 불러오기
+let levelList;
+function fetchGrade() {
+    const url = "/api/group/grade?url=" + groupUrl;
+    get(url)
+        .then(res => res.json())
+        .then(data => levelList = data.levelList);
 }
 
 
