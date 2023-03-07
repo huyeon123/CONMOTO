@@ -1,3 +1,26 @@
+let boardId = pathname.slice(pathname.lastIndexOf("/") + 1);
+
+function pageRender() {
+    appendBoardLike();
+    increaseViews();
+}
+
+function appendBoardLike() {
+    const url = "/api/board/likes?boardId=" + boardId;
+    get(url)
+        .then(res => res.json())
+        .then(data => {
+            $("#like-post-num").text(data.like);
+
+            const $like = $("#like-post-heart");
+            if (data.checked) $like.addClass("like-color");
+            else $like.addClass("material-symbols-outlined");
+
+            $("#viewer").show();
+            $("#loading").remove();
+        })
+}
+
 /*comment*/
 $(document).on('click', '#comment-toggle-btn', () => {
     const area = $('#comment-hide-area').get(0);
