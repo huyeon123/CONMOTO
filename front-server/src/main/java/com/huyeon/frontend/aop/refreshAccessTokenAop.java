@@ -20,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 public class refreshAccessTokenAop {
     @Value("${conmoto.server.auth}")
     private String AUTH_SERVER_ADDR;
-    public static final String REFRESH_KEY = "Super-Space-Refresh";
+    public static final String REFRESH_KEY = "CONMOTO_JWT";
 
     private final TokenExtractor tokenExtractor;
 
