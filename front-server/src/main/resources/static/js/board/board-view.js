@@ -189,6 +189,35 @@ function setCommentNum(num) {
     commentNumBox.text(num);
 }
 
+function thumbsUp() {
+    const url = new URL(location.origin + "/api/board/like");
+    const params = {
+        memberId: $("#member").data("member-id"),
+        groupUrl: groupUrl,
+        boardId: boardId
+    }
+
+    for (let key in params) {
+        url.searchParams.set(key, params[key]);
+    }
+
+    get(url)
+        .then(res => res.json())
+        .then(data => {
+            $("#like-post-num").text(data.like);
+
+            const $heart = $("#like-post-heart");
+            if (data.checked) {
+                $heart.removeClass("material-symbols-outlined")
+                    .addClass("like-color");
+            }
+            else {
+                $heart.removeClass("like-color")
+                    .addClass("material-symbols-outlined");
+            }
+        });
+}
+
 function moveToPreviousPage() {
     history.go(-1);
 }
