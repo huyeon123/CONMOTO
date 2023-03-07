@@ -38,7 +38,7 @@ function save(url, temp) {
         status: $("#js-status option:selected").val(),
         tags: [],
         content: {
-            markdown: editor.getMarkdown()
+            html: ckEditor5.getData()
         }
     }
 
@@ -124,7 +124,7 @@ function renderContent(tempPost) {
     $("#js-categoryOption").val(tempPost.categoryName).prop("selected", true);
     $("#js-status").val(tempPost.status).prop("selected", true);
     renderTags(tempPost.tags);
-    editor.setMarkdown(tempPost.content.markdown);
+    ckEditor5.setData(tempPost.content.html);
 }
 
 function renderTags(tags) {

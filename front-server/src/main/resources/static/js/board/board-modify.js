@@ -1,18 +1,18 @@
 const boardId = pathname.substring(pathname.lastIndexOf("/") + 1);
 
 async function pageRender() {
-    getMarkdown();
+    getHTML();
     autoScalingWidth("input.tag", "#tags", 15);
 }
 
-function getMarkdown() {
-    const contentId = $('.js-toast-editor').attr('id');
+function getHTML() {
+    const contentId = $('#ck5-editor').data('content-id');
     const url = "/api/board/content/" + contentId;
 
     get(url)
         .then(res => res.json())
         .then(contentDto => {
-            if (contentDto.markdown != null) editor.setMarkdown(contentDto.markdown);
+            if (contentDto.html != null) ckEditor5.setData(contentDto.html);
         })
         .catch(error => {
             alert("컨텐츠를 불러오는데 실패했습니다!");
@@ -153,7 +153,7 @@ function registerContent() {
     const url = "/api/board/edit/content";
     const request = {
         boardId: boardId,
-        markdown: editor.getMarkdown()
+        markdown: ckEditor5.getData()
     }
 
     put(url, request)
