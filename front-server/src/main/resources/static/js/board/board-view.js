@@ -45,7 +45,8 @@ $(document).on('click', '#comment-toggle-btn', () => {
 $(document).on('click', '.js-comment-add-btn', () => {
     const request = {
         author: $('.comment-inbox-name').attr('id'),
-        body: $('.comment-inbox-text').val()
+        body: $('.comment-inbox-text').val(),
+        groupUrl: groupUrl
     };
 
     registerComment(request);
@@ -79,7 +80,7 @@ function createNewComment(request, commentId) {
         `<div class="comment-nick-box">${nickname}</div>` +
         `<span class="comment-text-box">${request.body}</span>` +
         `<div class="comment-info-box">` +
-            `<span class="comment-info-date">${currentTime}</span>` +
+        `<span class="comment-info-date">${currentTime}</span>` +
         `</div>
         <div class="comment-tool">
             <button type="button" class="js-comment-edit simple-button">수정</button>
@@ -220,4 +221,10 @@ function thumbsUp() {
 
 function moveToPreviousPage() {
     history.go(-1);
+}
+
+function moveToEditPage() {
+    const pathname = location.pathname;
+    const boardId = pathname.slice(pathname.lastIndexOf("/"));
+    location.href = "./editor" + boardId;
 }
