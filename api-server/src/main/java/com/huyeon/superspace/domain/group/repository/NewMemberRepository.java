@@ -9,13 +9,13 @@ import java.util.Optional;
 
 @Repository
 public interface NewMemberRepository extends MongoRepository<Member, String> {
-    Optional<Member> findByGroupIdAndUserEmail(String groupId, String userEmail);
+    Optional<Member> findByGroupUrlAndUserEmail(String groupUrl, String userEmail);
 
     List<Member> findAllByUserEmail(String userEmail);
 
-    List<Member> findAllByGroupId(String groupId);
+    List<Member> findAllByGroupUrl(String groupUrl);
 
-    void deleteByGroupIdAndUserEmail(String groupId, String userEmail);
+    void deleteByGroupUrlAndUserEmail(String groupUrl, String userEmail);
 
-    boolean existsByGroupIdAndUserEmail(String groupId, String userEmail);
+    boolean existsByGroupUrlAndUserEmail(String groupUrl, String userEmail);
 }
