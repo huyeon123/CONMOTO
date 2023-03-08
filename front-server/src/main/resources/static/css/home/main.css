@@ -1,6 +1,6 @@
 html {
     font-size: 13pt;
-    font-family: sans-serif;
+    font-family: 'Noto Sans KR', sans-serif;
 }
 
 body {
@@ -62,7 +62,7 @@ li {
 
 .user-button a {
     padding: 5px 12px;
-    font-size: 1rem;
+    font-size: 1.1rem;
     border-radius: 5px;
 }
 
@@ -112,6 +112,21 @@ li {
 .header-area {
     height: 64px;
     margin-bottom: 15px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.link-conmoto {
+    font-size: 1rem;
+}
+
+.link-conmoto:hover {
+    cursor: pointer;
+    background: rgba(0, 0, 0, 7%);
+    border-radius: 5px;
 }
 
 .summary {

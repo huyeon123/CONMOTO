@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CONMOTO</title>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/home/main.css}">
 </head>
 <body class="container">
 <header class="header-box">
     <div class="header flex-space-between">
-        <div class="logo">
-            <img class="logo" th:src="@{/img/logo.png}" alt="conmoto-logo">
+        <div class="header-right">
+            <div class="logo">
+                <img class="logo" th:src="@{/img/logo.png}" alt="conmoto-logo">
+            </div>
         </div>
         <div class="user-button">
             <a href="/login" class="sign-in">로그인</a>
@@ -31,7 +34,8 @@
                 혼자가 좋다면 개인 블로그로도 좋아요.
             </div>
             <div class="try-conmoto">
-                <a href="/signup" class="sign-up">Let's Note</a>
+                <a href="/signup" class="sign-up">Let's Start</a>
+                <a href="/conmoto" class="sign-up">Look Around</a>
             </div>
         </div>
     </div>
