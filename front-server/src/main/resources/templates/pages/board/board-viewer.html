@@ -65,7 +65,7 @@
                     <div id="comment-hide-area" class="comment-list" hidden>
                         <li th:each="comment : ${comments}" th:id="|comment_${comment.id}|" class="comment-item">
                             <div class="comment-area">
-                                <div class="comment-nick-box" th:text="${comment.author}">nickname</div>
+                                <div th:id="${comment.author}" class="comment-nick-box" th:text="${comment.nickname}">nickname</div>
                                 <div class="comment-text-box" th:utext="${comment.body.replaceAll('\n', '<br>')}">댓글</div>
                                 <div class="comment-info-box">
                                     <span class="comment-info-date"
