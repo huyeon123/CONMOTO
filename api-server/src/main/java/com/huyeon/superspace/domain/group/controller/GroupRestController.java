@@ -9,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequestMapping("/api/group")
@@ -35,9 +33,10 @@ public class GroupRestController {
     @PutMapping("/{url}")
     public String editGroup(
             @PathVariable String url,
+            @RequestParam String type,
             @RequestBody GroupDto request
     ) {
-        return groupService.editGroup(url, request);
+        return groupService.editGroup(url, type, request);
     }
 
     @DeleteMapping("/{url}")
