@@ -19,5 +19,5 @@ public class FavoriteCategory extends DocumentAudit {
 
     private String groupUrl;
 
-    private List<String> categoryId;
+    private List<String> categoryIds;
 }

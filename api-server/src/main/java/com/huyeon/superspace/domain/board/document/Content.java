@@ -17,11 +17,11 @@ import javax.persistence.Id;
 public class Content extends DocumentAudit {
     @Id
     private String id;
-    private String markdown;
+    private String html;
 
     @Builder
     public Content(ContentDto dto) {
         id = dto.getId();
-        markdown = dto.getMarkdown();
+        html = dto.getHtml();
     }
 }

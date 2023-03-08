@@ -24,6 +24,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 
 @Slf4j
@@ -32,7 +33,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private static final String REFRESH_KEY_NAME = "Super-Space-Refresh";
+    private static final String REFRESH_KEY_NAME = "CONMOTO_JWT";
     private final AuthService authService;
     private final EmailService loginCodeEmailService;
 
@@ -73,7 +74,9 @@ public class AuthController {
 
     @PostMapping("/login-code")
     public void generateTempLoginCode(@RequestBody Email request) {
-        loginCodeEmailService.send(request.getEmail());
+        CompletableFuture
+                .runAsync(() -> loginCodeEmailService.send(request.getEmail()))
+                .thenAcceptAsync((returnValue) -> log.info("[이메일 발송 완료] : 수신자 - {}", request.getEmail()));
     }
 
     @PostMapping("/login/temp")
@@ -96,6 +99,7 @@ public class AuthController {
             HttpServletRequest request,
             @CookieValue(name = REFRESH_KEY_NAME, required = false) String refreshToken) {
         if (refreshToken == null) refreshToken = getRefreshToken(request);
+        if (refreshToken == null) return getAnonymousToken();
         String newAccessToken = authService.generateNewAccessToken(refreshToken);
         log.debug("AccessToken 생성완료");
         return newAccessToken;
@@ -135,13 +139,18 @@ public class AuthController {
         setCookie(response, userTokenInfo);
 
         try {
-            response.sendRedirect("https://conmoto.site/workspace");
+            response.sendRedirect("https://conmoto.site/community");
         } catch (IOException e) {
             log.error("FE 서버로 리다이렉트 실패");
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return userTokenInfo;
+    }
+
+    @GetMapping("/anonymous")
+    public String getAnonymousToken() {
+        return authService.getAnonymousToken();
     }
 
     @Getter

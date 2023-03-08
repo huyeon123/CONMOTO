@@ -163,4 +163,8 @@ public class AuthService {
     private Optional<User> findByEmail(String email) {
         return authRepository.findByEmail(email);
     }
+
+    public String getAnonymousToken() {
+        return tokenProvider.createAnonymousToken();
+    }
 }

@@ -39,7 +39,7 @@ public class TokenProvider implements InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -83,6 +83,18 @@ public class TokenProvider implements InitializingBean {
                 .setSubject(userEmail)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(refreshTokenExpiration)
+                .compact();
+    }
+
+
+    public String createAnonymousToken() {
+        long now = new Date().getTime();
+        Date anonymousTokenExpiration = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+
+        return Jwts.builder()
+                .setSubject("CONMOTO_ANONYMOUS_TOKEN")
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setExpiration(anonymousTokenExpiration)
                 .compact();
     }
 
