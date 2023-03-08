@@ -2,24 +2,18 @@ package com.huyeon.superspace.domain.board.service;
 
 import com.huyeon.superspace.domain.board.document.Category;
 import com.huyeon.superspace.domain.board.document.FavoriteCategory;
-import com.huyeon.superspace.domain.board.dto.CategoryCreateDto;
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
 import com.huyeon.superspace.domain.board.dto.FavoriteCategoryReq;
 import com.huyeon.superspace.domain.board.repository.FavoriteCategoryRepository;
 import com.huyeon.superspace.domain.board.repository.NewCategoryRepository;
-import com.huyeon.superspace.global.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 @Slf4j
@@ -31,90 +25,52 @@ public class NewCategoryService {
     private final FavoriteCategoryRepository favoriteRepository;
 
     public CategoryDto getCategory(String id) {
-        return findCategory(id).map(CategoryDto::new).orElseThrow();
+        return new CategoryDto(findCategory(id));
     }
 
-    private Optional<Category> findCategory(String id) {
-        return categoryRepository.findById(id);
+    public CategoryDto getCategoryByName(String groupUrl, String categoryName) {
+        return categoryRepository.findByGroupUrlAndName(groupUrl, categoryName)
+                .map(CategoryDto::new)
+                .orElseThrow();
     }
 
-    public String createCategory(CategoryCreateDto request) {
-        Category category = new Category(request);
-
-        if (Objects.nonNull(request.getParentId())) {
-            Category parent = findCategory(request.getParentId()).orElseThrow();
-            checkSameGroup(category, parent);
-            category.setParentCategory(parent);
-        }
-
-        return categoryRepository.save(category).getId();
+    private Category findCategory(String id) {
+        return categoryRepository.findById(id).orElseThrow();
     }
 
-    private void checkSameGroup(Category category, Category parent) {
-        if (category.getGroupUrl().equals(parent.getGroupUrl())) return;
-        throw new BadRequestException("잘못된 부모 카테고리 요청입니다!");
+    public List<CategoryDto> getCategoryListByUrl(String groupUrl) {
+        List<Category> categoryList = findCategoryListByUrl(groupUrl);
+        return categoryList.stream()
+                .map(CategoryDto::new)
+                .collect(toList());
     }
 
-    public List<CategoryDto> getCategoryTree(String email, String groupUrl) {
-        List<CategoryDto> categories = getCategoryList(groupUrl);
+    private List<Category> findCategoryListByUrl(String groupUrl) {
+        return categoryRepository.findAllByGroupUrl(groupUrl);
+    }
 
-        checkFavorite(email, groupUrl, categories);
-
-        if (categories.isEmpty()) return List.of();
-
-        List<CategoryDto> topCategories = getTopCategories(categories);
-
-        Map<String, List<CategoryDto>> groupingByParent = groupingByParent(categories);
-
-        addSubCategories(topCategories, groupingByParent);
-
-        return topCategories;
+    public List<CategoryDto> getMyCategoryList(String userEmail, String groupUrl) {
+        List<CategoryDto> categoryList = getCategoryList(groupUrl);
+        checkFavorite(userEmail, groupUrl, categoryList);
+        return categoryList;
     }
 
     private void checkFavorite(String email, String groupUrl, List<CategoryDto> categories) {
-        Optional<FavoriteCategory> favorites = findFavoriteByEmailAndUrl(email, groupUrl);
+        FavoriteCategory favorites = findFavoriteByEmailAndUrl(email, groupUrl);
 
-        if (favorites.isPresent()) {
-            List<String> categoryIdList = favorites.get().getCategoryId();
+        List<String> categoryIdList = favorites.getCategoryIds();
 
-            for (CategoryDto category : categories) {
-                if (categoryIdList.contains(category.getId())) {
-                    category.setFavorite(true);
-                }
+        for (CategoryDto category : categories) {
+            if (categoryIdList.contains(category.getId())) {
+                category.setFavorite(true);
+                category.setName("└" + category.getName());
             }
         }
     }
 
-    private Optional<FavoriteCategory> findFavoriteByEmailAndUrl(String email, String groupUrl) {
-        return favoriteRepository.findAllByUserEmailAndGroupUrl(email, groupUrl);
-    }
-
-    private List<CategoryDto> getTopCategories(List<CategoryDto> categories) {
-        return categories.stream()
-                .filter(category -> Objects.isNull(category.getParent()))
-                .collect(toList());
-    }
-
-    //같은 상위 카테고리를 가지고 있는 노드끼리 그룹핑
-    private Map<String, List<CategoryDto>> groupingByParent(List<CategoryDto> categories) {
-        return categories.stream()
-                .collect(groupingBy(category -> {
-                    CategoryDto parent = category.getParent();
-                    if (Objects.isNull(parent)) return "";
-                    else return parent.getId();
-                }));
-    }
-
-    private void addSubCategories(List<CategoryDto> parents, Map<String, List<CategoryDto>> groupingByParent) {
-        parents.forEach(parent -> {
-            List<CategoryDto> subCategories = groupingByParent.get(parent.getId());
-
-            if (subCategories == null) return;
-
-            parent.setChildren(subCategories);
-
-            addSubCategories(subCategories, groupingByParent);
-        });
+    private FavoriteCategory findFavoriteByEmailAndUrl(String email, String groupUrl) {
+        return favoriteRepository.findAllByUserEmailAndGroupUrl(email, groupUrl)
+                .orElse(new FavoriteCategory(email, groupUrl, new LinkedList<>()));
     }
 
     public List<CategoryDto> getCategoryList(String groupUrl) {
@@ -123,42 +79,39 @@ public class NewCategoryService {
                 .collect(toList());
     }
 
-    public void editCategory(List<CategoryDto> request, String groupUrl) {
-        List<CategoryDto> originalList = getCategoryList(groupUrl);
+    public void saveCategory(String groupUrl, List<CategoryDto> request) {
+        List<Category> origin = findCategoryListByUrl(groupUrl);
 
-        //수정과 생성을 동시에 할 수 없기 때문에, request가 original보다 클 수 없음.
-        if (originalList.size() < request.size()) {
-            throw new BadRequestException("기존 카테고리보다 더 많은 요청은 불가합니다");
+        //기존 categoryId 덮어쓰기
+        int min = Math.min(origin.size(), request.size());
+        for (int i = 0; i < min; i++) {
+            String originId = origin.get(i).getId();
+            request.get(i).setId(originId);
         }
 
-        IntStream.range(0, request.size())
-                .forEach(i -> {
-                    CategoryDto origin = originalList.get(i);
-                    CategoryDto newElem = request.get(i);
-
-                    change(origin, newElem);
-                });
-
-        categoryRepository.saveAll(convertDocList(originalList));
-
-        if (originalList.size() > request.size()) {
-            List<CategoryDto> deleteList = IntStream.range(request.size(), originalList.size())
-                    .mapToObj(originalList::get)
-                    .collect(toList());
-
-            categoryRepository.deleteAll(convertDocList(deleteList));
-        }
-    }
-
-    private void change(CategoryDto origin, CategoryDto change) {
-        origin.setName(change.getName());
-        origin.setParent(change.getParent());
-    }
-
-    private List<Category> convertDocList(List<CategoryDto> dtoList) {
-        return dtoList.stream()
+        //DTO -> Document
+        List<Category> convert = request.stream()
                 .map(Category::new)
                 .collect(toList());
+
+        categoryRepository.saveAll(convert);
+
+        //기존 카테고리 수가 더 많았다면 넘치는 만큼 카테고리 제거
+        if (origin.size() > request.size()) {
+            List<Category> deleteTarget = new LinkedList<>();
+
+            for (int i = request.size(); i < origin.size(); i++) {
+                deleteTarget.add(origin.get(i));
+            }
+
+            categoryRepository.deleteAll(deleteTarget);
+        }
+    }
+
+    public String editCategory(CategoryDto request) {
+        Category origin = findCategory(request.getId());
+        request.setId(origin.getId());
+        return categoryRepository.save(new Category(request)).getId();
     }
 
     public void deleteCategory(String id) {
@@ -175,32 +128,22 @@ public class NewCategoryService {
     }
 
     private void registerFavoriteCategory(String email, FavoriteCategoryReq request) {
-        Optional<FavoriteCategory> optional = findFavoriteByEmailAndUrl(email, request.getGroupUrl());
-        FavoriteCategory favorite;
+        FavoriteCategory favorites = findFavoriteByEmailAndUrl(email, request.getGroupUrl());
 
-        if (optional.isPresent()) {
-            favorite = optional.get();
-            List<String> categoryIdList = favorite.getCategoryId();
-            categoryIdList.add(request.getCategoryId());
-        } else {
-            favorite = FavoriteCategory.builder()
-                    .userEmail(email)
-                    .groupUrl(request.getGroupUrl())
-                    .categoryId(List.of(request.getCategoryId()))
-                    .build();
-        }
+        List<String> categoryIdList = favorites.getCategoryIds();
+        categoryIdList.add(request.getCategoryId());
 
-        favoriteRepository.save(favorite);
+        favoriteRepository.save(favorites);
     }
 
     private void liftFavoriteCategory(String email, FavoriteCategoryReq request) {
-        Optional<FavoriteCategory> optional = findFavoriteByEmailAndUrl(email, request.getGroupUrl());
+        FavoriteCategory favorites = findFavoriteByEmailAndUrl(email, request.getGroupUrl());
 
-        if (optional.isPresent()) {
-            FavoriteCategory favorite = optional.get();
-            List<String> categoryIdList = favorite.getCategoryId();
+        List<String> categoryIdList = favorites.getCategoryIds();
+
+        if (categoryIdList.contains(request.getCategoryId())) {
             categoryIdList.remove(request.getCategoryId());
-            favoriteRepository.save(favorite);
+            favoriteRepository.save(favorites);
         }
     }
 }
