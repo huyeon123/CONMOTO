@@ -31,6 +31,17 @@ public class GroupController {
         return "pages/group/community";
     }
 
+    @RequiredLogin
+    @GetMapping("/noty")
+    public String notyPage(
+            HttpServletRequest request,
+            String newAccessToken,
+            Model model
+    ) {
+        fetch.bindResponse("/community/noty", newAccessToken, model);
+        return "pages/user/notypage";
+    }
+
     @GetMapping("/{groupUrl}")
     public String workSpacePage(
             HttpServletRequest request,
@@ -40,6 +51,7 @@ public class GroupController {
         return "pages/group/groupmain";
     }
 
+    @RequiredLogin
     @GetMapping("/new")
     public String createGroupPage(
             HttpServletRequest request,
@@ -49,6 +61,7 @@ public class GroupController {
         return "pages/group/creategroup";
     }
 
+    @RequiredLogin
     @GetMapping("/{groupUrl}/apply/join")
     public String joinGroupPage(
             HttpServletRequest request,

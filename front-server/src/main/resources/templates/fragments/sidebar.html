@@ -31,7 +31,7 @@
                         <div class="info-menu" th:unless="${member.id == 'anonymous'}">
                             <a class="items" role="button" onclick="goToEditor()">글쓰기</a>
                             <span th:id="${member.id}" class="items" onclick="moveToMemberPage(this)">내 활동</span>
-                            <a class="items" href="/user/noty">알림</a>
+                            <a class="items" href="/community/noty">알림</a>
                         </div>
                         <div class="group-manage" th:if="${role == 'ROLE_MANAGER'}"> <!--그룹 관리자일시 관리버튼 활성화-->
                             <a role="button" class="group-menu-button" onclick="moveToGroupManagingPage()">현재 그룹 관리</a>
@@ -39,7 +39,8 @@
                         <div class="group-manage" th:unless="${member.id == 'anonymous'}"> <!--그룹 멤버일시 초대버튼 활성화-->
                             <a role="button" class="group-menu-button" onclick="openInviteModal()">그룹 초대</a>
                         </div>
-                        <div class="group-manage" th:if="${groupPage && member.id == 'anonymous'}"> <!--그룹 멤버가 아닐 시 가입버튼 활성화-->
+                        <div class="group-manage" th:if="${groupPage && member.id == 'anonymous'}">
+                            <!--그룹 멤버가 아닐 시 가입버튼 활성화-->
                             <a role="button" class="group-menu-button" onclick="moveToGroupJoinPage()">그룹 가입</a>
                         </div>
                     </div>
@@ -122,9 +123,12 @@
                                         <span th:id="${category.id}" th:unless="${category.indent}"
                                               th:if="${category.type == 'BASIC'}" th:utext="${category.name}"
                                               class="js-category-name" onclick="moveToCategoryPage(this)"></span>
-                                        <div th:unless="${category.type == 'CATEGORY_GROUP' || role == 'ROLE_ANONYMOUS'}" class="flex-vertical-center">
-                                            <i class="material-icons-outlined favorite-color" th:text="${category.favorite} ? 'star' : 'star_border'"
+                                        <div th:unless="${category.type == 'CATEGORY_GROUP' || role == 'ROLE_ANONYMOUS'}"
+                                             class="flex-vertical-center">
+                                            <i class="material-icons-outlined favorite-color"
+                                               th:text="${category.favorite} ? 'star' : 'star_border'"
                                                onclick="requestFavoriteCategory(this)">star</i>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

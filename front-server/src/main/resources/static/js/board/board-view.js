@@ -45,6 +45,7 @@ $(document).on('click', '#comment-toggle-btn', () => {
 $(document).on('click', '.js-comment-add-btn', () => {
     const request = {
         author: $('.comment-inbox-name').attr('id'),
+        nickname: $(".comment-inbox-name").text(),
         body: $('.comment-inbox-text').val(),
         groupUrl: groupUrl
     };
@@ -74,10 +75,9 @@ function registerComment(request) {
 
 function createNewComment(request, commentId) {
     const currentTime = new Date().toLocaleString();
-    const nickname = $('.comment-inbox-name').text();
     return `<li id="comment_${commentId}" class="comment-item">` +
         `<div class="comment-area">` +
-        `<div class="comment-nick-box">${nickname}</div>` +
+        `<div id="${request.author}" class="comment-nick-box">${request.nickname}</div>` +
         `<span class="comment-text-box">${request.body}</span>` +
         `<div class="comment-info-box">` +
         `<span class="comment-info-date">${currentTime}</span>` +
@@ -108,13 +108,15 @@ $(document).on('click', '.js-comment-edit', (e) => {
     $commentArea.hide(); //기존 commentArea 숨김
 
     //commentWriter 적용
-    const nickname = $commentArea.find('.comment-nick-box').text();
+    const $nickbox = $commentArea.find('.comment-nick-box');
+    const author = $nickbox.attr('id');
+    const nickname = $nickbox.text();
     const body = $commentArea.find('.comment-text-box').html().replaceAll('<br>', '\n');
 
     const writer = $(`
         <div class="comment-writer">
             <div class="comment-inbox">
-                <div class="comment-inbox-name">${nickname}</div>
+                <div id="${author}" class="comment-inbox-name">${nickname}</div>
                 <textarea class="comment-inbox-text" placeholder="댓글을 남겨보세요.">${body}</textarea>
             </div>
             <div class="comment-attach">
@@ -143,7 +145,8 @@ $(document).on('click', '.js-comment-edit-save', (e) => {
     const url = "/api/comment";
     const request = {
         id: $commentItem.attr('id').slice("comment_".length),
-        author: $commentItem.find('.comment-inbox-name').text(),
+        nickname: $commentItem.find('.comment-inbox-name').text(),
+        author: $commentItem.find('.comment-inbox-name').attr('id'),
         body: $commentItem.find('.comment-inbox-text').val()
     }
 
@@ -209,12 +212,12 @@ function thumbsUp() {
 
             const $heart = $("#like-post-heart");
             if (data.checked) {
-                $heart.removeClass("material-symbols-outlined")
+                $heart.text("favorite")
                     .addClass("like-color");
             }
             else {
-                $heart.removeClass("like-color")
-                    .addClass("material-symbols-outlined");
+                $heart.text("favorite_border")
+                    .removeClass("like-color");
             }
         });
 }

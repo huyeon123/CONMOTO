@@ -17,17 +17,17 @@
                 <span class="noty-count" id="js-noty-count">0</span>
             </div>
             <div class="user-name-wrapper">
-                <div class="user-menu" th:unless="${role == 'ROLE_ANONYMOUS'}">
-                    <i class="material-icons-outlined" onclick="openUserFloat()">account_circle</i>
+                <div class="user-menu" onclick="openUserFloat()" th:unless="${role == 'ROLE_ANONYMOUS'}">
+                    <i class="material-icons-outlined">account_circle</i>
                     <span style="font-size: 0.5rem; color: gray">메뉴</span>
                 </div>
-                <span th:if="${role == 'ROLE_ANONYMOUS'}">로그인</span>
-                <div id="user-floating" class="user-float-wrapper">
-                    <div class="user-float-inner">
-                        <div th:if="${role == 'ROLE_ANONYMOUS'}" class="user-float-menu" onclick="login()">로그인</div>
-                        <div th:unless="${role == 'ROLE_ANONYMOUS'}"class="user-float-menu" onclick="openMyAccountModal()">내 계정</div>
-                        <div th:unless="${role == 'ROLE_ANONYMOUS'}"class="user-float-menu" onclick="logout()">로그아웃</div>
-                    </div>
+                <span th:if="${role == 'ROLE_ANONYMOUS'}" onclick="openUserFloat()">로그인</span>
+            </div>
+            <div id="user-floating" class="user-float-wrapper">
+                <div class="user-float-inner">
+                    <div th:if="${role == 'ROLE_ANONYMOUS'}" class="user-float-menu" onclick="login()">로그인</div>
+                    <div th:unless="${role == 'ROLE_ANONYMOUS'}"class="user-float-menu" onclick="openMyAccountModal()">내 계정</div>
+                    <div th:unless="${role == 'ROLE_ANONYMOUS'}"class="user-float-menu" onclick="logout()">로그아웃</div>
                 </div>
             </div>
         </div>

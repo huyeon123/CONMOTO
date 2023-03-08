@@ -1,12 +1,10 @@
 package com.huyeon.frontend.controller.community;
 
-import com.huyeon.frontend.aop.refreshAccessTokenAop;
 import com.huyeon.frontend.util.Fetch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
