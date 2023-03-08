@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface TempPostRepository extends MongoRepository<TempPost, String> {
+public interface TempPostRepository extends MongoRepository<TempPost, Long> {
     long countAllByAuthorAndGroupUrl(String email, String groupUrl);
     List<TempPost> findAllByAuthorAndGroupUrl(String email, String groupUrl);
 }
