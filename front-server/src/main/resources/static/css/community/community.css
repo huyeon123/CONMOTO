@@ -287,12 +287,6 @@ label {
     padding: 3px 0;
 }
 
-.pointer-hover:hover {
-    cursor: pointer;
-    background: rgba(0, 0, 0, 7%);
-    border-radius: 5px;
-}
-
 .sidebar-elements.pointer-hover span {
     width: 100%;
 }
@@ -433,11 +427,6 @@ label {
     cursor: pointer;
     background: rgba(0, 0, 0, 7%);
     border-radius: 5px;
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
 }
 
 .header-noty {

@@ -62,6 +62,17 @@ input:focus {
     cursor: pointer;
 }
 
+.pointer-hover:hover {
+    cursor: pointer;
+    background: rgba(0, 0, 0, 7%);
+    border-radius: 5px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
 /* loading style */
 .loader-container {
 
