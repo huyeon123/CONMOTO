@@ -2,7 +2,6 @@ package com.huyeon.superspace.domain.user.entity;
 
 import com.huyeon.superspace.global.model.AuditEntity;
 import com.huyeon.superspace.global.model.Auditable;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
