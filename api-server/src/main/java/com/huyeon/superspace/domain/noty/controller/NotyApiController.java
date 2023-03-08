@@ -57,6 +57,13 @@ public class NotyApiController {
             @RequestHeader("X-Authorization-Id") String userEmail
     ) {
         notyService.setReadNoty(idList, userEmail);
-        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public void removeNoty(
+            @RequestBody List<Long> idList,
+            @RequestHeader("X-Authorization-Id") String userEmail
+    ) {
+        notyService.removeNoty(idList, userEmail);
     }
 }
