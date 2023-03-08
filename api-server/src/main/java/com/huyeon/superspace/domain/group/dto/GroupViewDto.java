@@ -2,6 +2,7 @@ package com.huyeon.superspace.domain.group.dto;
 
 import com.huyeon.superspace.domain.group.document.Group;
 import com.huyeon.superspace.domain.group.document.Member;
+import com.huyeon.superspace.domain.group.dto.GroupDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,8 +25,7 @@ public class GroupViewDto {
 
     private String myRole;
 
-    public GroupViewDto(Member member) {
-        Group group = member.getGroup();
+    public GroupViewDto(GroupDto group, Member member) {
         groupId = group.getId();
         groupName = group.getName();
         groupUrl = group.getUrl();

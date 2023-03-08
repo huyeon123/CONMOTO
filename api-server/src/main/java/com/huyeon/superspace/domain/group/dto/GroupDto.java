@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Getter
@@ -25,6 +26,12 @@ public class GroupDto {
 
     private Set<String> managers;
 
+    private LocalDate since;
+
+    private boolean open;
+
+    private boolean autoJoin;
+
     public GroupDto(Group group) {
         id = group.getId();
         name = group.getName();
@@ -33,5 +40,13 @@ public class GroupDto {
         description = group.getDescription();
         membersNum = group.getMembersNum();
         managers = group.getManagers();
+        since = group.getCreatedAt().toLocalDate();
+        open = group.isOpen();
+        autoJoin = group.isAutoJoin();
+    }
+
+    public GroupDto(String name, String url) {
+        this.name = name;
+        this.url = url;
     }
 }
