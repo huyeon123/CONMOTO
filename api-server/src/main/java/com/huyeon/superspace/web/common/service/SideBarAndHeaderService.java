@@ -35,6 +35,57 @@ public class SideBarAndHeaderService {
     private final CacheUtils cacheUtils;
 
     public Map<String, Object> getHeaderAndSideBar(String email, String groupUrl) {
+        //email이 CONMOTO_ANONYMOUS_TOKEN일 경우 익명 데이터
+        if (email.equals("CONMOTO_ANONYMOUS_TOKEN")) {
+            return getAnonymousHSB(email, groupUrl);
+        }
+
+        //로그인은 했으나 헤더 사이드바 정보가 필요없다면 기본 데이터
+        if (groupUrl == null) {
+            return getDefaultHSB(email);
+        }
+
+        return getFullHSB(email, groupUrl);
+    }
+
+    private Map<String, Object> getAnonymousHSB(String email, String groupUrl) {
+        AppHeaderDto appHeader = getAnonymousHeader(groupUrl);
+        SideBarDto sideBar = getAnonymousSideBar(email, groupUrl);
+
+        return Map.of(
+                "appHeader", appHeader,
+                "sideBar", sideBar,
+                "role", "ROLE_ANONYMOUS"
+        );
+    }
+
+    private AppHeaderDto getAnonymousHeader(String groupUrl) {
+        String groupName;
+        if (Objects.isNull(groupUrl)) groupName = "그룹을 선택하세요.";
+        else groupName = getGroupNameByUrl(groupUrl);
+
+        return new AppHeaderDto(groupName, "로그인");
+    }
+
+    private SideBarDto getAnonymousSideBar(String email, String groupUrl) {
+        MemberDto member = getAnonymousMember(email);
+        List<CategoryDto> categories = getMyCategoryList(email, groupUrl);
+        return SideBarDto.builder()
+                .member(member)
+                .groups(List.of())
+                .categories(categories)
+                .build();
+    }
+
+    private MemberDto getAnonymousMember(String email) {
+        return MemberDto.builder()
+                .id("anonymous")
+                .email(email)
+                .nickname("로그인이 필요합니다.")
+                .build();
+    }
+
+    private Map<String, Object> getFullHSB(String email, String groupUrl) {
         String key = String.format("%s:%s:%s", CACHE_KEY_TYPE, email, groupUrl);
         Map<String, Object> cache = cacheUtils.findCache(key);
 
@@ -57,8 +108,8 @@ public class SideBarAndHeaderService {
     }
 
     private AppHeaderDto getAppHeader(String email, String groupUrl) {
-        String groupName = findGroupNameByUrl(groupUrl);
-        String userName = findUserNameByEmail(email);
+        String groupName = getGroupNameByUrl(groupUrl);
+        String userName = getUserNameByEmail(email);
 
         return AppHeaderDto.builder()
                 .groupName(groupName)
@@ -66,18 +117,18 @@ public class SideBarAndHeaderService {
                 .build();
     }
 
-    private String findGroupNameByUrl(String urlPath) {
-        return groupService.findGroupByUrl(urlPath).getName();
+    private String getGroupNameByUrl(String urlPath) {
+        return groupService.getGroupByUrl(urlPath).getName();
     }
 
-    private String findUserNameByEmail(String email) {
+    private String getUserNameByEmail(String email) {
         return userRepository.findNameByEmail(email).orElseThrow();
     }
 
     private SideBarDto getSideBar(String userEmail, String groupUrl) {
         MemberDto member = getMemberInfo(userEmail, groupUrl);
         List<GroupViewDto> groups = getGroups(userEmail);
-        List<CategoryDto> categories = getHierarchicalCategories(userEmail, groupUrl);
+        List<CategoryDto> categories = getMyCategoryList(userEmail, groupUrl);
 
         if (categories == null) categories = Collections.emptyList();
 
@@ -96,22 +147,25 @@ public class SideBarAndHeaderService {
         List<Member> groups = groupService.findAllByUserEmail(email);
 
         return groups.stream()
-                .map(GroupViewDto::new)
+                .map(member -> {
+                    GroupDto group = groupService.getGroupByUrl(member.getGroupUrl());
+                    return new GroupViewDto(group, member);
+                })
                 .collect(Collectors.toList());
     }
 
-    private List<CategoryDto> getHierarchicalCategories(String email, String groupUrl) {
-        return categoryService.getCategoryTree(email, groupUrl);
+    private List<CategoryDto> getMyCategoryList(String email, String groupUrl) {
+        return categoryService.getMyCategoryList(email, groupUrl);
     }
 
-    public Map<String, Object> getBlankHeaderAndSideBar(String email) {
+    private Map<String, Object> getDefaultHSB(String email) {
         AppHeaderDto blankHeader = getBlankHeader(email);
         SideBarDto blankSideBar = getBlankSideBar(email);
 
         return Map.of("appHeader", blankHeader, "sideBar", blankSideBar);
     }
 
-    public SideBarDto getBlankSideBar(String email) {
+    private SideBarDto getBlankSideBar(String email) {
         MemberDto member = getNoneSelectGroupProfile();
         List<GroupViewDto> groups = getGroups(email);
         return SideBarDto.builder()
@@ -128,8 +182,8 @@ public class SideBarAndHeaderService {
                 .build();
     }
 
-    public AppHeaderDto getBlankHeader(String email) {
-        String username = findUserNameByEmail(email);
+    private AppHeaderDto getBlankHeader(String email) {
+        String username = getUserNameByEmail(email);
 
         return AppHeaderDto.builder()
                 .userName(username)
@@ -138,7 +192,10 @@ public class SideBarAndHeaderService {
     }
 
     public String getRole(String email, String groupUrl) {
-        GroupDto group = groupService.findGroupByUrl(groupUrl);
+        boolean notMember = groupService.isNotMemberByUrl(groupUrl, email);
+        if (notMember) return "ROLE_NOT_MEMBER";
+
+        GroupDto group = groupService.getGroupByUrl(groupUrl);
         boolean isManager = group.getManagers().contains(email);
 
         if (isManager) return "ROLE_MANAGER";
