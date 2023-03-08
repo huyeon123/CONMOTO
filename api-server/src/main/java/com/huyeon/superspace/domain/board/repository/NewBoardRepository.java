@@ -2,6 +2,7 @@ package com.huyeon.superspace.domain.board.repository;
 
 import com.huyeon.superspace.domain.board.document.Board;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -33,5 +34,12 @@ public interface NewBoardRepository extends MongoRepository<Board, Long> {
             Pageable pageable
     );
 
-    void deleteAllByGroupUrl(String groupurl);
+    @Aggregation(pipeline = {
+            "{$match: { timestamp: { $gte: ISODate(?0), $lt: ISODate(?1) } } }",
+            "{$sort: { views: -1 } }",
+            "{$limit: 10 }"
+    })
+    List<Board> findMostViewedPostsInLastHour(LocalDateTime oneHourAgo, LocalDateTime now);
+
+    void deleteAllByGroupUrl(String groupUrl);
 }
