@@ -242,14 +242,52 @@ public class NewGroupService {
         });
     }
 
-    public void joinMember(String userEmail, JoinDto request) {
-        Group group = findGroupById(request.getGroupId());
-        if (isMember(request.getGroupId(), userEmail)) {
+    public boolean joinMember(String userEmail, JoinDto request) {
+        Group group = findGroupByUrl(request.getGroupUrl());
+
+        if (isMember(group.getUrl(), userEmail)) {
             throw new AlreadyExistException("이미 그룹에 가입되어 있습니다.");
         }
 
-        registerMyNewGroup(group, userEmail, request.getNickname(), "일반 멤버");
-        setMemberNum(group, group.getMembersNum() + 1);
+        if (group.isAutoJoin()) {
+            //즉시 가입 처리
+            registerMyNewGroup(group, userEmail, request.getNickname(), "일반 멤버");
+            setMemberNum(group, group.getMembersNum() + 1);
+            groupRepository.save(group);
+            return true;
+        } else {
+            //가입 요청 목록에 추가
+            JoinRequest joinRequest = joinRequestRepository.findByGroupUrl(request.getGroupUrl())
+                    .orElse(new JoinRequest(request.getGroupUrl()));
+
+            joinRequest.addRequester(request);
+
+            joinRequestRepository.save(joinRequest);
+            return false;
+        }
+    }
+
+    public void acceptMember(JoinRequestDto request) {
+        Group group = findGroupByUrl(request.getGroupUrl());
+        JoinRequestDto joinRequestList = getJoinRequestList(request.getGroupUrl());
+
+        AtomicInteger success = new AtomicInteger();
+        request.getRequesters().forEach(requester -> {
+            //그룹 등록
+            String userEmail = requester.getUserEmail();
+            String nickname = requester.getNickname();
+            registerMyNewGroup(group, userEmail, nickname, "일반 멤버");
+            //신청 목록에서 제거
+            joinRequestList.removeRequester(requester);
+            success.getAndIncrement();
+        });
+
+        //가입 신청 목록 업데이트
+        joinRequestRepository.save(new JoinRequest(joinRequestList));
+
+        //멤버 수 증가
+        setMemberNum(group, group.getMembersNum() + success.get());
+        groupRepository.save(group);
     }
 
     private boolean isMember(String groupId, String userEmail) {
@@ -266,6 +304,16 @@ public class NewGroupService {
         return memberRepository.findAllByGroupUrl(groupUrl).stream()
                 .map(member -> new MemberDto(member, grade.getLevelName(member.getGradeLevel())))
                 .collect(Collectors.toList());
+    }
+
+    public MemberDto getMemberById(String memberId) {
+        return memberRepository.findById(memberId)
+                .map(member -> {
+                    Grade grade = findGradeByUrl(member.getGroupUrl());
+                    String levelName = grade.getLevelName(member.getGradeLevel());
+                    return new MemberDto(member, levelName);
+                })
+                .orElseThrow();
     }
 
     public boolean isNotManager(String groupUrl, String userEmail) {
