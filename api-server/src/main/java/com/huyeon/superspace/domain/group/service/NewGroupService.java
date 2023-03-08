@@ -1,19 +1,23 @@
 package com.huyeon.superspace.domain.group.service;
 
+import com.huyeon.superspace.domain.board.service.NewBoardService;
+import com.huyeon.superspace.domain.board.service.NewCategoryService;
+import com.huyeon.superspace.domain.group.document.Grade;
 import com.huyeon.superspace.domain.group.document.Group;
+import com.huyeon.superspace.domain.group.document.JoinRequest;
 import com.huyeon.superspace.domain.group.document.Member;
-import com.huyeon.superspace.domain.group.dto.CreateDto;
-import com.huyeon.superspace.domain.group.dto.GroupDto;
-import com.huyeon.superspace.domain.group.dto.JoinDto;
-import com.huyeon.superspace.domain.group.dto.MemberDto;
+import com.huyeon.superspace.domain.group.dto.*;
+import com.huyeon.superspace.domain.group.repository.GradeRepository;
+import com.huyeon.superspace.domain.group.repository.JoinRequestRepository;
+import com.huyeon.superspace.domain.group.repository.NewGroupRepository;
+import com.huyeon.superspace.domain.group.repository.NewMemberRepository;
+import com.huyeon.superspace.domain.noty.dto.NotyPayloadDto;
+import com.huyeon.superspace.domain.noty.entity.NotyType;
+import com.huyeon.superspace.domain.noty.service.NotyUtils;
 import com.huyeon.superspace.global.exception.AlreadyExistException;
 import com.huyeon.superspace.global.exception.BadRequestException;
 import com.huyeon.superspace.global.exception.NotAdminException;
 import com.huyeon.superspace.global.exception.NotOnlyMemberException;
-import com.huyeon.superspace.domain.group.repository.NewGroupRepository;
-import com.huyeon.superspace.domain.board.service.NewBoardService;
-import com.huyeon.superspace.domain.board.service.NewCategoryService;
-import com.huyeon.superspace.domain.group.repository.NewMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,9 +33,13 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class NewGroupService {
-    private static final int IDENTIFIER_LENGTH = 10;
     private final NewGroupRepository groupRepository;
     private final NewMemberRepository memberRepository;
+
+    private final GradeRepository gradeRepository;
+
+    private final JoinRequestRepository joinRequestRepository;
+
     private final NewCategoryService categoryService;
     private final NewBoardService boardService;
     private final NotyUtils notyUtils;
@@ -329,5 +337,52 @@ public class NewGroupService {
         }
         //강퇴
         deleteMemberInGroup(group.getId(), userEmail);
+    }
+
+    public GradeDto getGroupGrade(String url) {
+        Grade grade = gradeRepository.findByGroupUrl(url)
+                .orElseThrow();
+
+        return new GradeDto(grade);
+    }
+
+    public void saveGradeInfo(GradeDto request) {
+        Optional<Grade> optional = gradeRepository.findByGroupUrl(request.getGroupUrl());
+        optional.ifPresent(value -> request.setId(value.getId()));
+        gradeRepository.save(new Grade(request));
+    }
+
+    public JoinRequestDto getJoinRequestList(String groupUrl) {
+        JoinRequest joinRequest = joinRequestRepository.findByGroupUrl(groupUrl)
+                .orElse(new JoinRequest(groupUrl));
+
+        return new JoinRequestDto(joinRequest);
+    }
+
+    public void adjustMemberGrade(String memberId, int level) {
+        Member member = findMemberById(memberId);
+        member.setGradeLevel(level);
+        memberRepository.save(member);
+
+        CompletableFuture.runAsync(() -> {
+            createGradeChangePayload(member, level);
+        });
+    }
+
+    private void createGradeChangePayload(Member member, int level) {
+        GroupDto group = getGroupByUrl(member.getGroupUrl());
+        String levelName = findGradeByUrl(member.getGroupUrl())
+                .getLevelName(level);
+        NotyPayloadDto payload = NotyPayloadDto.builder()
+                .type(NotyType.GROUP_ROLE_CHANGE)
+                .group(group)
+                .data(levelName)
+                .receiverEmail(member.getUserEmail())
+                .build();
+        notyUtils.publishNoty(payload);
+    }
+
+    private Member findMemberById(String memberId) {
+        return memberRepository.findById(memberId).orElseThrow();
     }
 }
