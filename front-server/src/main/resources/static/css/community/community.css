@@ -124,7 +124,6 @@ label {
 
 /* sidebar */
 .super-space-app__sidebar {
-    display: none;
     overflow: hidden;
     height: 100vh;
     background-color: rgb(250 248 254);
@@ -132,6 +131,7 @@ label {
 }
 
 .super-space-app__sidebar.open {
+    display: block;
     visibility: visible;
     opacity: 1;
     width: 280px;
@@ -377,6 +377,7 @@ label {
     }
 
     .super-space-app__sidebar {
+        display: none;
         position: fixed;
         z-index: 9999;
     }
@@ -581,8 +582,8 @@ label {
     position: absolute;
     border: 1px solid rgba(0, 0, 0, 10%);
     border-radius: 5px;
-    right: 0;
-    top: 50px;
+    right: 12px;
+    top: 57px;
     background: white;
     z-index: 1000;
     box-shadow: 0 2px 2px rgb(0 0 0 / 12%), 0 2px 2px rgb(0 0 0 / 24%);
