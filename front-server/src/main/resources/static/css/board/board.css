@@ -427,5 +427,5 @@ label {
 }
 
 .like-color {
-    color: #ff5656;
+    color: #ff5656 !important;
 }

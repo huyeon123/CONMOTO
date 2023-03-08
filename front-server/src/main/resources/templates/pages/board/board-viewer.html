@@ -5,7 +5,6 @@
 <head>
     <title th:text="${board.title}"></title>
     <link rel="stylesheet" th:href="@{/css/board/board.css}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 <div class="wrapper" layout:fragment="content">
     <div class="scroll-frame">
@@ -52,7 +51,7 @@
                     <div class="like-wrapper">
                         <div class="like-inner" onclick="thumbsUp()">
                             <h4 id="like-post-num" class="like-text">0</h4>
-                            <i id="like-post-heart" class="material-icons-outlined">favorite</i>
+                            <i id="like-post-heart" class="material-icons-outlined" style="color: darkgray">favorite_border</i>
                         </div>
                     </div>
                 </div>
