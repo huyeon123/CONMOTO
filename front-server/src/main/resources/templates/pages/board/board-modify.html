@@ -39,6 +39,7 @@
                                     th:id="${category.id}"
                                     th:value="${category.name}"
                                     th:text="${category.name}"
+                                    th:unless="${category.type == 'CATEGORY_GROUP'}"
                                     th:selected="${category.name == board.categoryName}">카테고리
                             </option>
                         </select>

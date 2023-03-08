@@ -13,7 +13,7 @@ import java.util.List;
 public interface NotyReceiverRepository extends JpaRepository<ReceivedNoty, Long> {
     List<ReceivedNoty> findAllByUserEmail(String userEmail);
 
-    @Query("select n from ReceivedNoty n where id < :lastIndex and userEmail = :userEmail")
+    @Query("select n from ReceivedNoty n where id < :lastIndex and userEmail = :userEmail order by id desc")
     List<ReceivedNoty> findNextNoty(
             @Param("userEmail")String userEmail,
             @Param("lastIndex") Long lastIndex,

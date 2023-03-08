@@ -75,9 +75,7 @@ $(".group-main-wrapper").scroll((e) => {
     }
 })
 
-function moveToBoardPage(boardId) {
-    location.href = "/community/" + groupUrl + "/board/" + boardId;
-}
+
 
 //메뉴탭 카테고리 클릭 시 이벤트 발생
 $(".group-main-menu span").click((e) => {

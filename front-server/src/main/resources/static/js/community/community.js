@@ -3,7 +3,7 @@ function moveToCategoryPage(element) {
 }
 
 function moveToGroupJoinPage() {
-    location.href = "/community/" + groupUrl + "/join";
+    location.href = "/community/" + groupUrl + "/apply/join";
 }
 
 function moveToGroupManagingPage() {
@@ -21,6 +21,10 @@ function moveToMainPage(element) {
 
 function moveToMemberPage(element) {
     location.href = "/community/" + groupUrl + "/manage/members/" + element.id;
+}
+
+function moveToBoardPage(boardId) {
+    location.href = "/community/" + groupUrl + "/board/" + boardId;
 }
 
 function goToEditor() {

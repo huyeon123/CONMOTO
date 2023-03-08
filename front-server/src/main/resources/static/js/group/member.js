@@ -18,11 +18,6 @@ function fetchGrade() {
         .then(data => levelList = data.levelList);
 }
 
-function moveToBoardPage(boardId) {
-    location.href = "/community/" + groupUrl + "/board/" + boardId;
-    alert("test");
-}
-
 //스크롤 이벤트 감지
 $(".scrollable").scroll((e) => {
     const scrollable = e.target;
