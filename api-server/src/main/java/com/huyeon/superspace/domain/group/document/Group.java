@@ -17,10 +17,13 @@ public class Group extends DocumentAudit {
     @Id
     private String id;
 
+    @NonNull
     private String name;
 
+    @NonNull
     private String owner;
 
+    @NonNull
     private String url;
 
     private String description;
