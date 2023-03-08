@@ -62,7 +62,7 @@ public class NewBoardService {
         return id;
     }
 
-    public String saveBoard(BoardDto request, String target) {
+    public Long saveBoard(BoardDto request, String target) {
         BoardDto origin = getBoard(request.getId());
         change(origin, request, target);
         return boardRepository.save(new Board(origin)).getId();
@@ -77,6 +77,7 @@ public class NewBoardService {
                 origin.setDescription(request.getDescription());
                 break;
             case "CATEGORY":
+                origin.setCategoryId(request.getCategoryId());
                 origin.setCategoryName(request.getCategoryName());
                 break;
             case "STATUS":
@@ -88,7 +89,7 @@ public class NewBoardService {
         }
     }
 
-    public void deleteBoard(String id) {
+    public void deleteBoard(Long id) {
         Board board = boardRepository.findById(id).orElseThrow();
         contentRepository.delete(board.getContent());
         commentRepository.deleteAllByBoardId(board.getId());
@@ -102,15 +103,15 @@ public class NewBoardService {
 
     public String saveContent(ContentUpdateDto request) {
         ContentDto origin = getBoard(request.getBoardId()).getContent();
-        origin.setMarkdown(request.getMarkdown());
+        origin.setHtml(request.getMarkdown());
         return contentRepository.save(new Content(origin)).getId();
     }
 
-    public List<BoardDto> getNext10LatestInGroup(String groupUrl, int page) {
+    public List<BoardDto> getNextGroup(String groupUrl, Long lastIndex, int page) {
         List<Board> next = boardRepository.findNextLatestInGroup(
                 groupUrl,
-                LocalDateTime.now(),
-                PageRequest.of(page, 10)
+                lastIndex,
+                PageRequest.of(page, 50)
         );
 
         return mapToDtoList(next);
@@ -122,21 +123,24 @@ public class NewBoardService {
                 .collect(Collectors.toList());
     }
 
-    public List<BoardDto> getNext10LatestInCategory(String categoryName, int page) {
+    public List<BoardDto> getNextCategory(String categoryId, Long lastIndex, int page) {
         List<Board> next = boardRepository.findNextLatestInCategory(
-                categoryName,
-                LocalDateTime.now(),
-                PageRequest.of(page, 10)
+                categoryId,
+                lastIndex,
+                PageRequest.of(page, 50)
         );
 
         return mapToDtoList(next);
     }
 
-    public List<BoardDto> getNext10LatestInUser(String userEmail, int page) {
+    public List<BoardDto> getNextMember(String memberId, Long lastIndex, int page) {
+        Member member = findMemberById(memberId);
+
         List<Board> next = boardRepository.findNextLatestInUser(
-                userEmail,
-                LocalDateTime.now(),
-                PageRequest.of(page, 10)
+                member.getUserEmail(),
+                member.getGroupUrl(),
+                lastIndex,
+                PageRequest.of(page, 50)
         );
 
         return mapToDtoList(next);
@@ -146,7 +150,7 @@ public class NewBoardService {
         boardRepository.deleteAllByGroupUrl(groupUrl);
     }
 
-    public String saveTemporally(String userEmail, BoardDto request) {
+    public Long saveTemporally(String userEmail, BoardDto request) {
         long count = countTempPostByEmailAndUrl(userEmail, request.getGroupUrl());
 
         if (count >= 50) {
@@ -166,7 +170,7 @@ public class NewBoardService {
         return tempPostRepository.findAllByAuthorAndGroupUrl(email, groupUrl);
     }
 
-    public TempPost findTempPostById(String tempPostId) {
+    public TempPost findTempPostById(Long tempPostId) {
         return tempPostRepository.findById(tempPostId).orElseThrow();
     }
 }

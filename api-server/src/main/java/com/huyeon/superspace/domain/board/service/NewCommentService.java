@@ -27,27 +27,29 @@ public class NewCommentService {
     private final NewMemberRepository memberRepository;
     private final NewBoardRepository boardRepository;
 
-    public List<CommentDto> getCommentInBoard(String groupId, String userEmail, String key, int page) {
+    public List<CommentDto> getCommentInBoard(String groupUrl, String userEmail, Long key, int page) {
         List<Comment> comments = commentRepository.findAllByBoardIdOrderByCreatedAt(key, PageRequest.of(page, 10));
 
         return comments.stream()
-                .map(comment -> mapToDto(comment, groupId, userEmail))
+                .map(comment -> mapToDto(comment, groupUrl, userEmail))
                 .collect(Collectors.toList());
     }
 
     private CommentDto mapToDto(Comment comment, String groupId, String userEmail) {
         String authorEmail = comment.getAuthor();
-        String nickname = memberRepository.findByGroupIdAndUserEmail(groupId, authorEmail)
+        String nickname = memberRepository.findByGroupUrlAndUserEmail(groupId, authorEmail)
                 .orElseThrow()
                 .getNickname();
         boolean mine = userEmail.equals(authorEmail);
         return new CommentDto(comment, nickname, mine);
     }
 
-    public List<CommentPreviewDto> getCommentInUser(String userEmail, int page) {
-        List<Comment> latest = findNextComments(userEmail, page);
+    public List<CommentPreviewDto> getNextComment(String memberId, Long lastIndex, int page) {
+        Member member = memberRepository.findById(memberId).orElseThrow();
 
-        return latest.stream()
+        List<Comment> next = findNextComments(member.getUserEmail(), member.getGroupUrl(), lastIndex, page);
+
+        return next.stream()
                 .map(comment -> {
                     Board board = boardRepository.findById(comment.getBoardId()).orElseThrow();
                     return new CommentPreviewDto(comment, board);
@@ -55,11 +57,12 @@ public class NewCommentService {
                 .collect(Collectors.toList());
     }
 
-    private List<Comment> findNextComments(String userEmail, int page) {
+    private List<Comment> findNextComments(String userEmail, String groupUrl, Long lastIndex, int page) {
         return commentRepository.findNextByUserEmail(
                 userEmail,
-                LocalDateTime.now(),
-                PageRequest.of(page, 10));
+                groupUrl,
+                lastIndex,
+                PageRequest.of(page, 50));
     }
 
     public String createComment(String userEmail, CommentDto request) {
@@ -68,7 +71,7 @@ public class NewCommentService {
         return commentRepository.save(comment).getId();
     }
 
-    public String editComment(String userEmail, CommentDto request) {
+    public Long editComment(String userEmail, CommentDto request) {
         Comment origin = commentRepository.findById(request.getId()).orElseThrow();
 
         if (!origin.getAuthor().equals(userEmail)) {
@@ -80,7 +83,7 @@ public class NewCommentService {
         return commentRepository.save(origin).getId();
     }
 
-    public void removeComment(String id) {
+    public void removeComment(Long id) {
         commentRepository.deleteById(id);
     }
 }
