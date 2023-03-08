@@ -11,7 +11,7 @@ function drawBoards(data) {
         drawEachItem(data)
     } else {
         for (let value of Object.values(data)) {
-            drawEachItem(value);
+            drawBoard(value);
         }
     }
 
@@ -52,20 +52,4 @@ function setLastIndex(index, data) {
     if (index === data.length - 1) {
         lastIndex = data[index].id;
     }
-}
-
-function moveToMyPage() {
-    location.href = "./info";
-}
-
-function moveToMyBoard() {
-    location.href = "./board";
-}
-
-function moveToMyComment() {
-    location.href = "./comment";
-}
-
-function moveToResign() {
-    location.href = "./resign";
 }

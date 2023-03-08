@@ -27,7 +27,7 @@ function renderPost(url, nothing_body) {
                 renderHasNothing(nothing_body);
             }
             data.forEach((item, index) => {
-                drawBoards(item);
+                drawBoard(item);
                 setLastIndex(index, data);
             })
         });
