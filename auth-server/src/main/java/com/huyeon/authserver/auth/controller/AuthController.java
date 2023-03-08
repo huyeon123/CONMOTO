@@ -99,6 +99,7 @@ public class AuthController {
             HttpServletRequest request,
             @CookieValue(name = REFRESH_KEY_NAME, required = false) String refreshToken) {
         if (refreshToken == null) refreshToken = getRefreshToken(request);
+        if (refreshToken == null) return getAnonymousToken();
         String newAccessToken = authService.generateNewAccessToken(refreshToken);
         log.debug("AccessToken 생성완료");
         return newAccessToken;
@@ -138,13 +139,18 @@ public class AuthController {
         setCookie(response, userTokenInfo);
 
         try {
-            response.sendRedirect("https://conmoto.site/workspace");
+            response.sendRedirect("https://conmoto.site/community");
         } catch (IOException e) {
             log.error("FE 서버로 리다이렉트 실패");
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return userTokenInfo;
+    }
+
+    @GetMapping("/anonymous")
+    public String getAnonymousToken() {
+        return authService.getAnonymousToken();
     }
 
     @Getter
