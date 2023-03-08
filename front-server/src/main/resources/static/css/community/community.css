@@ -287,7 +287,7 @@ label {
     padding: 3px 0;
 }
 
-.sidebar-elements.pointer-hover span {
+.js-category-name {
     width: 100%;
 }
 
@@ -645,4 +645,13 @@ label {
 
 .js-noty-empty {
     text-align: center;
+}
+
+.article {
+    border-bottom: 1px solid rgba(0, 0, 0, 10%);
+    padding: 5px 0;
+}
+
+.article.pointer-hover {
+    border-radius: 0 !important;
 }

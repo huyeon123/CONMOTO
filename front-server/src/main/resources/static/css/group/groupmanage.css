@@ -139,15 +139,6 @@
     border-bottom: 2px solid;
 }
 
-.article {
-    border-bottom: 1px solid rgba(0, 0, 0, 10%);
-    padding: 5px 0;
-}
-
-.article.pointer-hover {
-    border-radius: 0 !important;
-}
-
 .article-body-wrapper {
     display: flex;
     justify-content: space-between;
