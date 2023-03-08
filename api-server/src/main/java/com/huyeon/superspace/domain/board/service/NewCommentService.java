@@ -2,7 +2,7 @@ package com.huyeon.superspace.domain.board.service;
 
 import com.huyeon.superspace.domain.board.document.Board;
 import com.huyeon.superspace.domain.board.document.Comment;
-import com.huyeon.superspace.domain.board.dto.BoardDto;
+import com.huyeon.superspace.domain.board.dto.CommentBoardPreviewDto;
 import com.huyeon.superspace.domain.board.dto.CommentDto;
 import com.huyeon.superspace.domain.board.dto.CommentPreviewDto;
 import com.huyeon.superspace.domain.board.repository.NewBoardRepository;
@@ -71,16 +71,22 @@ public class NewCommentService {
                 PageRequest.of(page, 50));
     }
 
-    public List<BoardDto> getNextCommentedPosts(String memberId, Long lastIndex, int page) {
+    public List<CommentBoardPreviewDto> getNextCommentedPosts(String memberId, Long lastIndex, int page) {
         Member member = memberRepository.findById(memberId).orElseThrow();
         List<Comment> next = findNextComments(member.getUserEmail(), member.getGroupUrl(), lastIndex, page);
 
         return next.stream()
                 .map(comment -> {
                     Board board = boardRepository.findById(comment.getBoardId()).orElseThrow();
-                    return new BoardDto(board);
+                    String nickname = findByUrlAndEmail(board.getGroupUrl(), board.getAuthor()).getNickname();
+                    return new CommentBoardPreviewDto(comment.getId(), board, nickname);
                 })
                 .collect(Collectors.toList());
+    }
+
+    private Member findByUrlAndEmail(String groupUrl, String userEmail) {
+        return memberRepository.findByGroupUrlAndUserEmail(groupUrl, userEmail)
+                .orElseThrow();
     }
 
     public Long createComment(String userEmail, CommentDto request) {
