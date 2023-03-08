@@ -3,6 +3,7 @@ package com.huyeon.superspace.domain.board.controller;
 import com.huyeon.superspace.domain.board.document.TempPost;
 import com.huyeon.superspace.domain.board.dto.BoardDto;
 import com.huyeon.superspace.domain.board.dto.ContentDto;
+import com.huyeon.superspace.domain.board.dto.LikePostRes;
 import com.huyeon.superspace.domain.board.service.*;
 import com.huyeon.superspace.global.exception.BadRequestException;
 import com.huyeon.superspace.global.exception.PermissionDeniedException;
@@ -18,10 +19,11 @@ import java.util.Map;
 @RequestMapping("/api/board")
 @RequiredArgsConstructor
 public class BoardReadController {
-
     private final NewCategoryService categoryService;
     private final NewBoardService boardService;
     private final PopularBoardService popularBoardService;
+
+    private final LikePostService likePostService;
 
     private final NewCommentService commentService;
 
@@ -99,5 +101,13 @@ public class BoardReadController {
             log.warn("[접근 제한] 소유자: {} / 요청자: {}", tempPost.getAuthor(), email);
             throw new PermissionDeniedException("올바르지 않은 요청입니다.");
         }
+    }
+
+    @GetMapping("/likes")
+    public LikePostRes likesBoard(
+            @RequestHeader("X-Authorization-Id") String email,
+            @RequestParam Long boardId
+    ) {
+        return likePostService.getBoardLikes(email, boardId);
     }
 }
