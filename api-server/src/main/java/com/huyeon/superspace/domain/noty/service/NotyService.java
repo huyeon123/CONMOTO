@@ -143,11 +143,24 @@ public class NotyService {
 
     public void setReadNoty(List<Long> idList, String userEmail) {
         idList.forEach(id -> {
-            ReceivedNoty receiver = receiverRepository.findById(id).orElseThrow();
+            ReceivedNoty receiver = getReceiverById(id);
             if (receiver.getUserEmail().equals(userEmail)) {
                 receiver.setRead(true);
                 receiverRepository.save(receiver);
             } else throw new PermissionDeniedException("잘못된 알림에 대한 접근입니다!");
         });
+    }
+
+    public void removeNoty(List<Long> idList, String userEmail) {
+        idList.forEach(id -> {
+            ReceivedNoty receiver = getReceiverById(id);
+            if (receiver.getUserEmail().equals(userEmail)) {
+                receiverRepository.delete(receiver);
+            } else throw new PermissionDeniedException("잘못된 알림에 대한 접근입니다!");
+        });
+    }
+
+    private ReceivedNoty getReceiverById(Long id) {
+        return receiverRepository.findById(id).orElseThrow();
     }
 }
