@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/workspace/{groupUrl}")
+@RequestMapping("/api/community/{groupUrl}")
 @RequiredArgsConstructor
 public class CategoryController {
     private final NewCategoryService categoryService;
