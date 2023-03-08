@@ -133,9 +133,9 @@ public class NotyService {
         });
     }
 
-    public List<NotyDto> findAllByUser(String userEmail, int page) {
+    public List<NotyDto> findAllByUser(String userEmail, Long lastIndex, int page) {
         List<ReceivedNoty> received =
-                receiverRepository.findAllByUserEmailOrderByIdDesc(userEmail, PageRequest.of(page, 10));
+                receiverRepository.findNextNoty(userEmail, lastIndex, PageRequest.of(page, 50));
         return received.stream()
                 .map(NotyDto::new)
                 .collect(Collectors.toList());
