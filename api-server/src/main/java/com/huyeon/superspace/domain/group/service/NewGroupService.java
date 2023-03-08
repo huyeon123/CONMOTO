@@ -40,15 +40,19 @@ public class NewGroupService {
     private final NewBoardService boardService;
     private final ApplicationEventPublisher eventPublisher;
 
-    public GroupDto findGroupByUrl(String url) {
+    public GroupDto getGroupByUrl(String url) {
         return groupRepository.findByUrl(url)
                 .map(GroupDto::new)
                 .orElseThrow();
     }
 
-    private Group findGroupById(String groupId) {
-        return groupRepository.findById(groupId)
+    public Group findGroupByUrl(String url) {
+        return groupRepository.findByUrl(url)
                 .orElseThrow();
+    }
+
+    private Grade findGradeByUrl(String groupUrl) {
+        return gradeRepository.findByGroupUrl(groupUrl).orElseThrow();
     }
 
     public String createGroup(String userEmail, CreateDto request) {
@@ -56,7 +60,7 @@ public class NewGroupService {
 
         //URL 중복 검사 및 구분자 추가
         if (existsByUrl(newGroup.getUrl())) {
-            newGroup.setUrl(appendIdentifier(newGroup.getUrl()));
+            throw new BadRequestException("중복된 그룹 URL 입니다.");
         }
 
         //매니저 등록 후 그룹 생성
@@ -87,7 +91,7 @@ public class NewGroupService {
 
     private void registerMyNewGroup(Group group, String userEmail, String nickname, String role) {
         Member member = Member.builder()
-                .group(group)
+                .groupUrl(group.getUrl())
                 .userEmail(userEmail)
                 .nickname(nickname)
                 .role(role)
@@ -100,8 +104,7 @@ public class NewGroupService {
         List<Member> groups = findAllByUserEmail(userEmail);
 
         return groups.stream()
-                .map(group -> findGroupById(group.getGroup().getId()))
-                .map(GroupDto::new)
+                .map(group -> getGroupByUrl(group.getGroupUrl()))
                 .collect(Collectors.toList());
     }
 
@@ -110,9 +113,13 @@ public class NewGroupService {
     }
 
     public MemberDto findByUserEmail(String userEmail, String groupUrl) {
-        String groupById = findGroupByUrl(groupUrl).getId();
-        return memberRepository.findByGroupIdAndUserEmail(groupById, userEmail)
-                .map(MemberDto::new)
+        Grade grade = findGradeByUrl(groupUrl);
+
+        return memberRepository.findByGroupUrlAndUserEmail(groupUrl, userEmail)
+                .map(member -> {
+                    String levelName = grade.getLevelName(member.getGradeLevel());
+                    return new MemberDto(member, levelName);
+                })
                 .orElse(MemberDto.builder()
                         .id("anonymous")
                         .nickname("그룹 가입이 필요합니다.")
@@ -148,7 +155,7 @@ public class NewGroupService {
     }
 
     public void deleteGroup(String userEmail, String url) {
-        GroupDto group = findGroupByUrl(url);
+        GroupDto group = getGroupByUrl(url);
         if (isNotGroupOwner(userEmail, group)) {
             throw new NotAdminException("그룹 소유자가 아닙니다.");
         }
@@ -158,7 +165,7 @@ public class NewGroupService {
         }
 
         groupRepository.deleteById(group.getId());
-        deleteMemberInGroup(group.getId(), userEmail);
+        deleteMemberInGroup(group.getUrl(), userEmail);
         categoryService.deleteAllByGroupUrl(group.getUrl());
         boardService.deleteAllByGroupUrl(group.getUrl());
     }
@@ -285,29 +292,30 @@ public class NewGroupService {
     }
 
     private boolean isMember(String groupId, String userEmail) {
-        return memberRepository.existsByGroupIdAndUserEmail(groupId, userEmail);
+        return memberRepository.existsByGroupUrlAndUserEmail(groupId, userEmail);
     }
 
     public boolean isNotMemberByUrl(String groupUrl, String userEmail) {
-        String groupId = findGroupByUrl(groupUrl).getId();
-        return !isMember(groupId, userEmail);
+        return !isMember(groupUrl, userEmail);
     }
 
-    public List<MemberDto> findMembersById(String groupId) {
-        return memberRepository.findAllByGroupId(groupId).stream()
-                .map(MemberDto::new)
+    public List<MemberDto> getMembersById(String groupUrl) {
+        Grade grade = findGradeByUrl(groupUrl);
+
+        return memberRepository.findAllByGroupUrl(groupUrl).stream()
+                .map(member -> new MemberDto(member, grade.getLevelName(member.getGradeLevel())))
                 .collect(Collectors.toList());
     }
 
     public boolean isNotManager(String groupUrl, String userEmail) {
-        Set<String> managers = findGroupByUrl(groupUrl).getManagers();
+        Set<String> managers = getGroupByUrl(groupUrl).getManagers();
         return !managers.contains(userEmail);
     }
 
     public void resignGroup(String url, String userEmail) {
-        GroupDto group = findGroupByUrl(url);
+        GroupDto group = getGroupByUrl(url);
         //탈퇴 가능한 그룹인지 확인
-        if (!isMember(group.getId(), userEmail)) {
+        if (!isMember(url, userEmail)) {
             throw new BadRequestException("해당 그룹 멤버가 아닙니다!");
         }
         //강퇴
