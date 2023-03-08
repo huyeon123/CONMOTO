@@ -56,15 +56,18 @@ public class NewBoardService {
         board.setAuthor(userEmail);
         Long id = boardRepository.save(board).getId();
 
-        CompletableFuture.runAsync(() -> {
-            NotyPayloadDto payload = NotyPayloadDto.builder()
-                    .type(NotyType.NOTICE)
-                    .groupUrl(board.getGroupUrl())
-                    .board(request)
-                    .build();
+        //카테고리가 공지사항일 경우 알림발송
+        if (request.getCategoryName().equals("⭐공지사항")) {
+            CompletableFuture.runAsync(() -> {
+                NotyPayloadDto payload = NotyPayloadDto.builder()
+                        .type(NotyType.NOTICE)
+                        .groupUrl(board.getGroupUrl())
+                        .board(request)
+                        .build();
 
-            notyUtils.publishNoty(payload);
-        }).thenAcceptAsync((v) -> log.info("[공지사항 알림 발송 완료]"));
+                notyUtils.publishNoty(payload);
+            }).thenAcceptAsync((v) -> log.info("[공지사항 알림 발송 완료]"));
+        }
 
         return id;
     }
