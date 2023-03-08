@@ -23,6 +23,10 @@ function moveToMemberPage(element) {
     location.href = "/community/" + groupUrl + "/manage/members/" + element.id;
 }
 
+function moveToBoardPage(boardId) {
+    location.href = "/community/" + groupUrl + "/board/" + boardId;
+}
+
 function goToEditor() {
     location.href = "/community/" + groupUrl + "/board/editor";
 }
