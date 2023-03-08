@@ -3,7 +3,7 @@ function moveToCategoryPage(element) {
 }
 
 function moveToGroupJoinPage() {
-    location.href = "/community/" + groupUrl + "/join";
+    location.href = "/community/" + groupUrl + "/apply/join";
 }
 
 function moveToGroupManagingPage() {
