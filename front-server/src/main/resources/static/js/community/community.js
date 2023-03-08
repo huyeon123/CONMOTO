@@ -165,7 +165,7 @@ function openInviteModal() {
                 <div class="flex-end">
                     <div>
                         <button id="grade-modal-cancel" class="manage-menu-button warn" onclick="closeInviteModal()">취소</button>
-                        <button id="grade-modal-save" class="manage-menu-button default" onclick="openInviteModal()">초대</button>
+                        <button id="grade-modal-save" class="manage-menu-button default" onclick="inviteMember()">초대</button>
                     </div>
                 </div>
             </div>
