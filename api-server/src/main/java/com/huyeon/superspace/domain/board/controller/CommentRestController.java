@@ -19,10 +19,11 @@ public class CommentRestController {
 
     @GetMapping("/latest")
     public List<CommentPreviewDto> getComments(
-            @RequestHeader("X-Authorization-Id") String userEmail,
-            @RequestParam int page
+            @RequestParam String memberId,
+            @RequestParam Long lastIndex,
+            @RequestParam(required = false, defaultValue = "0") int page
     ) {
-        return commentService.getCommentInUser(userEmail, page);
+        return commentService.getNextComment(memberId, lastIndex, page);
     }
 
     @PostMapping
