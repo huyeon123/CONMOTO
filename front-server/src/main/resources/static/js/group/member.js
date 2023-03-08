@@ -1,8 +1,13 @@
 function pageRender() {
+    addSelectedClass();
     render();
     fetchGrade();
 }
 
+function addSelectedClass() {
+    const tab = currentTab();
+    $('.member-menu > span:contains(${tab})').addClass("selected");
+}
 //관리자 - 등급 관리 용
 let levelList;
 
