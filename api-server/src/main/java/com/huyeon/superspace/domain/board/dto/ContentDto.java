@@ -1,12 +1,11 @@
 package com.huyeon.superspace.domain.board.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.huyeon.superspace.domain.board.document.Content;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Setter
 @Getter
@@ -14,14 +13,14 @@ import java.time.LocalDateTime;
 public class ContentDto {
     private String id;
 
-    private String markdown;
+    private String html;
 
-    @JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-    private LocalDateTime lastUpdate;
+    private String lastUpdate;
 
     public ContentDto(Content content) {
         id = content.getId();
-        markdown = content.getMarkdown();
-        lastUpdate = content.getUpdatedAt();
+        html = content.getHtml();
+        lastUpdate = content.getUpdatedAt()
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 }
