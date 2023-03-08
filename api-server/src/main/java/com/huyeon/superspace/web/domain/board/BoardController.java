@@ -34,10 +34,6 @@ public class BoardController {
             @PathVariable String groupUrl,
             @PathVariable Long id
     ) {
-        if (groupService.isNotMemberByUrl(groupUrl, userEmail)) {
-            throw new AlreadyExistException("멤버가 아닙니다!");
-        }
-
         Map<String, Object> response = new HashMap<>();
 
         BoardDto board = boardService.getBoard(id);
