@@ -51,14 +51,6 @@ public class GroupRestController {
         groupService.deleteGroup(userEmail, url);
     }
 
-    @PostMapping("/{url}/member-role")
-    public void saveMemberRole(
-            @PathVariable String url,
-            @RequestBody List<MemberDto> request
-    ) {
-        groupService.saveMemberRole(url, request);
-    }
-
     @DeleteMapping("/{url}/member")
     public void expelMember(
             @RequestHeader("X-Authorization-Id") String userEmail,
