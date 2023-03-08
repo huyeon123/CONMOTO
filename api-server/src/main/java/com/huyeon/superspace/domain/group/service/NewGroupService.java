@@ -130,28 +130,27 @@ public class NewGroupService {
         return groupRepository.existsByUrl(url);
     }
 
-    private String appendIdentifier(String urlPath) {
-        return urlPath + "-" + generateIdentifier();
+    public String editGroup(String url, String type, GroupDto request) {
+        Group group = groupRepository.findByUrl(url).orElseThrow();
+        modifyGroupInfo(type, group, request);
+        return groupRepository.save(group).getUrl();
     }
 
-    private String generateIdentifier() {
-        int leftLimit = '0'; // numeral '0'
-        int rightLimit = 'z'; // letter 'z'
-        Random random = new Random();
-
-        return random.ints(leftLimit, rightLimit + 1)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                .limit(IDENTIFIER_LENGTH)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
-    }
-
-    public String editGroup(String url, GroupDto request) {
-        GroupDto group = findGroupByUrl(url);
-        group.setName(request.getName());
-        group.setUrl(request.getUrl());
-        group.setDescription(request.getDescription());
-        return groupRepository.save(new Group(group)).getUrl();
+    private void modifyGroupInfo(String type, Group origin, GroupDto request) {
+        switch (type) {
+            case "name":
+                origin.setName(request.getName());
+                break;
+            case "description":
+                origin.setDescription(request.getDescription());
+                break;
+            case "open":
+                origin.setOpen(request.isOpen());
+                break;
+            case "autoJoin":
+                origin.setAutoJoin(request.isAutoJoin());
+                break;
+        }
     }
 
     public void deleteGroup(String userEmail, String url) {
@@ -179,38 +178,7 @@ public class NewGroupService {
     }
 
     private void deleteMemberInGroup(String groupId, String userEmail) {
-        memberRepository.deleteByGroupIdAndUserEmail(groupId, userEmail);
-    }
-
-    public void saveMemberRole(String groupUrl, List<MemberDto> request) {
-        GroupDto group = findGroupByUrl(groupUrl);
-
-        for (MemberDto member : request) {
-            String currentRole = findRoleByEmail(group, member.getEmail());
-            String changedRole = member.getRole();
-
-            if (isChanged(currentRole, changedRole)) {
-                //일반 멤버 -> 관리자
-                if (changedRole.equals("ROLE_MANAGER")) {
-                    registerUserAsManager(member, group);
-                    continue;
-                }
-                //관리자 -> 일반 멤버
-                if (changedRole.equals("ROLE_MEMBER")) {
-                    revokeManager(member, group);
-                }
-            }
-        }
-    }
-
-    private void revokeManager(MemberDto member, GroupDto group) {
-        group.getManagers().remove(member.getEmail());
-        groupRepository.save(new Group(group));
-    }
-
-    private void registerUserAsManager(MemberDto member, GroupDto group) {
-        group.getManagers().add(member.getEmail());
-        groupRepository.save(new Group(group));
+        memberRepository.deleteByGroupUrlAndUserEmail(groupId, userEmail);
     }
 
     public String findRoleByEmail(GroupDto group, String userEmail) {
@@ -223,9 +191,6 @@ public class NewGroupService {
         return "ROLE_MEMBER";
     }
 
-    private boolean isChanged(String currentRole, String changedRole) {
-        return !currentRole.equals(changedRole);
-    }
 
     public void expelMember(String userEmail, String groupUrl, String request) {
         GroupDto group = findGroupByUrl(groupUrl);
