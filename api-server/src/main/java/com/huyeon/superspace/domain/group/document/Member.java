@@ -13,9 +13,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @Document(collection = "members")
 public class Member extends DocumentAudit {
-    @DBRef
     @Indexed(unique = true)
-    private Group group;
+    private String groupUrl;
 
     @Indexed(unique = true)
     private String userEmail;
