@@ -2,6 +2,7 @@ package com.huyeon.frontend.util;
 
 import com.huyeon.frontend.controller.error.ErrorHandler;
 import com.huyeon.frontend.exception.NotFoundException;
+import com.huyeon.frontend.exception.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -28,6 +29,10 @@ public class Fetch {
 
     private Map<String, Object> fetch(String url, HttpMethod method, String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
+
+        if (accessToken == null) {
+            throw new UnauthorizedException("accessToken 없음");
+        }
 
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 routeApiServer(url),
