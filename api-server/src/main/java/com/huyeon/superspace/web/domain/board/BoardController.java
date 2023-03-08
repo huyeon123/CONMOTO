@@ -32,7 +32,7 @@ public class BoardController {
     public Map<String, Object> boardPage(
             @RequestHeader("X-Authorization-Id") String userEmail,
             @PathVariable String groupUrl,
-            @PathVariable String id
+            @PathVariable Long id
     ) {
         if (groupService.isNotMemberByUrl(groupUrl, userEmail)) {
             throw new AlreadyExistException("멤버가 아닙니다!");
@@ -48,8 +48,7 @@ public class BoardController {
             response.put("editable", false);
         }
 
-        String groupId = groupService.findGroupByUrl(groupUrl).getId();
-        List<CommentDto> comments = commentService.getCommentInBoard(groupId, userEmail, board.getId(), 0);
+        List<CommentDto> comments = commentService.getCommentInBoard(groupUrl, userEmail, board.getId(), 0);
 
         List<TempPost> tempPosts = boardService.findTempPostByEmailAndUrl(userEmail, groupUrl);
 
