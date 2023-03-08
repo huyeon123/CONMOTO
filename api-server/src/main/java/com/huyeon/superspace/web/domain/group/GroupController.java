@@ -22,26 +22,6 @@ public class GroupController {
 
     private final NewGroupService groupService;
 
-    @GetMapping("/find")
-    public String getGroupPage(@RequestHeader("X-Authorization-Id") String userEmail) {
-        if (hasAnyGroupPage(userEmail)) {
-            return redirectFirstGroup(userEmail);
-        }
-        return "/workspace";
-    }
-
-    private boolean hasAnyGroupPage(String userEmail) {
-        return !groupService.getMyGroups(userEmail).isEmpty();
-    }
-
-    private String redirectFirstGroup(String userEmail) {
-        return "/workspace/" + firstGroupUrl(userEmail);
-    }
-
-    private String firstGroupUrl(String userEmail) {
-        return groupService.getMyGroups(userEmail).get(0).getUrl();
-    }
-
     @NotGroupPage
     @GetMapping
     public Map<String, Object> workSpacePage(@RequestHeader("X-Authorization-Id") String userEmail) {
