@@ -51,26 +51,44 @@ public class GroupRestController {
     @DeleteMapping("/{url}/member")
     public void expelMember(
             @RequestHeader("X-Authorization-Id") String userEmail,
-            @PathVariable String url, @RequestBody Email request
+            @PathVariable String url, @RequestBody ExpelDto request
     ) {
-        groupService.expelMember(userEmail, url, request.getEmail());
+        groupService.expelMember(userEmail, url, request);
     }
 
     @PostMapping("/{url}/invite")
     public void inviteMember(
+            @RequestHeader("X-Authorization-Id") String userEmail,
             @PathVariable String url,
             @RequestBody Email request
     ) {
-        groupService.inviteMember(url, request.getEmail());
+        groupService.inviteMember(url, userEmail, request.getEmail());
     }
 
     @PostMapping("/join")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void joinMember(
+    public boolean joinMember(
             @RequestHeader("X-Authorization-Id") String userEmail,
             @RequestBody JoinDto request
     ) {
-        groupService.joinMember(userEmail, request);
+        request.setUserEmail(userEmail);
+        return groupService.joinMember(userEmail, request);
+    }
+
+    @GetMapping("/join-request-list")
+    public JoinRequestDto getJoinRequestList(
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @RequestParam String groupUrl
+    ) {
+        //TODO: Permission Check
+        return groupService.getJoinRequestList(groupUrl);
+    }
+
+    @PostMapping("/accept-join")
+    public void acceptJoinRequest(
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @RequestBody JoinRequestDto request
+    ) {
+        groupService.acceptMember(request);
     }
 
     @DeleteMapping("/{url}/resign")
