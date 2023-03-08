@@ -34,6 +34,21 @@ public class NewCategoryService {
                 .orElseThrow();
     }
 
+    public CategoryDto createNotice(String groupUrl, String groupName) {
+        Category notice = Category.builder()
+                .groupUrl(groupUrl)
+                .name("⭐공지사항")
+                .description(groupName + "의 공지사항입니다.")
+                .type(Category.Type.NOTICE)
+                .fold(false)
+                .indent(false)
+                .availableWriteLevel(3) //그룹 생성시 최초 등급은 4단계임
+                .build();
+
+        notice = categoryRepository.save(notice);
+        return new CategoryDto(notice);
+    }
+
     private Category findCategory(String id) {
         return categoryRepository.findById(id).orElseThrow();
     }
