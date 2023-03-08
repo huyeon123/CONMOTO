@@ -55,7 +55,7 @@
                             <ul>
                                 <li id="group-container" th:each="group: ${sideBar.groups}">
                                     <div class="sidebar-elements pointer-hover">
-                                        <span onclick="moveToGroup(this)" th:attr="data-url=${group.groupUrl}"
+                                        <span style="width: 100%" onclick="moveToGroup(this)" th:attr="data-url=${group.groupUrl}"
                                               th:utext="${group.groupName}">
                                             GROUP NAME
                                         </span>
@@ -76,7 +76,7 @@
                             <ul id="favorite-category-list">
                                 <li th:each="category: ${sideBar.categories}" th:if="${category.favorite}">
                                     <div class="sidebar-elements pointer-hover">
-                                        <span th:text="${category.name}" onclick="moveToCategoryPage(this)">
+                                        <span style="width: 100%" th:text="${category.name}" onclick="moveToCategoryPage(this)">
                                             즐겨찾는 카테고리 명
                                         </span>
                                     </div>
