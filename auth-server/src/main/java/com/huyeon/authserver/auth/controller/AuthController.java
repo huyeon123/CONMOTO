@@ -24,6 +24,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 
 @Slf4j
@@ -73,7 +74,9 @@ public class AuthController {
 
     @PostMapping("/login-code")
     public void generateTempLoginCode(@RequestBody Email request) {
-        loginCodeEmailService.send(request.getEmail());
+        CompletableFuture
+                .runAsync(() -> loginCodeEmailService.send(request.getEmail()))
+                .thenAcceptAsync((returnValue) -> log.info("[이메일 발송 완료] : 수신자 - {}", request.getEmail()));
     }
 
     @PostMapping("/login/temp")
