@@ -50,6 +50,7 @@ $(".member-menu span").click((e) => {
     $("#draw-board-container").children().remove();
 
     //변경된 카테고리 게시글 렌더링
+    isEnd = false;
     lastIndex = Number.MAX_SAFE_INTEGER;
     render();
 })
@@ -86,7 +87,9 @@ function createBoardReqAPI(tab) {
     }
 
     if (tab === "comment") {
-        url.pathname = "/api/comment/latest";
+        url.pathname = "/api/comment/latest/member/comment";
+    } else if (tab === "commented") {
+        url.pathname = "/api/comment/latest/member/commented";
     }
 
     return url;
@@ -129,7 +132,7 @@ function renderStart(tab, first, posts) {
         return;
     }
 
-    if (tab === "comment") renderCommentPosts(url);
+    if (tab === "comment") renderCommentPosts(posts);
     else renderPost(posts);
 }
 
