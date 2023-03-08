@@ -191,14 +191,13 @@ public class NewGroupService {
         return "ROLE_MEMBER";
     }
 
-
-    public void expelMember(String userEmail, String groupUrl, String request) {
-        GroupDto group = findGroupByUrl(groupUrl);
+    public void expelMember(String userEmail, String groupUrl, ExpelDto request) {
+        GroupDto group = getGroupByUrl(groupUrl);
         //권한 체크
         checkManagerRole(group, userEmail);
 
         //추방가능한 멤버인지 확인
-        checkNotManagerRole(group, request);
+        checkNotManagerRole(group, request.getEmail());
 
         //강퇴
         deleteMemberInGroup(group.getId(), userEmail);
@@ -222,8 +221,8 @@ public class NewGroupService {
         }
     }
 
-    public void inviteMember(String groupUrl, String userEmail) {
-        GroupDto group = findGroupByUrl(groupUrl);
+    public void inviteMember(String groupUrl, String requester, String inviter) {
+        GroupDto group = getGroupByUrl(groupUrl);
 
         Noty inviteNoty = Noty.builder()
                 .senderName(group.getName())
