@@ -40,16 +40,53 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void editInfo(String email, UserUpdateDto editUser) {
-        userRepository.findByEmail(email).ifPresent(user -> {
-            if (Objects.nonNull(editUser.getName())) user.setName(editUser.getName());
-            if (Objects.nonNull(editUser.getPassword())) {
-                user.setPassword(editUser.getPassword());
-                user.encryptPassword(passwordEncoder);
+    public EditRes editName(String email, UserUpdateDto request) {
+        User user = findUser(email);
+
+        if (Objects.isNull(request.getName())) {
+            return new EditRes("바꿀 이름은 null일 수 없습니다.");
+        }
+
+        user.setName(request.getName());
+        save(user);
+
+        return new EditRes();
+    }
+
+    public void editBirthday(String email, UserUpdateDto request) {
+        User user = findUser(email);
+        user.setBirthday(request.getBirthday());
+        save(user);
+    }
+
+    public EditRes editPassword(String email, UserUpdateDto request) {
+        User user = findUser(email);
+
+        String current = request.getCurrent();
+        String password = request.getPassword();
+        String again = request.getAgain();
+
+        if (!password.equals(again)) {
+            return new EditRes("바꿀 비밀번호가 일치하지 않습니다.");
+        }
+
+        String encode = passwordEncoder.encode(current);
+
+        if (!user.getPassword().equals(encode)) {
+            //Redis에서 임시 비밀번호 가져오기
+            String loginCode = redisTemplate.opsForValue().get("loginCode:" + email);
+            assert loginCode != null;
+
+            if (!loginCode.equals(current)) {
+                return new EditRes("비밀번호가 틀립니다.\n임시 로그인 중이라면 로그인 코드를 입력해주세요.");
             }
-            if (Objects.nonNull(editUser.getBirthday())) user.setBirthday(editUser.getBirthday());
-            userRepository.save(user);
-        });
+        }
+
+        user.setPassword(password);
+        user.encryptPassword(passwordEncoder);
+        save(user);
+
+        return new EditRes();
     }
 
     public void resign(String email) {
