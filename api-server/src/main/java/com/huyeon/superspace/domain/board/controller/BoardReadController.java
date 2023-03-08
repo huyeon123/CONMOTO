@@ -4,7 +4,10 @@ import com.huyeon.superspace.domain.board.document.TempPost;
 import com.huyeon.superspace.domain.board.dto.BoardDto;
 import com.huyeon.superspace.domain.board.dto.ContentDto;
 import com.huyeon.superspace.domain.board.dto.LikePostRes;
-import com.huyeon.superspace.domain.board.service.*;
+import com.huyeon.superspace.domain.board.service.LikePostService;
+import com.huyeon.superspace.domain.board.service.NewBoardService;
+import com.huyeon.superspace.domain.board.service.NewCategoryService;
+import com.huyeon.superspace.domain.board.service.PopularBoardService;
 import com.huyeon.superspace.global.exception.BadRequestException;
 import com.huyeon.superspace.global.exception.PermissionDeniedException;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +27,6 @@ public class BoardReadController {
     private final PopularBoardService popularBoardService;
 
     private final LikePostService likePostService;
-
-    private final NewCommentService commentService;
 
     @GetMapping("/{id}")
     public BoardDto getBoard(@PathVariable Long id) {
@@ -75,8 +76,6 @@ public class BoardReadController {
         switch (type) {
             case "write":
                 return boardService.getNextMember(memberId, lastIndex, page);
-            case "commented":
-                return commentService.getNextCommentedPosts(memberId, lastIndex, page);
             case "like":
                 return likePostService.getNextLike(memberId, lastIndex, page);
             default:

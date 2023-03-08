@@ -1,5 +1,6 @@
 package com.huyeon.superspace.domain.board.controller;
 
+import com.huyeon.superspace.domain.board.dto.CommentBoardPreviewDto;
 import com.huyeon.superspace.domain.board.dto.CommentDto;
 import com.huyeon.superspace.domain.board.dto.CommentPreviewDto;
 import com.huyeon.superspace.domain.board.service.NewCommentService;
@@ -17,13 +18,23 @@ import java.util.Objects;
 public class CommentRestController {
     private final NewCommentService commentService;
 
-    @GetMapping("/latest")
+    @GetMapping("/latest/member/comment")
     public List<CommentPreviewDto> getComments(
             @RequestParam String memberId,
             @RequestParam Long lastIndex,
             @RequestParam(required = false, defaultValue = "0") int page
     ) {
         return commentService.getNextComment(memberId, lastIndex, page);
+    }
+
+
+    @GetMapping("/latest/member/commented")
+    public List<CommentBoardPreviewDto> getNextCommentedPosts(
+            @RequestParam String memberId,
+            @RequestParam Long lastIndex,
+            @RequestParam(required = false, defaultValue = "0") int page
+    ) {
+        return commentService.getNextCommentedPosts(memberId, lastIndex, page);
     }
 
     @PostMapping
