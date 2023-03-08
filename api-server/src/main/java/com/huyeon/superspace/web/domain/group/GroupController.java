@@ -77,8 +77,23 @@ public class GroupController {
         return response;
     }
 
+    @GroupPage
+    @GetMapping("/{groupUrl}/members/{memberId}")
+    public Map<String, Object> memberPage(
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @PathVariable String groupUrl,
+            @PathVariable String memberId
+    ) {
+        Map<String, Object> response = new HashMap<>();
+
+        MemberDto member = groupService.getMemberById(memberId);
+        response.put("member", member);
+
+        return response;
     }
 
+    private List<MemberDto> getMembers(GroupDto group) {
+        return groupService.getMembersById(group.getUrl());
     }
 
     @GroupPage
