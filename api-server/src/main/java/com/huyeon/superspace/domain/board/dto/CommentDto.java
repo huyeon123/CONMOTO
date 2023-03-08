@@ -12,8 +12,10 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class CommentDto {
-    private String id;
-    private String boardId;
+    private Long id;
+
+    private String groupUrl;
+    private Long boardId;
     private String author;
     private String body;
     private String tag;
@@ -25,11 +27,22 @@ public class CommentDto {
 
     public CommentDto(Comment comment, String nickname, boolean mine) {
         id = comment.getId();
+        groupUrl = comment.getGroupUrl();
         boardId = comment.getBoardId();
         author = nickname;
         body = comment.getBody();
         tag = comment.getTag();
         lastUpdate = comment.getUpdatedAt();
         this.mine = mine;
+    }
+
+    public CommentDto(Comment comment) {
+        id = comment.getId();
+        groupUrl = comment.getGroupUrl();
+        boardId = comment.getBoardId();
+        author = comment.getAuthor();
+        body = comment.getBody();
+        tag = comment.getTag();
+        lastUpdate = comment.getUpdatedAt();
     }
 }

@@ -1,14 +1,12 @@
 package com.huyeon.superspace.domain.board.controller;
 
-import com.huyeon.superspace.domain.board.dto.CategoryCreateDto;
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
 import com.huyeon.superspace.domain.board.dto.FavoriteCategoryReq;
 import com.huyeon.superspace.domain.board.service.NewCategoryService;
-import com.huyeon.superspace.global.exception.PermissionDeniedException;
 import com.huyeon.superspace.domain.group.service.NewGroupService;
+import com.huyeon.superspace.global.exception.PermissionDeniedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,30 +20,27 @@ public class CategoryRestController {
     private final NewGroupService groupService;
 
     @GetMapping
-    public List<CategoryDto> getCategories(
-            @RequestHeader("X-Authorization-Id") String email,
-            @RequestParam String url) {
-        return categoryService.getCategoryTree(email, url);
+    public List<CategoryDto> getCategories(@RequestParam String url) {
+        return categoryService.getCategoryListByUrl(url);
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public String createCategory(
-            @RequestBody CategoryCreateDto request,
-            @RequestHeader("X-Authorization-Id") String userEmail
-    ) {
-        checkPermission(request.getGroupUrl(), userEmail, "카테고리 생성 권한이 없습니다.");
-        return categoryService.createCategory(request);
-    }
-
-    @PutMapping
-    public void editCategory(
-            @RequestBody List<CategoryDto> request,
+    @PostMapping("/save")
+    public void saveCategory(
             @RequestParam String url,
+            @RequestBody List<CategoryDto> request,
             @RequestHeader("X-Authorization-Id") String userEmail
     ) {
         checkPermission(url, userEmail, "카테고리 수정 권한이 없습니다.");
-        categoryService.editCategory(request, url);
+        categoryService.saveCategory(url, request);
+    }
+
+    @PutMapping
+    public String editCategory(
+            @RequestBody CategoryDto request,
+            @RequestHeader("X-Authorization-Id") String userEmail
+    ) {
+        checkPermission(request.getGroupUrl(), userEmail, "카테고리 수정 권한이 없습니다.");
+        return categoryService.editCategory(request);
     }
 
     @DeleteMapping("/{id}")

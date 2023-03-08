@@ -1,11 +1,11 @@
 package com.huyeon.superspace.domain.user.controller;
 
+import com.huyeon.superspace.domain.user.dto.EditRes;
 import com.huyeon.superspace.domain.user.dto.UserUpdateDto;
 import com.huyeon.superspace.domain.user.service.UserService;
+import com.huyeon.superspace.web.domain.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -15,27 +15,43 @@ import org.springframework.web.bind.annotation.*;
 public class UserApiController {
     private final UserService userService;
 
+    @GetMapping
+    public UserDto getUser(@RequestHeader("X-Authorization-Id") String userEmail) {
+        return userService.getUser(userEmail);
+    }
+
     //회원정보 수정
-    @PutMapping("/edit")
-    public ResponseEntity<?> editInfo(
+    @PutMapping("/edit/name")
+    public EditRes editName(
             @RequestHeader("X-Authorization-Id") String userEmail,
             @RequestBody UserUpdateDto editUser) {
-        userService.editInfo(userEmail, editUser);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return userService.editName(userEmail, editUser);
+    }
+
+    @PutMapping("/edit/birthday")
+    public void editBirthday(
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @RequestBody UserUpdateDto editUser) {
+        userService.editBirthday(userEmail, editUser);
+    }
+
+    @PutMapping("/edit/password")
+    public EditRes editPassword(
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @RequestBody UserUpdateDto editUser) {
+        return userService.editPassword(userEmail, editUser);
     }
 
     //회원탈퇴
     @DeleteMapping("/resign")
-    public ResponseEntity<?> resign(@RequestHeader("X-Authorization-Id") String userEmail) {
+    public void resign(@RequestHeader("X-Authorization-Id") String userEmail) {
         userService.resign(userEmail);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     //회원탈퇴 복구
     @PutMapping("/resign")
-    public ResponseEntity<?> cancelResign(@RequestHeader("X-Authorization-Id") String userEmail) {
+    public void cancelResign(@RequestHeader("X-Authorization-Id") String userEmail) {
         userService.cancelResign(userEmail);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

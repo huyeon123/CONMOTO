@@ -1,9 +1,6 @@
 package com.huyeon.superspace.domain.group.controller;
 
-import com.huyeon.superspace.domain.group.dto.CreateDto;
-import com.huyeon.superspace.domain.group.dto.JoinDto;
-import com.huyeon.superspace.domain.group.dto.MemberDto;
-import com.huyeon.superspace.domain.group.dto.GroupDto;
+import com.huyeon.superspace.domain.group.dto.*;
 import com.huyeon.superspace.domain.group.service.NewGroupService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +8,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -23,7 +18,7 @@ public class GroupRestController {
 
     @GetMapping("/{url}")
     public GroupDto getGroup(@PathVariable String url) {
-        return groupService.findGroupByUrl(url);
+        return groupService.getGroupByUrl(url);
     }
 
     @PostMapping
@@ -38,9 +33,10 @@ public class GroupRestController {
     @PutMapping("/{url}")
     public String editGroup(
             @PathVariable String url,
+            @RequestParam String type,
             @RequestBody GroupDto request
     ) {
-        return groupService.editGroup(url, request);
+        return groupService.editGroup(url, type, request);
     }
 
     @DeleteMapping("/{url}")
@@ -51,37 +47,47 @@ public class GroupRestController {
         groupService.deleteGroup(userEmail, url);
     }
 
-    @PostMapping("/{url}/member-role")
-    public void saveMemberRole(
-            @PathVariable String url,
-            @RequestBody List<MemberDto> request
-    ) {
-        groupService.saveMemberRole(url, request);
-    }
-
     @DeleteMapping("/{url}/member")
     public void expelMember(
             @RequestHeader("X-Authorization-Id") String userEmail,
-            @PathVariable String url, @RequestBody Email request
+            @PathVariable String url, @RequestBody ExpelDto request
     ) {
-        groupService.expelMember(userEmail, url, request.getEmail());
+        groupService.expelMember(userEmail, url, request);
     }
 
     @PostMapping("/{url}/invite")
     public void inviteMember(
+            @RequestHeader("X-Authorization-Id") String userEmail,
             @PathVariable String url,
             @RequestBody Email request
     ) {
-        groupService.inviteMember(url, request.getEmail());
+        groupService.inviteMember(url, userEmail, request.getEmail());
     }
 
     @PostMapping("/join")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void joinMember(
+    public boolean joinMember(
             @RequestHeader("X-Authorization-Id") String userEmail,
             @RequestBody JoinDto request
     ) {
-        groupService.joinMember(userEmail, request);
+        request.setUserEmail(userEmail);
+        return groupService.joinMember(userEmail, request);
+    }
+
+    @GetMapping("/join-request-list")
+    public JoinRequestDto getJoinRequestList(
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @RequestParam String groupUrl
+    ) {
+        //TODO: Permission Check
+        return groupService.getJoinRequestList(groupUrl);
+    }
+
+    @PostMapping("/accept-join")
+    public void acceptJoinRequest(
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @RequestBody JoinRequestDto request
+    ) {
+        groupService.acceptMember(request);
     }
 
     @DeleteMapping("/{url}/resign")
@@ -93,6 +99,27 @@ public class GroupRestController {
         groupService.resignGroup(url, userEmail);
     }
 
+    @GetMapping("/grade")
+    public GradeDto getGroupGrade(@RequestParam String url) {
+        return groupService.getGroupGrade(url);
+    }
+
+    @PostMapping("/grade")
+    public void saveGradeInfo(
+            @RequestBody GradeDto request,
+            @RequestHeader("X-Authorization-Id") String userEmail
+    ) {
+        groupService.saveGradeInfo(request);
+    }
+
+    @PutMapping("/member/grade")
+    public void adjustMemberGrade(
+            @RequestParam String memberId,
+            @RequestParam int level
+    ) {
+        //TODO: Permission Check
+        groupService.adjustMemberGrade(memberId, level);
+    }
 
     @Getter
     @Setter

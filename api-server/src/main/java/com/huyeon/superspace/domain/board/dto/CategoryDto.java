@@ -4,9 +4,7 @@ import com.huyeon.superspace.domain.board.document.Category;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
-import java.util.Objects;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Getter
 @Setter
@@ -18,19 +16,32 @@ public class CategoryDto {
 
     private String name;
 
-    private CategoryDto parent;
+    private String description;
+
+    private Category.Type type;
 
     private boolean favorite;
 
-    private List<CategoryDto> children; //읽기용
+    private boolean fold;
+
+    private boolean indent;
+
+    private int availableWriteLevel;
+
+    private int availableCommentLevel;
+
+    private int availableReadLevel;
 
     public CategoryDto(Category category) {
-        id = category.getId();
-        groupUrl = category.getGroupUrl();
-        name = category.getName();
-
-        if (Objects.nonNull(category.getParentCategory())) {
-            parent = new CategoryDto(category.getParentCategory());
-        }
+        this.id = category.getId();
+        this.groupUrl = category.getGroupUrl();
+        this.name = category.getName();
+        this.description = category.getDescription();
+        this.type = category.getType();
+        this.fold = category.isFold();
+        this.indent = category.isIndent();
+        this.availableWriteLevel = category.getAvailableWriteLevel();
+        this.availableCommentLevel = category.getAvailableCommentLevel();
+        this.availableReadLevel = category.getAvailableReadLevel();
     }
 }

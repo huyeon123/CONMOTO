@@ -11,15 +11,20 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.util.Objects;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "temp_post")
 public class TempPost extends DocumentAudit {
+    @Transient
+    public static final String SEQUENCE_NAME = "temp_post_sequence";
+
     @Id
-    private String id;
+    private Long id;
 
     @Setter
     private String author;
@@ -60,7 +65,7 @@ public class TempPost extends DocumentAudit {
         private String markdown;
 
         public TempContent(ContentDto contentDto) {
-            markdown = contentDto.getMarkdown();
+            markdown = contentDto.getHtml();
         }
     }
 }

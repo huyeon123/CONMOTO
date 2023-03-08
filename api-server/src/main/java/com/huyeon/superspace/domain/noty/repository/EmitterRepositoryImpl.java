@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @NoArgsConstructor
-public class EmitterRepositoryImpl implements EmitterRepository{
+public class EmitterRepositoryImpl implements EmitterRepository {
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
     private final Map<String, Object> eventCache = new ConcurrentHashMap<>();
 

@@ -1,31 +1,31 @@
 package com.huyeon.superspace.domain.group.service;
 
+import com.huyeon.superspace.domain.board.service.NewBoardService;
+import com.huyeon.superspace.domain.board.service.NewCategoryService;
+import com.huyeon.superspace.domain.group.document.Grade;
 import com.huyeon.superspace.domain.group.document.Group;
+import com.huyeon.superspace.domain.group.document.JoinRequest;
 import com.huyeon.superspace.domain.group.document.Member;
-import com.huyeon.superspace.domain.group.dto.CreateDto;
-import com.huyeon.superspace.domain.group.dto.GroupDto;
-import com.huyeon.superspace.domain.group.dto.JoinDto;
-import com.huyeon.superspace.domain.group.dto.MemberDto;
+import com.huyeon.superspace.domain.group.dto.*;
+import com.huyeon.superspace.domain.group.repository.GradeRepository;
+import com.huyeon.superspace.domain.group.repository.JoinRequestRepository;
+import com.huyeon.superspace.domain.group.repository.NewGroupRepository;
+import com.huyeon.superspace.domain.group.repository.NewMemberRepository;
+import com.huyeon.superspace.domain.noty.dto.NotyPayloadDto;
+import com.huyeon.superspace.domain.noty.entity.NotyType;
+import com.huyeon.superspace.domain.noty.service.NotyUtils;
 import com.huyeon.superspace.global.exception.AlreadyExistException;
 import com.huyeon.superspace.global.exception.BadRequestException;
 import com.huyeon.superspace.global.exception.NotAdminException;
 import com.huyeon.superspace.global.exception.NotOnlyMemberException;
-import com.huyeon.superspace.domain.group.repository.NewGroupRepository;
-import com.huyeon.superspace.domain.board.service.NewBoardService;
-import com.huyeon.superspace.domain.board.service.NewCategoryService;
-import com.huyeon.superspace.domain.group.repository.NewMemberRepository;
-import com.huyeon.superspace.domain.noty.entity.Noty;
-import com.huyeon.superspace.domain.noty.entity.NotyType;
-import com.huyeon.superspace.domain.noty.entity.ReceivedNoty;
-import com.huyeon.superspace.global.dto.NotyEventDto;
-import com.huyeon.superspace.global.model.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,22 +33,30 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class NewGroupService {
-    private static final int IDENTIFIER_LENGTH = 10;
     private final NewGroupRepository groupRepository;
     private final NewMemberRepository memberRepository;
+
+    private final GradeRepository gradeRepository;
+
+    private final JoinRequestRepository joinRequestRepository;
+
     private final NewCategoryService categoryService;
     private final NewBoardService boardService;
-    private final ApplicationEventPublisher eventPublisher;
+    private final NotyUtils notyUtils;
 
-    public GroupDto findGroupByUrl(String url) {
+    public GroupDto getGroupByUrl(String url) {
         return groupRepository.findByUrl(url)
                 .map(GroupDto::new)
                 .orElseThrow();
     }
 
-    private Group findGroupById(String groupId) {
-        return groupRepository.findById(groupId)
+    public Group findGroupByUrl(String url) {
+        return groupRepository.findByUrl(url)
                 .orElseThrow();
+    }
+
+    private Grade findGradeByUrl(String groupUrl) {
+        return gradeRepository.findByGroupUrl(groupUrl).orElseThrow();
     }
 
     public String createGroup(String userEmail, CreateDto request) {
@@ -56,7 +64,7 @@ public class NewGroupService {
 
         //URL 중복 검사 및 구분자 추가
         if (existsByUrl(newGroup.getUrl())) {
-            newGroup.setUrl(appendIdentifier(newGroup.getUrl()));
+            throw new BadRequestException("중복된 그룹 URL 입니다.");
         }
 
         //매니저 등록 후 그룹 생성
@@ -87,7 +95,7 @@ public class NewGroupService {
 
     private void registerMyNewGroup(Group group, String userEmail, String nickname, String role) {
         Member member = Member.builder()
-                .group(group)
+                .groupUrl(group.getUrl())
                 .userEmail(userEmail)
                 .nickname(nickname)
                 .role(role)
@@ -100,8 +108,7 @@ public class NewGroupService {
         List<Member> groups = findAllByUserEmail(userEmail);
 
         return groups.stream()
-                .map(group -> findGroupById(group.getGroup().getId()))
-                .map(GroupDto::new)
+                .map(group -> getGroupByUrl(group.getGroupUrl()))
                 .collect(Collectors.toList());
     }
 
@@ -110,9 +117,13 @@ public class NewGroupService {
     }
 
     public MemberDto findByUserEmail(String userEmail, String groupUrl) {
-        String groupById = findGroupByUrl(groupUrl).getId();
-        return memberRepository.findByGroupIdAndUserEmail(groupById, userEmail)
-                .map(MemberDto::new)
+        Grade grade = findGradeByUrl(groupUrl);
+
+        return memberRepository.findByGroupUrlAndUserEmail(groupUrl, userEmail)
+                .map(member -> {
+                    String levelName = grade.getLevelName(member.getGradeLevel());
+                    return new MemberDto(member, levelName);
+                })
                 .orElse(MemberDto.builder()
                         .id("anonymous")
                         .nickname("그룹 가입이 필요합니다.")
@@ -123,32 +134,31 @@ public class NewGroupService {
         return groupRepository.existsByUrl(url);
     }
 
-    private String appendIdentifier(String urlPath) {
-        return urlPath + "-" + generateIdentifier();
+    public String editGroup(String url, String type, GroupDto request) {
+        Group group = groupRepository.findByUrl(url).orElseThrow();
+        modifyGroupInfo(type, group, request);
+        return groupRepository.save(group).getUrl();
     }
 
-    private String generateIdentifier() {
-        int leftLimit = '0'; // numeral '0'
-        int rightLimit = 'z'; // letter 'z'
-        Random random = new Random();
-
-        return random.ints(leftLimit, rightLimit + 1)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                .limit(IDENTIFIER_LENGTH)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
-    }
-
-    public String editGroup(String url, GroupDto request) {
-        GroupDto group = findGroupByUrl(url);
-        group.setName(request.getName());
-        group.setUrl(request.getUrl());
-        group.setDescription(request.getDescription());
-        return groupRepository.save(new Group(group)).getUrl();
+    private void modifyGroupInfo(String type, Group origin, GroupDto request) {
+        switch (type) {
+            case "name":
+                origin.setName(request.getName());
+                break;
+            case "description":
+                origin.setDescription(request.getDescription());
+                break;
+            case "open":
+                origin.setOpen(request.isOpen());
+                break;
+            case "autoJoin":
+                origin.setAutoJoin(request.isAutoJoin());
+                break;
+        }
     }
 
     public void deleteGroup(String userEmail, String url) {
-        GroupDto group = findGroupByUrl(url);
+        GroupDto group = getGroupByUrl(url);
         if (isNotGroupOwner(userEmail, group)) {
             throw new NotAdminException("그룹 소유자가 아닙니다.");
         }
@@ -158,7 +168,7 @@ public class NewGroupService {
         }
 
         groupRepository.deleteById(group.getId());
-        deleteMemberInGroup(group.getId(), userEmail);
+        deleteMemberInGroup(group.getUrl(), userEmail);
         categoryService.deleteAllByGroupUrl(group.getUrl());
         boardService.deleteAllByGroupUrl(group.getUrl());
     }
@@ -172,38 +182,7 @@ public class NewGroupService {
     }
 
     private void deleteMemberInGroup(String groupId, String userEmail) {
-        memberRepository.deleteByGroupIdAndUserEmail(groupId, userEmail);
-    }
-
-    public void saveMemberRole(String groupUrl, List<MemberDto> request) {
-        GroupDto group = findGroupByUrl(groupUrl);
-
-        for (MemberDto member : request) {
-            String currentRole = findRoleByEmail(group, member.getEmail());
-            String changedRole = member.getRole();
-
-            if (isChanged(currentRole, changedRole)) {
-                //일반 멤버 -> 관리자
-                if (changedRole.equals("ROLE_MANAGER")) {
-                    registerUserAsManager(member, group);
-                    continue;
-                }
-                //관리자 -> 일반 멤버
-                if (changedRole.equals("ROLE_MEMBER")) {
-                    revokeManager(member, group);
-                }
-            }
-        }
-    }
-
-    private void revokeManager(MemberDto member, GroupDto group) {
-        group.getManagers().remove(member.getEmail());
-        groupRepository.save(new Group(group));
-    }
-
-    private void registerUserAsManager(MemberDto member, GroupDto group) {
-        group.getManagers().add(member.getEmail());
-        groupRepository.save(new Group(group));
+        memberRepository.deleteByGroupUrlAndUserEmail(groupId, userEmail);
     }
 
     public String findRoleByEmail(GroupDto group, String userEmail) {
@@ -216,22 +195,29 @@ public class NewGroupService {
         return "ROLE_MEMBER";
     }
 
-    private boolean isChanged(String currentRole, String changedRole) {
-        return !currentRole.equals(changedRole);
-    }
-
-    public void expelMember(String userEmail, String groupUrl, String request) {
-        GroupDto group = findGroupByUrl(groupUrl);
+    public void expelMember(String userEmail, String groupUrl, ExpelDto request) {
+        GroupDto group = getGroupByUrl(groupUrl);
         //권한 체크
         checkManagerRole(group, userEmail);
 
         //추방가능한 멤버인지 확인
-        checkNotManagerRole(group, request);
+        checkNotManagerRole(group, request.getEmail());
 
         //강퇴
         deleteMemberInGroup(group.getId(), userEmail);
 
         //TODO: 탈퇴한 멤버가 작성한 게시글/댓글 작성자를 '탈퇴한 멤버'로 바꾸기
+
+        CompletableFuture.runAsync(() -> {
+            NotyPayloadDto payload = NotyPayloadDto.builder()
+                    .type(NotyType.GROUP_EXPEL)
+                    .group(group)
+                    .data(request.getReason())
+                    .receiverEmail(request.getEmail())
+                    .build();
+
+            notyUtils.publishNoty(payload);
+        });
     }
 
     private void checkManagerRole(GroupDto group, String userEmail) {
@@ -250,67 +236,153 @@ public class NewGroupService {
         }
     }
 
-    public void inviteMember(String groupUrl, String userEmail) {
-        GroupDto group = findGroupByUrl(groupUrl);
+    public void inviteMember(String groupUrl, String requester, String inviter) {
+        GroupDto group = getGroupByUrl(groupUrl);
 
-        Noty inviteNoty = Noty.builder()
-                .senderName(group.getName())
-                .message("그룹에 초대합니다!\n그룹 설명: " + group.getDescription())
-                .type(NotyType.GROUP_INVITE)
-                .redirectUrl(group.getUrl())
-                .payload(group.getId())
-                .build();
+        CompletableFuture.runAsync(() -> {
+            NotyPayloadDto payload = NotyPayloadDto.builder()
+                    .type(NotyType.GROUP_INVITE)
+                    .group(group)
+                    .requesterEmail(requester)
+                    .receiverEmail(inviter).build();
 
-        ReceivedNoty receivedNoty = ReceivedNoty.builder()
-                .userEmail(userEmail)
-                .noty(inviteNoty)
-                .build();
-
-        NotyEventDto notyEventDto = NotyEventDto.builder()
-                .noty(inviteNoty)
-                .receivers(List.of(receivedNoty))
-                .build();
-
-        EventPublisher.publishEvent(eventPublisher, notyEventDto);
+            notyUtils.publishNoty(payload);
+        });
     }
 
-    public void joinMember(String userEmail, JoinDto request) {
-        Group group = findGroupById(request.getGroupId());
-        if (isMember(request.getGroupId(), userEmail)) {
+    public boolean joinMember(String userEmail, JoinDto request) {
+        Group group = findGroupByUrl(request.getGroupUrl());
+
+        if (isMember(group.getUrl(), userEmail)) {
             throw new AlreadyExistException("이미 그룹에 가입되어 있습니다.");
         }
 
-        registerMyNewGroup(group, userEmail, request.getNickname(), "일반 멤버");
-        setMemberNum(group, group.getMembersNum() + 1);
+        if (group.isAutoJoin()) {
+            //즉시 가입 처리
+            registerMyNewGroup(group, userEmail, request.getNickname(), "일반 멤버");
+            setMemberNum(group, group.getMembersNum() + 1);
+            groupRepository.save(group);
+            return true;
+        } else {
+            //가입 요청 목록에 추가
+            JoinRequest joinRequest = joinRequestRepository.findByGroupUrl(request.getGroupUrl())
+                    .orElse(new JoinRequest(request.getGroupUrl()));
+
+            joinRequest.addRequester(request);
+
+            joinRequestRepository.save(joinRequest);
+            return false;
+        }
+    }
+
+    public void acceptMember(JoinRequestDto request) {
+        Group group = findGroupByUrl(request.getGroupUrl());
+        JoinRequestDto joinRequestList = getJoinRequestList(request.getGroupUrl());
+
+        AtomicInteger success = new AtomicInteger();
+        request.getRequesters().forEach(requester -> {
+            //그룹 등록
+            String userEmail = requester.getUserEmail();
+            String nickname = requester.getNickname();
+            registerMyNewGroup(group, userEmail, nickname, "일반 멤버");
+            //신청 목록에서 제거
+            joinRequestList.removeRequester(requester);
+            success.getAndIncrement();
+        });
+
+        //가입 신청 목록 업데이트
+        joinRequestRepository.save(new JoinRequest(joinRequestList));
+
+        //멤버 수 증가
+        setMemberNum(group, group.getMembersNum() + success.get());
+        groupRepository.save(group);
     }
 
     private boolean isMember(String groupId, String userEmail) {
-        return memberRepository.existsByGroupIdAndUserEmail(groupId, userEmail);
+        return memberRepository.existsByGroupUrlAndUserEmail(groupId, userEmail);
     }
 
     public boolean isNotMemberByUrl(String groupUrl, String userEmail) {
-        String groupId = findGroupByUrl(groupUrl).getId();
-        return !isMember(groupId, userEmail);
+        return !isMember(groupUrl, userEmail);
     }
 
-    public List<MemberDto> findMembersById(String groupId) {
-        return memberRepository.findAllByGroupId(groupId).stream()
-                .map(MemberDto::new)
+    public List<MemberDto> getMembersById(String groupUrl) {
+        Grade grade = findGradeByUrl(groupUrl);
+
+        return memberRepository.findAllByGroupUrl(groupUrl).stream()
+                .map(member -> new MemberDto(member, grade.getLevelName(member.getGradeLevel())))
                 .collect(Collectors.toList());
     }
 
+    public MemberDto getMemberById(String memberId) {
+        return memberRepository.findById(memberId)
+                .map(member -> {
+                    Grade grade = findGradeByUrl(member.getGroupUrl());
+                    String levelName = grade.getLevelName(member.getGradeLevel());
+                    return new MemberDto(member, levelName);
+                })
+                .orElseThrow();
+    }
+
     public boolean isNotManager(String groupUrl, String userEmail) {
-        Set<String> managers = findGroupByUrl(groupUrl).getManagers();
+        Set<String> managers = getGroupByUrl(groupUrl).getManagers();
         return !managers.contains(userEmail);
     }
 
     public void resignGroup(String url, String userEmail) {
-        GroupDto group = findGroupByUrl(url);
+        GroupDto group = getGroupByUrl(url);
         //탈퇴 가능한 그룹인지 확인
-        if (!isMember(group.getId(), userEmail)) {
+        if (!isMember(url, userEmail)) {
             throw new BadRequestException("해당 그룹 멤버가 아닙니다!");
         }
         //강퇴
         deleteMemberInGroup(group.getId(), userEmail);
+    }
+
+    public GradeDto getGroupGrade(String url) {
+        Grade grade = gradeRepository.findByGroupUrl(url)
+                .orElseThrow();
+
+        return new GradeDto(grade);
+    }
+
+    public void saveGradeInfo(GradeDto request) {
+        Optional<Grade> optional = gradeRepository.findByGroupUrl(request.getGroupUrl());
+        optional.ifPresent(value -> request.setId(value.getId()));
+        gradeRepository.save(new Grade(request));
+    }
+
+    public JoinRequestDto getJoinRequestList(String groupUrl) {
+        JoinRequest joinRequest = joinRequestRepository.findByGroupUrl(groupUrl)
+                .orElse(new JoinRequest(groupUrl));
+
+        return new JoinRequestDto(joinRequest);
+    }
+
+    public void adjustMemberGrade(String memberId, int level) {
+        Member member = findMemberById(memberId);
+        member.setGradeLevel(level);
+        memberRepository.save(member);
+
+        CompletableFuture.runAsync(() -> {
+            createGradeChangePayload(member, level);
+        });
+    }
+
+    private void createGradeChangePayload(Member member, int level) {
+        GroupDto group = getGroupByUrl(member.getGroupUrl());
+        String levelName = findGradeByUrl(member.getGroupUrl())
+                .getLevelName(level);
+        NotyPayloadDto payload = NotyPayloadDto.builder()
+                .type(NotyType.GROUP_ROLE_CHANGE)
+                .group(group)
+                .data(levelName)
+                .receiverEmail(member.getUserEmail())
+                .build();
+        notyUtils.publishNoty(payload);
+    }
+
+    private Member findMemberById(String memberId) {
+        return memberRepository.findById(memberId).orElseThrow();
     }
 }

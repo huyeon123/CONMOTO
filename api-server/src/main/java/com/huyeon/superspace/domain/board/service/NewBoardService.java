@@ -10,6 +10,11 @@ import com.huyeon.superspace.domain.board.repository.NewBoardRepository;
 import com.huyeon.superspace.domain.board.repository.NewCommentRepository;
 import com.huyeon.superspace.domain.board.repository.NewContentRepository;
 import com.huyeon.superspace.domain.board.repository.TempPostRepository;
+import com.huyeon.superspace.domain.group.document.Member;
+import com.huyeon.superspace.domain.group.repository.NewMemberRepository;
+import com.huyeon.superspace.domain.noty.dto.NotyPayloadDto;
+import com.huyeon.superspace.domain.noty.entity.NotyType;
+import com.huyeon.superspace.domain.noty.service.NotyUtils;
 import com.huyeon.superspace.global.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +22,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,26 +32,44 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class NewBoardService {
+    private final NewMemberRepository memberRepository;
     private final NewBoardRepository boardRepository;
     private final NewContentRepository contentRepository;
     private final NewCommentRepository commentRepository;
     private final TempPostRepository tempPostRepository;
+    private final NotyUtils notyUtils;
 
-    public BoardDto getBoard(String id) {
-        Optional<Board> optional = boardRepository.findById(id);
-        return optional.map(BoardDto::new).orElseThrow();
+    public BoardDto getBoard(Long id) {
+        Board board = findBoard(id);
+        return new BoardDto(board);
     }
 
-    public String createBoard(String userEmail, BoardDto request) {
+    private Board findBoard(Long id) {
+        return boardRepository.findById(id).orElseThrow();
+    }
+
+    public Long createBoard(String userEmail, BoardDto request) {
         String contentId = contentRepository.save(new Content(request.getContent())).getId();
         request.getContent().setId(contentId);
 
         Board board = new Board(request);
         board.setAuthor(userEmail);
-        return boardRepository.save(board).getId();
+        Long id = boardRepository.save(board).getId();
+
+        CompletableFuture.runAsync(() -> {
+            NotyPayloadDto payload = NotyPayloadDto.builder()
+                    .type(NotyType.NOTICE)
+                    .groupUrl(board.getGroupUrl())
+                    .board(request)
+                    .build();
+
+            notyUtils.publishNoty(payload);
+        }).thenAcceptAsync((v) -> log.info("[공지사항 알림 발송 완료]"));
+
+        return id;
     }
 
-    public String saveBoard(BoardDto request, String target) {
+    public Long saveBoard(BoardDto request, String target) {
         BoardDto origin = getBoard(request.getId());
         change(origin, request, target);
         return boardRepository.save(new Board(origin)).getId();
@@ -61,6 +84,7 @@ public class NewBoardService {
                 origin.setDescription(request.getDescription());
                 break;
             case "CATEGORY":
+                origin.setCategoryId(request.getCategoryId());
                 origin.setCategoryName(request.getCategoryName());
                 break;
             case "STATUS":
@@ -72,7 +96,7 @@ public class NewBoardService {
         }
     }
 
-    public void deleteBoard(String id) {
+    public void deleteBoard(Long id) {
         Board board = boardRepository.findById(id).orElseThrow();
         contentRepository.delete(board.getContent());
         commentRepository.deleteAllByBoardId(board.getId());
@@ -86,18 +110,24 @@ public class NewBoardService {
 
     public String saveContent(ContentUpdateDto request) {
         ContentDto origin = getBoard(request.getBoardId()).getContent();
-        origin.setMarkdown(request.getMarkdown());
+        origin.setHtml(request.getMarkdown());
         return contentRepository.save(new Content(origin)).getId();
     }
 
-    public List<BoardDto> getNext10LatestInGroup(String groupUrl, int page) {
+    public List<BoardDto> getNextGroup(String groupUrl, Long lastIndex, int page) {
         List<Board> next = boardRepository.findNextLatestInGroup(
                 groupUrl,
-                LocalDateTime.now(),
-                PageRequest.of(page, 10)
+                lastIndex,
+                PageRequest.of(page, 50)
         );
 
+        convertEmailToNickname(next);
+
         return mapToDtoList(next);
+    }
+
+    public List<BoardDto> getNextNotice(String noticeId, Long lastIndex, int page) {
+        return getNextCategory(noticeId, lastIndex, page);
     }
 
     private List<BoardDto> mapToDtoList(List<Board> boards) {
@@ -106,31 +136,49 @@ public class NewBoardService {
                 .collect(Collectors.toList());
     }
 
-    public List<BoardDto> getNext10LatestInCategory(String categoryName, int page) {
+    public List<BoardDto> getNextCategory(String categoryId, Long lastIndex, int page) {
         List<Board> next = boardRepository.findNextLatestInCategory(
-                categoryName,
-                LocalDateTime.now(),
-                PageRequest.of(page, 10)
+                categoryId,
+                lastIndex,
+                PageRequest.of(page, 50)
+        );
+
+        convertEmailToNickname(next);
+
+        return mapToDtoList(next);
+    }
+
+    private void convertEmailToNickname(List<Board> boards) {
+        for (Board board : boards) {
+            String author = board.getAuthor();
+            String nickname = memberRepository.findByGroupUrlAndUserEmail(board.getGroupUrl(), author)
+                    .orElseThrow().getNickname();
+            board.setAuthor(nickname);
+        }
+    }
+
+    public List<BoardDto> getNextMember(String memberId, Long lastIndex, int page) {
+        Member member = findMemberById(memberId);
+
+        List<Board> next = boardRepository.findNextLatestInUser(
+                member.getUserEmail(),
+                member.getGroupUrl(),
+                lastIndex,
+                PageRequest.of(page, 50)
         );
 
         return mapToDtoList(next);
     }
 
-    public List<BoardDto> getNext10LatestInUser(String userEmail, int page) {
-        List<Board> next = boardRepository.findNextLatestInUser(
-                userEmail,
-                LocalDateTime.now(),
-                PageRequest.of(page, 10)
-        );
-
-        return mapToDtoList(next);
+    private Member findMemberById(String memberId) {
+        return memberRepository.findById(memberId).orElseThrow();
     }
 
     public void deleteAllByGroupUrl(String groupUrl) {
         boardRepository.deleteAllByGroupUrl(groupUrl);
     }
 
-    public String saveTemporally(String userEmail, BoardDto request) {
+    public Long saveTemporally(String userEmail, BoardDto request) {
         long count = countTempPostByEmailAndUrl(userEmail, request.getGroupUrl());
 
         if (count >= 50) {
@@ -150,7 +198,7 @@ public class NewBoardService {
         return tempPostRepository.findAllByAuthorAndGroupUrl(email, groupUrl);
     }
 
-    public TempPost findTempPostById(String tempPostId) {
+    public TempPost findTempPostById(Long tempPostId) {
         return tempPostRepository.findById(tempPostId).orElseThrow();
     }
 }

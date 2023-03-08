@@ -19,14 +19,18 @@ public class Noty extends AuditEntity implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String senderName;
+    @Enumerated(EnumType.STRING)
+    private NotyType type;
 
-    private String message;
+    private String title;
 
-    private String redirectUrl;
+    private String body;
 
     private String payload;
 
-    @Enumerated(EnumType.STRING)
-    private NotyType type;
+    private String redirectUrl;
+
+    private String senderName;
+
+    private String groupName;
 }

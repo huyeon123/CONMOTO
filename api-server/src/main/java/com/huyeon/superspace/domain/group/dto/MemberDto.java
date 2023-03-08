@@ -19,18 +19,21 @@ public class MemberDto {
 
     private String role;
 
+    private String grade;
+
     private int postCount;
 
     private int commentCount;
 
     private String joinDate;
 
-    public MemberDto(Member member) {
-        id = member.getGroup().getId();
+    public MemberDto(Member member, String grade) {
+        id = member.getId();
         email = member.getUserEmail();
         nickname = member.getNickname();
-        groupUrl = member.getGroup().getUrl();
+        groupUrl = member.getGroupUrl();
         role = member.getRole();
+        this.grade = grade;
         postCount = member.getPostCount();
         commentCount = member.getCommentCount();
         joinDate = member.getCreatedAt().toLocalDate().toString();

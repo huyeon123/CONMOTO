@@ -16,31 +16,11 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/workspace")
+@RequestMapping("/api/community")
 @RequiredArgsConstructor
 public class GroupController {
 
     private final NewGroupService groupService;
-
-    @GetMapping("/find")
-    public String getGroupPage(@RequestHeader("X-Authorization-Id") String userEmail) {
-        if (hasAnyGroupPage(userEmail)) {
-            return redirectFirstGroup(userEmail);
-        }
-        return "/workspace";
-    }
-
-    private boolean hasAnyGroupPage(String userEmail) {
-        return !groupService.getMyGroups(userEmail).isEmpty();
-    }
-
-    private String redirectFirstGroup(String userEmail) {
-        return "/workspace/" + firstGroupUrl(userEmail);
-    }
-
-    private String firstGroupUrl(String userEmail) {
-        return groupService.getMyGroups(userEmail).get(0).getUrl();
-    }
 
     @NotGroupPage
     @GetMapping
@@ -55,8 +35,8 @@ public class GroupController {
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
 
-        String groupName = groupService.findGroupByUrl(groupUrl).getName();
-        response.put("title", groupName);
+        GroupDto group = groupService.getGroupByUrl(groupUrl);
+        response.put("group", group);
 
         return response;
     }
@@ -75,7 +55,7 @@ public class GroupController {
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
 
-        GroupDto group = groupService.findGroupByUrl(groupUrl);
+        GroupDto group = groupService.getGroupByUrl(groupUrl);
         response.put("groupInfo", group);
 
         return response;
@@ -89,22 +69,31 @@ public class GroupController {
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
 
-        GroupDto group = groupService.findGroupByUrl(groupUrl);
-        response.put("groupName", group.getName());
+        GroupDto group = groupService.getGroupByUrl(groupUrl);
 
         List<MemberDto> members = getMembers(group);
         response.put("members", members);
 
-        response.put("availableAuth", getAvailableAuthority());
+        return response;
+    }
+
+    @GroupPage
+    @GetMapping("/{groupUrl}/members/{memberId}")
+    public Map<String, Object> memberPage(
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @PathVariable String groupUrl,
+            @PathVariable String memberId
+    ) {
+        Map<String, Object> response = new HashMap<>();
+
+        MemberDto member = groupService.getMemberById(memberId);
+        response.put("member", member);
+
         return response;
     }
 
     private List<MemberDto> getMembers(GroupDto group) {
-        return groupService.findMembersById(group.getId());
-    }
-
-    private List<String> getAvailableAuthority() {
-        return List.of("일반 멤버", "그룹 관리자");
+        return groupService.getMembersById(group.getUrl());
     }
 
     @GroupPage
@@ -115,7 +104,7 @@ public class GroupController {
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
 
-        String groupName = groupService.findGroupByUrl(groupUrl).getName();
+        String groupName = groupService.getGroupByUrl(groupUrl).getName();
 
         response.put("groupName", groupName);
         response.put("status", "success");

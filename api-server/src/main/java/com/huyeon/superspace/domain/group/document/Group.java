@@ -29,6 +29,10 @@ public class Group extends DocumentAudit {
 
     private Set<String> managers;
 
+    private boolean open;
+
+    private boolean autoJoin;
+
     public Group(GroupDto dto) {
         id = dto.getId();
         name = dto.getName();

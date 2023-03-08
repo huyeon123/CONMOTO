@@ -39,8 +39,9 @@ public class SideBarAndHeaderAop {
         Object[] args = joinPoint.getArgs();
         String userEmail = (String) args[USER_EMAIL];
 
-        Map<String, Object> blankHeaderAndSideBar = sideBarAndHeaderService.getBlankHeaderAndSideBar(userEmail);
+        Map<String, Object> blankHeaderAndSideBar = sideBarAndHeaderService.getHeaderAndSideBar(userEmail, null);
 
+        returnValue.put("groupPage", false);
         returnValue.putAll(blankHeaderAndSideBar);
     }
 
@@ -54,6 +55,7 @@ public class SideBarAndHeaderAop {
 
         Map<String, Object> headerAndSideBar = sideBarAndHeaderService.getHeaderAndSideBar(userEmail, groupUrl);
 
+        returnValue.put("groupPage", true);
         returnValue.putAll(headerAndSideBar);
     }
 

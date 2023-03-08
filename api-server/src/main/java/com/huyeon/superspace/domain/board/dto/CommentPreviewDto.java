@@ -26,7 +26,7 @@ public class CommentPreviewDto {
         boardTitle = board.getTitle();
         body = comment.getBody();
         tag = comment.getTag();
-        url = "/workspace/" + board.getGroupUrl() + "/board/" + board.getId();
+        url = "/community/" + board.getGroupUrl() + "/board/" + board.getId();
         lastUpdate = comment.getUpdatedAt();
     }
 }

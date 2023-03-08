@@ -28,8 +28,28 @@ public class ReceivedNoty extends AuditEntity implements Auditable {
 
     private boolean isRead;
 
-    public boolean isUnread() {
-        return !isRead;
+    public NotyType getType() {
+        return noty.getType();
+    }
+
+    public String getTitle() {
+        return noty.getTitle();
+    }
+
+    public String getBody() {
+        return noty.getBody();
+    }
+
+    public String getPayload() {
+        return noty.getPayload();
+    }
+
+    public String getUrl() {
+        return noty.getRedirectUrl();
+    }
+
+    public String getGroupName() {
+        return noty.getGroupName();
     }
 
     public String getSenderName() {
@@ -40,19 +60,7 @@ public class ReceivedNoty extends AuditEntity implements Auditable {
         return noty.getCreatedAt();
     }
 
-    public String getMessage() {
-        return noty.getMessage();
-    }
-
-    public String getUrl() {
-        return noty.getRedirectUrl();
-    }
-
-    public NotyType getType() {
-        return noty.getType();
-    }
-
-    public String getPayload() {
-        return noty.getPayload();
+    public boolean isUnread() {
+        return !isRead;
     }
 }
