@@ -2,20 +2,25 @@ package com.huyeon.superspace.domain.board.service;
 
 import com.huyeon.superspace.domain.board.document.Board;
 import com.huyeon.superspace.domain.board.document.Comment;
+import com.huyeon.superspace.domain.board.dto.BoardDto;
 import com.huyeon.superspace.domain.board.dto.CommentDto;
 import com.huyeon.superspace.domain.board.dto.CommentPreviewDto;
 import com.huyeon.superspace.domain.board.repository.NewBoardRepository;
 import com.huyeon.superspace.domain.board.repository.NewCommentRepository;
-import com.huyeon.superspace.global.exception.PermissionDeniedException;
+import com.huyeon.superspace.domain.group.document.Member;
 import com.huyeon.superspace.domain.group.repository.NewMemberRepository;
+import com.huyeon.superspace.domain.noty.dto.NotyPayloadDto;
+import com.huyeon.superspace.domain.noty.entity.NotyType;
+import com.huyeon.superspace.domain.noty.service.NotyUtils;
+import com.huyeon.superspace.global.exception.PermissionDeniedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -26,6 +31,7 @@ public class NewCommentService {
     private final NewCommentRepository commentRepository;
     private final NewMemberRepository memberRepository;
     private final NewBoardRepository boardRepository;
+    private final NotyUtils notyUtils;
 
     public List<CommentDto> getCommentInBoard(String groupUrl, String userEmail, Long key, int page) {
         List<Comment> comments = commentRepository.findAllByBoardIdOrderByCreatedAt(key, PageRequest.of(page, 10));
@@ -65,10 +71,38 @@ public class NewCommentService {
                 PageRequest.of(page, 50));
     }
 
-    public String createComment(String userEmail, CommentDto request) {
+    public List<BoardDto> getNextCommentedPosts(String memberId, Long lastIndex, int page) {
+        Member member = memberRepository.findById(memberId).orElseThrow();
+        List<Comment> next = findNextComments(member.getUserEmail(), member.getGroupUrl(), lastIndex, page);
+
+        return next.stream()
+                .map(comment -> {
+                    Board board = boardRepository.findById(comment.getBoardId()).orElseThrow();
+                    return new BoardDto(board);
+                })
+                .collect(Collectors.toList());
+    }
+
+    public Long createComment(String userEmail, CommentDto request) {
         Comment comment = new Comment(request);
         comment.setAuthor(userEmail);
-        return commentRepository.save(comment).getId();
+        Long id = commentRepository.save(comment).getId();
+
+        if (userEmail.equals(comment.getAuthor())) {
+            return id;
+        }
+
+        CompletableFuture.runAsync(() -> {
+            NotyPayloadDto payload = NotyPayloadDto.builder()
+                    .type(NotyType.BOARD_NEW_COMMENT)
+                    .groupUrl(comment.getGroupUrl())
+                    .comment(new CommentDto(comment))
+                    .build();
+
+            notyUtils.publishNoty(payload);
+        });
+
+        return id;
     }
 
     public Long editComment(String userEmail, CommentDto request) {
