@@ -2,18 +2,20 @@ package com.huyeon.superspace.domain.board.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.huyeon.superspace.domain.board.document.Board;
+import com.huyeon.superspace.domain.board.dto.ContentDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class BoardDto {
-    private String id;
+    private Long id;
 
     private String author;
 
@@ -23,6 +25,8 @@ public class BoardDto {
 
     private String groupUrl;
 
+    private String categoryId;
+
     private String categoryName;
 
     private String status;
@@ -31,8 +35,7 @@ public class BoardDto {
 
     private ContentDto content;
 
-    @JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-    private LocalDateTime lastUpdate;
+    private String lastUpdate;
 
     private String url;
 
@@ -42,11 +45,13 @@ public class BoardDto {
         title = board.getTitle();
         description = board.getDescription();
         groupUrl = board.getGroupUrl();
+        categoryId = board.getCategoryId();
         categoryName = board.getCategoryName();
         status = board.getStatus();
         tags = board.getTags();
-        lastUpdate = board.getUpdatedAt();
-        url = "/workspace/" + groupUrl + "/board/" + id;
+        lastUpdate = board.getUpdatedAt()
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        url = "/community/" + groupUrl + "/board/" + id;
 
         if (Objects.nonNull(board.getContent())) {
             content = new ContentDto(board.getContent());
