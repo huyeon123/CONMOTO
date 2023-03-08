@@ -21,12 +21,25 @@ public class UserApiController {
     }
 
     //회원정보 수정
-    @PutMapping("/edit")
-    public ResponseEntity<?> editInfo(
+    @PutMapping("/edit/name")
+    public EditRes editName(
             @RequestHeader("X-Authorization-Id") String userEmail,
             @RequestBody UserUpdateDto editUser) {
-        userService.editInfo(userEmail, editUser);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return userService.editName(userEmail, editUser);
+    }
+
+    @PutMapping("/edit/birthday")
+    public void editBirthday(
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @RequestBody UserUpdateDto editUser) {
+        userService.editBirthday(userEmail, editUser);
+    }
+
+    @PutMapping("/edit/password")
+    public EditRes editPassword(
+            @RequestHeader("X-Authorization-Id") String userEmail,
+            @RequestBody UserUpdateDto editUser) {
+        return userService.editPassword(userEmail, editUser);
     }
 
     //회원탈퇴
