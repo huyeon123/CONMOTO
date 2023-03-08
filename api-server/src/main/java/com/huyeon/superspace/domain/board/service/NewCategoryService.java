@@ -78,7 +78,6 @@ public class NewCategoryService {
         for (CategoryDto category : categories) {
             if (categoryIdList.contains(category.getId())) {
                 category.setFavorite(true);
-                category.setName("└" + category.getName());
             }
         }
     }
