@@ -3,7 +3,7 @@ package com.huyeon.superspace.domain.user.controller;
 import com.huyeon.superspace.domain.user.dto.EditRes;
 import com.huyeon.superspace.domain.user.dto.UserUpdateDto;
 import com.huyeon.superspace.domain.user.service.UserService;
-import com.huyeon.superspace.web.domain.user.dto.UserDto;
+import com.huyeon.superspace.domain.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

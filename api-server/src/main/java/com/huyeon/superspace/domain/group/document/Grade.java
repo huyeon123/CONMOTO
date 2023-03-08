@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,10 +27,21 @@ public class Grade extends DocumentAudit {
     @Field("level_list")
     private List<Level> levelList;
 
-    public Grade(String id, String groupUrl) {
-        this.id = id;
+    public Grade(String groupUrl) {
         this.groupUrl = groupUrl;
         this.levelList = new ArrayList<>();
+        addDefaultLevel();
+    }
+
+    private void addDefaultLevel() {
+        Level[] levels = new Level[]{
+                new Level(0, "Largo", "이제 활동을 시작하는 단계"),
+                new Level(0, "Moderato", "활동에 적응한 단계"),
+                new Level(0, "Allegretto", "활동에 여유가 생긴 단계"),
+                new Level(0, "Presto", "활동에 중독된 단계")
+        };
+
+        levelList.addAll(Arrays.asList(levels));
     }
 
     public Grade(GradeDto dto) {
@@ -46,10 +58,6 @@ public class Grade extends DocumentAudit {
 
     public String getLevelName(int level) {
         return getLevel(level).getGradeName();
-    }
-
-    public void setLevel(Level level) {
-        levelList.set(level.getLevel(), level);
     }
 
     @Getter
@@ -76,6 +84,12 @@ public class Grade extends DocumentAudit {
             this.postCondition = dto.getPostCondition();
             this.commentCondition = dto.getCommentCondition();
             this.durationCondition = dto.getDurationCondition();
+        }
+
+        public Level(int level, String gradeName, String gradeDescription) {
+            this.level = level;
+            this.gradeName = gradeName;
+            this.gradeDescription = gradeDescription;
         }
     }
 }

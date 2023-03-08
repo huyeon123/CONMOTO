@@ -28,6 +28,12 @@ public class GroupController {
         return new HashMap<>();
     }
 
+    @NotGroupPage
+    @GetMapping("/noty")
+    public Map<String, Object> myNoty(@RequestHeader("X-Authorization-Id") String userEmail) {
+        return new HashMap<>();
+    }
+
     @GroupPage
     @GetMapping("/{groupUrl}")
     public Map<String, Object> workSpacePage(

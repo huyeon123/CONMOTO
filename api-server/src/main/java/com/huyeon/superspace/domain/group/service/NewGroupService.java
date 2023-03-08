@@ -62,7 +62,7 @@ public class NewGroupService {
     public String createGroup(String userEmail, CreateDto request) {
         Group newGroup = new Group(userEmail, request);
 
-        //URL 중복 검사 및 구분자 추가
+        //URL 중복 검사
         if (existsByUrl(newGroup.getUrl())) {
             throw new BadRequestException("중복된 그룹 URL 입니다.");
         }
@@ -71,6 +71,12 @@ public class NewGroupService {
         setMemberNum(newGroup, 1);
         registerAsManager(userEmail, newGroup);
         Group group = groupRepository.save(newGroup);
+
+        //공지사항 카테고리 생성
+        categoryService.createNotice(group.getUrl(), group.getName());
+
+        //등급 생성
+        saveDefaultGradeInfo(group.getUrl());
 
         //유저 그룹정보에 새 그룹역할 추가
         registerMyNewGroup(group, userEmail, request.getNickname(), "그룹 소유자");
@@ -99,17 +105,10 @@ public class NewGroupService {
                 .userEmail(userEmail)
                 .nickname(nickname)
                 .role(role)
+                .gradeLevel(3)
                 .build();
 
         memberRepository.save(member);
-    }
-
-    public List<GroupDto> getMyGroups(String userEmail) {
-        List<Member> groups = findAllByUserEmail(userEmail);
-
-        return groups.stream()
-                .map(group -> getGroupByUrl(group.getGroupUrl()))
-                .collect(Collectors.toList());
     }
 
     public List<Member> findAllByUserEmail(String userEmail) {
@@ -352,6 +351,10 @@ public class NewGroupService {
         gradeRepository.save(new Grade(request));
     }
 
+    private void saveDefaultGradeInfo(String groupUrl) {
+        gradeRepository.save(new Grade(groupUrl));
+    }
+
     public JoinRequestDto getJoinRequestList(String groupUrl) {
         JoinRequest joinRequest = joinRequestRepository.findByGroupUrl(groupUrl)
                 .orElse(new JoinRequest(groupUrl));
@@ -364,9 +367,7 @@ public class NewGroupService {
         member.setGradeLevel(level);
         memberRepository.save(member);
 
-        CompletableFuture.runAsync(() -> {
-            createGradeChangePayload(member, level);
-        });
+        CompletableFuture.runAsync(() -> createGradeChangePayload(member, level));
     }
 
     private void createGradeChangePayload(Member member, int level) {

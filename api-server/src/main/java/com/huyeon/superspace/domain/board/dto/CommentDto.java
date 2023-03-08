@@ -17,6 +17,7 @@ public class CommentDto {
     private String groupUrl;
     private Long boardId;
     private String author;
+    private String nickname;
     private String body;
     private String tag;
 
@@ -26,23 +27,24 @@ public class CommentDto {
     private LocalDateTime lastUpdate;
 
     public CommentDto(Comment comment, String nickname, boolean mine) {
-        id = comment.getId();
-        groupUrl = comment.getGroupUrl();
-        boardId = comment.getBoardId();
-        author = nickname;
-        body = comment.getBody();
-        tag = comment.getTag();
-        lastUpdate = comment.getUpdatedAt();
+        this.id = comment.getId();
+        this.groupUrl = comment.getGroupUrl();
+        this.boardId = comment.getBoardId();
+        this.author = comment.getAuthor();
+        this.nickname = nickname;
+        this.body = comment.getBody();
+        this.tag = comment.getTag();
+        this.lastUpdate = comment.getUpdatedAt();
         this.mine = mine;
     }
 
     public CommentDto(Comment comment) {
-        id = comment.getId();
-        groupUrl = comment.getGroupUrl();
-        boardId = comment.getBoardId();
-        author = comment.getAuthor();
-        body = comment.getBody();
-        tag = comment.getTag();
-        lastUpdate = comment.getUpdatedAt();
+        this.id = comment.getId();
+        this.groupUrl = comment.getGroupUrl();
+        this.boardId = comment.getBoardId();
+        this.author = comment.getAuthor();
+        this.body = comment.getBody();
+        this.tag = comment.getTag();
+        this.lastUpdate = comment.getUpdatedAt();
     }
 }

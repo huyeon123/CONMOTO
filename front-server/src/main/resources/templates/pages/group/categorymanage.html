@@ -34,6 +34,7 @@
                 </div>
                 <ul id="sortable">
                     <li th:each="category: ${categories}"
+                        th:unless="${category.type} == 'NOTICE'"
                         th:class="${category.type} == 'CATEGORY_GROUP' ? 'category-group' : 'category-item'"
                         th:attr="
                         data-category-type=${category.type},

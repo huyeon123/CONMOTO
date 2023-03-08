@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class CommentPreviewDto {
+    private Long id;
+
     private String boardTitle;
 
     private String body;
@@ -23,6 +25,7 @@ public class CommentPreviewDto {
     private LocalDateTime lastUpdate;
 
     public CommentPreviewDto(Comment comment, Board board) {
+        id = comment.getId();
         boardTitle = board.getTitle();
         body = comment.getBody();
         tag = comment.getTag();

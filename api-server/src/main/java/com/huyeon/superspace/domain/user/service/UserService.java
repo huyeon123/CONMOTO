@@ -6,7 +6,7 @@ import com.huyeon.superspace.domain.user.entity.User;
 import com.huyeon.superspace.domain.user.entity.UserHistory;
 import com.huyeon.superspace.domain.user.repository.UserHistoryRepo;
 import com.huyeon.superspace.domain.user.repository.UserRepository;
-import com.huyeon.superspace.web.domain.user.dto.UserDto;
+import com.huyeon.superspace.domain.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
