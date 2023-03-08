@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ContentUpdateDto {
-    private String boardId;
+    private Long boardId;
     private String markdown;
 }
