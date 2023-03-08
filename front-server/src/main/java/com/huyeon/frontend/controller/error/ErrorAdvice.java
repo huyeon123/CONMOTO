@@ -31,7 +31,7 @@ public class ErrorAdvice {
         model.addAttribute("title", "401 Unauthorized");
         model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.value());
         model.addAttribute("message", "로그인이 필요한 페이지입니다.");
-        return "error/ClientError";
+        return "pages/home/login";
     }
     
     @ExceptionHandler(ForbiddenException.class)
