@@ -23,7 +23,7 @@ public class GroupRestController {
 
     @GetMapping("/{url}")
     public GroupDto getGroup(@PathVariable String url) {
-        return groupService.findGroupByUrl(url);
+        return groupService.getGroupByUrl(url);
     }
 
     @PostMapping
