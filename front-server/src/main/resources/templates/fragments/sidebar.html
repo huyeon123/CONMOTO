@@ -114,7 +114,7 @@
                                             <span th:text="${category.name}">카테고리 그룹 명</span>
                                             <i class="js-category-expand material-icons-outlined md-18 gray">expand_more</i>
                                         </div>
-                                        <div th:if="${category.indent}">
+                                        <div th:if="${category.indent}" style="width: 100%">
                                             <span>└</span>
                                             <span th:id="${category.id}" th:if="${category.type == 'BASIC'}"
                                                   th:utext="${category.name}" class="js-category-name"
