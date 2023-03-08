@@ -14,18 +14,14 @@ import com.huyeon.superspace.domain.group.repository.NewGroupRepository;
 import com.huyeon.superspace.domain.board.service.NewBoardService;
 import com.huyeon.superspace.domain.board.service.NewCategoryService;
 import com.huyeon.superspace.domain.group.repository.NewMemberRepository;
-import com.huyeon.superspace.domain.noty.entity.Noty;
-import com.huyeon.superspace.domain.noty.entity.NotyType;
-import com.huyeon.superspace.domain.noty.entity.ReceivedNoty;
-import com.huyeon.superspace.global.dto.NotyEventDto;
-import com.huyeon.superspace.global.model.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,7 +34,7 @@ public class NewGroupService {
     private final NewMemberRepository memberRepository;
     private final NewCategoryService categoryService;
     private final NewBoardService boardService;
-    private final ApplicationEventPublisher eventPublisher;
+    private final NotyUtils notyUtils;
 
     public GroupDto getGroupByUrl(String url) {
         return groupRepository.findByUrl(url)
@@ -203,6 +199,17 @@ public class NewGroupService {
         deleteMemberInGroup(group.getId(), userEmail);
 
         //TODO: 탈퇴한 멤버가 작성한 게시글/댓글 작성자를 '탈퇴한 멤버'로 바꾸기
+
+        CompletableFuture.runAsync(() -> {
+            NotyPayloadDto payload = NotyPayloadDto.builder()
+                    .type(NotyType.GROUP_EXPEL)
+                    .group(group)
+                    .data(request.getReason())
+                    .receiverEmail(request.getEmail())
+                    .build();
+
+            notyUtils.publishNoty(payload);
+        });
     }
 
     private void checkManagerRole(GroupDto group, String userEmail) {
@@ -224,25 +231,15 @@ public class NewGroupService {
     public void inviteMember(String groupUrl, String requester, String inviter) {
         GroupDto group = getGroupByUrl(groupUrl);
 
-        Noty inviteNoty = Noty.builder()
-                .senderName(group.getName())
-                .message("그룹에 초대합니다!\n그룹 설명: " + group.getDescription())
-                .type(NotyType.GROUP_INVITE)
-                .redirectUrl(group.getUrl())
-                .payload(group.getId())
-                .build();
+        CompletableFuture.runAsync(() -> {
+            NotyPayloadDto payload = NotyPayloadDto.builder()
+                    .type(NotyType.GROUP_INVITE)
+                    .group(group)
+                    .requesterEmail(requester)
+                    .receiverEmail(inviter).build();
 
-        ReceivedNoty receivedNoty = ReceivedNoty.builder()
-                .userEmail(userEmail)
-                .noty(inviteNoty)
-                .build();
-
-        NotyEventDto notyEventDto = NotyEventDto.builder()
-                .noty(inviteNoty)
-                .receivers(List.of(receivedNoty))
-                .build();
-
-        EventPublisher.publishEvent(eventPublisher, notyEventDto);
+            notyUtils.publishNoty(payload);
+        });
     }
 
     public void joinMember(String userEmail, JoinDto request) {
