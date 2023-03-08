@@ -20,7 +20,7 @@ public class BoardReadController {
     private final NewBoardService boardService;
 
     @GetMapping("/{id}")
-    public BoardDto getBoard(@PathVariable String id) {
+    public BoardDto getBoard(@PathVariable Long id) {
         return boardService.getBoard(id);
     }
 
@@ -56,7 +56,7 @@ public class BoardReadController {
     @GetMapping("/temp/{id}")
     public TempPost getTempPost(
             @RequestHeader("X-Authorization-Id") String email,
-            @PathVariable String id
+            @PathVariable Long id
     ) {
         TempPost tempPost = boardService.findTempPostById(id);
         if (tempPost.getAuthor().equals(email)) {

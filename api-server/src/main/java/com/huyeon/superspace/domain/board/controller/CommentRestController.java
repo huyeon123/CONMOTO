@@ -26,7 +26,7 @@ public class CommentRestController {
     }
 
     @PostMapping
-    public String createComment(
+    public Long createComment(
             @RequestHeader("X-Authorization-Id") String userEmail,
             @RequestBody CommentDto request
     ) {
@@ -36,7 +36,7 @@ public class CommentRestController {
     }
 
     @PutMapping
-    public String editComment(
+    public Long editComment(
             @RequestHeader("X-Authorization-Id") String userEmail,
             @RequestBody CommentDto request
     ) {
@@ -44,7 +44,7 @@ public class CommentRestController {
     }
 
     @DeleteMapping("/{id}")
-    public void removeComment(@PathVariable String id) {
+    public void removeComment(@PathVariable Long id) {
         commentService.removeComment(id);
     }
 }

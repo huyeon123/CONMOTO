@@ -22,7 +22,7 @@ public class BoardWriteController {
 
     @PostMapping("/{groupUrl}/new")
     @ResponseStatus(HttpStatus.CREATED)
-    public String createBoard(
+    public Long createBoard(
             @PathVariable String groupUrl,
             @RequestHeader("X-Authorization-Id") String userEmail,
             @RequestBody BoardDto request
@@ -34,7 +34,7 @@ public class BoardWriteController {
 
     @PostMapping("/{groupUrl}/temp")
     @ResponseStatus(HttpStatus.CREATED)
-    public String temporallySave(
+    public Long temporallySave(
             @PathVariable String groupUrl,
             @RequestHeader("X-Authorization-Id") String userEmail,
             @RequestBody BoardDto request
@@ -51,7 +51,7 @@ public class BoardWriteController {
     }
 
     @PutMapping("/edit/title")
-    public String updateTitle(
+    public Long updateTitle(
             @RequestBody BoardDto request,
             @RequestHeader("X-Authorization-Id") String userEmail
     ) {
@@ -61,7 +61,7 @@ public class BoardWriteController {
     }
 
     @PutMapping("/edit/description")
-    public String updateDescription(
+    public Long updateDescription(
             @RequestBody BoardDto request,
             @RequestHeader("X-Authorization-Id") String userEmail
     ) {
@@ -71,7 +71,7 @@ public class BoardWriteController {
     }
 
     @PutMapping("/edit/category")
-    public String updateCategory(
+    public Long updateCategory(
             @RequestBody BoardDto request,
             @RequestHeader("X-Authorization-Id") String userEmail
     ) {
@@ -81,7 +81,7 @@ public class BoardWriteController {
     }
 
     @PutMapping("/edit/status")
-    public String updateStatus(
+    public Long updateStatus(
             @RequestBody BoardDto request,
             @RequestHeader("X-Authorization-Id") String userEmail
     ) {
@@ -91,7 +91,7 @@ public class BoardWriteController {
     }
 
     @PutMapping("/edit/tags")
-    public String updateTags(
+    public Long updateTags(
             @RequestBody BoardDto request,
             @RequestHeader("X-Authorization-Id") String userEmail
     ) {
@@ -112,7 +112,7 @@ public class BoardWriteController {
 
     @DeleteMapping("/{id}")
     public void deleteBoard(
-            @PathVariable String id,
+            @PathVariable Long id,
             @RequestHeader("X-Authorization-Id") String userEmail
     ) {
         checkUpdatePermission(id, userEmail, "게시글 삭제 권한이 없습니다.");
