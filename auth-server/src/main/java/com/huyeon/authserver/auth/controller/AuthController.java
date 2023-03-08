@@ -32,7 +32,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private static final String REFRESH_KEY_NAME = "Super-Space-Refresh";
+    private static final String REFRESH_KEY_NAME = "CONMOTO_JWT";
     private final AuthService authService;
     private final EmailService loginCodeEmailService;
 
