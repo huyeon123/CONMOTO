@@ -1,5 +1,6 @@
 package com.huyeon.superspace.domain.user.service;
 
+import com.huyeon.superspace.domain.user.dto.EditRes;
 import com.huyeon.superspace.domain.user.dto.UserUpdateDto;
 import com.huyeon.superspace.domain.user.entity.User;
 import com.huyeon.superspace.domain.user.entity.UserHistory;
@@ -8,6 +9,7 @@ import com.huyeon.superspace.domain.user.repository.UserRepository;
 import com.huyeon.superspace.web.domain.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +25,19 @@ import java.util.Objects;
 public class UserService {
     private final UserRepository userRepository;
     private final UserHistoryRepo userHistoryRepo;
+    private final StringRedisTemplate redisTemplate;
     private final PasswordEncoder passwordEncoder;
 
     public UserDto getUser(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow();
-        return new UserDto(user);
+        return new UserDto(findUser(email));
+    }
+
+    private User findUser(String email) {
+        return userRepository.findByEmail(email).orElseThrow();
+    }
+
+    private User save(User user) {
+        return userRepository.save(user);
     }
 
     public void editInfo(String email, UserUpdateDto editUser) {
@@ -43,21 +53,19 @@ public class UserService {
     }
 
     public void resign(String email) {
-        userRepository.findByEmail(email).ifPresent(user -> {
-            //user.setEnabled(false); => expire date가 지나면 DB에 의해 레코드가 삭제되므로 설정필요 없음. 설정하면 탈퇴 취소가 불가능.
-            user.setExpireDate(LocalDate.now().plusDays(15));
-            userRepository.save(user);
-        });
+        User user = findUser(email);
+        user.setExpireDate(LocalDate.now().plusDays(15));
+        save(user);
     }
 
     public void cancelResign(String email) {
-        userRepository.findByEmail(email).ifPresent(user -> {
-            if (user.getExpireDate() != null) {
-                user.setEnabled(true);
-                user.setExpireDate(null);
-                userRepository.save(user);
-            }
-        });
+        User user = findUser(email);
+
+        if (Objects.isNull(user.getExpireDate())) return;
+
+        user.setEnabled(true);
+        user.setExpireDate(null);
+        userRepository.save(user);
     }
 
     public List<UserHistory> myInfoHistory(String email) {
