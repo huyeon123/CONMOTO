@@ -37,16 +37,29 @@ public class NewBoardService {
         return new BoardDto(board);
     }
 
-    public String createBoard(String userEmail, BoardDto request) {
     private Board findBoard(Long id) {
         return boardRepository.findById(id).orElseThrow();
     }
+
+    public Long createBoard(String userEmail, BoardDto request) {
         String contentId = contentRepository.save(new Content(request.getContent())).getId();
         request.getContent().setId(contentId);
 
         Board board = new Board(request);
         board.setAuthor(userEmail);
-        return boardRepository.save(board).getId();
+        Long id = boardRepository.save(board).getId();
+
+        CompletableFuture.runAsync(() -> {
+            NotyPayloadDto payload = NotyPayloadDto.builder()
+                    .type(NotyType.NOTICE)
+                    .groupUrl(board.getGroupUrl())
+                    .board(request)
+                    .build();
+
+            notyUtils.publishNoty(payload);
+        }).thenAcceptAsync((v) -> log.info("[공지사항 알림 발송 완료]"));
+
+        return id;
     }
 
     public String saveBoard(BoardDto request, String target) {
