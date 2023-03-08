@@ -41,19 +41,19 @@ public class CategoryController {
 
     @GroupPage
     @ManagerPage
-    @GetMapping("/category")
+    @GetMapping("/manage/category")
     public Map<String, Object> manageCategoryPage(
             @RequestHeader("X-Authorization-Id") String userEmail,
             @PathVariable String groupUrl
     ) {
         Map<String, Object> response = new HashMap<>();
-        response.put("topCategories", getCategoryTree(userEmail, groupUrl));
+        response.put("categories", getCategoryList(groupUrl));
 
         return response;
     }
 
-    private List<CategoryDto> getCategoryTree(String email, String groupUrl) {
-        return categoryService.getCategoryTree(email, groupUrl);
+    private List<CategoryDto> getCategoryList(String groupUrl) {
+        return categoryService.getCategoryListByUrl(groupUrl);
     }
 
     @GroupPage
@@ -64,13 +64,9 @@ public class CategoryController {
             @PathVariable String categoryName
     ) {
         Map<String, Object> response = new HashMap<>();
-
-        //TODO: 존재하지 않는 CategoryName이면 400에러
-
-        List<BoardDto> boards = boardService.getNext10LatestInCategory(categoryName, 0);
-
-        response.put("categoryName", categoryName);
-        response.put("boards", boards);
+        categoryName = categoryName.replace("_", " ");
+        CategoryDto category = categoryService.getCategoryByName(groupUrl, categoryName);
+        response.put("category", category);
         return response;
     }
 }
