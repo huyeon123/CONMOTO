@@ -1,9 +1,6 @@
 package com.huyeon.superspace.domain.group.controller;
 
-import com.huyeon.superspace.domain.group.dto.CreateDto;
-import com.huyeon.superspace.domain.group.dto.JoinDto;
-import com.huyeon.superspace.domain.group.dto.MemberDto;
-import com.huyeon.superspace.domain.group.dto.GroupDto;
+import com.huyeon.superspace.domain.group.dto.*;
 import com.huyeon.superspace.domain.group.service.NewGroupService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -85,6 +82,27 @@ public class GroupRestController {
         groupService.resignGroup(url, userEmail);
     }
 
+    @GetMapping("/grade")
+    public GradeDto getGroupGrade(@RequestParam String url) {
+        return groupService.getGroupGrade(url);
+    }
+
+    @PostMapping("/grade")
+    public void saveGradeInfo(
+            @RequestBody GradeDto request,
+            @RequestHeader("X-Authorization-Id") String userEmail
+    ) {
+        groupService.saveGradeInfo(request);
+    }
+
+    @PutMapping("/member/grade")
+    public void adjustMemberGrade(
+            @RequestParam String memberId,
+            @RequestParam int level
+    ) {
+        //TODO: Permission Check
+        groupService.adjustMemberGrade(memberId, level);
+    }
 
     @Getter
     @Setter
