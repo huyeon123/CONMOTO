@@ -10,25 +10,26 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface NewBoardRepository extends MongoRepository<Board, String> {
-    @Query(value = "{groupUrl: ?0, updatedAt: {$lt: ?1}}", sort = "{updatedAt: -1}")
+public interface NewBoardRepository extends MongoRepository<Board, Long> {
+    @Query(value = "{id: {$lt: ?1}, groupUrl: ?0}", sort = "{id: -1}")
     List<Board> findNextLatestInGroup(
             String groupId,
-            LocalDateTime now,
+            Long lastIndex,
             Pageable pageable
     );
 
-    @Query(value = "{categoryName: ?0, updatedAt: {$lt: ?1}}", sort = "{updatedAt: -1}")
+    @Query(value = "{id: {$lt: ?1}, categoryId: ?0}", sort = "{id: -1}")
     List<Board> findNextLatestInCategory(
             String categoryId,
-            LocalDateTime now,
+            Long lastIndex,
             Pageable pageable
     );
 
-    @Query(value = "{author: ?0, updatedAt: {$lt: ?1}}", sort = "{updatedAt: -1}")
+    @Query(value = "{id: {$lt: ?2}, author: ?0, groupUrl: ?1}", sort = "{id: -1}")
     List<Board> findNextLatestInUser(
             String email,
-            LocalDateTime now,
+            String groupUrl,
+            Long lastIndex,
             Pageable pageable
     );
 

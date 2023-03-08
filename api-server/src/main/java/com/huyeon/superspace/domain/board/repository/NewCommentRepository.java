@@ -13,8 +13,12 @@ import java.util.List;
 public interface NewCommentRepository extends MongoRepository<Comment, String> {
     List<Comment> findAllByBoardIdOrderByCreatedAt(String boardId, Pageable pageable);
 
-    @Query(value = "{author: ?0, updatedAt: {$lt: ?1}}", sort = "{updatedAt: -1}")
-    List<Comment> findNextByUserEmail(String userEmail, LocalDateTime now, Pageable pageable);
+    @Query(value = "{id: {$lt: ?2}, author: ?0, groupUrl: ?1}", sort = "{id: -1}")
+    List<Comment> findNextByUserEmail(
+            String userEmail,
+            String groupUrl,
+            Long lastIndex,
+            Pageable pageable);
 
     void deleteAllByBoardId(String boardId);
 }
