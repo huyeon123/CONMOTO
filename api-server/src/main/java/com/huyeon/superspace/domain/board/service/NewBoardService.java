@@ -32,12 +32,15 @@ public class NewBoardService {
     private final NewCommentRepository commentRepository;
     private final TempPostRepository tempPostRepository;
 
-    public BoardDto getBoard(String id) {
-        Optional<Board> optional = boardRepository.findById(id);
-        return optional.map(BoardDto::new).orElseThrow();
+    public BoardDto getBoard(Long id) {
+        Board board = findBoard(id);
+        return new BoardDto(board);
     }
 
     public String createBoard(String userEmail, BoardDto request) {
+    private Board findBoard(Long id) {
+        return boardRepository.findById(id).orElseThrow();
+    }
         String contentId = contentRepository.save(new Content(request.getContent())).getId();
         request.getContent().setId(contentId);
 
