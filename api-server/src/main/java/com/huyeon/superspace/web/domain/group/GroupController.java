@@ -35,8 +35,8 @@ public class GroupController {
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
 
-        String groupName = groupService.findGroupByUrl(groupUrl).getName();
-        response.put("title", groupName);
+        GroupDto group = groupService.getGroupByUrl(groupUrl);
+        response.put("group", group);
 
         return response;
     }
@@ -55,7 +55,7 @@ public class GroupController {
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
 
-        GroupDto group = groupService.findGroupByUrl(groupUrl);
+        GroupDto group = groupService.getGroupByUrl(groupUrl);
         response.put("groupInfo", group);
 
         return response;
@@ -69,22 +69,16 @@ public class GroupController {
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
 
-        GroupDto group = groupService.findGroupByUrl(groupUrl);
-        response.put("groupName", group.getName());
+        GroupDto group = groupService.getGroupByUrl(groupUrl);
 
         List<MemberDto> members = getMembers(group);
         response.put("members", members);
 
-        response.put("availableAuth", getAvailableAuthority());
         return response;
     }
 
-    private List<MemberDto> getMembers(GroupDto group) {
-        return groupService.findMembersById(group.getId());
     }
 
-    private List<String> getAvailableAuthority() {
-        return List.of("일반 멤버", "그룹 관리자");
     }
 
     @GroupPage
@@ -95,7 +89,7 @@ public class GroupController {
             @PathVariable String groupUrl) {
         Map<String, Object> response = new HashMap<>();
 
-        String groupName = groupService.findGroupByUrl(groupUrl).getName();
+        String groupName = groupService.getGroupByUrl(groupUrl).getName();
 
         response.put("groupName", groupName);
         response.put("status", "success");
