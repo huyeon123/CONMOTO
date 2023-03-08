@@ -1,8 +1,6 @@
 package com.huyeon.superspace.web.domain.board;
 
-import com.huyeon.superspace.domain.board.dto.BoardDto;
 import com.huyeon.superspace.domain.board.dto.CategoryDto;
-import com.huyeon.superspace.domain.board.service.NewBoardService;
 import com.huyeon.superspace.domain.board.service.NewCategoryService;
 import com.huyeon.superspace.web.annotation.GroupPage;
 import com.huyeon.superspace.web.annotation.ManagerPage;
@@ -20,24 +18,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CategoryController {
     private final NewCategoryService categoryService;
-    private final NewBoardService boardService;
-
-    @GroupPage
-    @ManagerPage
-    @GetMapping("/new-category")
-    public Map<String, Object> createCategoryPage(
-            @RequestHeader("X-Authorization-Id") String userEmail,
-            @PathVariable String groupUrl
-    ) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("categoryOptions", categoryOptions(groupUrl));
-
-        return response;
-    }
-
-    private List<CategoryDto> categoryOptions(String groupUrl) {
-        return categoryService.getCategoryList(groupUrl);
-    }
 
     @GroupPage
     @ManagerPage
