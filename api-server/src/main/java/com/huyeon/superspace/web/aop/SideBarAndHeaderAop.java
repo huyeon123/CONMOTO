@@ -41,6 +41,7 @@ public class SideBarAndHeaderAop {
 
         Map<String, Object> blankHeaderAndSideBar = sideBarAndHeaderService.getBlankHeaderAndSideBar(userEmail);
 
+        returnValue.put("groupPage", false);
         returnValue.putAll(blankHeaderAndSideBar);
     }
 
@@ -54,6 +55,7 @@ public class SideBarAndHeaderAop {
 
         Map<String, Object> headerAndSideBar = sideBarAndHeaderService.getHeaderAndSideBar(userEmail, groupUrl);
 
+        returnValue.put("groupPage", true);
         returnValue.putAll(headerAndSideBar);
     }
 
