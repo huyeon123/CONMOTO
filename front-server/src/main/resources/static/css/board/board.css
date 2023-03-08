@@ -264,7 +264,7 @@ label {
     position: fixed;
     bottom: 0;
     height: 60px;
-    background-color: rgba(245, 242, 255, 0.4);
+    background-color: rgb(250 248 254);
 }
 
 @media (min-width: 768px) {
