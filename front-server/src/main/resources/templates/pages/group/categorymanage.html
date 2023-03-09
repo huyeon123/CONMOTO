@@ -24,7 +24,7 @@
                 <div class="category-class">
                     <div>기본 카테고리</div>
                 </div>
-                <ul>
+                <ul class="none">
                     <li class="category-item">🔥한눈에 보기</li>
                     <li class="category-item">📝전체 게시글</li>
                     <li class="category-item">⭐공지사항</li>
@@ -32,7 +32,7 @@
                 <div class="category-class">
                     <div>일반 카테고리</div>
                 </div>
-                <ul id="sortable">
+                <ul id="sortable" class="none">
                     <li th:each="category: ${categories}"
                         th:unless="${category.type} == 'NOTICE'"
                         th:class="${category.type} == 'CATEGORY_GROUP' ? 'category-group' : 'category-item'"

@@ -23,7 +23,7 @@
     </div>
     <div class="container" style="overflow:hidden; height: 100%">
         <div class="narrow-content-body mt-0">
-            <ul class="scrollable">
+            <ul class="scrollable none">
                 <li class="member-info" th:each="member: ${members}" th:id="|member_${member.id}|">
                     <a role="button" onclick="moveToMemberPage(this.parentNode.id)">
                         <div class="profile">
