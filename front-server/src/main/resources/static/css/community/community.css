@@ -467,13 +467,13 @@ label {
 .custom-modal {
     display: none;
     position: fixed;
-    top: 45%;
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, -45%);
+    transform: translate(-50%, -50%);
     z-index: 9999;
     width: calc(95%);
     max-width: 450px;
-    max-height: 90%;
+    max-height: 70vh;
 }
 
 .custom-modal.wide-style {
@@ -493,8 +493,9 @@ label {
 }
 
 .custom-modal-wrapper {
+    max-height: 70vh;
     width: 100%;
-    position: absolute;
+    position: relative;
     border: 1px solid rgba(0, 0, 0, 30%);
     border-radius: 5px;
     background: white;
