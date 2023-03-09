@@ -79,7 +79,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="temp-save-wrapper">
-                            <ul>
+                            <ul class="none">
                                 <li class="temp-save-element" th:each="tempPost: ${tempPosts}" th:id="${tempPost.id}">
                                     <span class="temp-save-date" th:text="${tempPost.updatedAt}">최근저장일</span>
                                     <span class="temp-save-title" th:text="${tempPost.title}">제목</span>

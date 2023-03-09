@@ -52,7 +52,7 @@
                             <i class="material-icons-outlined expand md-18 gray">expand_more</i>
                         </header>
                         <main>
-                            <ul>
+                            <ul class="none">
                                 <li id="group-container" th:each="group: ${sideBar.groups}">
                                     <div class="sidebar-elements pointer-hover">
                                         <span style="width: 100%" onclick="moveToGroup(this)" th:attr="data-url=${group.groupUrl}"
@@ -73,7 +73,7 @@
                             <i class="material-icons-outlined expand md-18 gray">expand_more</i>
                         </header>
                         <main>
-                            <ul id="favorite-category-list">
+                            <ul id="favorite-category-list" class="none">
                                 <li th:each="category: ${sideBar.categories}" th:if="${category.favorite}">
                                     <div class="sidebar-elements pointer-hover">
                                         <span style="width: 100%" th:text="${category.name}" onclick="moveToCategoryPage(this)">
