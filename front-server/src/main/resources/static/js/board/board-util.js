@@ -11,7 +11,7 @@ function drawBoards(data) {
         drawEachItem(data)
     } else {
         for (let value of Object.values(data)) {
-            drawBoard(value);
+            drawEachItem(value);
         }
     }
 
