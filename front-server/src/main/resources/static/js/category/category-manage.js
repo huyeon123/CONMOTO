@@ -362,6 +362,7 @@ function createCategoryGroupHTML() {
 //카테고리 선택 시 편집 모달 oepn
 $(document).on("click", "#sortable > li", (e) => {
     $("#modal-dimmed").show();
+    $("#modal").show();
     createEditCategoryModalHTML($(e.target));
 })
 

@@ -49,27 +49,27 @@ public class NewBoardService {
     }
 
     public Long createBoard(String userEmail, BoardDto request) {
-        String contentId = contentRepository.save(new Content(request.getContent())).getId();
-        request.getContent().setId(contentId);
-
+        Content content = contentRepository.save(new Content(request.getContent()));
         Board board = new Board(request);
         board.setAuthor(userEmail);
-        Long id = boardRepository.save(board).getId();
+        board.setContent(content);
+        board = boardRepository.save(board);
 
         //카테고리가 공지사항일 경우 알림발송
         if (request.getCategoryName().equals("⭐공지사항")) {
+            final BoardDto dto = new BoardDto(board);
             CompletableFuture.runAsync(() -> {
                 NotyPayloadDto payload = NotyPayloadDto.builder()
                         .type(NotyType.NOTICE)
-                        .groupUrl(board.getGroupUrl())
-                        .board(request)
+                        .groupUrl(dto.getGroupUrl())
+                        .board(dto)
                         .build();
 
                 notyUtils.publishNoty(payload);
             }).thenAcceptAsync((v) -> log.info("[공지사항 알림 발송 완료]"));
         }
 
-        return id;
+        return board.getId();
     }
 
     public Long saveBoard(BoardDto request, String target) {

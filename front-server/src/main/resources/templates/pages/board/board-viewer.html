@@ -65,8 +65,11 @@
                     <div id="comment-hide-area" class="comment-list" hidden>
                         <li th:each="comment : ${comments}" th:id="|comment_${comment.id}|" class="comment-item">
                             <div class="comment-area">
-                                <div th:id="${comment.author}" class="comment-nick-box" th:text="${comment.nickname}">nickname</div>
-                                <div class="comment-text-box" th:utext="${comment.body.replaceAll('\n', '<br>')}">댓글</div>
+                                <div th:id="${comment.author}" class="comment-nick-box" th:text="${comment.nickname}">
+                                    nickname
+                                </div>
+                                <div class="comment-text-box" th:utext="${comment.body.replaceAll('\n', '<br>')}">댓글
+                                </div>
                                 <div class="comment-info-box">
                                     <span class="comment-info-date"
                                           th:text="${comment.lastUpdate}">2023.01.08 16:45</span>
@@ -80,12 +83,19 @@
                     </div>
                     <div class="comment-writer">
                         <div class="comment-inbox">
-                            <div class="comment-inbox-name" th:id="${sideBar.member.email}" th:text="${sideBar.member.nickname}">사용자명</div>
-                            <textarea class="comment-inbox-text" placeholder="댓글을 남겨보세요."></textarea>
+                            <div class="comment-inbox-name" th:id="${sideBar.member.email}"
+                                 th:text="${sideBar.member.nickname}">사용자명
+                            </div>
+                            <textarea class="comment-inbox-text"
+                                      th:placeholder="${sideBar.member.id == 'anonymous' ? '로그인이 필요한 서비스 입니다.' : '댓글을 남겨보세요.'}"
+                                      th:readonly="${sideBar.member.id == 'anonymous' ? 'readonly' : 'false'}"></textarea>
                         </div>
                         <div class="comment-attach">
                             <div class="comment-register">
-                                <button type="button" class="js-comment-add-btn simple-button">등록</button>
+                                <button type="button" class="simple-button"
+                                        th:attr="onclick=${sideBar.member.id == 'anonymous' ? '' : 'registerComment()'}">
+                                    등록
+                                </button>
                             </div>
                         </div>
                     </div>

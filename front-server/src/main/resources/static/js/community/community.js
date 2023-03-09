@@ -70,12 +70,14 @@ function openSideBar() {
     onDimmed();
 }
 
-$(document).on('click', '.sidebar-mobile-dimmed', () => {
+$(document).on('click', '.sidebar-mobile-dimmed', closeSideBar)
+
+function closeSideBar() {
     $(".super-space-app__sidebar")
         .addClass("closed")
         .removeClass("open");
     $(".sidebar-mobile-dimmed").hide();
-})
+}
 
 let sidebarHeaderSize;
 
@@ -156,6 +158,7 @@ $(".sidebar-header .expand").click((e) => {
 })
 
 function openInviteModal() {
+    if ($(".sidebar-mobile-dimmed").css("display") === "block") closeSideBar();
     $("#modal-dimmed").show();
 
     const $element = $(`

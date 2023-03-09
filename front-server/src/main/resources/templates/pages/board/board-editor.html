@@ -30,6 +30,7 @@
                             <option th:each="category : ${sideBar.categories}"
                                     th:value="${category.name}"
                                     th:attr="data-category-id=${category.id}"
+                                    th:unless="${category.type == 'CATEGORY_GROUP'}"
                                     th:text="${category.name}">카테고리
                             </option>
                         </select>
@@ -45,13 +46,6 @@
                             </option>
                             <option value="COMPLETE">COMPLETE</option>
                         </select>
-                    </label>
-                </div>
-                <div class="header-elements">
-                    <label id="tags" class="flex-horizon-center">
-                        <span class="name mr-2">태그</span>
-                        <div class="flex-horizon-center"></div>
-                        <input class="empty tag" placeholder="#태그 추가">
                     </label>
                 </div>
             </div>

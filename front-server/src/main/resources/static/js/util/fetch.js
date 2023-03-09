@@ -8,6 +8,11 @@ let accessToken = null;
 $(function () {
     if (isMainPage()) return;
 
+    const num = localStorage.getItem("curNotyNum");
+    if (num != null) {
+        $("#js-noty-count").text(num);
+    }
+    
     init()
         .then(() => console.log("[Page Initiation Success]"));
 });

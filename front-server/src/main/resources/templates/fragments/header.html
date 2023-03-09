@@ -4,8 +4,8 @@
     <div class="header-box">
         <div class="header-left">
             <i id="js-sidebar-expand-btn" class="material-icons-outlined sidebar-expand" onclick="openSideBar()">menu</i>
-            <div class="group-name" th:classappend="${sideBar.member.id == 'anonymous' ? 'anonymous' : ''}"
-                 th:text="${appHeader.groupName}" th:attr="onclick=${sideBar.member.id == 'anonymous' ? '' : 'moveToGroupMain()'}">GROUP NAME
+            <div class="group-name" th:classappend="${appHeader.groupName == '그룹을 선택하세요.' ? 'anonymous' : ''}"
+                 th:text="${appHeader.groupName}" th:attr="onclick=${appHeader.groupName == '그룹을 선택하세요.' ? '' : 'moveToGroupMain()'}">GROUP NAME
             </div>
         </div>
         <div class="header-right">

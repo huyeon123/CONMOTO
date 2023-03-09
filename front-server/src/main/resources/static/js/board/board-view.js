@@ -1,6 +1,9 @@
 let boardId = pathname.slice(pathname.lastIndexOf("/") + 1);
 
 function pageRender() {
+    if ($(".app-footer").length === 0) {
+        $(".whole-scroll-section").css("max-height", "calc(100vh - 70px)");
+    }
     appendBoardLike();
     increaseViews();
 }
@@ -13,7 +16,7 @@ function appendBoardLike() {
             $("#like-post-num").text(data.like);
 
             const $like = $("#like-post-heart");
-            if (data.checked) $like.addClass("like-color");
+            if (data.checked) $like.addClass("like-color").text("favorite");
             else $like.addClass("material-symbols-outlined");
 
             $("#viewer").show();
@@ -29,6 +32,21 @@ function increaseViews() {
         })
 }
 
+function deleteBoard() {
+    if (!confirm("정말로 삭제하시겠습니까?")) {
+        return;
+    }
+
+    delWithoutBody("/api/board/" + boardId)
+        .then(() => {
+            location.href = "/community/" + groupUrl;
+        })
+        .catch(error => {
+            alert("삭제에 실패했습니다!");
+            console.error(error);
+        });
+}
+
 /*comment*/
 $(document).on('click', '#comment-toggle-btn', () => {
     const area = $('#comment-hide-area').get(0);
@@ -42,20 +60,15 @@ $(document).on('click', '#comment-toggle-btn', () => {
     }
 })
 
-$(document).on('click', '.js-comment-add-btn', () => {
+function registerComment() {
+    const url = "/api/comment";
     const request = {
         author: $('.comment-inbox-name').attr('id'),
         nickname: $(".comment-inbox-name").text(),
         body: $('.comment-inbox-text').val(),
-        groupUrl: groupUrl
+        groupUrl: groupUrl,
+        boardId: boardId
     };
-
-    registerComment(request);
-})
-
-function registerComment(request) {
-    const url = "/api/comment";
-    request.boardId = boardId;
 
     post(url, request)
         .then(res => res.text())

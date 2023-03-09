@@ -4,6 +4,7 @@ import com.huyeon.superspace.domain.board.dto.CommentBoardPreviewDto;
 import com.huyeon.superspace.domain.board.dto.CommentDto;
 import com.huyeon.superspace.domain.board.dto.CommentPreviewDto;
 import com.huyeon.superspace.domain.board.service.NewCommentService;
+import com.huyeon.superspace.global.exception.PermissionDeniedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +44,9 @@ public class CommentRestController {
             @RequestBody CommentDto request
     ) {
         Objects.requireNonNull(request.getBoardId());
+        if (userEmail.equals("CONMOTO_ANONYMOUS_TOKEN")) {
+            throw new PermissionDeniedException("비로그인 댓글 작성시도");
+        }
 
         return commentService.createComment(userEmail, request);
     }

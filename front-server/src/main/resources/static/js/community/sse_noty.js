@@ -13,6 +13,7 @@ function getUnreadNoty() {
     get("/api/noty/unread")
         .then(res => res.json())
         .then(data => {
+            localStorage.setItem("curNotyNum", data.length);
             $("#js-noty-count").text(data.length);
 
             if (data.length !== 0) {
@@ -44,6 +45,7 @@ function addNotyListener(eventSource) {
             const $noty = $('#js-noty-count');
             const current = parseInt($noty.text());
             $noty.text(current + 1);
+            localStorage.setItem("curNotyNum", (current + 1).toString());
 
             $("#noty-dialog").prepend(createNotyHTML(data));
 
@@ -81,7 +83,7 @@ function addOnClick($element, noty) {
     const canRedirectList = ["NOTICE", "BOARD_NEW_COMMENT"];
 
     if (canRedirectList.includes(noty.type)) {
-        $element.attr("onclick", `moveToBoard("${noty.url}")`) //게시글로 이동
+        $element.attr("onclick", `moveToBoardAndRead(this)`) //게시글로 이동
             .addClass("pointer-hover");
     } else if (noty.type === "GROUP_INVITE" && !noty.read) { //그룹 초대 알림을 읽지않았으면
         $element.attr("onclick", `openJoinModal(this)`) //모달창 OPEN 가능
@@ -90,7 +92,11 @@ function addOnClick($element, noty) {
     }
 }
 
-function moveToBoard(url) {
+function moveToBoardAndRead(element) {
+    const $noty = $(element);
+    const url = $noty.data("url");
+    const notyId = $noty.attr('id').slice("noty_".length);
+    setRead(notyId);
     location.href = url;
 }
 
@@ -219,6 +225,8 @@ function setRead(id) {
     const now = parseInt($noty.text()) - 1;
     $noty.text(now);
 
+    localStorage.setItem("curNotyNum", now.toString());
+
     if (now === 0) $(".js-noty-empty").attr('hidden', false);
 }
 
@@ -232,7 +240,10 @@ function setReadAll() {
 
     if (request.length !== 0) {
         requestSetRead(request);
+        $("#noty-dialog li").remove();
+        $("#js-noty-count").text(0);
         $(".js-noty-empty").attr('hidden', false);
+        localStorage.setItem("curNotyNum", "0");
     }
 }
 
@@ -243,7 +254,7 @@ function requestSetRead(request) {
 }
 
 //미확인 알림창 설정
-function initNotyDialog($element) {
+function initNotyDialog() {
     const $modal = $(`
         <div class="custom-modal-wrapper">
             <div class="custom-modal-inner">

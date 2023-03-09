@@ -33,7 +33,6 @@ label {
 
 .scroll-frame {
     width: 100%;
-    height: calc(100% - 60px);
     position: relative;
     overflow: hidden;
 }
@@ -64,6 +63,7 @@ label {
 }
 
 .board-delete {
+    padding: 3px 8px;
     transition: all 100ms ease-in 0s;
 }
 

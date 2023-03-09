@@ -84,7 +84,7 @@ public class NewCategoryService {
 
     private FavoriteCategory findFavoriteByEmailAndUrl(String email, String groupUrl) {
         return favoriteRepository.findAllByUserEmailAndGroupUrl(email, groupUrl)
-                .orElse(new FavoriteCategory(email, groupUrl, new LinkedList<>()));
+                .orElse(new FavoriteCategory(email, groupUrl));
     }
 
     public List<CategoryDto> getCategoryList(String groupUrl) {
