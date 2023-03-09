@@ -62,10 +62,10 @@ public class TempPost extends DocumentAudit {
     @Getter
     @NoArgsConstructor
     static class TempContent {
-        private String markdown;
+        private String html;
 
         public TempContent(ContentDto contentDto) {
-            markdown = contentDto.getHtml();
+            html = contentDto.getHtml();
         }
     }
 }
