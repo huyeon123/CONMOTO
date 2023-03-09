@@ -16,7 +16,7 @@ function appendBoardLike() {
             $("#like-post-num").text(data.like);
 
             const $like = $("#like-post-heart");
-            if (data.checked) $like.addClass("like-color");
+            if (data.checked) $like.addClass("like-color").text("favorite");
             else $like.addClass("material-symbols-outlined");
 
             $("#viewer").show();
