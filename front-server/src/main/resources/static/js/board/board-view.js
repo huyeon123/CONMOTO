@@ -60,20 +60,15 @@ $(document).on('click', '#comment-toggle-btn', () => {
     }
 })
 
-$(document).on('click', '.js-comment-add-btn', () => {
+function registerComment() {
+    const url = "/api/comment";
     const request = {
         author: $('.comment-inbox-name').attr('id'),
         nickname: $(".comment-inbox-name").text(),
         body: $('.comment-inbox-text').val(),
-        groupUrl: groupUrl
+        groupUrl: groupUrl,
+        boardId: boardId
     };
-
-    registerComment(request);
-})
-
-function registerComment(request) {
-    const url = "/api/comment";
-    request.boardId = boardId;
 
     post(url, request)
         .then(res => res.text())
