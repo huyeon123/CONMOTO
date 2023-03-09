@@ -91,9 +91,12 @@ function createBoardReqAPI(tab) {
 }
 
 function currentTab() {
-    const tab = new URLSearchParams(location.search).get("tab");
+    let tab = new URLSearchParams(location.search).get("tab");
+    if(tab == null) tab = "📝작성한 글";
+
     const $tab = $(`.member-menu span:contains(${tab})`);
     $tab.addClass("selected");
+
     let type = $tab.attr("id");
     if (type === undefined) type = "write";
     return type;
