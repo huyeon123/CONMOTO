@@ -30,6 +30,7 @@
                             <option th:each="category : ${sideBar.categories}"
                                     th:value="${category.name}"
                                     th:attr="data-category-id=${category.id}"
+                                    th:unless="${category.type == 'CATEGORY_GROUP'}"
                                     th:text="${category.name}">카테고리
                             </option>
                         </select>
