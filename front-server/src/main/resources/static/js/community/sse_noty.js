@@ -13,6 +13,7 @@ function getUnreadNoty() {
     get("/api/noty/unread")
         .then(res => res.json())
         .then(data => {
+            localStorage.setItem("curNotyNum", data.length);
             $("#js-noty-count").text(data.length);
 
             if (data.length !== 0) {
@@ -44,6 +45,7 @@ function addNotyListener(eventSource) {
             const $noty = $('#js-noty-count');
             const current = parseInt($noty.text());
             $noty.text(current + 1);
+            localStorage.setItem("curNotyNum", (current + 1).toString());
 
             $("#noty-dialog").prepend(createNotyHTML(data));
 
@@ -219,6 +221,8 @@ function setRead(id) {
     const now = parseInt($noty.text()) - 1;
     $noty.text(now);
 
+    localStorage.setItem("curNotyNum", now.toString());
+
     if (now === 0) $(".js-noty-empty").attr('hidden', false);
 }
 
@@ -233,6 +237,7 @@ function setReadAll() {
     if (request.length !== 0) {
         requestSetRead(request);
         $(".js-noty-empty").attr('hidden', false);
+        localStorage.setItem("curNotyNum", "0");
     }
 }
 
