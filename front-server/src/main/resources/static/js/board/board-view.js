@@ -1,6 +1,9 @@
 let boardId = pathname.slice(pathname.lastIndexOf("/") + 1);
 
 function pageRender() {
+    if ($(".app-footer").length === 0) {
+        $(".whole-scroll-section").css("max-height", "calc(100vh - 70px)");
+    }
     appendBoardLike();
     increaseViews();
 }
