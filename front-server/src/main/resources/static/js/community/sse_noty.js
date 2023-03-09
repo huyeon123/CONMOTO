@@ -92,7 +92,7 @@ function addOnClick($element, noty) {
     }
 }
 
-function moveToBoardAndRead(element) {
+async function moveToBoardAndRead(element) {
     const $noty = $(element);
     const url = $noty.data("url");
     const notyId = $noty.attr('id').slice("noty_".length);
