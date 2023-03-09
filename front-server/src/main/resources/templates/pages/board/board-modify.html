@@ -12,7 +12,6 @@
             <div class="board__header">
                 <div class="flex-end">
                     <div>
-                        <button type="button" class="simple-button board-history">변경이력</button>
                         <button type="button" class="simple-button board-delete" onclick="deleteBoard()">삭제</button>
                     </div>
                 </div>
@@ -59,16 +58,6 @@
                                     value="COMPLETE">COMPLETE
                             </option>
                         </select>
-                    </label>
-                </div>
-                <div class="header-elements">
-                    <label id="tags" class="flex-horizon-center">
-                        <span class="name mr-2">태그</span>
-                        <div class="tag-wrapper flex-horizon-center" th:each="tag : ${board.tags}">
-                            <input class="tag" th:value="|${tag}|">
-                            <i class="pointer material-icons-outlined delete md-16 gray">delete</i>
-                        </div>
-                        <input class="empty tag" placeholder="#태그 추가">
                     </label>
                 </div>
             </div>
