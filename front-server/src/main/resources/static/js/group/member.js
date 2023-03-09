@@ -222,10 +222,10 @@ function changeGrade() {
 
 function renderGradeModal() {
     const $element = $(`
-        <div class="custom-modal-wrapper">
+        <div class="custom-modal-wrapper" style="overflow: initial !important;">
             <div class="custom-modal-inner">
                 <div class="custom-modal-title">변경할 등급을 선택하세요</div>
-                <div class="custom-modal-main">
+                <div class="custom-modal-main" style="align-items: center">
                     <div class="group-custom-select" onclick="openOptions()">
                         <span>등급 단계</span>
                         <i class="material-icons-outlined md-16">unfold_more</i>
