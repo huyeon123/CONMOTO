@@ -83,7 +83,7 @@ function addOnClick($element, noty) {
     const canRedirectList = ["NOTICE", "BOARD_NEW_COMMENT"];
 
     if (canRedirectList.includes(noty.type)) {
-        $element.attr("onclick", `moveToBoard("${noty.url}")`) //게시글로 이동
+        $element.attr("onclick", `moveToBoardAndRead(this)`) //게시글로 이동
             .addClass("pointer-hover");
     } else if (noty.type === "GROUP_INVITE" && !noty.read) { //그룹 초대 알림을 읽지않았으면
         $element.attr("onclick", `openJoinModal(this)`) //모달창 OPEN 가능
@@ -92,7 +92,11 @@ function addOnClick($element, noty) {
     }
 }
 
-function moveToBoard(url) {
+function moveToBoardAndRead(element) {
+    const $noty = $(element);
+    const url = $noty.data("url");
+    const notyId = $noty.attr('id').slice("noty_".length);
+    setRead(notyId);
     location.href = url;
 }
 
