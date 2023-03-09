@@ -26,12 +26,15 @@ a {
 }
 
 ul {
-    padding: 0 !important;
     margin: 0 !important;
 }
 
+.super-space-app__sidebar ul {
+    padding: 0 !important;
+}
+
 li {
-    list-style: none;
+    list-style: inherit;
 }
 
 label {
