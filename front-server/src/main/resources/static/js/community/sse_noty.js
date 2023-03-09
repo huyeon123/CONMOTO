@@ -254,7 +254,7 @@ function requestSetRead(request) {
 }
 
 //미확인 알림창 설정
-function initNotyDialog($element) {
+function initNotyDialog() {
     const $modal = $(`
         <div class="custom-modal-wrapper">
             <div class="custom-modal-inner">
