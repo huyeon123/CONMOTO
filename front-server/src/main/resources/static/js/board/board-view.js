@@ -32,6 +32,21 @@ function increaseViews() {
         })
 }
 
+function deleteBoard() {
+    if (!confirm("정말로 삭제하시겠습니까?")) {
+        return;
+    }
+
+    delWithoutBody("/api/board/" + boardId)
+        .then(() => {
+            location.href = "/community/" + groupUrl;
+        })
+        .catch(error => {
+            alert("삭제에 실패했습니다!");
+            console.error(error);
+        });
+}
+
 /*comment*/
 $(document).on('click', '#comment-toggle-btn', () => {
     const area = $('#comment-hide-area').get(0);
