@@ -240,6 +240,8 @@ function setReadAll() {
 
     if (request.length !== 0) {
         requestSetRead(request);
+        $("#noty-dialog li").remove();
+        $("#js-noty-count").text(0);
         $(".js-noty-empty").attr('hidden', false);
         localStorage.setItem("curNotyNum", "0");
     }
