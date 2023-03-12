@@ -460,6 +460,8 @@ label {
 
 #noty-dialog {
     width: 100%;
+    max-height: 30vh;
+    overflow: hidden scroll;
 }
 
 .sidebar__expand {
