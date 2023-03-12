@@ -1,5 +1,5 @@
 body {
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Noto Sans KR', sans-serif !important;
     width: 100vw;
     margin: 0;
     -ms-overflow-style: none;
