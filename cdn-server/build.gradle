@@ -1,0 +1,22 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config:3.1.4'
+
+    // https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-objectstorage
+    implementation 'com.oracle.oci.sdk:oci-java-sdk-objectstorage:3.7.0'
+    // https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-common-httpclient-jersey
+    implementation 'com.oracle.oci.sdk:oci-java-sdk-common-httpclient-jersey:3.7.0'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+configurations {
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+}
