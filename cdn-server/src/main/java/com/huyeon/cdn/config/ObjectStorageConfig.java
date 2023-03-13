@@ -4,6 +4,7 @@ import com.oracle.bmc.ConfigFileReader;
 import com.oracle.bmc.Region;
 import com.oracle.bmc.auth.AbstractAuthenticationDetailsProvider;
 import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider;
+import com.oracle.bmc.http.client.Options;
 import com.oracle.bmc.objectstorage.ObjectStorage;
 import com.oracle.bmc.objectstorage.ObjectStorageClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +22,8 @@ public class ObjectStorageConfig {
     public ObjectStorage objectStorage() throws IOException {
         ConfigFileReader.ConfigFile configFile = ConfigFileReader.parse(CONFIG_FILE_PATH);
         AbstractAuthenticationDetailsProvider provider = new ConfigFileAuthenticationDetailsProvider(configFile);
+
+        Options.shouldAutoCloseResponseInputStream(false);
 
         return ObjectStorageClient.builder()
                 .region(Region.AP_CHUNCHEON_1)
