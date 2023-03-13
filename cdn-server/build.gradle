@@ -7,6 +7,9 @@ dependencies {
     // https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-common-httpclient-jersey
     implementation 'com.oracle.oci.sdk:oci-java-sdk-common-httpclient-jersey:3.7.0'
 
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation 'commons-io:commons-io:2.11.0'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
