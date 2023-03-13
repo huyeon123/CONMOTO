@@ -85,7 +85,7 @@ public class CDNController {
                         InputStream inputStream = response.getInputStream();
                         ByteArrayResource resource = new ByteArrayResource(inputStream.readAllBytes());
                         return ResponseEntity.ok()
-                                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
                                 .contentLength(response.getContentLength())
                                 .contentType(MediaType.parseMediaType(response.getContentType()))
                                 .body(resource);
