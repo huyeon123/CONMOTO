@@ -7,22 +7,25 @@ import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -36,8 +39,24 @@ public class CDNController {
     @Value("${oci.namespace}")
     private String NAMESPACE;
 
+    private final List<String> ALLOWED_EXTENSIONS = List.of("jpg", "jpeg", "png", "gif", "webp");
+    private final String CONTENT_PREFIX = "Contents/CONMOTO_CONTENTS_";
+
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Mono<String> uploadFile(@RequestPart("file") FilePart filePart) {
+    public Mono<ResponseEntity<String>> uploadFile(
+            ServerWebExchange exchange,
+            @RequestPart("file") FilePart filePart
+    ) {
+        if (notAllowedDomain(exchange)) {
+            return Mono.just(ResponseEntity.status(HttpStatus.FORBIDDEN).body("Not Allowed Domain."));
+        }
+
+        String extension = FilenameUtils.getExtension(filePart.filename());
+        if (!ALLOWED_EXTENSIONS.contains(extension)) {
+            return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("It's Unacceptable extension.\nWe allow 'jpg', 'jpeg', 'png', 'gif', 'webp'"));
+        }
+
         // Get the input stream from the file part
         Mono<InputStream> inputStreamMono = DataBufferUtils.join(filePart.content())
                 .map(dataBuffer -> {
@@ -53,7 +72,7 @@ public class CDNController {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucketName(BUCKET_NAME)
                     .namespaceName(NAMESPACE)
-                    .objectName(filePart.filename())
+                    .objectName(CONTENT_PREFIX + filePart.filename())
                     .contentLength(filePart.headers().getContentLength())
                     .putObjectBody(inputStream)
                     .build();
@@ -63,12 +82,46 @@ public class CDNController {
             );
 
             return Mono.fromFuture(future)
-                    .map(response -> "File uploaded successfully with ETag: " + response.getETag());
+                    .map(response -> ResponseEntity.ok()
+                            .body("File uploaded successfully with ETag: " + response.getETag()));
         });
     }
 
-    @GetMapping("/download/{fileName:.+}")
-    public Mono<ResponseEntity<Resource>> downloadFile(@PathVariable String fileName) {
+    @GetMapping("/images/{fileName:.+}")
+    public Mono<ResponseEntity<Resource>> getImages(@PathVariable String fileName) {
+        final String IMAGE_PREFIX = "Images/CONMOTO_IMAGES_";
+        return getResource(IMAGE_PREFIX + fileName);
+    }
+
+    @GetMapping("/contents/{fileName:.+}")
+    public Mono<ResponseEntity<Resource>> getContents(@PathVariable String fileName) {
+        return getResource(CONTENT_PREFIX + fileName);
+    }
+
+    @GetMapping("/files/{fileName:.+}")
+    public Mono<ResponseEntity<Resource>> getFiles(ServerWebExchange exchange, @PathVariable String fileName) {
+        if (notAllowedDomain(exchange)) {
+            return forbiddenMessageResource();
+        }
+
+        String extension = FilenameUtils.getExtension(fileName);
+        final String FILE_PREFIX = "Files/" + extension + "/CONMOTO_FE_FILES_";
+        return getResource(FILE_PREFIX + fileName);
+    }
+
+    private boolean notAllowedDomain(ServerWebExchange exchange) {
+        String domain = Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getHostName();
+        return domain != null && !domain.endsWith("conmoto.site") && !domain.endsWith("0:0:0:0:0:0:1");
+    }
+
+    private Mono<ResponseEntity<Resource>> forbiddenMessageResource() {
+        ByteArrayResource resource = new ByteArrayResource("Not Allowed Domain".getBytes());
+        return Mono.just(ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(resource));
+    }
+
+    private Mono<ResponseEntity<Resource>> getResource(@PathVariable String fileName) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucketName(BUCKET_NAME)
                 .namespaceName(NAMESPACE)
