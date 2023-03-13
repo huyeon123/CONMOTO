@@ -138,6 +138,7 @@ public class CDNController {
                         InputStream inputStream = response.getInputStream();
                         ByteArrayResource resource = new ByteArrayResource(inputStream.readAllBytes());
                         return ResponseEntity.ok()
+                                .cacheControl(setCacheOneDayRevalidateOneWeek())
                                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
                                 .contentLength(response.getContentLength())
                                 .contentType(MediaType.parseMediaType(response.getContentType()))
@@ -146,5 +147,12 @@ public class CDNController {
                         throw new RuntimeException("Error occurred while reading the file", e);
                     }
                 });
+    }
+
+    private CacheControl setCacheOneDayRevalidateOneWeek() {
+        return CacheControl
+                .maxAge(1, TimeUnit.DAYS)
+                .cachePrivate()
+                .staleWhileRevalidate(7, TimeUnit.DAYS);
     }
 }
