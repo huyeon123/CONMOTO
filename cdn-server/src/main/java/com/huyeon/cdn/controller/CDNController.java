@@ -1,5 +1,6 @@
 package com.huyeon.cdn.controller;
 
+import com.huyeon.cdn.dto.CKEditor5Res;
 import com.oracle.bmc.objectstorage.ObjectStorage;
 import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
 import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
@@ -43,18 +44,21 @@ public class CDNController {
     private final String CONTENT_PREFIX = "Contents/CONMOTO_CONTENTS_";
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Mono<ResponseEntity<String>> uploadFile(
+    public Mono<ResponseEntity<CKEditor5Res>> uploadFile(
             ServerWebExchange exchange,
-            @RequestPart("file") FilePart filePart
+            @RequestPart("upload") FilePart filePart
     ) {
         if (notAllowedDomain(exchange)) {
-            return Mono.just(ResponseEntity.status(HttpStatus.FORBIDDEN).body("Not Allowed Domain."));
+            CKEditor5Res response = new CKEditor5Res(false, "Not Allowed Domain.");
+            return Mono.just(ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(response));
         }
 
         String extension = FilenameUtils.getExtension(filePart.filename());
         if (!ALLOWED_EXTENSIONS.contains(extension)) {
+            CKEditor5Res response = new CKEditor5Res(false, "It's Unacceptable extension.\nWe allow 'jpg', 'jpeg', 'png', 'gif', 'webp'");
             return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("It's Unacceptable extension.\nWe allow 'jpg', 'jpeg', 'png', 'gif', 'webp'"));
+                    .body(response));
         }
 
         // Get the input stream from the file part
@@ -82,8 +86,10 @@ public class CDNController {
             );
 
             return Mono.fromFuture(future)
-                    .map(response -> ResponseEntity.ok()
-                            .body("File uploaded successfully with ETag: " + response.getETag()));
+                    .map(response -> {
+                        CKEditor5Res body = new CKEditor5Res(true, "http://localhost:8400/contents/" + filePart.filename());
+                        return ResponseEntity.ok().body(body);
+                    });
         });
     }
 
