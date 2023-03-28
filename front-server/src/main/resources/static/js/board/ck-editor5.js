@@ -12,6 +12,10 @@ DecoupledDocumentEditor
                 { model: 'heading5', view: 'h5', title: 'Heading 5', class: 'ck-heading_heading5' },
                 { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
             ]
+        },
+        ckfinder: {
+            uploadUrl: "https://static.conmoto.site/upload",
+            removeUrl: "https://static.conmoto.site/remove"
         }
     })
     .then(editor => {
