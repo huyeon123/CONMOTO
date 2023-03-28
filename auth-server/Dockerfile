@@ -1,6 +1,8 @@
 FROM openjdk:11-jre
 COPY build/libs/*.jar app-auth.jar
+ARG ENCRYPT_KEY
+ARG CONFIG_SERVER
 ENV CONMOTO_ENV="op" \
-    ENCRYPT_KEY="super-space!5087" \
-    CONFIG_SERVER="146.56.113.92:8888"
+    ENCRYPT_KEY=$ENCRYPT_KEY \
+    CONFIG_SERVER=$CONFIG_SERVER
 ENTRYPOINT ["java", "-jar", "app-auth.jar"]
