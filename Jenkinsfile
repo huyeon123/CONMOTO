@@ -13,6 +13,8 @@ pipeline {
         IMG_API = 'huyeon123/conmoto-api'
         IMG_FE = 'huyeon123/conmoto-front'
         IMG_CDN = 'huyeon123/conmoto-cdn'
+        ENCRYPT_KEY = sh(script: 'echo $ENCRYPT_KEY', returnStdout: true).trim()
+        CONFIG_SERVER = sh(script: 'echo $CONFIG_SERVER', returnStdout: true).trim()
     }
     stages {
         stage('Grant Gradle Permission') {
@@ -73,7 +75,7 @@ pipeline {
                     }
                     steps {
                         echo 'Docker Build Start "${IMG_AUTH}"'
-                        sh 'sudo docker build -t "${IMG_AUTH}" --build-arg ENCRYPT_KEY=$ENCRYPT_KEY --build-arg CONFIG_SERVER=$CONFIG_SERVER "${APP_AUTH}"'
+                        sh 'sudo docker build -t "${IMG_AUTH}" --build-arg ENCRYPT_KEY="${ENCRYPT_KEY}" --build-arg CONFIG_SERVER="${CONFIG_SERVER}" "${APP_AUTH}"'
                         echo 'Docker Build End "${IMG_AUTH}"'
                     }
                 }
@@ -83,7 +85,7 @@ pipeline {
                     }
                     steps {
                         echo 'Docker Build Start "${IMG_API}"'
-                        sh 'sudo docker build -t "${IMG_API}" --build-arg ENCRYPT_KEY=$ENCRYPT_KEY --build-arg CONFIG_SERVER=$CONFIG_SERVER "${APP_API}"'
+                        sh 'sudo docker build -t "${IMG_API}" --build-arg ENCRYPT_KEY="${ENCRYPT_KEY}" --build-arg CONFIG_SERVER="${CONFIG_SERVER}" "${APP_API}"'
                         echo 'Docker Build End "${IMG_API}"'
                     }
                 }
@@ -93,7 +95,7 @@ pipeline {
                     }
                     steps {
                         echo 'Docker Build Start "${IMG_FE}"'
-                        sh 'sudo docker build -t "${IMG_FE}" --build-arg ENCRYPT_KEY=$ENCRYPT_KEY --build-arg CONFIG_SERVER=$CONFIG_SERVER "${APP_FE}"'
+                        sh 'sudo docker build -t "${IMG_FE}" --build-arg ENCRYPT_KEY="${ENCRYPT_KEY}" --build-arg CONFIG_SERVER="${CONFIG_SERVER}" "${APP_FE}"'
                         echo 'Docker Build End "${IMG_FE}"'
                     }
                 }
@@ -103,7 +105,7 @@ pipeline {
                     }
                     steps {
                         echo 'Docker Build Start "${IMG_CDN}"'
-                        sh 'sudo docker build -t "${IMG_CDN}" --build-arg ENCRYPT_KEY=$ENCRYPT_KEY --build-arg CONFIG_SERVER=$CONFIG_SERVER "${APP_CDN}"'
+                        sh 'sudo docker build -t "${IMG_CDN}" --build-arg ENCRYPT_KEY="${ENCRYPT_KEY}" --build-arg CONFIG_SERVER="${CONFIG_SERVER}" "${APP_CDN}"'
                         echo 'Docker Build End "${IMG_CDN}"'
                     }
                 }
