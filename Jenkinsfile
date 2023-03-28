@@ -13,8 +13,8 @@ pipeline {
         IMG_API = 'huyeon123/conmoto-api'
         IMG_FE = 'huyeon123/conmoto-front'
         IMG_CDN = 'huyeon123/conmoto-cdn'
-        ENCRYPT_KEY = sh(script: 'echo $ENCRYPT_KEY', returnStdout: true).trim()
-        CONFIG_SERVER = sh(script: 'echo $CONFIG_SERVER', returnStdout: true).trim()
+        ENCRYPT_KEY = sh(script: "echo $ENCRYPT_KEY", returnStdout: true).trim()
+        CONFIG_SERVER = sh(script: "echo $CONFIG_SERVER", returnStdout: true).trim()
     }
     stages {
         stage('Grant Gradle Permission') {
@@ -161,7 +161,7 @@ pipeline {
                         sh 'sudo docker ps -f name="${APP_CDN}" -q | sudo xargs --no-run-if-empty docker container stop'
                         sh 'sudo docker container ls -a -f name="${APP_CDN}" -q | sudo xargs -r docker container rm'
                         sh 'sudo docker images --no-trunc --all --quiet --filter="dangling=true" | sudo xargs --no-run-if-empty docker rmi'
-                        sh 'sudo docker run -d --name "${APP_CDN}" -p 8200:8200 "${IMG_CDN}"'
+                        sh 'sudo docker run -d --name "${APP_CDN}" -p 8400:8400 "${IMG_CDN}"'
                         echo 'Deploy End "${IMG_CDN}"'
                     }
                 }
