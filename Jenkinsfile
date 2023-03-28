@@ -13,8 +13,6 @@ pipeline {
         IMG_API = 'huyeon123/conmoto-api'
         IMG_FE = 'huyeon123/conmoto-front'
         IMG_CDN = 'huyeon123/conmoto-cdn'
-        ENCRYPT_KEY = sh(script: "echo $ENCRYPT_KEY", returnStdout: true).trim()
-        CONFIG_SERVER = sh(script: "echo $CONFIG_SERVER", returnStdout: true).trim()
     }
     stages {
         stage('Grant Gradle Permission') {
