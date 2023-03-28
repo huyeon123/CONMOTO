@@ -219,7 +219,6 @@ function renderType(noty) {
 function setRead(id) {
     const request = [id];
     requestSetRead(request);
-    $("#noty_" + id).remove();
 
     const $noty = $('#js-noty-count');
     const now = parseInt($noty.text()) - 1;

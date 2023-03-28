@@ -1,7 +1,7 @@
 /* workspace */
 @font-face {
     font-family: Azonix;
-    src: url("../../fonts/Azonix.woff") format("woff");
+    src: url("https://static.conmoto.site/files/Azonix.woff") format("woff");
 }
 
 p {
@@ -460,6 +460,8 @@ label {
 
 #noty-dialog {
     width: 100%;
+    max-height: 30vh;
+    overflow: hidden scroll;
 }
 
 .sidebar__expand {

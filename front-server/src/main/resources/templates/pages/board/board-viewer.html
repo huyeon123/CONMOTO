@@ -30,13 +30,6 @@
                         <span class="name">상태</span>
                         <span th:text="${board.status}"></span>
                     </div>
-                    <div class="header-elements">
-                        <span class="name mr-2">태그</span>
-                        <div class="flex-horizon-center" th:each="tag : ${board.tags}">
-                            <span class="tag" th:text="${tag}"></span>
-                            <i class="pointer material-icons-outlined delete md-16 gray">delete</i>
-                        </div>
-                    </div>
                 </div>
 
                 <!--HTML 내용이 CKEditor5에 의해 렌더링 됨-->
