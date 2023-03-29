@@ -25,14 +25,14 @@ https://documenter.getpostman.com/view/11771159/2s8ZDcyKfd
 
 ## ERD
 ### RDBMS (MySQL)
-![RDBMS-ERD](https://user-images.githubusercontent.com/66458794/215076866-d0afdfcf-c74a-4518-a5a8-9922f6ec9952.png)
-### NoSQL (MongoDB)
-![NoSQL-ERD](https://user-images.githubusercontent.com/66458794/215081538-428d9c66-16e0-4ba6-969e-987f4737282a.png)
+![RDBMS-ERD_v2](https://user-images.githubusercontent.com/66458794/228433918-a16079b8-6a35-4102-bdae-6df1a045e62a.png)
 
+### NoSQL (MongoDB)
+![NoSQL-ERD_v2](https://user-images.githubusercontent.com/66458794/228433947-3221600d-0a9e-41fa-9a8e-051cab497ac3.png)
 
 ## 아키텍처
-### (2023.01.27 기준)
-![conmoto-2023-01-27](https://user-images.githubusercontent.com/66458794/215075626-6d5b21ca-e537-44d0-8ade-fd19248aa7bd.png)
+### (2023.03.27 기준)
+![conmoto-2023-03-29](https://user-images.githubusercontent.com/66458794/228434129-b6cca8dc-df0d-4362-9906-a18fe9c4bee0.png)
 
 ## TOOL
 Skill Name | Version
