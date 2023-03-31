@@ -40,6 +40,9 @@ public class CDNController {
     @Value("${oci.namespace}")
     private String NAMESPACE;
 
+    @Value("${cdn.origin}")
+    private String ORIGIN;
+
     private final List<String> ALLOWED_EXTENSIONS = List.of("jpg", "jpeg", "png", "gif", "webp");
     private final String CONTENT_PREFIX = "Contents/CONMOTO_CONTENTS_";
 
@@ -87,7 +90,7 @@ public class CDNController {
 
             return Mono.fromFuture(future)
                     .map(response -> {
-                        CKEditor5Res body = new CKEditor5Res(true, "http://localhost:8400/contents/" + filePart.filename());
+                        CKEditor5Res body = new CKEditor5Res(true, ORIGIN + "/contents/" + filePart.filename());
                         return ResponseEntity.ok().body(body);
                     });
         });
