@@ -1,4 +1,4 @@
-package com.huyeon.authserver.utils;
+package com.huyeon.common.cookie;
 
 import org.springframework.util.SerializationUtils;
 
